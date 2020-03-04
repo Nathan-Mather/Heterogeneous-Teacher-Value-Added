@@ -1,0 +1,135 @@
+\documentclass[letterpaper,12pt]{article}
+
+% Import packages from .sty file.
+%\usepackage{imports}
+
+% Mike's things because he couldn't figure out how to get the preamble working otherwise
+\usepackage[utf8]{inputenc}
+\usepackage{geometry,ulem,graphicx,caption,color,setspace,dsfont,amssymb}
+\usepackage[comma]{natbib}
+\usepackage{subcaption} 
+\usepackage[short]{optidef}
+\usepackage{hhline}
+\usepackage[capposition=top]{floatrow}
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{adjustbox}
+\usepackage{tikz}
+\usepackage{pdflscape}
+\usetikzlibrary{calc,patterns,positioning}
+\usepackage{environ}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+ 
+\usepackage{natbib}
+\bibliographystyle{unsrtnat}
+
+\usepackage{titlesec}
+\titleformat{\section}
+  {\normalfont\normalsize\bfseries}{\thesection.}{1em}{}
+
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries}{\thesubsection}{1em}{}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Proposal for Mike idea1/Mike idea5
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% Set up the title.
+\title{What Information Is in Higher Moments of Value Added Functions?}
+\author{Tanner S Eastmond\thanks{Department of Economics, University of California, San Diego. Email: teastmond@ucsd.edu},  Nathan Mather\thanks{Department of Economics, University of Michigan. Email: njmather@umich.edu }, Michael Ricks\thanks{Department of Economics, University of Michigan. Email: ricksmi@umich.edu}}
+\date{\vspace{-8ex}}
+
+\begin{document}
+\maketitle
+
+\section{Question:} 
+
+How much added information do expressions of variance and dispersion of teacher value-added contain over the traditional mean effects?
+
+\section{Motivation and Proposal:}
+
+As the use of value added measures (VAM) continues to increase, many have wondered about the reliability of VAM to measure teacher quality. 
+The prior research assessing the validity and usefulness of VAM seems to suggest that VAM seem to be useful and (maybe?) reasonable estimates. 
+For examples VAM do not seem to be overly sensitive to concerns about sorting and other omitted variables \citep{chetty2014measuring1}; they are also predictive of long term outcomes \citep{chetty2014measuring2}, so they must contain important information. 
+Value added measures, however, essentially rely on comparing average outcomes, and as such, they can only capture mean effects.
+Intuition suggests that conditional on a mean, there may be more information in class scores that could characterize teacher quality.
+
+[Something about why better measures of quality are important (we want kids to learn, sorting teachers, paying teachers, etc.). Maybe mention \citet{michelmore2017gap}]
+
+We propose four additional measures that can be created with the data that are used to create value added measures. We will then try to show the validity of these measures, i.e., (1) that they are unbiased and (2) that they are informative about welfare-relevant outcomes beyond short term testing outcomes.
+
+\begin{enumerate}
+    \item The variance of VAM with a class
+    \item The variance of VAM across classes and/or time
+    \item Separate VAM for optimally partitioned subgroups
+    \item Bayesian (or quantile) estimates of a teacher's VAM function over the achievement distribution
+\end{enumerate}
+
+
+\section{Estimating the Measures:}
+
+\subsection{Within-Group Variance}
+
+Intuition suggests that conditional on a mean, teachers may also be characterized by the variance in VA across students. Depending on what this is driven by, this variance may carry important information that would help evaluate teacher performance. For example, low variance teachers essentially help all students equally while high variance teachers may connect especially well with some students or especially poorly with others. It seems reasonable that for individual students having a high match might be more predictive of future outcomes (like attitudes toward schools or graduation) that the mean effects wouldn't capture.
+
+Consider a simple residual-based value added measure from the regression equation:
+
+$$ y_{it} = \beta X_{it} + \alpha y_{it-1} + \epsilon_{it} $$
+$$ VA_{jt} = \frac{\sum_{i\in J_t}y_{it} - \hat{y}_i}{n_{jt}}  $$
+
+In this situation we could estimate the variance of the residuals for each teacher (year) to characterize the average dispersion within a class. 
+\footnote{Is this true for fixed effect measures or estimates that use shrinkage... Is there econometrics about the variance being a parameter of a random effect?}
+\footnote{Would Skewness be an interesting parameter? The higher order they are the more power it would take to identify well... the interaction of skewness and kurtosis would tell a lot about who the teacher really does help right?}
+
+
+$$ \hat{\sigma}_{VA_{jt}} = \frac{\sum_{i\in J_t}(y_{it} - \hat{y}_i)^2 - n_{jt}VA_{jt}^2}{n_{jt} - 1}  $$
+
+
+\subsection{Across-Group Variance}
+
+Another dimension of important variance might be within-teacher variance across groups. For example some teachers might have years or classes that are better idiosyncratic matches than others. If there is a great deal of difference between classes or if a teacher is very consistent, those characteristics might be important factors in quantifying teacher ability. Consider the same model where:
+
+\subsection{Partitioned VAM}
+
+This is my one idea that I think actually has potential to crack the problem noted at the very very top about the literature not finding VAM effects that vary over the distribution. In a sense it may be because they are looking for linear or well behaved effects, when it seems like the heterogeneity is really going to be in certain bins. (for example few teachers are really going to be able to add value to top quartile kids, but I bet there is a lot of variation in how much they help second quartile kids).
+
+Use an unsupervised classification algorithm to sort students of a given grade into “bins” (not sure whether or not they need to be ordered) and then estimate VAM (or a percentile rank) for each bins--maybe even separately for each bin. If we are really technically inclined, we could combine this together and choose hyperparameters that maximize the tradeoff between similar groups and being able to estimate as many groups as possible for each teacher.
+
+The pro is that this gets us around the identification problem that broke our very first iteration of this project, i.e., not being able to separately identify an effect and noise with just one observation. Pooling students is the natural solution, but rather than pool them into classes, why not pool them more finely?
+
+
+\subsection{Bayesian (Quantile) VAM functions}
+
+
+
+\section{The Applications:}
+
+
+
+The second exercise would be to use these variables to see how much information they add. One way I imagine that playing out would be going to 3 fairly different and or semi-famous scenarios and reviewing the results with our approach. We could do a long term outcomes one (Chetty), a non-academic outcomes one (Pope), and something else to see what is the added predictive power having especially high/low variance teachers has on later student outcomes and/or the interaction of mean and variance. It would be neat if the variance had added predictive power beyond the mean (or more predictive power than the mean if run head to head).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\bibliography{citations}
+
+\end{document}

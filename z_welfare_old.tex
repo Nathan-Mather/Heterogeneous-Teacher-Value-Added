@@ -1,0 +1,176 @@
+\documentclass[letterpaper,12pt]{article}
+
+% Import packages from .sty file.
+%\usepackage{imports}
+
+% Mike's things because he couldn't figure out how to get the preamble working otherwise
+\usepackage[utf8]{inputenc}
+\usepackage{geometry,ulem,graphicx,caption,color,setspace,dsfont,amssymb}
+\usepackage{natbib}
+\usepackage{subcaption} 
+\usepackage[short]{optidef}
+\usepackage{hhline}
+\usepackage[capposition=top]{floatrow}
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{adjustbox}
+\usepackage{tikz}
+\usepackage{pdflscape}
+\usetikzlibrary{calc,patterns,positioning}
+\usepackage{environ}
+
+
+
+
+
+% commands for use to put comments into text 
+
+\newcommand\cmnt[2]{\;
+{\textcolor{red}{[{\em #1 --- #2}] \;}
+}}
+
+\newcommand\Nate[1]{\cmnt{#1}{Nate}}
+\newcommand\Mike[1]{\cmnt{#1}{Mike}}
+\newcommand\Tanner[1]{\cmnt{#1}{Tanner}}
+\newcommand\rmk[1]{\;\textcolor{red}{{\em #1}\;}}
+\newcommand\Natenote[1]{\footnote{\cmnt{#1}{Nate}}}
+\newcommand\Mikenote[1]{\footnote{\cmnt{#1}{Mike}}}
+\newcommand\Tannernote[1]{\footnote{\cmnt{#1}{Tanner}}}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+ 
+\usepackage{natbib}
+\bibliographystyle{apa}
+
+\setcitestyle{round}
+\setcitestyle{semicolon}
+\setcitestyle{yysep={;}}
+
+\usepackage{titlesec}
+\titleformat{\section}
+  {\normalfont\normalsize\bfseries}{\thesection.}{1em}{}
+
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries}{\thesubsection}{1em}{}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Proposal for Tanner idea4/Mike idea1
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% Set up the title.
+\title{[Snappy Title]: A Welfare-Function Approach to Value Added Measures}
+\author{Tanner S Eastmond\thanks{Department of Economics, University of California, San Diego. Email: teastmon@ucsd.edu}, Nathan Mather\thanks{Department of Economics, University of Michigan. Email: njmather@umich.edu }, Michael Ricks\thanks{Department of Economics, University of Michigan. Email: ricksmi@umich.edu}} 
+\date{\vspace{-8ex}}
+
+\begin{document}
+\maketitle
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%% Questions. %%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Questions:} 
+How do teachers vary in their abilities to help different students? How much do teachers' rankings change under different ``welfare'' criteria? How does the distribution of test score gains change under policies implementing these different ``welfare'' criteria? What implications do these changes have for the effectiveness of educational accountability policies? 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%% Motivation and Proposal. %%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Motivation and Proposal:}
+A major goal of value added measures (VAM) is to evaluate and compare teachers. As VAM become increasingly prevalent, they have generated an enormous discussion about the relative merits of test score based measures and the appropriateness of using them in teacher evaluation. In the face of the skepticism about VAM, research has shown that they seem to perform relatively well in the face of possible biases \citep{chetty2014measuring1}, and they seem to be capturing information about the important, long-term effect that teachers have on students \citep{chetty2014measuring2}. More broadly the use of VAM to compare teachers has been show to increase teacher (and therefore student) performance \citep{pope2019effect}.
+
+Despite these results and the increasing reliance on Value Added Measures of teacher performance, there seems to be a philosophical disconnect between traditional (completely utilitarian) VAM and (much more egalitarian) education policy such as No Child Left Behind (NCLB). The heart of this tension lies in the fact that at their heart VAM are mean-oriented statistics; whether calculated as a fixed effect, as a mean residual, or in some other way each teachers VAM represents their average value imparted to their students. While making them much more empirically tractable, this also limits the breadth of what VAM can communicate and what policy ideas they can be reasonably used to promote: Consider, for example, the difference between `no child left behind' and `average child scoring better.'
+
+We propose a (set of?) more flexible measure(s) for VAM that allow for teacher heterogeneity, showing the behavior of these measures in simulation exercises, \Mikenote{One of the things I think we will want to show in our simulation exercises is how big the within-teacher cells have to become in order to estimate these well. Maybe a table or figures that communicates the tradeoff between size, degree of heterogeneity, and intra-class correlations or something in affecting signal/vs noise...?}, then bringing them to real data to estimate the heterogeneity in effects for a set of teachers. With these estimates we will show how the rankings change under different welfare criteria and perform simple simulation analyses about the gains possible from better matching.(?)
+
+To estimate heterogeneous VAM we will use empirical Bayes estimates, quantile regressions, or the residuals from a weighted least squares regression to measure of test score improvement for students across the achievement distribution. While all of these estimators will perform well in large samples, we will need to show how they perform in controlled/simulated environments to make sure that our estimators can recover true parameters in reasonable settings. The big issue to overcome will be parsing out signal from noise especially given that cell sizes will tend to be small. A commonly used tool in industry is to use shrinkage estimators to reduce unreasonably large effects at certain parts of the distribution.
+
+Once the estimators are behaving well we would be able to calculate these scores for real teachers and rank then rank them under various welfare criteria (e.g., how much is the worst student improving (Rawlsian), total test score improvement, etc.). We could also model the effort needed to raise student test scores for different points in the achievement distribution and use that effort measure to make statements about possible Pareto improvements for students. One way to get at measures of effort is to talk to teachers and ask how much time it takes to help students of various levels of ability to improve commensurate amounts, and our measure would be percent of teacher’s time spent on student x. Another option could be revealed responses in the distribution to policies that remunerate utilitarian VAM scores.
+
+After showing the differences in ranking of teachers under various welfare criteria, we could take the stated goals for recent (or not so recent) teacher accountability policies and think about whether what those policies measure actually gives the right ranking of teachers according to the welfare criteria the policies are attempting to further. For example, NCLB was intended to bring all students up to a certain level and to hold schools accountable for groups that traditionally were overlooked. However, the evaluation structure meant that students at the bottom and top of the achievement distribution were often overlooked \citep{neal2010left}. With our heterogeneous value added measure, we could suggest alternative methods of evaluation that would better ensure that teachers who furthered or hindered the goal of not leaving any child behind were correctly identified. We could also identify how teachers respond, and simulate how teachers reoptimize and show the changes in the distribution of effects, or consider the lowest dollar cost ranking strategy for getting gains where a policy maker wants it. We could also think about using this method (or maybe the ML method mentioned in \texttt{variance.tex}) to think about whether disadvantaged schools have teachers that are inside the frontier and whether we could swap teachers and to and get Pareto improvements. Or we could look to see how new principals shift teachers along their frontier.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%% Estimation %%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Estimation:}
+\subsection{Weighted OLS Residuals}
+
+One idea to estimate VAM with welfare weights is to start the estimation for VAM using student residuals\Natenote{This is how I remember doing it at EA, But it has been a long time and I used a lot of pre written code. I would need to brush up on this}. \Mikenote{I just read a paper by Chris Walters where this is what he does: Average residuals}We run a regression of student post tests on student pretests and controls. From this we get residuals that are the difference between the predicted score for the student and the actual score. These residuals are then regressed on a ``dose matrix'' that shows which students are linked to which teachers. In this regression all students are treated equally. However, we could weight the student residuals here according to our welfare measure. For example, we may want to weight lower pre-test level students more so they impact the teachers final value added more. One thing I like about this is it seems like it would be very flexible to any welfare function or ``preferences" the policy maker wants. \Natenote{this is really just a thought and I have no idea if the math will work out here.} While in theory we could use any weighting function, in practice we would want to limit ourselves to something parametric where the parameter captures the policy maker's preference for helping lower or higher achieving students. 
+
+We need to be sure that the total weight of any teacher, regardless of class composition, is the same. We do not want teachers getting higher scores because they are in classes with lower or higher achieving students.
+
+
+
+
+
+\subsection{Quantile Regression}
+
+Another way we could estimate the heterogeneity of teacher value added is with a quantile regression. I think this would be more the ``fixed effects" approach\Mikenote{I think this is the approach Jeff Smith used in that working paper we did the referee report on in Mike's class}\Natenote{ I need to take another look at this paper. Thanks for the tip } than the average residual approach, but the idea would be to show how the estimate of a teacher's average value added changes when we change the percentile at which we center the loss function. There might be a residuals analogue to this but I haven't thought through the econometrics. 
+
+Here are some of the problems I see with this approach.
+\begin{enumerate}
+    \item I don't know how well a quantile regression works in massively high dimensional settings. I know there are people in the education statistics literature doing things like this \Mike{Tanner do you remember the citations? I first saw them in that tournaments theory paper you showed me} so I think it should work. A quick google scholar search shows that people have thought about this and that there is some work in the area which may mean it doesn't work as nicely as we'd like. 
+    \item At first I wasn't sold on the quantile regression because when you include covariates the interpretability gets weird (because we aren't really comparing people in the absolute quantiles, but rather within their quantile conditional on the X---for example with race included the quantile wouldn't correspond to the association at the (unconditional) first percentile, but rather a weighted average of the association for black students in the first percentile among black students and white students at the first percentile among white students). As I've been thinking about it, could this actually become an asset? For example if we only include lagged scores as our X's then this would be telling us the quantile effect for the worst achievers? ... or would it average the worst achievers who did well last year with the worst achievers who did poorly last year.... maybe that isn't as nice as it sounded in my head. \Tannernote{When I talked to Julian in the early stages of this idea the point about the quantile conditional on X was particularly interesting to him because he felt that it gave a clearer estimate of value added across the distribution in some sense. His caution is that people struggle to interpret these coefficients correctly, so communicating the results can be more challenging.}
+\end{enumerate}
+
+
+\subsection{Empirical Bayes}
+Yet another option that has been suggested is to use Empirical Bayes Method. We could think about this approach a few different ways, but one possibility is to bin students based on their prior year achievement (e.g. bottom 10th percentile, 10th-20th, etc.), then use an Empirical Bayes Estimate with past year (or even average yearly improvement using the past few years) test score improvement to predict what the current year improvement should be within each bin. We can then take the difference between actual improvement in each bin (or for each student) and the predicted improvement to have an estimate for the current teacher's value added for each point in the achievement distribution.
+
+\Mike{Tanner maybe you could take it from here. I literally know nothing more than the name and what I read in the header of the Wikipedia article.}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%% Welfare and Simulations. %%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Analysis and Simulations:}
+
+\subsection{Econometric Simulations:}
+First, we will compare the relative strengths of our various approaches and determine which have the most desirable properties in our classroom setting when estimating value added across the achievement distribution.
+
+
+\subsection{Theoretical Simulations:}
+
+Possible welfare criteria to analyze:
+
+    \begin{itemize}
+        \item Total test score improvement (Utilitarian).
+        \item Test score improvement at the bottom of the achievement distribution (Rawlsian).
+        \item Test score improvement at the top of the achievement distribution (This would attempt to evaluate if some teachers are good at creating superstars. This definitely has concerns of test score ceiling though).
+        \item Test score improvement at the median of the achievement distribution (Maybe not interesting, but another way to think about things).
+        \item Efficiency of the test score improvements (Paretian. We would need to model or estimate the cost to raise test scores in each part of the distribution and allow for differential costs for raising test scores different amounts).
+        \item Equality of effort across students (This is much more of a stretch and would be purely theoretical, but could be an interesting in thinking normatively about what teachers goals should be and how they should spend their effort. Once we have modelled/estimated the cost to raise test scores for students across the achievement distribution, we could ask the question of what would happen to the distribution if teachers spent the same amount of time/effort on each student).
+        \item Raising all students to a certain level (This is the criterion that NCLB used and is one common way to define what a teacher's goal should be. One way to think about this criterion is only caring about the improvement of students beneath the threshold).
+    \end{itemize}
+
+Second, we will run simulations under each separate welfare criterion for how teachers reoptimize to evaluate the distributional consequences of policies focused on the given criterion. Under the assumptions that the educational policies correctly evaluate teachers based the specified criterion and that teachers respond to the policies, these simulations will allow us to then investigate what trade-offs policymakers are facing when deciding which welfare criteria they want to use in accountability policies.
+
+\subsection{Substantive Simulations:}
+
+
+The purpose of our simulations will be twofold.  
+
+
+
+% Simulations: (1) Econometric (How do our estimators and traditional estimators perform?), (2) Theoretical (What do these criteria mean in this context?), (3) Substantive (what else can we do with what we measured?)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%% References %%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliography{citations}
+    
+
+\end{document}
