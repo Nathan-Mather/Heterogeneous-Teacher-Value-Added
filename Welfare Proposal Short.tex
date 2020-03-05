@@ -66,11 +66,19 @@
 
 % Set up the title.
 \title{From Value Added to Welfare Added: A Social Planner Approach to Education Policy and Statistics}
-\author{Tanner S Eastmond\thanks{Department of Economics, University of California, San Diego. Email: teastmon@ucsd.edu}, Nathan Mather\thanks{Department of Economics, University of Michigan. Email: njmather@umich.edu }, Michael Ricks\thanks{Department of Economics, University of Michigan. Email: ricksmi@umich.edu}} 
+\author{
+Tanner S Eastmond\thanks{Department of Economics, University of California, San Diego. Email: teastmon@ucsd.edu}, Nathan Mather\thanks{Department of Economics, University of Michigan. Email: njmather@umich.edu }, Michael Ricks\thanks{Department of Economics, University of Michigan. Email: ricksmi@umich.edu}} 
 \date{\vspace{-8ex}}
 
 \begin{document}
-\maketitle
+%\maketitle
+\begin{center}
+\noindent \textbf{From Value Added to Welfare Added: A Social Planner Approach to Education Policy and Statistics}
+
+Tanner S Eastmond, Nathan Mather, Michael Ricks
+\end{center}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%% Motivation and Proposal. %%%%%%%%%%%%%%%
@@ -80,15 +88,11 @@ A major goal of value added measures (VAM) is to determine who are the most and 
 
 While these results support the increasing reliance on Value Added Measures of teacher performance, there seems to be a philosophical disconnect between traditional  VAM, which measures mean performance, and education policy such as No Child Left Behind (NCLB), which attempted to target low performing students. The heart of this tension lies in the fact that VAM are mean-oriented statistics; VAM represents a teachers average value imparted to their students. While making them much more empirically tractable, this also limits the breadth of questions VAM can address and what policy ideas they can be reasonably used to promote. 
 
-How do teachers vary in their abilities to help different types of students? How much do teachers' rankings, or the distribution of test score gains, change under different policies ``welfare'' criteria?  What implications do these changes have for the effectiveness of educational accountability policies? Traditional VAM will struggle to address these questions.  We propose a set of more flexible heterogeneous VAM that measures teachers heterogeneous impact and weights that impact on various students according to a given policy goal or welfare criteria. 
+How do teachers vary in their abilities to help different types of students? How well does ranking teachers using VAM reflect those differences? How much do teachers' rankings change under different policies' ``welfare'' criteria?  What implications do these changes have for the effectiveness of educational accountability policies? Because Traditional VAM  struggle to address these questions, we propose a set of more flexible heterogeneous VAM that measure teachers heterogeneous impacts and weight that impact on various students according to a given policy goal or welfare criterion. 
 
-To estimate heterogeneous VAM we will use either a weighted least squares regression of residuals, empirical Bayes estimates, or quantile regressions. regardless of the exact method used, the end result will be value added measures that can be adapted to a specific normative policy goal. For example, No Child Left behind was intended to bring all students up to a certain level and to hold schools accountable for groups that were traditionally overlooked. However, the evaluation structure meant that students at the bottom and top of the achievement distribution were often overlooked \citep{neal2010left}. With our heterogeneous value added measure we would ensure improving a low performing student's score increases a teacher's metric by more than improving a high performing students score. This would align teacher incentives to the stated policy goal as well as ensure that teachers who furthered or hindered the goal of not leaving any child behind were correctly identified
+The three methods we propose for estimating heterogeneous VAM are a weighted least squares regression of residuals, empirical Bayes estimates, and quantile regressions. Regardless of the exact method used, the end result will be value added measures that can be adapted to a specific normative policy goal. For example, No Child Left Behind was intended to bring all students up to a certain level and to hold schools accountable for groups that were traditionally overlooked. While traditional value added measures only capture the average effect of a teacher, our heterogeneous value added measures could weigh performance gains to lower achieving students more than those to higher performing students. This more felxible VAM would enable policy makers to align teacher incentives to the stated policy goal.\footnote{For example in the NCLB situation, the current evaluation structure meant that students at the bottom and top of the achievement distribution were often overlooked \citep{neal2010left}. But this could be over come by a continuous weighting structure rather than a discontinuous cutoff.} 
 
-While all of our potential approaches to estimating heterogeneous VAM should perform well in large samples, we will need to show how they perform in controlled/simulated environments to make sure that our estimators can recover true parameters in reasonable settings. We will also consider how teachers respond, and simulate how they re optimize, showing the resulting changes in the distribution of effects.
-
-Once we have confidence in the estimators from simulations, we will be able to calculate these scores for real teachers then rank them under various policy welfare criteria. This will demonstrate the effectiveness of these metrics on a real distribution of students and teachers. 
-
-
+While all of our potential approaches to estimating heterogeneous VAM should perform well in large samples, we will need to show how they perform in controlled/simulated environments to make sure that our estimators can recover true parameters in reasonable empirical settings. Once we have confidence in the estimators from simulations, we will be able to calculate these scores for real teachers then rank them under various policy welfare criteria. This will demonstrate the effectiveness of these metrics on a real distribution of students and teachers.  We would also like to consider how teachers respond to incentives, simulate how they reoptimize, and show the resulting changes in the distribution of effects.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -117,7 +121,7 @@ Another way we could estimate the heterogeneity of teacher value added is with a
 
 An advantage of using the quantile regression is that it simplifies the weighting problem introduced in the previous subsection. The quantile regression's ``check'' loss function will naturally weight observations by the percentile of their residual. This is a simple and intuitive weighting function. The disadvantage is that residuals may not be exactly what we want to use to characterize the achievement distribution---especially if we decide to include student characteristics as controls in addition to test scores from previous periods.
 
-A potential disadvantage of the quantile approach is whether it works in high dimensional settings (i.e., with lots of fixed effects).\footnote{There are people in the education statistics literature doing Value added with quantile regressions like this, but also discussions in the econometrics literature about dimensionality...} Another potential issue comes from the difficulty to interpret quantile coefficients: Including covariates makes it so that we are no longer comparing people in the absolute quantiles, but rather within their quantile conditional on the X. For example as I understand it, after including race indicators, the quantile results wouldn't correspond to the association at the (unconditional) first percentile, but rather a weighted average of the association for black students in the first percentile among black students and white students at the first percentile among white students.\footnote{It may be worth considering whether this could be engineered into a feature rather than a bug. For example by only including lagged scores as our X's, the results might be able to tell us the quantile effect for the worst achievers (?or would it average the worst achievers who did well last year with the worst achievers who did poorly last year?).}
+A potential disadvantage of the quantile approach is whether it works in high dimensional settings (i.e., with lots of fixed effects). Another potential issue comes from the difficulty to interpret quantile coefficients: Including covariates makes it so that we are no longer comparing people in the absolute quantiles, but rather within their quantile conditional on the X. For example, after including race indicators, the quantile results wouldn't correspond to the association at the (unconditional) first percentile, but rather a weighted average of the association for black students in the first percentile among black students and white students at the first percentile among white students.\footnote{It may be worth considering whether this could be engineered into a feature rather than a bug. For example by only including lagged scores as our X's, the results might be able to tell us the quantile effect for the worst achievers.}
 
 
 
@@ -137,17 +141,6 @@ The purpose of our first set of simulations will be to show which of the propose
 To accomplish this, we will consider data generating processes which vary classroom size, degree of heterogeneity in terms of prior achievement, the amount of noise in current-year test scores, correlation structure for ability and errors within classes, and teacher VA across the achievement distribution. This will allow us to compare the estimators under each different scenario. For example, we will be able to characterize how many classroom-year observations we would need per teacher in order to reliably estimate her VA at different points in the achievement distribution or how coarsely or finely each estimator can measure VA heterogeneity given intra-class correlations. 
 
 These simulations will also show evidence about whether estimating heterogeneous VA would be practically useful in evaluating teacher effectiveness (e.g., if it takes 30 classroom/year observations with classes of average size to have desirable properties for these estimators, they will not be valuable tools for educational policy). They will also tell us under which situations certain approaches of estimation will dominate others.
-
-
-% Which estimates can recover the true gains?
-
-%One of the things I think we will want to show in our simulation exercises is how big the within-teacher cells have to become in order to estimate these well. Maybe a table or figures that communicates the tradeoff between size, degree of heterogeneity, and intra-class correlations or something in affecting signal/vs noise...?
-
-% Also show how VA, Qreg, etc. get at different things. H
-
-% How much of what types of bias can these methods handle
-
-%
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
