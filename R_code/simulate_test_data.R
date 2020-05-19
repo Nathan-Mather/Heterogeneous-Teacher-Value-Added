@@ -36,3 +36,6 @@ for(i in 1:n_schools){
   r_dt[[i]] <- data.table(school = rep(i,  max(round(rnorm(1,  m_stud, stud_sd)), 50)))
   
 }
+
+#testing github 
+
