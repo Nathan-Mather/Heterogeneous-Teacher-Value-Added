@@ -1,0 +1,100 @@
+\documentclass[letterpaper,12pt]{article}
+
+% Import packages from .sty file.
+%\usepackage{imports}
+
+% Mike's things because he couldn't figure out how to get the preamble working otherwise
+\usepackage[utf8]{inputenc}
+\usepackage{geometry,ulem,graphicx,caption,color,setspace,dsfont,amssymb}
+\usepackage{natbib}
+\usepackage{subcaption} 
+\usepackage[short]{optidef}
+\usepackage{hhline}
+\usepackage[capposition=top]{floatrow}
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{adjustbox}
+\usepackage{tikz}
+\usepackage{pdflscape}
+\usetikzlibrary{calc,patterns,positioning}
+\usepackage{environ}
+
+
+
+
+
+% commands for use to put comments into text 
+
+\newcommand\cmnt[2]{\;
+{\textcolor{red}{[{\em #1 --- #2}] \;}
+}}
+
+\newcommand\Nate[1]{\cmnt{#1}{Nate}}
+\newcommand\Mike[1]{\cmnt{#1}{Mike}}
+\newcommand\Tanner[1]{\cmnt{#1}{Tanner}}
+\newcommand\rmk[1]{\;\textcolor{red}{{\em #1}\;}}
+\newcommand\Natenote[1]{\footnote{\cmnt{#1}{Nate}}}
+\newcommand\Mikenote[1]{\footnote{\cmnt{#1}{Mike}}}
+\newcommand\Tannernote[1]{\footnote{\cmnt{#1}{Tanner}}}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+ 
+\usepackage{natbib}
+\bibliographystyle{apa}
+
+\setcitestyle{round}
+\setcitestyle{semicolon}
+\setcitestyle{yysep={;}}
+
+\usepackage{titlesec}
+\titleformat{\section}
+  {\normalfont\normalsize\bfseries}{\thesection.}{1em}{}
+
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries}{\thesubsection}{1em}{}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Proposal for Tanner idea4/Mike idea1
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% Set up the title.
+
+\begin{document}
+%\maketitle
+\begin{center}
+\noindent \textbf{Timeline}
+
+\end{center}
+
+
+Simmulation:
+\begin{itemize}
+    \item Create Data
+    \begin{enumerate}
+        \item Random
+        \item Random within school
+        \item ?
+        \item
+    \end{enumerate}
+    \item Run Analyses
+    \begin{enumerate}
+        \item Run basic value added
+        \item Run weighting idea (residual or non parametric)
+        \item Run quantile 
+    \end{enumerate}
+\end{itemize}
+    
+    
+    \noindent \textbf{June 30, 2020:} Do it all with the random version. See how hard it is going to be? Nate start. Check in on June 12th.
+
+\end{document}
+
+
+% Chris comment: can you horse race va on different outcomes to see what matters at different points of the distribution.
