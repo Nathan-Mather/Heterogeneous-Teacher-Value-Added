@@ -11,14 +11,19 @@
 
 # notes for future versions 
 # 1) The school sizes are just uniform but that's probably not accurate. Just need to find a better distribution 
-# 2) students have standard normal distributions of underlying ability. for now 
+# 2) students have standard normal distributions of underlying ability. seems reasonable to me 
 # 3) student ability and test scores are all in std normal distributions. I thought 
-# this was good, but I am not sure how to relate that to SEMs. Need to figure it out eventually 
-# 4) teacher to student ratios are pretty mush set for now but we probaby want some variation in this 
+# this was good, but I am not sure how to relate that to SEMs. Need to figure it out how to properly simulate test data 
+# 4) teacher to student ratios are pretty mush set for now but we probaby want some variation in this.
+# I also don't like how I coded this, but that will change with the update anyway 
+# 5) How the teacher ability translates into student growth is entirely arbitrary for now 
+# 6) there is effectivly only one grade 
+# 7) each student is assigned exactly one teacher 
 
-rm(list = ls(pos = ".GlobalEnv"), pos = ".GlobalEnv")
-options(scipen = 999)
-cat("\f")
+# clear data. This is commented out so we can source this from another script 
+# rm(list = ls(pos = ".GlobalEnv"), pos = ".GlobalEnv")
+# options(scipen = 999)
+# cat("\f")
 
 library(data.table)
 
@@ -53,13 +58,13 @@ library(data.table)
   # 
   #   # parameters for school, teacher sizes 
   #   #note: for now just doing one grade 
-  #   n_schools = 100             # number of schools 
-  #   min_stud  = 25           # minimum students per school 
-  #   max_stud  = 600       # maximum number of students 
-  #   n_stud_per_teacher = 25      # goal number of students per teacher 
-  #   
+    # n_schools = 100             # number of schools
+    # min_stud  = 25           # minimum students per school
+    # max_stud  = 600       # maximum number of students
+    # n_stud_per_teacher = 25      # goal number of students per teacher
+
   #   # parameters for test 
-  #   test_SEM = .07 # this is a complete guess at this point. Need to brush up on psychometrics 
+    # test_SEM = .07 # this is a complete guess at this point. Need to brush up on psychometrics
   #   
 
   #==========================#
@@ -113,13 +118,13 @@ library(data.table)
     #note not 100% sure this is how this works with the SEM but I think this is close to right 
     r_dt[, test_1 := mapply(rnorm, n= 1, mean = stud_ability_1, sd = test_SEM) ]
     
-    # assign teacher's an underlying ability 
-    r_dt[, teacher_ability := rnorm(nrow(r_dt))]
+    # assign teacher's an underlying value added 
+    r_dt[, teacher_ability := .1*rnorm(1), teacher_id]
     
     # Now let teachers influence students and grow their ability over time base on how good the teacher is 
     #note I have no idea what this distribution shold look like. keep in mind all the scores are in theory normalized 
     # so a student going down just means relative score is going down 
-    r_dt[, stud_ability_2 := stud_ability_1 + .1*teacher_ability]
+    r_dt[, stud_ability_2 := stud_ability_1 + teacher_ability]
     
     # Now that they have a new ability give them another test 
     r_dt[, test_2 := mapply(rnorm, n= 1, mean = stud_ability_2, sd = test_SEM) ]
@@ -132,8 +137,8 @@ library(data.table)
   # ==== Test function ====
   #========================#
   
-  # just leave all the defaults in there 
-  sim_dt <- simulate_test_data()
+  # # just leave all the defaults in there 
+  # sim_dt <- simulate_test_data()
 
 
 
