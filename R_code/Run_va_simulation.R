@@ -151,4 +151,11 @@ all.equal(ww_tab3$estimate, ww_tab$estimate)
 all.equal(ww_tab3$std.error, ww_tab$std.error)
 summary(ww_tab3$std.error)
 summary( ww_tab$std.error)
-=all.equal(r_dt$weight, r_dt$weight_3)
+all.equal(r_dt$weight, r_dt$weight_3)
+
+
+
+#================================================#
+# ==== Save example data for mike and tanner ====
+#================================================#
+write.csv(r_dt, "C:/Users/Nmath_000/Documents/data/Value Added/Simulated_data_6_2_2020.csv", row.names = FALSE)
