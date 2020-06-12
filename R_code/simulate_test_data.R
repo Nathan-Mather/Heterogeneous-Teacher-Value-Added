@@ -52,35 +52,35 @@ library(data.table)
   #==========================#
   # ==== debug parameters ====
   #==========================#
-  # It can be helpful for code debugging to define all the function inputs in the global enviorment 
+  # It can be helpful for code debugging to define all the function inputs in the global enviorment
   # and then run the funciton line by line.
   # uncomment the chunk by highlighting and hitting ctrl+shift+c
-  # 
-  #   # parameters for school, teacher sizes 
-  #   #note: for now just doing one grade 
-    # n_schools = 100             # number of schools
-    # min_stud  = 25           # minimum students per school
-    # max_stud  = 600       # maximum number of students
-    # n_stud_per_teacher = 25      # goal number of students per teacher
+  #
+  #   # parameters for school, teacher sizes
+  #   #note: for now just doing one grade
+    n_schools = 100             # number of schools
+    min_stud  = 25           # minimum students per school
+    max_stud  = 600       # maximum number of students
+    n_stud_per_teacher = 25      # goal number of students per teacher
 
-  #   # parameters for test 
-    # test_SEM = .07 # this is a complete guess at this point. Need to brush up on psychometrics
-  #   
+  #   # parameters for test
+    test_SEM = .07 # this is a complete guess at this point. Need to brush up on psychometrics
+  #
 
   #==========================#
   # ==== Define Function ====
   #==========================#
   
-  
+  # start of the funciton
   simulate_test_data <- function(n_schools          = 100,
                                  min_stud           = 25,
                                  max_stud           = 600, 
                                  n_stud_per_teacher = 25,
                                  test_SEM           = .07){
-    # generate vectors 
+    # generate an empty list to fill in with schools 
     r_dt <- vector("list", length = n_schools)
     
-    # just do this with a loop because its easy 
+    # fill in schools data.tabes with random numbers of rows (students)
     for(i in 1:n_schools){
       
       r_dt[[i]] <- data.table(school = rep(i,  round(runif(1,  min_stud, max_stud))))
@@ -92,7 +92,6 @@ library(data.table)
     
     # add students 
     r_dt[, stud_id := .I]
-    
     
     # now assign teachers within school 
     # start by getting the number of teachers needed per school 
@@ -116,6 +115,7 @@ library(data.table)
     
     # assign them a test score 
     #note not 100% sure this is how this works with the SEM but I think this is close to right 
+    # mapply applies rnorm to each row using stud_ability_1 and test_SEM from each row
     r_dt[, test_1 := mapply(rnorm, n= 1, mean = stud_ability_1, sd = test_SEM) ]
     
     # assign teacher's an underlying value added 
