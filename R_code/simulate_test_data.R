@@ -58,14 +58,16 @@ library(data.table)
   #
   #   # parameters for school, teacher sizes
   #   #note: for now just doing one grade
-    n_schools = 100             # number of schools
-    min_stud  = 25           # minimum students per school
-    max_stud  = 600       # maximum number of students
-    n_stud_per_teacher = 25      # goal number of students per teacher
-
-  #   # parameters for test
-    test_SEM = .07 # this is a complete guess at this point. Need to brush up on psychometrics
-  #
+  #   n_schools = 100             # number of schools
+  #   min_stud  = 25           # minimum students per school
+  #   max_stud  = 600       # maximum number of students
+  #   n_stud_per_teacher = 25      # goal number of students per teacher
+  # 
+  # #   # parameters for test
+  #   test_SEM = .07 # this is a complete guess at this point. Need to brush up on psychometrics
+  # 
+  #   # uncertainty for teacher ability translating into student growth 
+  # techer_va_epsilon  = .1
 
   #==========================#
   # ==== Define Function ====
@@ -76,7 +78,8 @@ library(data.table)
                                  min_stud           = 25,
                                  max_stud           = 600, 
                                  n_stud_per_teacher = 25,
-                                 test_SEM           = .07){
+                                 test_SEM           = .07,
+                                 techer_va_epsilon  = .1 ){
     # generate an empty list to fill in with schools 
     r_dt <- vector("list", length = n_schools)
     
@@ -118,14 +121,17 @@ library(data.table)
     # mapply applies rnorm to each row using stud_ability_1 and test_SEM from each row
     r_dt[, test_1 := mapply(rnorm, n= 1, mean = stud_ability_1, sd = test_SEM) ]
     
-    # assign teacher's an underlying value added 
-    r_dt[, teacher_ability := .1*rnorm(1), teacher_id]
+    # assign teacher's an overall ability. and a "center" where they perform best 
+    r_dt[, teacher_ability := rnorm(1, mean =0, sd = .1), teacher_id]
+    r_dt[, teacher_center := rnorm(1, mean =0, sd = 1), teacher_id]
     
     # Now let teachers influence students and grow their ability over time base on how good the teacher is 
     #note I have no idea what this distribution shold look like. keep in mind all the scores are in theory normalized 
     # so a student going down just means relative score is going down 
-    r_dt[, stud_ability_2 := stud_ability_1 + teacher_ability]
+    n_row_dt <- nrow(r_dt)
+    r_dt[, stud_ability_2 := stud_ability_1 + pnorm(stud_ability_1 - teacher_center)*teacher_ability + rnorm(n_row_dt, sd = techer_va_epsilon)]
     
+
     # Now that they have a new ability give them another test 
     r_dt[, test_2 := mapply(rnorm, n= 1, mean = stud_ability_2, sd = test_SEM) ]
     

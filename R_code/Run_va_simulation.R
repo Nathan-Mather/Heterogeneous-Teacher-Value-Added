@@ -148,8 +148,7 @@ all.equal(comparison_1$estimate, comparison_1$p_out_va1)
   summary(r_dt$weight)
   # put the weights on the diagonal of a matrix 
   W_mat <- as.matrix(diag(r_dt$weight))
-  W_mat <- as.matrix(diag(rep(1, length(r_dt$weight))))
-  
+
   # make outcome matrix 
   Y_mat <-  as.matrix(r_dt[, c("test_2")])
   
