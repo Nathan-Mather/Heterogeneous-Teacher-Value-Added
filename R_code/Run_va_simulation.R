@@ -37,8 +37,12 @@ library(Matrix)
 # ==== sim data ====
 #===================#
 
-# generate simluated data. just use default inputs for now 
-r_dt <- simulate_test_data()
+# generate simluated data. do a very small smaple so stuff runs quickly 
+r_dt <- simulate_test_data(n_schools          = 10,
+                           min_stud           = 200,
+                           max_stud           = 200, 
+                           n_stud_per_teacher = 25,
+                           test_SEM           = .07)
 
 
 #=================#
@@ -60,50 +64,81 @@ va_tab1 <- data.table(tidy(va_out1))
 
 va_tab1[, teacher_id := gsub("teacher_id", "", term)]
 
+# grab out just the esimates for teachers and the the teacher id 
 va_res <- va_tab1[term %like% "teacher_id", c("estimate", "teacher_id")]
 
-# grab unique teacher data 
+# grab each teachers ability so we can compare it to the value added 
 teach_dt <- unique(r_dt[, c("teacher_id", "teacher_ability")])
 
-# merge it on to data '
+# merge ability to the value added for comparison 
 va_res <- merge(teach_dt, va_res, "teacher_id")
 
 # get correlation 
 correlation <- va_res[, cor(estimate, teacher_ability)]
 
 
+
+
+#============================================#
+# ==== partial out regression no weights ====
+#============================================#
+
+# make data into dose matrix so I can do regression with matrices  
+# start by grabing stud_id and teacher_id
+dose_dt <- r_dt[, c("stud_id", "teacher_id")]
+
+# now loop through and make a new dummy column for each teacer 
+for(teach_i in unique(r_dt$teacher_id)){
+  
+  # create category column in dataset
+  dose_dt[, paste0("d_teacher_",teach_i) := 0]
+  
+  # add 1 in column for rows where category applies
+  dose_dt[ teacher_id == teach_i, paste0("d_teacher_",teach_i) := 1]
+  
+}
+
+# drop off the extra columns and make it a matrix 
+dose_mat <- as.matrix(dose_dt[, -c("stud_id", "teacher_id")])
+
+# get controls matrix 
+cont_dt <- r_dt[, c("test_1")]
+# cont_dt[, constant := 1]
+cont_mat <- as.matrix(cont_dt)
+
+# partial out the effect of the pretest (and other controls once we get them) on the dose matrix. 
+B_mat <- solve(crossprod(cont_mat, cont_mat)) %*% (crossprod(cont_mat, dose_mat))
+
+# get residuals 
+residuals_1 <- dose_mat - cont_mat%*%B_mat
+
+# make outcome matrix 
+Y_mat <-  as.matrix(r_dt[, c("test_2")])
+
+# now do a\second step of regression 
+p_out_va_coef <- solve(crossprod(residuals_1, residuals_1)) %*% (crossprod(residuals_1, Y_mat))
+
+# reorganize them for easier comparison
+p_out_va_coef_dt <- data.table(p_out_va_coef, keep.rownames = TRUE)
+colnames(p_out_va_coef_dt) <- c("teacher_id", "p_out_va1")
+p_out_va_coef_dt[, teacher_id := gsub("d_teacher_", "", teacher_id)]
+p_out_va_coef_dt <- merge(teach_dt, p_out_va_coef_dt, "teacher_id")
+
+# check correclation 
+p_out_va_coef_dt[, cor(teacher_ability, p_out_va1)]
+
+# check that it is identical to lm regression 
+comparison_1 <- merge(va_res, p_out_va_coef_dt, "teacher_id")
+all.equal(comparison_1$estimate, comparison_1$p_out_va1)
+
+
 #==========================#
 # ==== welfare weights ====
 #==========================#
-  #=================================#
-  # ==== partial out regression ====
-  #=================================#
+  #==============================================#
+  # ==== partial out regression with weights ====
+  #==============================================#
 
-  # make data into dose matrix so I can do regression  
-  dose_dt <- r_dt[, c("stud_id", "teacher_id")]
-  for(teach_i in unique(r_dt$teacher_id)){
-    
-    # create category column in dataset
-    dose_dt[, paste0("d_teacher_",teach_i) := 0]
-    
-    # add 1 in column for rows where category applies
-    dose_dt[ teacher_id == teach_i, paste0("d_teacher_",teach_i) := 1]
-    
-  }
-
-  # drop off the extra columns and make it a matrix 
-  dose_mat <- as.matrix(dose_dt[, -c("stud_id", "teacher_id")])
-  
-  # get controls matrix 
-  cont_dt <- r_dt[, c("test_1")]
-  cont_dt[, constant := 1]
-  cont_mat <- as.matrix(cont_dt)
-  
-  # partial out the effect of the pretest (and other controls once we get them) on the dose matrix. 
-  B_mat <- solve(crossprod(cont_mat, cont_mat)) %*% (crossprod(cont_mat, dose_mat))
-  
-  residuals_1 <- dose_mat - cont_mat%*%B_mat
-  
   # Make wieghts 
   # lots of different ways to do this. For now lets make weights where 
   #lowest student is weighted twice what the highest student is
@@ -113,6 +148,7 @@ correlation <- va_res[, cor(estimate, teacher_ability)]
   summary(r_dt$weight)
   # put the weights on the diagonal of a matrix 
   W_mat <- as.matrix(diag(r_dt$weight))
+  W_mat <- as.matrix(diag(rep(1, length(r_dt$weight))))
   
   # make outcome matrix 
   Y_mat <-  as.matrix(r_dt[, c("test_2")])
