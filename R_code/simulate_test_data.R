@@ -14,10 +14,10 @@
 # 2) students have standard normal distributions of underlying ability. seems reasonable to me 
 # 3) student ability and test scores are all in std normal distributions. I thought 
 # this was good, but I am not sure how to relate that to SEMs. Need to figure it out how to properly simulate test data 
-# 4) teacher to student ratios are pretty mush set for now but we probaby want some variation in this.
+# 4) teacher to student ratios are pretty much set for now but we probably want some variation in this.
 # I also don't like how I coded this, but that will change with the update anyway 
 # 5) How the teacher ability translates into student growth is entirely arbitrary for now 
-# 6) there is effectivly only one grade 
+# 6) there is effectively only one grade 
 # 7) each student is assigned exactly one teacher 
 
 # clear data. This is commented out so we can source this from another script 
@@ -38,7 +38,7 @@ library(data.table)
   # I like to do it right away in shared projects just to keep track of what functions do 
   #' AS_IW
   #' 
-  #' impliment methods from "Estimating Dynamic Treatment Effects in Event Studies
+  #' implement methods from "Estimating Dynamic Treatment Effects in Event Studies
   #' with Heterogeneous Treatment Effects" by Abraham and Sun.
   #'
   #'@param n_schools number of schools 
@@ -73,17 +73,17 @@ library(data.table)
   # ==== Define Function ====
   #==========================#
   
-  # start of the funciton
+  # start of the function
   simulate_test_data <- function(n_schools          = 100,
                                  min_stud           = 25,
                                  max_stud           = 600, 
                                  n_stud_per_teacher = 25,
                                  test_SEM           = .07,
-                                 techer_va_epsilon  = .1 ){
+                                 teacher_va_epsilon  = .1){
     # generate an empty list to fill in with schools 
     r_dt <- vector("list", length = n_schools)
     
-    # fill in schools data.tabes with random numbers of rows (students)
+    # fill in schools data.tables with random numbers of rows (students)
     for(i in 1:n_schools){
       
       r_dt[[i]] <- data.table(school = rep(i,  round(runif(1,  min_stud, max_stud))))
@@ -126,10 +126,10 @@ library(data.table)
     r_dt[, teacher_center := rnorm(1, mean =0, sd = 1), teacher_id]
     
     # Now let teachers influence students and grow their ability over time base on how good the teacher is 
-    #note I have no idea what this distribution shold look like. keep in mind all the scores are in theory normalized 
+    #note I have no idea what this distribution should look like. keep in mind all the scores are in theory normalized 
     # so a student going down just means relative score is going down 
     n_row_dt <- nrow(r_dt)
-    r_dt[, stud_ability_2 := stud_ability_1 + pnorm(stud_ability_1 - teacher_center)*teacher_ability + rnorm(n_row_dt, sd = techer_va_epsilon)]
+    r_dt[, stud_ability_2 := stud_ability_1 + dnorm(stud_ability_1 - teacher_center)*teacher_ability + rnorm(n_row_dt, sd = teacher_va_epsilon)]
     
 
     # Now that they have a new ability give them another test 
@@ -137,7 +137,7 @@ library(data.table)
     
     return(r_dt[])
   
-  } # end fucntion 
+  } # end function 
   
   #========================#
   # ==== Test function ====
