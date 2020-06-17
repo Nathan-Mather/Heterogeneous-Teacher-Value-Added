@@ -32,6 +32,9 @@ source("c:/Users/Nmath_000/Documents/Research/Heterogeneous-Teacher-Value-Added/
 library(Matrix)
 library(ggplot2)
 
+# set path for plots to save 
+plot_out <- ""
+
 #===================#
 # ==== sim data ====
 #===================#
@@ -68,6 +71,9 @@ max_score <-  max(r_dt$test_1)
   r_dt[test_1>w_i, mr_weights := 1 - (test_1-w_i)/(max_score-w_i)]
   mr_w_plot <- ggplot(data = r_dt, aes(x= test_1, y = mr_weights)) + geom_point()
   mr_w_plot  
+  
+  # save plots 
+  
 
 #=================#
 # ==== run VA ====
@@ -163,15 +169,9 @@ all.equal(comparison_1$estimate, comparison_1$p_out_va1)
   # ==== partial out regression with weights ====
   #==============================================#
 
-  # Make wieghts 
-  # lots of different ways to do this. For now lets make weights where 
-  #lowest student is weighted twice what the highest student is
-  max_score <- r_dt[, max(test_1)]
-  min_score <- r_dt[,min(test_1)]
-  r_dt[, weight := 2-(test_1-min_score)*(1/(max_score-min_score))]
-  summary(r_dt$weight)
+
   # put the weights on the diagonal of a matrix 
-  W_mat <- as.matrix(diag(r_dt$weight))
+  W_mat <- as.matrix(diag(r_dt$linear_weights))
 
   # make outcome matrix 
   Y_mat <-  as.matrix(r_dt[, c("test_2")])
