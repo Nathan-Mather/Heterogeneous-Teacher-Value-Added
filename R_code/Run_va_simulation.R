@@ -16,11 +16,9 @@
 # 4) aggrergation if teachers teach multiple grade levels from mutliple models 
 
 
-
 #=================#
 # ==== set up ====
 #=================#
-
 
 # clear data.
 rm(list = ls(pos = ".GlobalEnv"), pos = ".GlobalEnv")
@@ -32,6 +30,10 @@ library(data.table)
 library(broom)
 source("c:/Users/Nmath_000/Documents/Research/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R")  #set this path 
 library(Matrix)
+library(ggplot2)
+
+# set path for plots to save 
+plot_out <- ""
 
 #===================#
 # ==== sim data ====
@@ -44,6 +46,34 @@ r_dt <- simulate_test_data(n_schools          = 10,
                            n_stud_per_teacher = 25,
                            test_SEM           = .07)
 
+#===========================#
+# ==== weight functions ====
+#===========================#
+
+# function for linaer weigts. lowest student is weighted alpha times more than highest ]
+in_test_1 <- r_dt$test_1
+linear_weight_fun <- function(alpha = 2, in_test_1){
+  
+  max_score <- max(in_test_1)
+  min_score <- min(in_test_1)
+  weight <-  2-(in_test_1-min_score)*(1/(max_score-min_score))
+}
+
+# use the function to make the weights 
+r_dt[, linear_weights := linear_weight_fun(2,test_1)]
+lin_w_plot <- ggplot(data = r_dt, aes(x= test_1, y = linear_weights)) + geom_point()
+lin_w_plot
+
+# Mike Ricks weights 
+w_i <- median(r_dt$test_1)
+max_score <-  max(r_dt$test_1)
+  r_dt[test_1<=w_i, mr_weights := test_1/w_i ]
+  r_dt[test_1>w_i, mr_weights := 1 - (test_1-w_i)/(max_score-w_i)]
+  mr_w_plot <- ggplot(data = r_dt, aes(x= test_1, y = mr_weights)) + geom_point()
+  mr_w_plot  
+  
+  # save plots 
+  
 
 #=================#
 # ==== run VA ====
@@ -139,15 +169,9 @@ all.equal(comparison_1$estimate, comparison_1$p_out_va1)
   # ==== partial out regression with weights ====
   #==============================================#
 
-  # Make wieghts 
-  # lots of different ways to do this. For now lets make weights where 
-  #lowest student is weighted twice what the highest student is
-  max_score <- r_dt[, max(test_1)]
-  min_score <- r_dt[,min(test_1)]
-  r_dt[, weight := 2-(test_1-min_score)*(1/(max_score-min_score))]
-  summary(r_dt$weight)
+
   # put the weights on the diagonal of a matrix 
-  W_mat <- as.matrix(diag(r_dt$weight))
+  W_mat <- as.matrix(diag(r_dt$linear_weights))
 
   # make outcome matrix 
   Y_mat <-  as.matrix(r_dt[, c("test_2")])
