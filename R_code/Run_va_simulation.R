@@ -10,10 +10,11 @@
 #  Run a basic value added on simulated data 
 
 # notes for future versions 
-# 1) Measurment error correction 
+# 1) Measurement error correction 
 # 2) shrinkage 
 # 3) centering and scaling and all that 
-# 4) aggrergation if teachers teach multiple grade levels from mutliple models 
+# 4) aggregation if teachers teach multiple grade levels from multiple models 
+
 
 
 #=================#
@@ -28,35 +29,41 @@ cat("\f")
 # load packages and our functions 
 library(data.table)
 library(broom)
-source("c:/Users/Nmath_000/Documents/Research/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R")  #set this path 
+# source("c:/Users/Nmath_000/Documents/Research/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R")  #set this path 
+source("~/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R")
 library(Matrix)
 library(ggplot2)
 
 # set path for plots to save 
 plot_out <- ""
 
+
+
 #===================#
 # ==== sim data ====
 #===================#
 
-# generate simluated data. do a very small smaple so stuff runs quickly 
+# generate simulated data. do a very small sample so stuff runs quickly 
 r_dt <- simulate_test_data(n_schools          = 10,
                            min_stud           = 200,
                            max_stud           = 200, 
                            n_stud_per_teacher = 25,
                            test_SEM           = .07)
 
+
+
 #===========================#
 # ==== weight functions ====
 #===========================#
 
-# function for linaer weigts. lowest student is weighted alpha times more than highest ]
+# function for linear weights. lowest student is weighted alpha times more than highest ]
 in_test_1 <- r_dt$test_1
 linear_weight_fun <- function(alpha = 2, in_test_1){
   
   max_score <- max(in_test_1)
   min_score <- min(in_test_1)
   weight <-  2-(in_test_1-min_score)*(1/(max_score-min_score))
+  weight <- weight/sum(weight) # I think it is more helpful if the weights sum to one in talking about them, though it does not affect the estimates at all.
 }
 
 # use the function to make the weights 
@@ -75,11 +82,12 @@ max_score <-  max(r_dt$test_1)
   # save plots 
   
 
+  
 #=================#
 # ==== run VA ====
 #=================#
 
-# for now I am just going to use built in commands. If we eventually want to do measurment error correction and stuff 
+# for now I am just going to use built in commands. If we eventually want to do measurement error correction and stuff 
 # then we will have to write this more from scratch and can rely on the VA code I have from EA. We will also 
 # have to create a dummy matrix, rather than using factors, once students have multiple teacher assignments 
 
@@ -94,7 +102,7 @@ va_tab1 <- data.table(tidy(va_out1))
 
 va_tab1[, teacher_id := gsub("teacher_id", "", term)]
 
-# grab out just the esimates for teachers and the the teacher id 
+# grab out just the estimates for teachers and the the teacher id 
 va_res <- va_tab1[term %like% "teacher_id", c("estimate", "teacher_id")]
 
 # grab each teachers ability so we can compare it to the value added 
@@ -108,16 +116,15 @@ correlation <- va_res[, cor(estimate, teacher_ability)]
 
 
 
-
 #============================================#
 # ==== partial out regression no weights ====
 #============================================#
 
 # make data into dose matrix so I can do regression with matrices  
-# start by grabing stud_id and teacher_id
+# start by grabbing stud_id and teacher_id
 dose_dt <- r_dt[, c("stud_id", "teacher_id")]
 
-# now loop through and make a new dummy column for each teacer 
+# now loop through and make a new dummy column for each teacher 
 for(teach_i in unique(r_dt$teacher_id)){
   
   # create category column in dataset
@@ -154,12 +161,13 @@ colnames(p_out_va_coef_dt) <- c("teacher_id", "p_out_va1")
 p_out_va_coef_dt[, teacher_id := gsub("d_teacher_", "", teacher_id)]
 p_out_va_coef_dt <- merge(teach_dt, p_out_va_coef_dt, "teacher_id")
 
-# check correclation 
+# check correlation 
 p_out_va_coef_dt[, cor(teacher_ability, p_out_va1)]
 
 # check that it is identical to lm regression 
 comparison_1 <- merge(va_res, p_out_va_coef_dt, "teacher_id")
 all.equal(comparison_1$estimate, comparison_1$p_out_va1)
+
 
 
 #==========================#
@@ -185,9 +193,58 @@ all.equal(comparison_1$estimate, comparison_1$p_out_va1)
   ww_va_coef_dt[, teacher_id := gsub("d_teacher_", "", teacher_id)]
   ww_va_coef_dt <- merge(teach_dt, ww_va_coef_dt, "teacher_id")
   
-  # check correclation 
+  # check correlation 
   ww_va_coef_dt[, cor(teacher_ability, ww_va1)]
   
+  
+  # =========================================== #
+  # ==== Calculate the "Truth" and Compare ==== #
+  # =========================================== #
+  
+  # I assume that the true ranking is given by the density of the difference between
+  #   student ability and the teacher center multiplied by the teacher's ability 
+  #   and the correct weight. Is this the right way to do it?
+  
+  # Make a column with the "true" welfare-weighted effect on scores
+  r_dt[, true_ww := sum(dnorm(stud_ability_1 - teacher_center)*teacher_ability*linear_weights), "teacher_id"]
+  
+  # Keep just the teacher id and true welfare-weighted effect
+  new <- r_dt[, .(teacher_id, true_ww)]
+  new <- unique(new)
+  
+  # Sort the teachers by true_ww and label them 1-Number Teachers.
+  new <- new[order(true_ww)]
+  new[, tid := .I]
+  
+  # Combine the weighted and the unweighted estimates into one dataframe
+  ww_va_coef_dt <- merge(ww_va_coef_dt, va_res[, c("teacher_ability") := NULL], "teacher_id")
+  
+  # Merge on the "true" welfare-weighted effect
+  ww_va_coef_dt <- merge(ww_va_coef_dt, new, "teacher_id")
+  
+  # Renormalize everything so they have the same mean and variance
+  ww_va_coef_dt[, ww_va1 := ((ww_va1 - mean(ww_va1))/sd(ww_va1) + mean(true_ww))*sd(true_ww)]
+  ww_va_coef_dt[, estimate := ((estimate - mean(estimate))/sd(estimate) + mean(true_ww))*sd(true_ww)]
+  
+  # Make a Caterpillar plot (currently includes truth, baseline, and weighted estimates)
+  test <- melt(ww_va_coef_dt, id.vars="tid", measure.vars = c("estimate", "ww_va1", "true_ww"))
+  
+  cat_plot_baseline <- ggplot(test, aes(x = tid, y = value, color = variable)) + geom_point()
+  cat_plot_baseline
+  
+  # Calculate the mean squared distance from the rank of the truth
+  ww_va_coef_dt <- ww_va_coef_dt[order(estimate)]
+  ww_va_coef_dt[, baseline := (.I - tid)^2]
+  
+  ww_va_coef_dt <- ww_va_coef_dt[order(ww_va1)]
+  ww_va_coef_dt[, weighted := (.I - tid)^2]
+  
+  # Display the mean squared distance for both
+  sum(ww_va_coef_dt$baseline)
+  sum(ww_va_coef_dt$weighted)
+  
+  
+
   #==============================#
   # ==== get standard errors ====
   #==============================#
