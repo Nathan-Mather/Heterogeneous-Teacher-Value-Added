@@ -26,16 +26,18 @@ rm(list = ls(pos = ".GlobalEnv"), pos = ".GlobalEnv")
 options(scipen = 999)
 cat("\f")
 
+# check users 
+
 # load packages and our functions 
 library(data.table)
 library(broom)
-# source("c:/Users/Nmath_000/Documents/Research/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R")  #set this path 
-source("~/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R")
+source("c:/Users/Nmath_000/Documents/Research/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R")  #set this path
+# source("~/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R")
 library(Matrix)
 library(ggplot2)
 
-# set path for plots to save 
-plot_out <- ""
+#set path for plots to save 
+out_plot <- "c:/Users/Nmath_000/Documents/data/Value Added/"
 
 
 
@@ -80,6 +82,7 @@ max_score <-  max(r_dt$test_1)
   mr_w_plot  
   
   # save plots 
+  ggsave(paste0(out_plot, "mr_weight.png"))
   
 
   
