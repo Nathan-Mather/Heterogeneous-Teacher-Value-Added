@@ -77,12 +77,12 @@ lin_w_plot <- ggplot(data = r_dt, aes(x= test_1, y = linear_weights)) + geom_poi
 
 # Mike Ricks weights 
 w_i <- median(r_dt$test_1)
-max_score <-  max(r_dt$test_1)
-  r_dt[test_1<=w_i, mr_weights := test_1/w_i ]
+  max_score <-  max(r_dt$test_1)
+  min_score <-  min(r_dt$test_1)
+  r_dt[test_1<=w_i, mr_weights := (test_1-min_score)/(w_i-min_score) ]
   r_dt[test_1>w_i, mr_weights := 1 - (test_1-w_i)/(max_score-w_i)]
   mr_w_plot <- ggplot(data = r_dt, aes(x= test_1, y = mr_weights)) + geom_point()
-  
-  
+
   # save plots 
   ggsave(paste0(out_plot, "linear_wight.png"), plot = lin_w_plot)
   ggsave(paste0(out_plot, "mr_weight.png"), plot = mr_w_plot)
