@@ -26,7 +26,10 @@ rm(list = ls(pos = ".GlobalEnv"), pos = ".GlobalEnv")
 options(scipen = 999)
 cat("\f")
 
-# check users 
+# check users (can do something here eventually to automatically pick a user)
+
+# option for weight type options: linear, mr, .... 
+opt_weight_type <- "linear"
 
 # load packages and our functions 
 library(data.table)
@@ -71,7 +74,6 @@ linear_weight_fun <- function(alpha = 2, in_test_1){
 # use the function to make the weights 
 r_dt[, linear_weights := linear_weight_fun(2,test_1)]
 lin_w_plot <- ggplot(data = r_dt, aes(x= test_1, y = linear_weights)) + geom_point()
-lin_w_plot
 
 # Mike Ricks weights 
 w_i <- median(r_dt$test_1)
@@ -79,10 +81,11 @@ max_score <-  max(r_dt$test_1)
   r_dt[test_1<=w_i, mr_weights := test_1/w_i ]
   r_dt[test_1>w_i, mr_weights := 1 - (test_1-w_i)/(max_score-w_i)]
   mr_w_plot <- ggplot(data = r_dt, aes(x= test_1, y = mr_weights)) + geom_point()
-  mr_w_plot  
+  
   
   # save plots 
-  ggsave(paste0(out_plot, "mr_weight.png"))
+  ggsave(paste0(out_plot, "linear_wight.png"), plot = lin_w_plot)
+  ggsave(paste0(out_plot, "mr_weight.png"), plot = mr_w_plot)
   
 
   
@@ -116,7 +119,7 @@ va_res <- merge(teach_dt, va_res, "teacher_id")
 
 # get correlation 
 correlation <- va_res[, cor(estimate, teacher_ability)]
-
+correlation
 
 
 #============================================#
@@ -181,7 +184,8 @@ all.equal(comparison_1$estimate, comparison_1$p_out_va1)
   #==============================================#
 
 
-  # put the weights on the diagonal of a matrix 
+  # put the weights on the diagonal of a matrix, pick weight using option 
+  if(opt)
   W_mat <- as.matrix(diag(r_dt$linear_weights))
 
   # make outcome matrix 
