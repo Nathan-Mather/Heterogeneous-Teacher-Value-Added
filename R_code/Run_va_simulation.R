@@ -185,8 +185,16 @@ all.equal(comparison_1$estimate, comparison_1$p_out_va1)
 
 
   # put the weights on the diagonal of a matrix, pick weight using option 
-  if(opt)
-  W_mat <- as.matrix(diag(r_dt$linear_weights))
+  if(opt_weight_type == "linear"){
+    W_mat <- as.matrix(diag(r_dt$linear_weights))
+  }
+  if(opt_weight_type == "mr"){
+    W_mat <- as.matrix(diag(r_dt$mr_weights))
+  }
+  if(!exists("W_mat")){
+    stop("You need to pick one of the specified opt_weight_type options")
+  }
+ 
 
   # make outcome matrix 
   Y_mat <-  as.matrix(r_dt[, c("test_2")])
@@ -212,9 +220,12 @@ all.equal(comparison_1$estimate, comparison_1$p_out_va1)
   #   student ability and the teacher center multiplied by the teacher's ability 
   #   and the correct weight. Is this the right way to do it?
   
-  # Make a column with the "true" welfare-weighted effect on scores
-  r_dt[, true_ww := sum(dnorm(stud_ability_1 - teacher_center)*teacher_ability*linear_weights), "teacher_id"]
-  
+  # Make a column with the "true" welfare-weighted effect on scores. Based on option
+  if(opt_weight_type == "linear"){
+    r_dt[, true_ww := sum(dnorm(stud_ability_1 - teacher_center)*teacher_ability*linear_weights), "teacher_id"]
+  }
+  if(opt_weight_type == "mr"){
+  }
   # Keep just the teacher id and true welfare-weighted effect
   new <- r_dt[, .(teacher_id, true_ww)]
   new <- unique(new)
