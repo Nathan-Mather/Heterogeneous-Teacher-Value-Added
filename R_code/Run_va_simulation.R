@@ -49,10 +49,10 @@ out_plot <- "c:/Users/Nmath_000/Documents/data/Value Added/"
 #===================#
 
 # generate simulated data. do a very small sample so stuff runs quickly 
-r_dt <- simulate_test_data(n_schools          = 10,
+r_dt <- simulate_test_data(n_schools          = 20,
                            min_stud           = 200,
                            max_stud           = 200, 
-                           n_stud_per_teacher = 25,
+                           n_stud_per_teacher = 30,
                            test_SEM           = .07)
 
 
@@ -225,6 +225,8 @@ all.equal(comparison_1$estimate, comparison_1$p_out_va1)
     r_dt[, true_ww := sum(dnorm(stud_ability_1 - teacher_center)*teacher_ability*linear_weights), "teacher_id"]
   }
   if(opt_weight_type == "mr"){
+    r_dt[, true_ww := sum(dnorm(stud_ability_1 - teacher_center)*teacher_ability*mr_weights), "teacher_id"]
+    
   }
   # Keep just the teacher id and true welfare-weighted effect
   new <- r_dt[, .(teacher_id, true_ww)]
@@ -261,7 +263,9 @@ all.equal(comparison_1$estimate, comparison_1$p_out_va1)
   sum(ww_va_coef_dt$baseline)
   sum(ww_va_coef_dt$weighted)
   
-  
+  # differences in correlation 
+  ww_va_coef_dt[, cor(ww_va1, true_ww)]
+  ww_va_coef_dt[, cor(estimate, true_ww)]
 
   #==============================#
   # ==== get standard errors ====
