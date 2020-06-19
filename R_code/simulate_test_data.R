@@ -46,7 +46,7 @@ library(data.table)
   #'@param max_stud maximum students per school
   #'@param n_stud_per_teacher goal number of students per teacher 
   #'@param test_SEM The test's Standard Error of Measure. Maybe eventually want condition SEMS too 
-  #'@details See the working paper http://economics.mit.edu/files/14964
+  #'@details 
   #'@examples 
 
   #==========================#
@@ -74,7 +74,7 @@ library(data.table)
   #==========================#
   
   # start of the function
-  simulate_test_data <- function(n_schools          = 100,
+  simulate_test_data <- function(n_schools          = 20,
                                  min_stud           = 25,
                                  max_stud           = 600, 
                                  n_stud_per_teacher = 25,
