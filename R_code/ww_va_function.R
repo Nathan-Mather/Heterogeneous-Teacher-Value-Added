@@ -61,10 +61,10 @@ ww_va <- function(in_data = NULL,
   for(teach_i in u_teachers){
     
     # create category column in dataset
-    dose_dt[, paste0("d_teacher_",teach_i) := 0]
+    dose_dt[, paste0("d_",teach_i) := 0]
     
     # add 1 in column for rows where category applies
-    dose_dt[ teacher_id == teach_i, paste0("d_teacher_",teach_i) := 1]
+    dose_dt[ get(in_teacher_id) == teach_i, paste0("d_",teach_i) := 1]
     
   }
   
@@ -72,14 +72,14 @@ ww_va <- function(in_data = NULL,
   dose_mat <- as.matrix(dose_dt[, -c(in_stud_id, in_teacher_id), with = FALSE])
   
   # get controls matrix 
-  cont_dt <- r_dt[, in_pre_test, with = FALSE]
+  cont_dt <- in_data[, in_pre_test, with = FALSE]
   cont_mat <- as.matrix(cont_dt)
   
   # put the weights on the diagonal of a matrix, pick weight using option 
   W_mat <- as.matrix(diag(in_data[[in_weights]]))
   
   # make outcome matrix 
-  Y_mat <-  as.matrix(r_dt[, in_post_test, with = FALSE])
+  Y_mat <-  as.matrix(in_data[, in_post_test, with = FALSE])
   
   #=========================#
   # ==== do value added ====
@@ -100,7 +100,7 @@ ww_va <- function(in_data = NULL,
   # reorganize them for easier comparison
   ww_va_coef_dt <- data.table(ww_va_coef, keep.rownames = TRUE)
   colnames(ww_va_coef_dt) <- c(in_teacher_id, "ww_va1")
-  ww_va_coef_dt[, (in_teacher_id) := gsub("d_teacher_", "", get(in_teacher_id))]
+  ww_va_coef_dt[, (in_teacher_id) := gsub("^d_", "", get(in_teacher_id))]
 
   return(ww_va_coef_dt)
   
