@@ -60,7 +60,7 @@ library(data.table)
   # uncomment the chunk by highlighting and hitting ctrl+shift+c
   #
   #   # parameters for school, teacher sizes
-  #   #note: for now just doing one grade
+    #note: for now just doing one grade
   #   n_schools = 100             # number of schools
   #   min_stud  = 25           # minimum students per school
   #   max_stud  = 600       # maximum number of students
@@ -156,27 +156,29 @@ library(data.table)
   # # just leave all the defaults in there 
   # sim_dt <- simulate_test_data()
 
-  #======================#
-  # ==== diognostics ====
-  #======================#
-
-    # take the expected mean teacher ability and center and map their benefit to the draw of students 
-    E_teacher_ability <- 0 
-    E_Teacher_center <- 0 
-    r_dt[, diog_teacher_impact := E_teacher_ability - abs(stud_ability_1 - E_Teacher_center)* teacher_abiliy_drop_off]
-    diog_plot1 <- ggplot(data = r_dt, aes(x= test_1, y = diog_teacher_impact)) + 
-      geom_point() +
-      ggtitle("Expected teacher impact without Noise") +
-      ylab("Theoretical average teacher impact")
-    print(diog_plot1)
-    
-    # now do it with the noise 
-    r_dt[, diog_teacher_impact := E_teacher_ability - abs(stud_ability_1 - E_Teacher_center)* teacher_abiliy_drop_off + rnorm(n_row_dt, sd = teacher_va_epsilon)]
-    diog_plot1 <- ggplot(data = r_dt, aes(x= test_1, y = diog_teacher_impact)) + 
-      geom_point() +
-      ggtitle("Expected teacher impact with Noise") +
-      ylab("Theoretical average teacher impact with added noise ")
-    print(diog_plot1)
-  
-
+  # #======================#
+  # # ==== diognostics ====
+  # #======================#
+  # 
+    # take the expected mean teacher ability and center and map their benefit to the draw of students
+  #   E_teacher_ability <- 0
+  #   E_Teacher_center <- 0
+  #   r_dt[, diog_teacher_impact := E_teacher_ability - abs(stud_ability_1 - E_Teacher_center)* teacher_abiliy_drop_off]
+  #   diog_plot1 <- ggplot(data = r_dt, aes(x= test_1, y = diog_teacher_impact)) +
+  #     geom_point() +
+  #     ggtitle("Expected teacher impact without Noise") +
+  #     ylab("Theoretical average teacher impact")
+  #   print(diog_plot1)
+  # ggsave("c:/Users/Nmath_000/Documents/data/Value Added/teacher_impact_kernal_no_noise.png")
+  # #   
+  #   # now do it with the noise
+  #   r_dt[, diog_teacher_impact := E_teacher_ability - abs(stud_ability_1 - E_Teacher_center)* teacher_abiliy_drop_off + rnorm(n_row_dt, sd = teacher_va_epsilon)]
+  #   diog_plot1 <- ggplot(data = r_dt, aes(x= test_1, y = diog_teacher_impact)) +
+  #     geom_point() +
+  #     ggtitle("Expected teacher impact with Noise") +
+  #     ylab("Theoretical average teacher impact with added noise ")
+  #   print(diog_plot1)
+  # 
+  # ggsave("c:/Users/Nmath_000/Documents/data/Value Added/teacher_impact_kernal_noise.png")
+  # 
 

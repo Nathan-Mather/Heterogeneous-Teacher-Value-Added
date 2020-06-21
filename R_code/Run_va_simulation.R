@@ -49,11 +49,13 @@ out_plot <- "c:/Users/Nmath_000/Documents/data/Value Added/"
 #===================#
 
 # generate simulated data. do a very small sample so stuff runs quickly 
-r_dt <- simulate_test_data(n_schools          = 20,
-                           min_stud           = 200,
-                           max_stud           = 200, 
-                           n_stud_per_teacher = 30,
-                           test_SEM           = .07)
+r_dt <- simulate_test_data(n_schools               = 20,
+                           min_stud                = 200,
+                           max_stud                = 200, 
+                           n_stud_per_teacher      = 30,
+                           test_SEM                = .07,
+                           teacher_va_epsilon      = .1,
+                           teacher_abiliy_drop_off = .25)
 
 
 
@@ -63,16 +65,17 @@ r_dt <- simulate_test_data(n_schools          = 20,
 
 # function for linear weights. lowest student is weighted alpha times more than highest ]
 in_test_1 <- r_dt$test_1
-linear_weight_fun <- function(alpha = 2, in_test_1){
+linear_weight_fun <- function(alpha, in_test_1){
   
   max_score <- max(in_test_1)
   min_score <- min(in_test_1)
-  weight <-  2-(in_test_1-min_score)*(1/(max_score-min_score))
+  weight <-  alpha-(in_test_1-min_score)*(1/(max_score-min_score))*(alpha-1)
   weight <- weight/sum(weight) # I think it is more helpful if the weights sum to one in talking about them, though it does not affect the estimates at all.
 }
 
 # use the function to make the weights 
-r_dt[, linear_weights := linear_weight_fun(2,test_1)]
+lin_w_alpha <- 2
+r_dt[, linear_weights := linear_weight_fun(lin_w_alpha,test_1)]
 lin_w_plot <- ggplot(data = r_dt, aes(x= test_1, y = linear_weights)) + geom_point()
 
 # Mike Ricks weights 
@@ -137,7 +140,7 @@ for(teach_i in unique(r_dt$teacher_id)){
   dose_dt[, paste0("d_teacher_",teach_i) := 0]
   
   # add 1 in column for rows where category applies
-  dose_dt[ teacher_id == teach_i, paste0("d_teacher_",teach_i) := 1]
+  dose_dt[ teacher_id == teach_i, paste0("d_teacher_",teach_i) := .25]
   
 }
 
@@ -209,8 +212,10 @@ all.equal(comparison_1$estimate, comparison_1$p_out_va1)
   ww_va_coef_dt <- merge(teach_dt, ww_va_coef_dt, "teacher_id")
   
   # check correlation 
+  print("welfare weighted cor:")
   ww_va_coef_dt[, cor(teacher_ability, ww_va1)]
-  
+  print("standard cor: ")
+  correlation
   
   # =========================================== #
   # ==== Calculate the "Truth" and Compare ==== #
@@ -222,7 +227,10 @@ all.equal(comparison_1$estimate, comparison_1$p_out_va1)
   
   # Make a column with the "true" welfare-weighted effect on scores. Based on option
   if(opt_weight_type == "linear"){
-    r_dt[, true_ww := sum(dnorm(stud_ability_1 - teacher_center)*teacher_ability*linear_weights), "teacher_id"]
+    
+    # make weights based on tru ex ante ability rather than test one 
+    r_dt[,linear_weights_true := linear_weight_fun(alpha = lin_w_alpha, in_test_1 = stud_ability_1)]
+    r_dt[, true_ww := sum(dnorm(stud_ability_1 - teacher_center)*teacher_ability*linear_weights_true), "teacher_id"]
   }
   if(opt_weight_type == "mr"){
     r_dt[, true_ww := sum(dnorm(stud_ability_1 - teacher_center)*teacher_ability*mr_weights), "teacher_id"]
@@ -267,6 +275,17 @@ all.equal(comparison_1$estimate, comparison_1$p_out_va1)
   ww_va_coef_dt[, cor(ww_va1, true_ww)]
   ww_va_coef_dt[, cor(estimate, true_ww)]
 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  # work in progress
   #==============================#
   # ==== get standard errors ====
   #==============================#
