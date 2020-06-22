@@ -14,8 +14,6 @@
 #'@param in_pre_test variable name of pre-test entered as character string 
 #'@param in_post_test variable name of post-test entered as character string 
 #'@param in_weights variable name of policy maker's welfare weights entered as character string 
-#'@param weightvar variable name of basis of the weights (e.g. ability for the infeasible weights)
-#'@param alpha the alpha value for the linear weights
 #'@param 
 #'@details 
 #'@examples 
@@ -29,24 +27,13 @@
 #in_post_test  = "test_2"
 #in_weights    = "linear"
 
-# Linear weighting function
-linear_weight_fun <- function(alpha, in_test_1){
-  max_score <- max(in_test_1)
-  min_score <- min(in_test_1)
-  weight <-  alpha-(in_test_1-min_score)*(1/(max_score-min_score))*(alpha-1)
-  weight <- weight/sum(weight) # I think it is more helpful if the weights sum to one in talking about them, though it does not affect the estimates at all.
-}
-
-
 # define function and set default column names to what we have been using 
 ww_va <- function(in_data = NULL,
                   in_teacher_id = "teacher_id",
                   in_stud_id    = "stud_id",
                   in_pre_test   = "test_1",
                   in_post_test  = "test_2",
-                  in_weights    = "linear",
-                  weightvar     = "student_ability_1",
-                  alpha         = 2){
+                  in_weights    = "linear"){
 
   #=======================#
   # ==== error checks ====
@@ -88,11 +75,7 @@ ww_va <- function(in_data = NULL,
   cont_mat <- as.matrix(cont_dt)
   
   # put the weights on the diagonal of a matrix, pick weight using option 
-  if (in_weights == "linear") {
-    in_data[, weights := linear_weight_fun(alpha, stud_ability_1)] # Come back to this, replace stud_ability_1 with weightvar
-  }
-  
-  W_mat <- as.matrix(diag(in_data$weights))
+  W_mat <- as.matrix(diag(in_data[[in_weights]]))
   
   # make outcome matrix 
   Y_mat <-  as.matrix(in_data[, in_post_test, with = FALSE])

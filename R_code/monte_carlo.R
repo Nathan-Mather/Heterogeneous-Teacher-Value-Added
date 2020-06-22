@@ -9,7 +9,7 @@
 # clear data.
 rm(list = ls(pos = ".GlobalEnv"), pos = ".GlobalEnv")
 options(scipen = 999)
-#cat("\f")
+cat("\f")
 
 # check users (can do something here eventually to automatically pick a user)
 
@@ -19,6 +19,7 @@ library(broom)
 # source("c:/Users/Nmath_000/Documents/Research/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R")  #set this path
 source("~/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R")
 source("~/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code/ww_va_function.R")
+source("~/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code/weighting_functions.R")
 library(Matrix)
 library(ggplot2)
 library(doParallel)
@@ -35,18 +36,11 @@ registerDoParallel(myCluster)
 registerDoRNG()
 
 # Set the number of simulations and other options
-nsims = 100
+nsims = 1000
 set.seed(42)
 opt_weight_type <- "linear" # I haven't built in any other weights yet.
 teacher_ability_drop_off = 0.25
-
-# Linear weighting function
-linear_weight_fun <- function(alpha, in_test_1){
-  max_score <- max(in_test_1)
-  min_score <- min(in_test_1)
-  weight <-  alpha-(in_test_1-min_score)*(1/(max_score-min_score))*(alpha-1)
-  weight <- weight/sum(weight) # I think it is more helpful if the weights sum to one in talking about them, though it does not affect the estimates at all.
-}
+lin_alpha = 2
 
 
 
@@ -118,6 +112,14 @@ out <- foreach(i = 1:nsims, .combine = 'comb', .multicombine = TRUE) %dopar% { #
   
   
   # Now run the weighted VA
+  # Generate the weights
+  if(opt_weight_type == "linear"){
+    
+    r_dt[, c(opt_weight_type) := linear_weight_fun(alpha = lin_alpha, in_test_1 = test_1)]
+    
+  }
+  
+  # Estimate the weighted VA
   ww_tab1 <- ww_va(in_data = r_dt, in_weights = opt_weight_type)
   
   # Merge on the standard VA
@@ -136,7 +138,7 @@ out <- foreach(i = 1:nsims, .combine = 'comb', .multicombine = TRUE) %dopar% { #
 if(opt_weight_type == "linear"){
   
   # make weights based on true ex ante ability rather than test one 
-  r_dt[, linear_weights_true := linear_weight_fun(alpha = 2, in_test_1 = stud_ability_1)]
+  r_dt[, linear_weights_true := linear_weight_fun(alpha = lin_alpha, in_test_1 = stud_ability_1)]
   r_dt[, true_ww := sum((teacher_ability - abs(stud_ability_1 - teacher_center)* teacher_ability_drop_off)*linear_weights_true), "teacher_id"]
   
 }
@@ -148,9 +150,6 @@ new <- unique(new)
 # Sort the teachers by true_ww and label them 1-Number Teachers.
 new <- new[order(true_ww)]
 new[, tid := .I]
-
-# Combine the weighted and the unweighted estimates into one dataframe
-out <- merge(out, va_res[, c("teacher_ability") := NULL], "teacher_id")
 
 # Merge on the "true" welfare-weighted effect
 out <- merge(out, new, "teacher_id")
