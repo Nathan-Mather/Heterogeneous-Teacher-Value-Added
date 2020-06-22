@@ -1,0 +1,183 @@
+# ==================================== #
+# == Run the Monte Carlo Simulation == #
+# ==================================== #
+
+# ================ #
+# ==== set up ==== #
+# ================ #
+
+# clear data.
+rm(list = ls(pos = ".GlobalEnv"), pos = ".GlobalEnv")
+options(scipen = 999)
+#cat("\f")
+
+# check users (can do something here eventually to automatically pick a user)
+
+# load packages and our functions 
+library(data.table)
+library(broom)
+# source("c:/Users/Nmath_000/Documents/Research/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R")  #set this path
+source("~/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R")
+source("~/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code/ww_va_function.R")
+library(Matrix)
+library(ggplot2)
+library(doParallel)
+library(matrixStats)
+library(doRNG)
+
+#set path for plots to save 
+out_plot <- "~/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code"
+
+# Set parallel options
+myCluster <- makeCluster(20, # number of cores to use
+                         type = "FORK") # type of cluster (Must be "PSOCK" on Windows)
+registerDoParallel(myCluster)
+registerDoRNG()
+
+# Set the number of simulations and other options
+nsims = 100
+set.seed(42)
+opt_weight_type <- "linear" # I haven't built in any other weights yet.
+teacher_ability_drop_off = 0.25
+
+# Linear weighting function
+linear_weight_fun <- function(alpha, in_test_1){
+  max_score <- max(in_test_1)
+  min_score <- min(in_test_1)
+  weight <-  alpha-(in_test_1-min_score)*(1/(max_score-min_score))*(alpha-1)
+  weight <- weight/sum(weight) # I think it is more helpful if the weights sum to one in talking about them, though it does not affect the estimates at all.
+}
+
+
+
+
+# ================== #
+# ==== sim data ==== #
+# ================== #
+
+# generate simulated data. do a very small sample so stuff runs quickly 
+r_dt <- simulate_test_data(n_schools               = 20,
+                           min_stud                = 200,
+                           max_stud                = 200, 
+                           n_stud_per_teacher      = 30,
+                           test_SEM                = .07,
+                           teacher_va_epsilon      = .1,
+                           teacher_ability_drop_off = teacher_ability_drop_off)
+
+# convert teacher_id to a factor so we can treat it as a dummy 
+r_dt[, teacher_id := as.factor(teacher_id)]
+
+
+
+
+# ============================= #
+# ==== run the Monte Carlo ==== #
+# ============================= #
+
+# Define a function to combine the results
+comb <- function(...){
+  # Combine the lists
+  args <- do.call(cbind, list(...))
+  
+  # Get all estimates from the standard VA
+  args1 <- args[, c(grepl("est", names(args))), with=FALSE]
+  
+  # Make a data table with means and standard deviations for the standard case
+  out <- data.table(mean_standard = rowMeans(args1))
+  out[, sd_standard := round(rowSds(matrix(unlist(args1), nr=lengths(out)[1])), digits=10)]
+  
+  # Get all estimates from the weighted case
+  args2 <- args[, c(grepl("ww", names(args))), with=FALSE]
+  
+  # Add to the data table
+  out[, mean_weighted := rowMeans(args2)]
+  out[, sd_weighted := round(rowSds(matrix(unlist(args2), nr=lengths(out)[1])), digits=10)]
+  
+  # Get the teacher id
+  out[, teacher_id := args[, c("teacher_id")]]
+  
+  return(out)
+}
+
+
+# Run the simulation
+out <- foreach(i = 1:nsims, .combine = 'comb', .multicombine = TRUE) %dopar% { # Change %dopar% to %do% if you don't want to run it parallel
+  # Resample the student data
+  r_dt <- simulate_test_data(teacher_dt = r_dt[, c("school", "teacher_id", "teacher_ability", "teacher_center")])
+
+  # First run the standard VA 
+  # run regression 
+  va_out1 <- lm(test_2 ~ test_1 + teacher_id - 1, data = r_dt)
+  
+  # clean results 
+  va_tab1 <- data.table(tidy(va_out1))
+  va_tab1[, teacher_id := gsub("teacher_id", "", term)]
+  
+  # Return just the estimates
+  va_tab1 <- va_tab1[term %like% "teacher_id", c("teacher_id", "estimate")]
+  
+  
+  # Now run the weighted VA
+  ww_tab1 <- ww_va(in_data = r_dt, in_weights = opt_weight_type)
+  
+  # Merge on the standard VA
+  va_tab1 <- merge(va_tab1, ww_tab1, "teacher_id")
+
+}
+
+
+
+
+# ======================================= #
+# ==== Generate the Caterpillar Plot ==== #
+# ======================================= #
+
+# Make a column with the "true" welfare-weighted effect on scores.
+if(opt_weight_type == "linear"){
+  
+  # make weights based on true ex ante ability rather than test one 
+  r_dt[, linear_weights_true := linear_weight_fun(alpha = 2, in_test_1 = stud_ability_1)]
+  r_dt[, true_ww := sum((teacher_ability - abs(stud_ability_1 - teacher_center)* teacher_ability_drop_off)*linear_weights_true), "teacher_id"]
+  
+}
+
+# Keep just the teacher id and true welfare-weighted effect
+new <- r_dt[, .(teacher_id, true_ww)]
+new <- unique(new)
+
+# Sort the teachers by true_ww and label them 1-Number Teachers.
+new <- new[order(true_ww)]
+new[, tid := .I]
+
+# Combine the weighted and the unweighted estimates into one dataframe
+out <- merge(out, va_res[, c("teacher_ability") := NULL], "teacher_id")
+
+# Merge on the "true" welfare-weighted effect
+out <- merge(out, new, "teacher_id")
+
+# Renormalize everything so they have the same mean and variance
+out[, mean_weighted := (mean_weighted - mean(mean_weighted))/sd(mean_weighted)]
+out[, mean_standard := (mean_standard - mean(mean_standard))/sd(mean_standard)]
+out[, true_ww := (true_ww - mean(true_ww))/sd(true_ww)]
+
+# Make a Caterpillar plot (currently includes truth, baseline, and weighted estimates)
+test <- melt(out, id.vars="tid", measure.vars = c("mean_standard", "mean_weighted", "true_ww"))
+
+cat_plot_baseline <- ggplot(test, aes(x = tid, y = value, color = variable)) + geom_point()
+cat_plot_baseline
+
+# Calculate the mean squared distance from the rank of the truth
+out <- out[order(mean_standard)]
+out[, baseline := (.I - tid)^2]
+
+out <- out[order(mean_weighted)]
+out[, weighted := (.I - tid)^2]
+
+# Display the mean squared distance for both
+sum(out$baseline)
+sum(out$weighted)
+
+# differences in correlation 
+out[, cor(mean_standard, true_ww)]
+out[, cor(mean_weighted, true_ww)]
+

@@ -34,8 +34,8 @@ opt_weight_type <- "linear"
 # load packages and our functions 
 library(data.table)
 library(broom)
-source("c:/Users/Nmath_000/Documents/Research/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R")  #set this path
-# source("~/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R")
+# source("c:/Users/Nmath_000/Documents/Research/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R")  #set this path
+source("~/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R")
 library(Matrix)
 library(ggplot2)
 
@@ -55,7 +55,7 @@ r_dt <- simulate_test_data(n_schools               = 20,
                            n_stud_per_teacher      = 30,
                            test_SEM                = .07,
                            teacher_va_epsilon      = .1,
-                           teacher_abiliy_drop_off = .25)
+                           teacher_ability_drop_off = .25)
 
 
 
@@ -225,10 +225,10 @@ all.equal(comparison_1$estimate, comparison_1$p_out_va1)
   #   student ability and the teacher center multiplied by the teacher's ability 
   #   and the correct weight. Is this the right way to do it?
   
-  # Make a column with the "true" welfare-weighted effect on scores. Based on option
+  # Make a column with the "true" welfare-weighted effect on scores.
   if(opt_weight_type == "linear"){
     
-    # make weights based on tru ex ante ability rather than test one 
+    # make weights based on true ex ante ability rather than test one 
     r_dt[,linear_weights_true := linear_weight_fun(alpha = lin_w_alpha, in_test_1 = stud_ability_1)]
     r_dt[, true_ww := sum(dnorm(stud_ability_1 - teacher_center)*teacher_ability*linear_weights_true), "teacher_id"]
   }
