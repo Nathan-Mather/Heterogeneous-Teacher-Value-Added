@@ -26,7 +26,8 @@ rm(list = ls(pos = ".GlobalEnv"), pos = ".GlobalEnv")
 options(scipen = 999)
 cat("\f")
 
-# check users (can do something here eventually to automatically pick a user)
+# check users
+my_wd <- getwd()
 
 # option for weight type options: linear, mr, .... 
 opt_weight_type <- "linear"
@@ -34,13 +35,20 @@ opt_weight_type <- "linear"
 # load packages and our functions 
 library(data.table)
 library(broom)
-# source("c:/Users/Nmath_000/Documents/Research/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R")  #set this path
-source("~/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R")
 library(Matrix)
 library(ggplot2)
+# check user and set paths accordingly 
+if(my_wd %like% "Nmath_000"){
+  source("c:/Users/Nmath_000/Documents/Research/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R")  #set this path
+  
+  #set path for plots to save 
+  out_plot <- "c:/Users/Nmath_000/Documents/data/Value Added/"
+  
+}else{
+  
+source("~/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R")
 
-#set path for plots to save 
-out_plot <- "c:/Users/Nmath_000/Documents/data/Value Added/"
+  }
 
 
 
