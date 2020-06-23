@@ -39,7 +39,7 @@ registerDoRNG()
 nsims = 100
 set.seed(42)
 opt_weight_type <- "linear" # I haven't built in any other weights yet.
-teacher_ability_drop_off = 0.25
+teacher_ability_drop_off = 0.75
 lin_alpha = 2
 
 
@@ -188,8 +188,8 @@ sum(out$weighted_count)
 c1 <- rgb(0, 0, 255,max = 255, alpha = 80, names = "blue")
 c2 <- rgb(0, 255, 0, max = 255, alpha = 80, names = "green")
 
-h1 <- hist(out$baseline_count_num, breaks=seq(0,50,l=10))
-h2 <- hist(out$weighted_count_num, breaks=seq(0,50,l=10))
+h1 <- hist(out$baseline_count_num, breaks=seq(0,max(out$baseline_count_num),l=15))
+h2 <- hist(out$weighted_count_num, breaks=seq(0,max(out$weighted_count_num),l=15))
 
 plot(h1, col = c1)
 plot(h2, col = c2, add = TRUE) # Blue is the baseline, green the weighted
