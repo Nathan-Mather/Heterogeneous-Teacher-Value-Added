@@ -36,7 +36,7 @@ registerDoParallel(myCluster)
 registerDoRNG()
 
 # Set the number of simulations and other options
-nsims = 1000
+nsims = 100
 set.seed(42)
 opt_weight_type <- "linear" # I haven't built in any other weights yet.
 teacher_ability_drop_off = 0.25
@@ -168,15 +168,35 @@ cat_plot_baseline
 # Calculate the mean squared distance from the rank of the truth
 out <- out[order(mean_standard)]
 out[, baseline := (.I - tid)^2]
+out[, baseline_count := (.I - tid != 0)]
+out[, baseline_count_num := abs(.I - tid)]
 
 out <- out[order(mean_weighted)]
 out[, weighted := (.I - tid)^2]
+out[, weighted_count := (.I - tid != 0)]
+out[, weighted_count_num := abs(.I - tid)]
 
 # Display the mean squared distance for both
 sum(out$baseline)
 sum(out$weighted)
 
+# Display the number of rank inversions for both
+sum(out$baseline_count)
+sum(out$weighted_count)
+
+# Histogram of the density and distance of rank inversions
+c1 <- rgb(0, 0, 255,max = 255, alpha = 80, names = "blue")
+c2 <- rgb(0, 255, 0, max = 255, alpha = 80, names = "green")
+
+h1 <- hist(out$baseline_count_num, breaks=seq(0,50,l=10))
+h2 <- hist(out$weighted_count_num, breaks=seq(0,50,l=10))
+
+plot(h1, col = c1)
+plot(h2, col = c2, add = TRUE) # Blue is the baseline, green the weighted
+
 # differences in correlation 
 out[, cor(mean_standard, true_ww)]
 out[, cor(mean_weighted, true_ww)]
 
+# Let go of the processors
+stopCluster(myCluster)
