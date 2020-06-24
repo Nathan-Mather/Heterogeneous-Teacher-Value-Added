@@ -43,7 +43,7 @@ teacher_ability_drop_off = 0.25
 lin_alpha = 2 # For linear weights
 pctile = .4 # For rawlsian weights
 v_alpha = 1 # For v weights
-mrpctile = .8 # For mr weights
+mrpctile = .1 # For mr weights
 mrdist = .2 # for mr weights
 
 

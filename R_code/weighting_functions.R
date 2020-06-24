@@ -25,8 +25,8 @@ linear_weight_fun <- function(alpha, in_test_1){
 # dist is the maximum distance away from pctile that observations get weight (in terms of percentiles, between 0 and 1)
 mr_weight_fun <- function(pctile, dist, in_test_1){
   w_i <- quantile(in_test_1, pctile)
-  min_score <- quantile(in_test_1, pctile - dist)
-  max_score <- quantile(in_test_1, pctile + dist)
+  min_score <- quantile(in_test_1, max(pctile - dist, 0))
+  max_score <- quantile(in_test_1, min(pctile + dist, 100))
   
   weight <- (in_test_1 > min_score & in_test_1 <= w_i)*(in_test_1 - min_score)/(w_i - min_score) + (in_test_1 < max_score & in_test_1 > w_i)*(1 - (in_test_1-w_i)/(max_score-w_i)) + 0.0001
 }
