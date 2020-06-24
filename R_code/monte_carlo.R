@@ -36,11 +36,15 @@ registerDoParallel(myCluster)
 registerDoRNG()
 
 # Set the number of simulations and other options
-nsims = 100
+nsims = 10
 set.seed(42)
-opt_weight_type <- "linear" # I haven't built in any other weights yet.
-teacher_ability_drop_off = 0.75
-lin_alpha = 2
+opt_weight_type <- "mr" # "linear" or "rawlsian" or "equal" or "v" or "mr"
+teacher_ability_drop_off = 0.25
+lin_alpha = 2 # For linear weights
+pctile = .4 # For rawlsian weights
+v_alpha = 1 # For v weights
+mrpctile = .8 # For mr weights
+mrdist = .2 # for mr weights
 
 
 
@@ -117,6 +121,22 @@ out <- foreach(i = 1:nsims, .combine = 'comb', .multicombine = TRUE) %dopar% { #
     
     r_dt[, c(opt_weight_type) := linear_weight_fun(alpha = lin_alpha, in_test_1 = test_1)]
     
+  } else if(opt_weight_type == "rawlsian"){
+    
+    r_dt[, c(opt_weight_type) := rawlsian_weight_fun(pctile, test_1)]
+    
+  } else if(opt_weight_type == "equal"){
+    
+    r_dt[, c(opt_weight_type) := equal_weight_fun(test_1)]
+    
+  } else if(opt_weight_type == "v"){
+    
+    r_dt[, c(opt_weight_type) := v_weight_fun(v_alpha, test_1)]
+    
+  } else if(opt_weight_type == "mr"){
+    
+    r_dt[, c(opt_weight_type) := mr_weight_fun(mrpctile, mrdist, test_1)]
+    
   }
   
   # Estimate the weighted VA
@@ -138,10 +158,32 @@ out <- foreach(i = 1:nsims, .combine = 'comb', .multicombine = TRUE) %dopar% { #
 if(opt_weight_type == "linear"){
   
   # make weights based on true ex ante ability rather than test one 
-  r_dt[, linear_weights_true := linear_weight_fun(alpha = lin_alpha, in_test_1 = stud_ability_1)]
-  r_dt[, true_ww := sum((teacher_ability - abs(stud_ability_1 - teacher_center)* teacher_ability_drop_off)*linear_weights_true), "teacher_id"]
+  r_dt[, weights_true := linear_weight_fun(alpha = lin_alpha, in_test_1 = stud_ability_1)]
+  
+} else if(opt_weight_type == "rawlsian"){
+  
+  # make weights based on true ex ante ability rather than test one 
+  r_dt[, weights_true := rawlsian_weight_fun(pctile, stud_ability_1)]
+  
+} else if(opt_weight_type == "equal"){
+  
+  # make weights based on true ex ante ability rather than test one 
+  r_dt[, weights_true := equal_weight_fun(stud_ability_1)]
+  
+} else if(opt_weight_type == "v"){
+  
+  # make weights based on true ex ante ability rather than test one 
+  r_dt[, weights_true := v_weight_fun(v_alpha, stud_ability_1)]
+  
+} else if(opt_weight_type == "mr"){
+  
+  # make weights based on true ex ante ability rather than test one 
+  r_dt[, weights_true := mr_weight_fun(mrpctile, mrdist, stud_ability_1)]
   
 }
+
+r_dt[, true_ww := sum((teacher_ability - abs(stud_ability_1 - teacher_center)* teacher_ability_drop_off)*weights_true), "teacher_id"]
+
 
 # Keep just the teacher id and true welfare-weighted effect
 new <- r_dt[, .(teacher_id, true_ww)]
@@ -193,6 +235,8 @@ h2 <- hist(out$weighted_count_num, breaks=seq(0,max(out$weighted_count_num),l=15
 
 plot(h1, col = c1)
 plot(h2, col = c2, add = TRUE) # Blue is the baseline, green the weighted
+
+plot(r_dt$stud_ability_1, r_dt$weights_true)
 
 # differences in correlation 
 out[, cor(mean_standard, true_ww)]
