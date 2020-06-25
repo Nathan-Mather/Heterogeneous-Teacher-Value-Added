@@ -1,0 +1,83 @@
+\documentclass[letterpaper,12pt]{article}
+
+% Import packages from .sty file.
+%\usepackage{imports}
+
+% Mike's things because he couldn't figure out how to get the preamble working otherwise
+\usepackage[utf8]{inputenc}
+\usepackage{geometry,ulem,graphicx,caption,color,setspace,dsfont,amssymb}
+\usepackage[comma]{natbib}
+\usepackage{subcaption} 
+\usepackage[short]{optidef}
+\usepackage{hhline}
+\usepackage[capposition=top]{floatrow}
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{adjustbox}
+\usepackage{tikz}
+\usepackage{pdflscape}
+\usetikzlibrary{calc,patterns,positioning}
+\usepackage{environ}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+ 
+\usepackage{natbib}
+\bibliographystyle{unsrtnat}
+
+\usepackage{titlesec}
+\titleformat{\section}
+  {\normalfont\normalsize\bfseries}{\thesection.}{1em}{}
+
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries}{\thesubsection}{1em}{}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Weights math 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+I am just laying out the math for the weighted residuals regression to help me think through it, to communicate you you both, and possibly to use it in slides/paper eventually. 
+\\
+
+First define some terms: 
+\\
+
+Let $Y$ be a vector of post-test scores. Let $X_1$ be a matrix of pretests and demographic controls. Let $X_2$ be a matrix of teacher dummies (the dosage matrix). Let $X$ be a matrix of both $X_1$ and $X_2$
+\\
+
+\section{Standard VA}
+The standard regressions gets coefficients by: 
+$$\beta_{ols} = (X'X)^{-1}X'Y $$
+
+We could also get the teacher coefficients ( the value added) by first partialing out the pretest and controls and then regressing the post test on the residuals of the first regression. So first we get 
+
+$$\beta_1 = (X_1'X_1)^{-1}X_1'X_2 $$
+
+then let $R_1$ be the residuals of the above regression 
+$$ R_1 = X_2 - X_1 \beta_1$$
+
+Then we get the teacher value added with 
+
+$$ \beta_2 = (R_1'R_1)^{-1}R_1'Y $$
+
+The teacher coefficients in $\beta_{ols}$ and $\beta_2$ are equal.
+
+\section{Weighted VA}
+
+Now for the weighted value added. We start off with the same first step as the partialling out method above. That is we again need 
+$$\beta_1 = (X_1'X_1)^{-1}X_1'X_2 $$
+
+and
+$$ R_1 = X_2 - X_1 \beta_1$$
+
+Now, however, we also need a weight matrix $W$. For the second regression we get weighted value added with 
+$$\beta_{W} = (R_1' W R_1)^{-1}R_1' W Y $$
+
+
+\end{document}
