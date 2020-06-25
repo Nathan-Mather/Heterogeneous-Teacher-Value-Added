@@ -141,21 +141,102 @@
 
 %------------------------------------------------
 % Why do we care 
-\begin{frame}{Use of Value Added Measures Is Proliferating}
+%------------------------------------------------
+\begin{frame}{Value Added Measures}
 \begin{wideitemize}
-    \item 
+    \item The goal of value added measures (VAM) is to determine who are the most and least effective educators and schools
     
-    \item 
-
+    \item Disconnect between traditional VAM and education policy such as No Child Left Behind
+    
+    \item VAM are mean-oriented statistics; VAM represents a teachers average value imparted to their students
+    
+    \begin{itemize}
+        \vspace{2mm}
+        \item Carries \textbf{implicit normative} welfare weights 
+    \end{itemize}
+    
+    \item  We propose a set of more flexible heterogeneous VAM 
+    \begin{itemize}
+        \vspace{2mm}
+        \setlength{\itemsep}{2mm}
+        \item Assess teachers' heterogeneous impacts
+        \item  Weight impact on students according to an \textbf{explicit normative} policy goal or welfare criterion
+    \end{itemize}
 
 \end{wideitemize}
 
 \end{frame}
+
 %------------------------------------------------
+% How do we answer our question?
+%------------------------------------------------
+
+\begin{frame}{Research Goals}
+
+\begin{wideenumerate}
+     \item Build a welfare-relevant framework for VAM (and other educational statistics) 
+     \begin{itemize}
+         \item Flexible to any policy or normative goal 
+     \end{itemize}
+    \item Estimate VA Heterogeneity Along the Achievement Distribution
+    \begin{itemize}
+        \item Do certain teachers excel at teaching certain students? 
+    \end{itemize}
+    \item Simulate data to test new methods
+    \begin{itemize}
+        \item Are these methods feasible 
+        \item Simulations to consider implications of policies
+    \end{itemize}
+    \item Employ methods in real data
+    \begin{itemize}
+        \vspace{2mm}
+    	\setlength{\itemsep}{2mm}
+        \item Analyze rank inversions and implications for welfare
+    \end{itemize}  
+
+\end{wideenumerate}
+\end{frame}
+%-----------------------------------------------
+% Why is this useful ?
+%-----------------------------------------------
+
+\begin{frame}{Purpose of New Methods ( I THINK CUT THIS OUT AND JUST SAY IT}
+\begin{wideenumerate}
+    \item Investigate teacher heterogeneity 
+        \begin{itemize}
+            \item Do teachers shift rank based on different welfare/policy goals? 
+        \end{itemize}
+    \item Industry use
+    \begin{itemize}
+        \item Align teacher incentives and assessment with policy goals 
+        \item Put teachers in the correct role with students that match their strengths
+    \end{itemize}
+    \item Academic use 
+        \begin{itemize}
+            \item Assess outcomes in explicitly normative way (did policy X achieve its goal?) 
+        \end{itemize}
+\end{wideenumerate}
+\end{frame}
+
+%-----------------------------------------------
+% Goal of toady's talk 
+%-----------------------------------------------
+\begin{frame}[c]{Today's Talk}
+
+\begin{wideenumerate}
+    \item Big picture, does this look like it is worth pursuing?
+    \item Next steps (or steps we haven't thought about)?
+    \item What first order concerns should we be aware of and thinking about?
+
+\end{wideenumerate}
+\end{frame}
+
+
 
 %------------------------------------------------
 % What do we know and not know
-\begin{frame}{We Don't Know To What Extend Heterogeneity Matters}
+%------------------------------------------------
+\begin{frame}{Does Heterogeneity Matter? *** I LIKE THIS SLIDE BUT NOT SURE WHERE IT FITS}
 
 \begin{wideitemize}
     \item We know teachers respond to incentives
@@ -173,66 +254,25 @@
     % This means we aren't necessarily incentivizing everything we want to be
     
     \vfill
-    \item<2-> \textbf<2>{How much does teacher value added vary across the achievement distribution?} %We are intersted in this within and across teachers right?
+    \item \textbf{How much does teacher value added vary across the achievement distribution?} %We are intersted in this within and across teachers right?
     \vspace{-14pt}
-    \item<3-> \textbf<3>{What does this mean for welfare and policy?}
+    \vspace{5mm}
+    \item \textbf{What does this mean for welfare and policy?}
     \vfill
 \end{wideitemize}
 \end{frame}
 
-%------------------------------------------------
-% How do we answer our question?
-\begin{frame}{We Estimate VA Heterogeneity Along the Achievement Distribution}
 
-
-\begin{wideenumerate}
-     \item Frame VAM (and other educational statistics) in a welfare-relevant framework
-
-    \item \textbf<2>{Develop new tools to estimate value added beyond mean effects}
-    % Tied to (derived from the welfare approaches)
-    % Econometric simulations to assess performance
-    \item Employ methods in real data
-    \begin{itemize}
-        \item Estimate VAM across achievement distribution
-        \item Investigate heterogeneity in long-term outcomes 
-        \item Analyze rank inversions and implications for welfare
-        \item Can we learn something about effort or teachers PPFs?
-        \item Policy simulations to consider implications of policies
-    \end{itemize}  
-
-\end{wideenumerate}
-\end{frame}
-
-%------------------------------------------------
-% What is the answer
-\begin{frame}{Preliminary Results Look Promising}
-
-
-\begin{wideitemize}
-\item Today we'll report on some simple simulation exercises:
-\begin{itemize}
-    \item<2-> 
-    \item<3-> 
-\end{itemize}
-\item<4-> 
-\end{wideitemize}
-\end{frame}
-
-%-----------------------------------------------
-\begin{frame}[c]{Today's Talk}
-
-\begin{wideenumerate}
-    \item Big picture, does this look like it is worth pursuing?
-    \item Next steps (or steps we haven't thought about)?
-    \item What first order concerns should we be aware of and thinking about?
-
-\end{wideenumerate}
-\end{frame}
-
-
-%------------------------------------------------
+%------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------------
+% NEW SECTION: Setting up the theory 
+%------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------------
 \section{Welfare and Value Added}
+
+
 %------------------------------------------------
+% Obligatory model going over the logic 
 %------------------------------------------------
 \begin{frame}{Modeling Value Added As Social Welfare}
 
@@ -267,7 +307,10 @@
 
 \end{frame}
 %------------------------------------------------
-\begin{frame}{Estimating Value Added}
+% Estimating STANDARD Value Added 
+%------------------------------------------------
+
+\begin{frame}{Estimating Standard  Value Added}
 
 \begin{wideitemize}
     \item In theory test scores are a function of testing ability, value added, and noise
@@ -293,36 +336,10 @@
 \end{wideitemize}
 \end{frame}
 
-%------------------------------------------------
-\begin{frame}{[Plot corr($VA$,$\hat{VA}$) against var($\eta_{it}$)]} % or \mu_{jt}?
 
-\centering
-\scalebox{.8}{\parbox{\linewidth}{%   
-    \begin{align*}
-    estimating equation
-    \end{align*}
-}}
-\includegraphics[width=.85\linewidth]{Slides/a.pdf}
-
-\end{frame}
-%------------------------------------------------
-\begin{frame}{[Plot pct $\hat{VA}$ outside of 95\% CI of lowest) against var($\eta_{it}$) or $\mu_{jt}$?]} 
-\centering
-\scalebox{.8}{\parbox{\linewidth}{%   
-    \begin{align*}
-    estimating equation
-    \end{align*}
-}}
-\includegraphics[width=.85\linewidth]{Slides/a.pdf}
-
-\end{frame}
-
-%------------------------------------------------
-%------------------------------------------------
-\section{Measuring Heterogeneity in Teacher Effects}
-%------------------------------------------------
-%------------------------------------------------
-
+%-----------------------------------------------
+% Motivation for Weighted VAM 
+%-----------------------------------------------
 
 \begin{frame}{Motivation from the Social Welfare function}
 
@@ -349,13 +366,23 @@
 
 \end{wideitemize}
 
-
-
 \end{frame}
-%----------------------------------
+
+
+%------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------------
+% Going through our methods 
+%------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------------
+\section{Measuring Heterogeneity in Teacher Effects}
+
+
+%-------------------------------------------------------------
+% Estimating Weighted Value added with our first method
+%-------------------------------------------------------------
 
 %% It might be easier to not call this method one because it adds in a step of complication with having to do the Frisch-Waugh-Lovell projection.
-\begin{frame}{Method One: Weighted Least Squares}
+\begin{frame}{Weighted VAM: Using Weighted Least Squares}
 
 \begin{wideitemize}
     \item WLS is consistent in models ``fully saturated'' with binary  variables  \citet{solon2015we} 
@@ -385,33 +412,58 @@
 
 \end{frame}
 
-%----------------------------------
+%------------------------------------------------
+% Does this first method work? 
+%-------------------------------------------------
+\begin{frame}{Preliminary Results Look Promising}
 
-
-\begin{frame}{Method Two: Quantile Regression}
 
 \begin{wideitemize}
-
-    \item Quantile regressions recover the ... \citep{}
-    \begin{enumerate}
-        %\item Predict $y$ with $X$ and lagged $y$ and assign $\hat{y}$
-        \item Estimate the effect of teachers $D_j$ at the $p$th quantile (conditional on X)
-        % There is a tension here about whether we want the Xs to be evaluated at the given quantile or not...
-        %\item \color{gray}{or Use Frisch-Waugh-Lovell to partial out mean predictors then estimate effects of teachers on students at the (unconditional) $p$th quantile]?}
-        
-    \end{enumerate}
-    \item {\color{gray}{Is it really that simple?}}
-    \item Would the SP care about conditioning on X at the $p$th quantile or on average?
-    \item How to estimate many fixed effects in quantile models? 
-    \item Conditional quantile on $X$ needed, but not on $D$? or also on $D$?
-
+\item Today we'll report on some simple simulation exercises:
+\begin{itemize}
+    \item
+    \item 
+\end{itemize}
+\item
 \end{wideitemize}
 \end{frame}
+%------------------------------------------------
+%plot 
+%-----------------------------------------------
+
+\begin{frame}{[Plot corr($VA$,$\hat{VA}$) against var($\eta_{it}$)]} % or \mu_{jt}?
+
+\centering
+\scalebox{.8}{\parbox{\linewidth}{%   
+    \begin{align*}
+    estimating equation
+    \end{align*}
+}}
+\includegraphics[width=.85\linewidth]{Slides/a.pdf}
+
+\end{frame}
+
+%------------------------------------------------
+%plot 
+%-----------------------------------------------
+
+\begin{frame}{[Plot pct $\hat{VA}$ outside of 95\% CI of lowest) against var($\eta_{it}$) or $\mu_{jt}$?]} 
+\centering
+\scalebox{.8}{\parbox{\linewidth}{%   
+    \begin{align*}
+    estimating equation
+    \end{align*}
+}}
+\includegraphics[width=.85\linewidth]{Slides/a.pdf}
+
+\end{frame}
+
 
 %----------------------------------
+% Method Two: Kernel Regression
+%------------------------------------
 
-
-\begin{frame}{Method Three: Kernel Regression}
+\begin{frame}{Weighted VAM: Kernel Regression}
 
 \begin{wideitemize}
 
@@ -435,8 +487,10 @@
 
 \end{wideitemize}
 \end{frame}
-%----------------------------------
 
+%----------------------------------
+% Plot 
+%--------------------------------------
 \begin{frame}{[Plot estimate against the truth for one or two sets of weights ]} 
 \centering
 \scalebox{.8}{\parbox{\linewidth}{%   
@@ -447,8 +501,10 @@
 \includegraphics[width=.85\linewidth]{Slides/a.pdf}
 
 \end{frame}
-%----------------------------------
 
+%----------------------------------
+% Plot 
+%--------------------------------------
 \begin{frame}{[Plot corr(VA(W),$\hat{VA}(W)$) over $W$]} 
 \centering
 \scalebox{.8}{\parbox{\linewidth}{%   
@@ -459,9 +515,10 @@
 \includegraphics[width=.85\linewidth]{Slides/a.pdf}
 
 \end{frame}
+
 %----------------------------------
-
-
+% Plot 
+%--------------------------------------
 \begin{frame}{[Caterpillar Plot (for what weight?)]}
 
 \centering
@@ -473,9 +530,10 @@
 \includegraphics[width=.85\linewidth]{Slides/a.pdf}
 
 \end{frame}
+
 %----------------------------------
-
-
+% Plot 
+%--------------------------------------
 \begin{frame}{[Plot number of rank inversions (or square loss) over $W$}
 
 \centering
@@ -487,18 +545,44 @@
 \includegraphics[width=.85\linewidth]{Slides/a.pdf}
 
 \end{frame}
+
 %----------------------------------
-
-
+% Plot 
+%--------------------------------------
 \begin{frame}{[Some figures (and or tables) exploring how $\mathbb{E}[N_j]$ and var($\eta$) ]}
 
 \centering
 %\includegraphics[width=.9\linewidth]{Slides/}
 
-
 \end{frame}
-%------------------------------------------------
-%------------------------------------------------
+
+
+%----------------------------------
+% Method three: Quantile Regression
+%--------------------------------------
+\begin{frame}{Weighted VAM: Quantile Regression}
+
+\begin{wideitemize}
+
+    \item Quantile regressions recover the ... \citep{}
+    \begin{enumerate}
+        %\item Predict $y$ with $X$ and lagged $y$ and assign $\hat{y}$
+        \item Estimate the effect of teachers $D_j$ at the $p$th quantile (conditional on X)
+        % There is a tension here about whether we want the Xs to be evaluated at the given quantile or not...
+        %\item \color{gray}{or Use Frisch-Waugh-Lovell to partial out mean predictors then estimate effects of teachers on students at the (unconditional) $p$th quantile]?}
+        
+    \end{enumerate}
+    \item {\color{gray}{Is it really that simple?}}
+    \item Would the SP care about conditioning on X at the $p$th quantile or on average?
+    \item How to estimate many fixed effects in quantile models? 
+    \item Conditional quantile on $X$ needed, but not on $D$? or also on $D$?
+
+\end{wideitemize}
+\end{frame}
+
+%------------------------------------------------------------------------------------------------------
+% CONCLUDING SECTION 
+%-------------------------------------------------------------------------------------------------------
 \section{Feedback and Next Steps}
 
 %------------------------------------------------
@@ -566,8 +650,6 @@ ricksmi{\fontfamily{qag}\selectfont @}umich.edu
 \begin{frame}{}
 
 \end{frame}
-
-
 
 
 
