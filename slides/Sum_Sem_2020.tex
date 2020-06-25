@@ -1,0 +1,578 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Beamer Presentation
+% LaTeX Template
+% Version 1.0 (10/11/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND THEMES
+%----------------------------------------------------------------------------------------
+\documentclass[t,aspectratio=169,11pt]{beamer}
+%\documentclass[t,aspectratio=169,11pt,draft]{beamer}
+
+\mode<presentation> {
+
+\input{LatexColors.incl.tex}
+
+\usetheme{Boadilla}
+
+% Footer and page numbers
+
+% First remove the navigation symbols from the bottom of all slides 
+\setbeamertemplate{navigation symbols}{} 
+% Make a new prettier page number
+\addtobeamertemplate{navigation symbols}{}{%
+    \usebeamerfont{footline}%
+    \hspace{5em}%
+    {\color{black!50}{\small\insertframenumber/\inserttotalframenumber}}%
+}
+% Remove the colored line at the bottom
+\setbeamertemplate{footline}{}
+
+
+% Customize items
+\setbeamertemplate{itemize items}{\color{ptlightblue}{\rule[0.05em]{0.6em}{0.6em}}}
+\setbeamertemplate{itemize subitem}{\color{ptlightblue}{\raisebox{0.12em}{$\blacktriangleright$}}}
+\setbeamercolor{enumerate item}{fg=black}
+\setbeamertemplate{enumerate items}[default]
+\setbeamercolor{enumerate subitem}{fg=black}
+\setbeamertemplate{enumerate subitems}[default]
+
+
+% Table of Contents (if we have one)
+\setbeamertemplate{section in toc}{\inserttocsectionnumber.~\inserttocsection}
+\setbeamercolor{section in toc}{bg=white,fg=black}
+\setbeamertemplate{subsection in toc}{%
+  \hspace{1.2em}{{\color{ptlightblue}{\rule[0.05em]{0.6em}{0.6em}}}~\inserttocsubsection\par}
+}
+\setbeamercolor{subsection in toc}{bg=white,fg=black}
+
+
+% Customize beamer colors
+\setbeamercolor{titlelike}{fg=white,bg=ptlightblue}
+\setbeamercolor{button}{bg=ptlightcyan,fg=white}
+}
+
+% Nicer looking Itemize and enumerate environments
+\newenvironment{wideitemize}{\itemize\addtolength{\itemsep}{14pt}}{\enditemize}
+\newenvironment{wideenumerate}{\enumerate\addtolength{\itemsep}{14pt}}{\endenumerate}
+
+% Import packages
+\usepackage[default]{lato} % More modern looking font than Helvetica
+\usepackage{geometry,ulem,caption,color,setspace,dsfont,physics,commath,amsmath,amssymb}
+\usepackage[comma]{natbib}
+\usepackage[short]{optidef}
+\usepackage{hhline}
+\usepackage{array}
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{adjustbox}
+\usepackage{graphicx,xcolor,bbm,xcomment}
+\usepackage{appendixnumberbeamer}
+\usepackage{textcomp}
+\usepackage{colortbl}
+\usepackage{subcaption} 
+\usepackage{tikz}
+\usetikzlibrary{calc,patterns,positioning}
+\usepackage{pdflscape}
+\usepackage{environ}
+
+\bibliographystyle{ecta}
+
+
+
+% Make Section Header Frames
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
+\AtBeginSubsection[]{
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsectionhead: \\ \insertsubsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
+
+
+\tikzset{
+    invisible/.style={opacity=0},
+    visible on/.style={alt={#1{}{invisible}}},
+    alt/.code args={<#1>#2#3}{%
+      \alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}} % \pgfkeysalso doesn't change the path
+    },
+  }
+
+
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\title{From Value Added to Welfare Added} 
+
+\author{Tanner Eastmond \hfill \and Nathan Mather   \and \hfill Michael D Ricks   \\   \textit{teastmond@ucsd.edu}\hfill \textit{njmather{\fontfamily{qag}\selectfont @}umich.edu} \hfill
+\textit{ricksmi{\fontfamily{qag}\selectfont @}umich.edu} } 
+\institute{}
+\date{\today} 
+
+\begin{document}
+
+\begin{frame}
+\titlepage 
+\end{frame}
+
+%------------------------------------------------
+% Why do we care 
+\begin{frame}{Use of Value Added Measures Is Proliferating}
+\begin{wideitemize}
+    \item 
+    
+    \item 
+
+
+\end{wideitemize}
+
+\end{frame}
+%------------------------------------------------
+
+%------------------------------------------------
+% What do we know and not know
+\begin{frame}{We Don't Know To What Extend Heterogeneity Matters}
+
+\begin{wideitemize}
+    \item We know teachers respond to incentives
+    \begin{itemize}
+        \item {\color{gray}{\citep{jacob2003rotten,NCLB,pope2017multidimensional}}}
+    \end{itemize}
+    \item We know VAM capture something real
+    \begin{itemize}
+        \item {\color{gray}{\citep{chetty2014measuring2,pope2017multidimensional}}}
+    \end{itemize}
+    \item We know there is heterogeneity VAM do not catch
+    \begin{itemize}
+        \item {\color{gray}{\citep{ehrenberg1995teachers,dee2005teacher}}}
+    \end{itemize}
+    % This means we aren't necessarily incentivizing everything we want to be
+    
+    \vfill
+    \item<2-> \textbf<2>{How much does teacher value added vary across the achievement distribution?} %We are intersted in this within and across teachers right?
+    \vspace{-14pt}
+    \item<3-> \textbf<3>{What does this mean for welfare and policy?}
+    \vfill
+\end{wideitemize}
+\end{frame}
+
+%------------------------------------------------
+% How do we answer our question?
+\begin{frame}{We Estimate VA Heterogeneity Along the Achievement Distribution}
+
+
+\begin{wideenumerate}
+     \item Frame VAM (and other educational statistics) in a welfare-relevant framework
+
+    \item \textbf<2>{Develop new tools to estimate value added beyond mean effects}
+    % Tied to (derived from the welfare approaches)
+    % Econometric simulations to assess performance
+    \item Employ methods in real data
+    \begin{itemize}
+        \item Estimate VAM across achievement distribution
+        \item Investigate heterogeneity in long-term outcomes 
+        \item Analyze rank inversions and implications for welfare
+        \item Can we learn something about effort or teachers PPFs?
+        \item Policy simulations to consider implications of policies
+    \end{itemize}  
+
+\end{wideenumerate}
+\end{frame}
+
+%------------------------------------------------
+% What is the answer
+\begin{frame}{Preliminary Results Look Promising}
+
+
+\begin{wideitemize}
+\item Today we'll report on some simple simulation exercises:
+\begin{itemize}
+    \item<2-> 
+    \item<3-> 
+\end{itemize}
+\item<4-> 
+\end{wideitemize}
+\end{frame}
+
+%-----------------------------------------------
+\begin{frame}[c]{Today's Talk}
+
+\begin{wideenumerate}
+    \item Big picture, does this look like it is worth pursuing?
+    \item Next steps (or steps we haven't thought about)?
+    \item What first order concerns should we be aware of and thinking about?
+
+\end{wideenumerate}
+\end{frame}
+
+
+%------------------------------------------------
+\section{Welfare and Value Added}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}{Modeling Value Added As Social Welfare}
+
+\begin{wideitemize}
+    \item We can think of the following social welfare function (discrete for now)
+    \begin{itemize}
+        \item $\omega(x_i,y_i)$ weights: likely based on \textit{ex ante} expected performance
+        % Talk about the concavity here?
+        \item $v(x_i,y_i)$ value: think achievement, gains, etc.
+    \end{itemize}
+    \[
+    W  = \sum_i \omega(x_i,y_i) v(x_i,y_i) 
+    \] 
+    
+    \item Value added scores take the average gains for students among each teacher
+    \begin{itemize}
+        \item If $x_i$ is \textit{ex ante} expected performance, $v(\cdot) = y_i - x_i$
+    \end{itemize}
+    \[
+    W_{VA}  = \sum_i \frac{(y_i-x_i)}{N_{j(i)}} \hspace{3em}
+    \]
+    
+    \item This implies $\omega(x_i,y_i)=\frac{1}{N_j}$, which is (almost) utilitarian
+    % this also implies that the value we care about is growth above/compared to similar students. What I mean is theoretically the same measures could be achieved by changing V or W, but changing W seams easier.  
+    % Not what we hear people talking about 
+    % For reference a VA version of NCLB has a weight  .... 
+    
+    
+    % Note VA scores are mean zero (almost--because you are averaging over classes of differnt sizes) , so total welfare is uninformative but rank is informative.
+\end{wideitemize}
+
+
+\end{frame}
+%------------------------------------------------
+\begin{frame}{Estimating Value Added}
+
+\begin{wideitemize}
+    \item In theory test scores are a function of testing ability, value added, and noise
+    
+    \begin{align*}
+    y_{ijt}  &= a_{it} + \epsilon_{ijt} \\
+    y_{ijt}  &= a_{it-1} + VA_j(a_{it-1}) + \epsilon_{ijt}
+    \end{align*}
+ 
+    \item We don't observe testing ability. Traditional assumptions
+    \begin{itemize}
+        \item Predict testing ability with characteristics (including lagged scores): $X_{it}$
+        \item Assume homogeneity within and across teachers $VA_j=\gamma d_j$ with no $ij$ error
+    \end{itemize}
+        
+    \begin{align*}
+    y_{ijt}  &= \beta X_{it} +\Gamma D_{it} +\mu_{jt} + \eta_{it}
+    \end{align*}
+    
+    \item {\color{gray}{This might be the other place to talk about the $\mu_{jt}$ term picking up ij variation.}}
+       
+    
+\end{wideitemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{[Plot corr($VA$,$\hat{VA}$) against var($\eta_{it}$)]} % or \mu_{jt}?
+
+\centering
+\scalebox{.8}{\parbox{\linewidth}{%   
+    \begin{align*}
+    estimating equation
+    \end{align*}
+}}
+\includegraphics[width=.85\linewidth]{Slides/a.pdf}
+
+\end{frame}
+%------------------------------------------------
+\begin{frame}{[Plot pct $\hat{VA}$ outside of 95\% CI of lowest) against var($\eta_{it}$) or $\mu_{jt}$?]} 
+\centering
+\scalebox{.8}{\parbox{\linewidth}{%   
+    \begin{align*}
+    estimating equation
+    \end{align*}
+}}
+\includegraphics[width=.85\linewidth]{Slides/a.pdf}
+
+\end{frame}
+
+%------------------------------------------------
+%------------------------------------------------
+\section{Measuring Heterogeneity in Teacher Effects}
+%------------------------------------------------
+%------------------------------------------------
+
+
+\begin{frame}{Motivation from the Social Welfare function}
+
+\begin{wideitemize}
+    \item Imagine the SP only cares about students exactly 1.5$\sigma$ below average
+    
+    \item<2-> Two problems with binning students by \textit{ex ante} expected score and estimating VA
+    \begin{enumerate}
+        \item<3-> We don't have infinite data, so bins would be too small
+        \item<4-> Even if we did, we don't know the \textit{ex ante} expected score
+    \end{enumerate}
+
+    \item<5-> $\hat{y}_{it} = \hat{\beta}_1X_i + \sum \hat{\beta}_jy_{ij-1}$ consistent for expected score
+    \begin{itemize}
+        \item But prediction error means that binning no longer works %(do we need to formalize this? That the ammount of students who SP cares about should be decreasing from that point out)
+    \end{itemize}
+
+    \item<6-> We propose three methods that (not only deal with but) capitalize on this
+    \begin{enumerate}
+        \item WLS regression with weights defined by the distance from the target (e.g., -1.5$\sigma$)
+        \item Quantile regression evaluated at the relevant percentile
+        \item Kernel regression of effect of $D_j$ over achievement distribution
+    \end{enumerate}
+
+\end{wideitemize}
+
+
+
+\end{frame}
+%----------------------------------
+
+%% It might be easier to not call this method one because it adds in a step of complication with having to do the Frisch-Waugh-Lovell projection.
+\begin{frame}{Method One: Weighted Least Squares}
+
+\begin{wideitemize}
+    \item WLS is consistent in models ``fully saturated'' with binary  variables  \citet{solon2015we} 
+    % i.e.,  it is consistent for average partial effects in the population represented by the reweighted sample.
+    \begin{enumerate}
+        \item<2-> Predict $y$ with $X$ and lagged $y$ and assign weights $W_p$
+        % weights target the point in the achievemnet distribution of interest
+        \item<3-> Use Frisch-Waugh-Lovell to partial out these predictors from $D_j$
+        \item<4-> Estimate effects of teachers, $D_j$, weighting by predicted achievement
+    \end{enumerate}
+    
+    \begin{align*}
+    Y &= \beta X + \Gamma D + \eta \\
+    \\
+    \alt<3-4>{(\hat{\beta}_{OLS},\hat{\Gamma}_{OLS}) &= \left ((\beta,\Gamma)'(\beta,\Gamma) \right ) ^{-1} (\beta,\Gamma)' Y \\
+    \hat{\Gamma}_{OLS} &= \hat{\Gamma}_{FWL} =  (\tilde{\Gamma}'\tilde{\Gamma}  ) ^{-1} \tilde{\Gamma}' Y \\}%
+    {\\
+    \\}
+    \\
+    \alt<4>{\hat{\Gamma}_{p} &= \left (\tilde{\Gamma}'W_p\tilde{\Gamma} \right ) ^{-1} \tilde{\Gamma}'W_p Y}{} \\
+    \end{align*}
+    
+
+\end{wideitemize}
+
+
+
+\end{frame}
+
+%----------------------------------
+
+
+\begin{frame}{Method Two: Quantile Regression}
+
+\begin{wideitemize}
+
+    \item Quantile regressions recover the ... \citep{}
+    \begin{enumerate}
+        %\item Predict $y$ with $X$ and lagged $y$ and assign $\hat{y}$
+        \item Estimate the effect of teachers $D_j$ at the $p$th quantile (conditional on X)
+        % There is a tension here about whether we want the Xs to be evaluated at the given quantile or not...
+        %\item \color{gray}{or Use Frisch-Waugh-Lovell to partial out mean predictors then estimate effects of teachers on students at the (unconditional) $p$th quantile]?}
+        
+    \end{enumerate}
+    \item {\color{gray}{Is it really that simple?}}
+    \item Would the SP care about conditioning on X at the $p$th quantile or on average?
+    \item How to estimate many fixed effects in quantile models? 
+    \item Conditional quantile on $X$ needed, but not on $D$? or also on $D$?
+
+\end{wideitemize}
+\end{frame}
+
+%----------------------------------
+
+
+\begin{frame}{Method Three: Kernel Regression}
+
+\begin{wideitemize}
+
+    \item Assuming continuity, the best estimate for the value of $y$ at a point $x$,  is using a kernel
+    \item Kernel weighting has a theoretical analogue: 
+    \begin{itemize}
+        \item The welfare for a SP who only cares about students at $x$ (but doesn't observe types)
+    \end{itemize}
+ 
+    
+    % I'm not sure technically how to implement this.. Is it E[Y|\hat{Y}] for each D?
+    \item ... \citep{}
+    \begin{itemize}
+        \item Predict $y$ with $X$ and lagged $y$ and assign $\hat{y}$
+        \item For each $j$ estimate $\mathbb{E}[y|\hat{y}]$ nonparametrically
+    \end{itemize}
+
+    \item Not re-estimating the model under different weights (or objective functions)
+    \item More data hungry \color{gray}{(when to talk about heterogeneity vs changes over time?)
+    \item Bandwidth selection...? (Also a place to talk about measuring scores in pctle vs $\sigma$?)}
+
+\end{wideitemize}
+\end{frame}
+%----------------------------------
+
+\begin{frame}{[Plot estimate against the truth for one or two sets of weights ]} 
+\centering
+\scalebox{.8}{\parbox{\linewidth}{%   
+    \begin{align*}
+    estimating equation
+    \end{align*}
+}}
+\includegraphics[width=.85\linewidth]{Slides/a.pdf}
+
+\end{frame}
+%----------------------------------
+
+\begin{frame}{[Plot corr(VA(W),$\hat{VA}(W)$) over $W$]} 
+\centering
+\scalebox{.8}{\parbox{\linewidth}{%   
+    \begin{align*}
+    estimating equation
+    \end{align*}
+}}
+\includegraphics[width=.85\linewidth]{Slides/a.pdf}
+
+\end{frame}
+%----------------------------------
+
+
+\begin{frame}{[Caterpillar Plot (for what weight?)]}
+
+\centering
+\scalebox{.8}{\parbox{\linewidth}{%   
+    \begin{align*}
+    estimating equation
+    \end{align*}
+}}
+\includegraphics[width=.85\linewidth]{Slides/a.pdf}
+
+\end{frame}
+%----------------------------------
+
+
+\begin{frame}{[Plot number of rank inversions (or square loss) over $W$}
+
+\centering
+\scalebox{.8}{\parbox{\linewidth}{%   
+    \begin{align*}
+    estimating equation
+    \end{align*}
+}}
+\includegraphics[width=.85\linewidth]{Slides/a.pdf}
+
+\end{frame}
+%----------------------------------
+
+
+\begin{frame}{[Some figures (and or tables) exploring how $\mathbb{E}[N_j]$ and var($\eta$) ]}
+
+\centering
+%\includegraphics[width=.9\linewidth]{Slides/}
+
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\section{Feedback and Next Steps}
+
+%------------------------------------------------
+\begin{frame}{Next Steps}
+
+\begin{wideitemize}
+    \item 
+\end{wideitemize}
+
+\end{frame}
+
+
+%------------------------------------------------
+\begin{frame}{Questions and Feedback}
+
+\begin{wideitemize}
+    \item 
+    \item<2-> 
+    \begin{itemize}
+        \item 
+        \item 
+    \end{itemize}
+    \item<3-> 
+    \vspace{12pt}
+    \item<4-> \textbf{What are your questions, suggestions, and thoughts?} 
+    
+
+\end{wideitemize}
+
+\end{frame}
+
+
+
+%------------------------------------------------
+
+
+\begin{frame}[c]
+\centering
+\Huge{\centerline{To Be Continued...}}
+\normalsize njmather{\fontfamily{qag}\selectfont @}umich.edu
+ricksmi{\fontfamily{qag}\selectfont @}umich.edu
+\end{frame}
+
+%------------------------------------------------
+
+
+\begin{frame}
+\frametitle{References}
+\tiny
+\bibliography{citations}
+\end{frame}
+
+
+%----------------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------------
+
+\appendix
+\setbeamertemplate{navigation symbols}{}
+
+
+%----------------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------------
+
+
+\begin{frame}{}
+
+\end{frame}
+
+
+
+
+
+
+\end{document}
+
+
+
