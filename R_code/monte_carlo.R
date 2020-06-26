@@ -48,12 +48,12 @@ registerDoRNG()
 # Set the number of simulations and other options
 nsims = 10
 set.seed(42)
-opt_weight_type <-"linear" # "linear" or "rawlsian" or "equal" or "v" or "mr"
+opt_weight_type <-"rawlsian" # "linear" or "rawlsian" or "equal" or "v" or "mr"
 teacher_ability_drop_off = 0.25
-lin_alpha = 5 # For linear weights
+lin_alpha = 2 # For linear weights
 pctile = .4 # For rawlsian weights
 v_alpha = 1 # For v weights
-mrpctile = .1 # For mr weights
+mrpctile = .4 # For mr weights
 mrdist = .2 # for mr weights
 
 
@@ -195,7 +195,7 @@ if(opt_weight_type == "linear"){
   
 }
 
-r_dt[, true_ww := sum((teacher_ability - abs(stud_ability_1 - teacher_center)* teacher_ability_drop_off)*weights_true), "teacher_id"]
+r_dt[, true_ww := sum(teacher_impact * weights_true), "teacher_id"]
 
 
 # Keep just the teacher id and true welfare-weighted effect
@@ -249,7 +249,7 @@ h2 <- hist(out$weighted_count_num, breaks=seq(0,max(out$weighted_count_num),l=15
 plot(h1, col = c1)
 plot(h2, col = c2, add = TRUE) # Blue is the baseline, green the weighted
 
-plot(r_dt$stud_ability_1, r_dt$weights_true)
+#plot(r_dt$stud_ability_1, r_dt$weights_true)
 
 # differences in correlation 
 out[, cor(mean_standard, true_ww)]

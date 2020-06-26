@@ -164,8 +164,9 @@ library(data.table)
     #note I have no idea what this distribution should look like. keep in mind all the scores are in theory normalized 
     # so a student going down just means relative score is going down 
     n_row_dt <- nrow(r_dt)
+    
     # get teacher impact on student without noise 
-    r_dt[, teacher_impact := teacher_ability - abs(stud_ability_1 - teacher_center)* teacher_ability_drop_off]
+    r_dt[, teacher_impact := teacher_ability - pmin(abs(stud_ability_1 - teacher_center), 2) * teacher_ability_drop_off]
     
     # as impact to student with noise 
     r_dt[, stud_ability_2 := stud_ability_1 + teacher_impact + rnorm(n_row_dt, sd = teacher_va_epsilon)]
