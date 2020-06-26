@@ -21,7 +21,7 @@ opt_weight_type <- "linear"
 # load packages and our functions 
 library(data.table)
 library(broom)
-#source("c:/Users/Nmath_000/Documents/Research/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R")  #set this path
+source("c:/Users/Nmath_000/Documents/Research/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R")  #set this path
 # source("~/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R")
 library(Matrix)
 library(ggplot2)
@@ -51,7 +51,7 @@ for (var in eps_steps)
                            n_stud_per_teacher      = 25,
                            test_SEM                = .07,
                            teacher_va_epsilon      = var,
-                           teacher_abiliy_drop_off = .25)
+                           teacher_ability_drop_off = .25)
 
 
   # ==== run VA ====
@@ -113,7 +113,7 @@ for (var in eps_steps)
                              n_stud_per_teacher      = 25,
                              test_SEM                = .07,
                              teacher_va_epsilon      = var,
-                             teacher_abiliy_drop_off = .25)
+                             teacher_ability_drop_off = .25)
   
   
   # ==== run VA ====

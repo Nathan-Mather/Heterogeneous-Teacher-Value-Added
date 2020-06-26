@@ -12,14 +12,19 @@ options(scipen = 999)
 cat("\f")
 
 # check users (can do something here eventually to automatically pick a user)
+my_wd <- getwd()
+if(my_wd %like% "Nmath_000"){
+  base_path <- "c:/Users/Nmath_000/Documents/Research/"
+}else{
+  base_path <- "~/Documents/Research/HeterogenousTeacherVA/Git/"
+}
 
 # load packages and our functions 
 library(data.table)
 library(broom)
-# source("c:/Users/Nmath_000/Documents/Research/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R")  #set this path
-source("~/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R")
-source("~/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code/ww_va_function.R")
-source("~/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code/weighting_functions.R")
+source(paste0(base_path, "Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R"))
+source(paste0(base_path, "Heterogeneous-Teacher-Value-Added/R_code/ww_va_function.R"))
+source(paste0(base_path, "Heterogeneous-Teacher-Value-Added/R_code/weighting_functions.R"))
 library(Matrix)
 library(ggplot2)
 library(doParallel)
@@ -30,17 +35,22 @@ library(doRNG)
 out_plot <- "~/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code"
 
 # Set parallel options
+if(my_wd %like% "Nmath_000"){
+  myCluster <- makeCluster(4, # number of cores to use
+                           type = "PSOCK") # type of cluster (Must be "PSOCK" on Windows)
+}else{
 myCluster <- makeCluster(20, # number of cores to use
                          type = "FORK") # type of cluster (Must be "PSOCK" on Windows)
+}
 registerDoParallel(myCluster)
 registerDoRNG()
 
 # Set the number of simulations and other options
 nsims = 10
 set.seed(42)
-opt_weight_type <- "mr" # "linear" or "rawlsian" or "equal" or "v" or "mr"
+opt_weight_type <-"linear" # "linear" or "rawlsian" or "equal" or "v" or "mr"
 teacher_ability_drop_off = 0.25
-lin_alpha = 2 # For linear weights
+lin_alpha = 5 # For linear weights
 pctile = .4 # For rawlsian weights
 v_alpha = 1 # For v weights
 mrpctile = .1 # For mr weights
@@ -100,6 +110,9 @@ comb <- function(...){
 
 # Run the simulation
 out <- foreach(i = 1:nsims, .combine = 'comb', .multicombine = TRUE) %dopar% { # Change %dopar% to %do% if you don't want to run it parallel
+
+  # I need this for it to work on windows clusters since libraries arent recognized on every cluseter
+  require(data.table)
   # Resample the student data
   r_dt <- simulate_test_data(teacher_dt = r_dt[, c("school", "teacher_id", "teacher_ability", "teacher_center")])
 
@@ -108,7 +121,7 @@ out <- foreach(i = 1:nsims, .combine = 'comb', .multicombine = TRUE) %dopar% { #
   va_out1 <- lm(test_2 ~ test_1 + teacher_id - 1, data = r_dt)
   
   # clean results 
-  va_tab1 <- data.table(tidy(va_out1))
+  va_tab1 <- data.table(broom::tidy(va_out1))
   va_tab1[, teacher_id := gsub("teacher_id", "", term)]
   
   # Return just the estimates

@@ -293,7 +293,7 @@ all.equal(comparison_1$estimate, comparison_1$p_out_va1)
   
   
   
-  # work in progress
+  # work in progress###########################################################################################
   #==============================#
   # ==== get standard errors ====
   #==============================#
@@ -344,83 +344,8 @@ all.equal(comparison_1$estimate, comparison_1$p_out_va1)
   var_betas2 <- solve(t(X) %*% W %*% X) %*% (t(X) %*% W %*% diag(sig_i^2) %*% t(W) %*% X) %*% solve(t(X) %*% W %*% X)
   sqrt(diag(var_betas2)) # SEs
   
-  #============================================#
-  # ==== residualized outcome regression ====
-  #============================================#
-  # this is WRRRRRRRRRRRROOOOOOOOOOOOOOONGGGGGGGGGGGGGGGGG  but I am just going to keep it down here for now as a reference 
-  
-  # run first regression to partial out controlls 
-  ww_partial <- lm(test_2 ~ test_1 , data = r_dt)
-  
-  # get the residuals 
-  ww_resids <- data.table(stud_id = r_dt$stud_id, residual = residuals(ww_partial) )
-  
-  # merge on residuals 
-  r_dt <- merge(r_dt, ww_resids, "stud_id")
 
-  
-  # Now run weighted regression 
-  ww_va <- lm(residual ~ teacher_id - 1, weights = weight, data = r_dt)
-  
-  # clean results 
-  ww_tab <- data.table(tidy(ww_va))
-  
-  ww_tab[, teacher_id := gsub("teacher_id", "", term)]
-  
-  ww_res <- ww_tab[term %like% "teacher_id", c("estimate", "teacher_id")]
-  
-  # merge it on to data 
-  ww_res <- merge(teach_dt, ww_res, "teacher_id")
-  
-  # get correlation 
-  correlation <- ww_res[, cor(estimate, teacher_ability)]
-  
-  #============================#
-  # ==== rescaling weights ====
-  #============================#
-  # I'm not sure what happens if I rescale the weights so I am going to try that 
-  r_dt[, weight_2 := weight*.5]
-  summary(r_dt$weight_2)
-  
-  # Now run weighted regression 
-  ww_va2 <- lm(residual ~ teacher_id - 1, weights = weight_2, data = r_dt)
-  
-  # clean results 
-  ww_tab2 <- data.table(tidy(ww_va2))
-  
-  ww_tab2[, teacher_id := gsub("teacher_id", "", term)]
-  
-  
-  # compare, looks like nothing happens... interesting 
-  all.equal(ww_tab2$estimate, ww_tab$estimate)
-  all.equal(ww_tab2$std.error, ww_tab$std.error)
-  all.equal(r_dt$weight, r_dt$weight_2)
-  
-  
-  #==============================#
-  # ==== try extreme weights ====
-  #==============================#
-  
-  r_dt[, weight_3 := (1/(test_1 + abs(min_score) +.01))]
-  summary(r_dt$weight_3)
-  
-  # Now run weighted regression 
-  ww_va3 <- lm(residual ~ teacher_id - 1, weights = weight_3, data = r_dt)
-  
-  # clean results 
-  ww_tab3 <- data.table(tidy(ww_va3))
-  
-  ww_tab3[, teacher_id := gsub("teacher_id", "", term)]
-  
-  
-  # compare:
-  all.equal(ww_tab3$estimate, ww_tab$estimate)
-  all.equal(ww_tab3$std.error, ww_tab$std.error)
-  summary(ww_tab3$std.error)
-  summary( ww_tab$std.error)
-  all.equal(r_dt$weight, r_dt$weight_3)
-  
-  
+
   
   #================================================#
   # ==== Save example data for mike and tanner ====
