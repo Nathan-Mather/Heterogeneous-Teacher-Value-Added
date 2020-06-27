@@ -72,12 +72,13 @@ r_dt <- simulate_test_data(n_schools               = 20,
 #===========================#
 
 # function for linear weights. lowest student is weighted alpha times more than highest ]
-in_test_1 <- r_dt$test_1
+# in_test_1 <- r_dt$test_1
 linear_weight_fun <- function(alpha, in_test_1){
   
-  max_score <- max(in_test_1)
-  min_score <- min(in_test_1)
-  weight <-  alpha-(in_test_1-min_score)*(1/(max_score-min_score))*(alpha-1)
+  quntile_lh <- quantile(in_test_1, probs = c(.1,.9))
+  low_score <- quntile_lh["10%"]
+  high_score <- quntile_lh["90%"]
+  weight <-  alpha-(in_test_1-low_score)*(1/(high_score-low_score))*(alpha-1)
   weight <- weight/sum(weight) # I think it is more helpful if the weights sum to one in talking about them, though it does not affect the estimates at all.
 }
 
