@@ -70,7 +70,7 @@ abline(-.25,1)
 #   quantile regression
 #============================
 
-
+n=20
 
 # === generate simulated data over ~7 years ===
 r_dt <- simulate_test_data(n_schools               = 20,
@@ -94,14 +94,23 @@ ptle = seq(.01,.99,by=.02)
 rqfit <- rq(test_2 ~ test_1 + teacher_id -1, data = r_dt, tau = ptle)
 
 
-# clean results 
+# clean results for teachers
 coefs <- rqfit[["coefficients"]]
+coefs <- coefs[1:n+1,]
 
-out <- data.frame(coefs[19,],ptle)
+# Standardize coefs (should I do this? If I don't things look really wrong...)
+std_coefs <- matrix(0,n,length(ptle))
+for (x in seq(1,length(ptle),by=1))
+{
+std_coefs[,x] = (coefs[,x]-mean(coefs[,x]))/sd(coefs[,x])
+}
 
-diog_plot1 <- ggplot(data = out, aes(x= ptle, y = coefs.19...)) +
+# Graph it for teacher 1
+out <- data.frame(std_coefs[1,],ptle)
+
+diog_plot1 <- ggplot(data = out, aes(x= ptle, y = std_coefs.1...)) +
   geom_point()  +
-  ylab("Effect") + xlab("Percentile")
+  ylab("Standardized Effect") + xlab("Percentile")
 print(diog_plot1)
 
 
