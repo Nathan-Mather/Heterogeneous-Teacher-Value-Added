@@ -69,29 +69,29 @@ library(data.table)
   #
   #   # parameters for school, teacher sizes
     #note: for now just doing one grade
-  #   n_schools = 100             # number of schools
-  #   min_stud  = 25           # minimum students per school
-  #   max_stud  = 600       # maximum number of students
-  #   n_stud_per_teacher = 25      # goal number of students per teacher
+  #   n_schools = 20             # number of schools
+  #   min_stud  = 200           # minimum students per school
+  #   max_stud  = 200       # maximum number of students
+  #   n_stud_per_teacher = 30      # goal number of students per teacher
   # 
   # #   # parameters for test
   #   test_SEM = .07 # this is a complete guess at this point. Need to brush up on psychometrics
   # 
   #   # uncertainty for teacher ability translating into student growth
   # teacher_va_epsilon  = .1
-  # teacher_ability_drop_off     = .25
+  # teacher_ability_drop_off     = .15
   #==========================#
   # ==== Define Function ====
   #==========================#
   
   # start of the function
   simulate_test_data <- function(n_schools                = 20,
-                                 min_stud                 = 25,
-                                 max_stud                 = 600, 
-                                 n_stud_per_teacher       = 25,
+                                 min_stud                 = 200,
+                                 max_stud                 = 200, 
+                                 n_stud_per_teacher       = 30,
                                  test_SEM                 = .07,
                                  teacher_va_epsilon       = .1,
-                                 teacher_ability_drop_off = .25,
+                                 teacher_ability_drop_off = .15,
                                  teacher_dt               = NULL,
                                  school_id                = "school",
                                  teacher_id               = "teacher_id",
@@ -190,7 +190,7 @@ library(data.table)
   # # ==== diognostics ====
   # #======================#
   # 
-    # take the expected mean teacher ability and center and map their benefit to the draw of students
+  # take the expected mean teacher ability and center and map their benefit to the draw of students
   #   E_teacher_ability <- 0
   #   E_Teacher_center <- 0
   #   r_dt[, diog_teacher_impact := E_teacher_ability - abs(stud_ability_1 - E_Teacher_center)* teacher_abiliy_drop_off]
@@ -200,7 +200,7 @@ library(data.table)
   #     ylab("Theoretical average teacher impact")
   #   print(diog_plot1)
   # ggsave("c:/Users/Nmath_000/Documents/data/Value Added/teacher_impact_kernal_no_noise.png")
-  # #   
+  # #
   #   # now do it with the noise
   #   r_dt[, diog_teacher_impact := E_teacher_ability - abs(stud_ability_1 - E_Teacher_center)* teacher_abiliy_drop_off + rnorm(n_row_dt, sd = teacher_va_epsilon)]
   #   diog_plot1 <- ggplot(data = r_dt, aes(x= test_1, y = diog_teacher_impact)) +
@@ -210,5 +210,5 @@ library(data.table)
   #   print(diog_plot1)
   # 
   # ggsave("c:/Users/Nmath_000/Documents/data/Value Added/teacher_impact_kernal_noise.png")
-  # 
+
 
