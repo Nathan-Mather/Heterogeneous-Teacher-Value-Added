@@ -385,37 +385,50 @@ r_dt <- simulate_test_data(n_schools               = 20,
 #============================#
 # ==== stress test plots ====
 #============================#
-#note: in future iterations we can do this on the simulations.
   
-  # make sure that all the stress test data is alone in one folder 
-  # this lists all the fiels 
-  file_list <- list.files(stress_path)
+  #===========================#
+  # ==== load stress data ====
+  #===========================#
   
-  # initalize list for data 
-  stress_list <- setNames(vector("list", length = length(file_list)), file_list)
-
-  # load up files and add type indicators 
-  stress_test_readR <- function(file_name){
+  #note: in future iterations we can do this on the simulations.
     
-    out_dt <- fread(paste0(stress_path, file_name))
-    file_info <- strsplit(file_name, "_")[[1]][1]
-    temp <- strsplit(file_info, "[[:digit:]]")[[1]]
-    temp <- subset(temp, temp != "")
-    weight_type <- temp[[1]]
-    statistic <- temp[[2]]
-    value   <- paste0(stringr::str_extract_all(file_info, "[[:digit:]]" )[[1]], collapse = "")
+    # make sure that all the stress test data is alone in one folder 
+    # this lists all the fiels 
+    file_list <- list.files(stress_path)
     
-    # put info into data.table 
-    out_dt[, weight_type := weight_type]
-    out_dt[, statistic := statistic]
-    out_dt[, value := value]
-    # stor it in list 
-    stress_list[[file_name]] <- out_dt
+    # initalize list for data. It's most efficient if you set the length and I'm naming them for reference
+    stress_list <- setNames(vector("list", length = length(file_list)), file_list)
+  
+    # load up files and add type indicators 
+    stress_test_readR <- function(file_name){
+      # laod the data 
+      out_dt <- fread(paste0(stress_path, file_name))
+      
+      # grab everything before the "_"
+      file_info <- strsplit(file_name, "_")[[1]][1]
+      
+      # split it up by things before and after the first digit
+      temp <- strsplit(file_info, "[[:digit:]]")[[1]]
+      temp <- subset(temp, temp != "")
+      
+      # grab the info we need 
+      weight_type <- temp[[1]]
+      statistic <- temp[[2]]
+      value   <- paste0(stringr::str_extract_all(file_info, "[[:digit:]]" )[[1]], collapse = "")
+      
+      # put info into data.table 
+      out_dt[, weight_type := weight_type]
+      out_dt[, statistic := statistic]
+      out_dt[, value := value]
+      # stor it in list 
+      stress_list[[file_name]] <- out_dt
+      
+    }
+  
+    # now run this reader funciton on all the file paths 
+    stress_data_ls <- lapply(file_list, stress_test_readR)  
+    stress_data_dt <- rbindlist(stress_data_ls)
     
-  }
-
-  # now run this reader funciton on all the file paths 
-  stress_data_ls <- lapply(file_list, stress_test_readR)  
-  stress_data_dt <- rbindlist(stress_data_ls)
-  
-  
+    #=================================#
+    # ==== stress test histograms ====
+    #=================================#
