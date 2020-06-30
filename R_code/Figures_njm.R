@@ -151,8 +151,8 @@ r_dt <- simulate_test_data(n_schools               = 20,
   lin_w_plot <- ggplot(data = r_dt, aes(x= test_1, y = linear_weights)) + 
     geom_point(size = 6, color = "#ffaabb", alpha = .75) + 
     ggtitle("Example Linear Weight") +
-    ylab("Student Weight") + 
-    xlab("Student Test 1") +
+    ylab("Student Weight") +
+    xlab("Student Test 1") + xlim(-4,4) +
     plot_attributes
         
   print(lin_w_plot)      
@@ -167,8 +167,8 @@ r_dt <- simulate_test_data(n_schools               = 20,
   rawlsian_w_plot <- ggplot(data = r_dt, aes(x= test_1, y = rawlsian_weight)) + 
     geom_point(size = 6, color = "#ffaabb", alpha = .75) + 
     ggtitle("Example Rawlsian Weight") +
-    ylab("Student Weight") + 
-    xlab("Student Test 1") +
+    ylab("Student Weight") + ylim(0,1) + 
+    xlab("Student Test 1") + xlim(-4,4) +
     plot_attributes
   
   print(rawlsian_w_plot)
@@ -180,8 +180,8 @@ r_dt <- simulate_test_data(n_schools               = 20,
   mr_w_plot <- ggplot(data = r_dt, aes(x= test_1, y = mr_weight)) + 
     geom_point(size = 6, color = "#ffaabb", alpha = .75) + 
     ggtitle("Example Kernal Weight") +
-    ylab("Student Weight") + 
-    xlab("Student Test 1") +
+    ylab("Student Weight") + ylim(0,1) +
+    xlab("Student Test 1") + xlim(-4,4) +
     plot_attributes
   
   print(mr_w_plot)
@@ -241,17 +241,15 @@ r_dt <- simulate_test_data(n_schools               = 20,
     standard_cat_plot <- ggplot(in_data, aes(x = tid, y = mean_standard_norm)) +
       geom_point(size = 3, color = "#ffaabb", alpha = 1) + 
       geom_errorbar(aes(ymin=standard_lc, ymax=standard_uc), width=.2, color = "#ffaabb") +
-      ggtitle("Standard VA Results", subtitle = weight_type) +
-      ylab("Value Added") + 
+      ylab("Traditional Value Added") + 
       xlab("True Teacher Order") +
-      ylim(-6,5)+
+      ylim(-6,6)+
       plot_attributes
-    
-    png(paste0(paste0(out_plot,"standard_", weight_type, "_caterpillar.png")),
-        height = 1500, width = 1500, type = "cairo")
-    print(standard_cat_plot)
-    dev.off()  
-    
+
+     # save plot  
+     ggsave(paste0("standard_", weight_type, "_caterpillar.pdf"), standard_cat_plot, width=4, height=4)
+  
+
     return(standard_cat_plot)
     
   }
@@ -274,22 +272,15 @@ r_dt <- simulate_test_data(n_schools               = 20,
     weight_type <- unique(in_data$weight_type)
     
     ww_cat_plot <- ggplot(in_data, aes(x = tid, y = mean_weighted_norm)) +
-      geom_point(size = 3, color = "#db7093", alpha = 1) + 
-      geom_errorbar(aes(ymin=ww_lc, ymax=ww_uc), width=.2, color = "#db7093") +
-      ggtitle("Welfare Weighted VA Results", subtitle = weight_type) +
-      ylab("Weighted Value Added") + 
+      geom_point(size = 3, color = "#ffaabb",  alpha = 1) + 
+      geom_errorbar(aes(ymin=ww_lc, ymax=ww_uc), width=.2, color = "#ffaabb") +
+      ylab("WLS Welfare Added") + 
       xlab("True Teacher Order") +
-      ylim(-6,5)+
+      ylim(-6,6)+
       plot_attributes
     
      # save plot  
-     #ggsave("fig_triangle_weight.pdf", mr_w_plot, width=9, height=4)
-  
-    
-    png(paste0(paste0(out_plot,"ww_", weight_type, "_caterpillar.png")),
-        height = 1500, width = 1500, type = "cairo")
-    print(ww_cat_plot)
-    dev.off()  
+     ggsave(paste0("ww_", weight_type, "_caterpillar.pdf"), ww_cat_plot, width=4, height=4)
     
     return(ww_cat_plot)
     
