@@ -221,6 +221,7 @@ r_dt <- simulate_test_data(n_schools               = 20,
   mc_kernal[, weight_type := "Kernal"]
   mc_rawlsian[, weight_type := "rawlsian"]
   
+  # normalize everything 
   for( in_data in list(mc_linear,mc_kernal, mc_rawlsian)){
     # Renormalize everything so they have the same mean and variance
     in_data[, mean_weighted_norm := (mean_weighted - mean(mean_weighted))/sd(mean_weighted)]
@@ -332,11 +333,8 @@ r_dt <- simulate_test_data(n_schools               = 20,
                                  Standard =  mean(in_data$baseline_count_num),
                                  Weighted =  mean(in_data$weighted_count_num))
     
-    sum_stats[[3]] <- data.table(Statistic = "# of Rank Inversions", 
-                                 Standard =  sum(in_data$baseline_count),
-                                 Weighted =sum(in_data$weighted_count))
     
-    sum_stats[[4]] <- data.table(Statistic = "Correlation to Truth", 
+    sum_stats[[3]] <- data.table(Statistic = "Correlation to Truth", 
                                  Standard =  cor(in_data$mean_standard_norm, in_data$true_ww),
                                  Weighted = cor(in_data$mean_weighted_norm, in_data$true_ww))
     
@@ -429,6 +427,79 @@ r_dt <- simulate_test_data(n_schools               = 20,
     stress_data_ls <- lapply(file_list, stress_test_readR)  
     stress_data_dt <- rbindlist(stress_data_ls)
     
+    #=======================#
+    # ==== normalize it ====
+    #=======================#
+
+      # Renormalize everything so they have the same mean and variance
+    stress_data_dt[, mean_weighted_norm := (mean_weighted - mean(mean_weighted))/sd(mean_weighted), by = c("weight_type", "statistic", "value")]
+    stress_data_dt[, mean_standard_norm := (mean_standard - mean(mean_standard))/sd(mean_standard), by = c("weight_type", "statistic", "value")]
+    stress_data_dt[, true_ww := (true_ww - mean(true_ww))/sd(true_ww), by = c("weight_type", "statistic", "value")]
+      
+      # now renormalize standard deviations 
+    stress_data_dt[, sd_weighted_norm := sd_weighted/sd(mean_weighted), by = c("weight_type", "statistic", "value")]
+    stress_data_dt[, sd_standard_norm := sd_standard/sd(mean_standard), by = c("weight_type", "statistic", "value")]
+    
+    
     #=================================#
     # ==== stress test histograms ====
     #=================================#
+    
+    # make histograms for various student levels 
+    histogram_stress_fun <- function(in_data){
+      
+      # grab data info
+      weight_type <- unique(in_data$weight_type)
+      statistic <- unique(in_data$statistic)
+      value <- unique(in_data$value)
+      
+      # Calculate the mean squared distance from the rank of the truth
+      setorder(in_data, mean_standard_norm)
+      in_data[, baseline := (.I - tid)^2]
+      in_data[, baseline_count := (.I - tid != 0)]
+      in_data[, baseline_count_num := abs(.I - tid)]
+      
+      setorder(in_data, mean_weighted_norm)
+      in_data[, weighted := (.I - tid)^2]
+      in_data[, weighted_count := (.I - tid != 0)]
+      in_data[, weighted_count_num := abs(.I - tid)]
+
+      
+      # Histogram of the density and distance of rank inversions
+      # set binwidth parm
+      b_width <- 3
+      
+      out_histogram <- ggplot(in_data) + 
+        geom_histogram( aes(baseline_count_num, fill = "Standard"), alpha = .4, colour="black", binwidth = b_width) +
+        geom_histogram( aes(weighted_count_num, fill = "Weighted"), alpha = .4, colour="black", binwidth = b_width) +
+        ggtitle(paste0(weight_type, " Weight ", statistic, " = ", value)) + 
+        xlab("Difference in Rank From Truth")+
+        scale_fill_manual(values= c("#56B4E9", "#D55E00")) +
+        scale_x_continuous(limits = c(-3,130)) +
+        ylim(0,70) +
+        plot_attributes +
+        theme(legend.title = element_blank(),
+              legend.position = c(0.8, 0.8),
+              legend.key.size = unit(4, "cm"))
+      
+ 
+      # save plot and table 
+      png(paste0(paste0(out_plot,"Histrogram_", weight_type, "_",statistic, "_",value, ".png")),
+          height = 1200, width = 2100, type = "cairo")
+      print(out_histogram)
+      dev.off()  
+      
+      # LIST OF OUTPUT 
+      return(out_histogram)
+  
+    }
+
+    # split data. can't use previous list since I normalized the stacked dt 
+    stress_data_ls<- split(stress_data_dt[statistic == "Students"], by = c("weight_type", "statistic", "value"))
+    
+    # now apply function to list 
+    res <- lapply(stress_data_ls, histogram_stress_fun)
+    
+    
+    
+    
