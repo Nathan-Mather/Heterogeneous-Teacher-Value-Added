@@ -3,6 +3,10 @@
 #=======================#
 
 
+#====================================#
+# ==== set dir and load packages ====
+#====================================#
+
 # clear data.
 rm(list = ls(pos = ".GlobalEnv"), pos = ".GlobalEnv")
 options(scipen = 999)
@@ -17,7 +21,11 @@ if(my_wd %like% "Nmath_000"){
   # source simulated data path 
   source("c:/Users/Nmath_000/Documents/Research/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R") 
 
+  # source weighting funciton 
+  source("c:/Users/Nmath_000/Documents/Research/Heterogeneous-Teacher-Value-Added/R_code/weighting_functions.R")
+  
   # set path for monte carlo data 
+  mc_path <- "c:/Users/Nmath_000/Documents/data/Value Added/"
   
   #set path for plots to save 
   out_plot <- "c:/Users/Nmath_000/Documents/data/Value Added/"
@@ -30,10 +38,26 @@ if(my_wd %like% "Nmath_000"){
   
 }
 
+# load mc data 
+mc_linear <- fread(paste0(mc_path, "linear_MC.csv"))
+mc_kernal <- fread(paste0(mc_path, "mr_MC.csv"))
+mc_rawlsian <- fread(paste0(mc_path, "rawlsian_MC.csv"))
+
 # load packages and our functions 
 library(data.table)
 library(ggplot2)
 
+#====================#
+# ==== set parms ====
+#====================#
+
+lin_alpha = 2 # For linear weights
+pctile = .4 # For rawlsian weights
+v_alpha = 1 # For v weights
+mrpctile = .4 # For mr weights
+mrdist = .2 # for mr weights
+teacher_ability_drop_off = .15
+teacher_va_epsilon = .1
 
 #=========================#
 # ==== set plot style ====
@@ -48,15 +72,14 @@ plot_attributes <- theme_classic() +
 #==================================#
 # ==== Single simulation plots ====
 #==================================#
-teacher_ability_drop_off = .15
-teacher_va_epsilon = .1
+set.seed(123)
 r_dt <- simulate_test_data(n_schools               = 20,
                            min_stud                = 200,
                            max_stud                = 200, 
                            n_stud_per_teacher      = 30,
                            test_SEM                = .07,
-                           teacher_va_epsilon      = .1,
-                           teacher_ability_drop_off = .15)
+                           teacher_va_epsilon      = teacher_va_epsilon,
+                           teacher_ability_drop_off = teacher_ability_drop_off)
   
   #=================================#
   # ==== example teacher impact ====
@@ -112,29 +135,76 @@ r_dt <- simulate_test_data(n_schools               = 20,
   # ==== linear weight plot ====
   #=============================#
 
+  r_dt[, linear_weights := linear_weight_fun(alpha = lin_alpha, in_test_1 = test_1)]
+  
+  lin_w_plot <- ggplot(data = r_dt, aes(x= test_1, y = linear_weights)) + 
+    geom_point(size = 6, color = "#db7093", alpha = .5) + 
+    ggtitle("Example Linear Weight") +
+    ylab("Student Weight") + 
+    xlab("Student Test 1") +
+    plot_attributes
+        
+  print(lin_w_plot)      
+                 
+  
   
   #===============================#
   # ==== rawlsian weight plot ====
   #===============================#
-
+  r_dt[, rawlsian_weight := rawlsian_weight_fun(pctile, test_1)]
+  
+  rawlsian_w_plot <- ggplot(data = r_dt, aes(x= test_1, y = rawlsian_weight)) + 
+    geom_point(size = 6, color = "#db7093", alpha = .5) + 
+    ggtitle("Example Rawlsian Weight") +
+    ylab("Student Weight") + 
+    xlab("Student Test 1") +
+    plot_attributes
+  
+  print(rawlsian_w_plot)
   #==================================#
   # ==== kernal "mr" weight plot ====
   #==================================#
+  r_dt[,  mr_weight := mr_weight_fun(mrpctile, mrdist, test_1)]
 
-
+  mr_w_plot <- ggplot(data = r_dt, aes(x= test_1, y = mr_weight)) + 
+    geom_point(size = 6, color = "#db7093", alpha = .5) + 
+    ggtitle("Example Kernal Weight") +
+    ylab("Student Weight") + 
+    xlab("Student Test 1") +
+    plot_attributes
+  
+  print(mr_w_plot)
+  
   #=======================================#
   # ==== save single simulation plots ====
   #=======================================#
   
-  # ggsave("c:/Users/Nmath_000/Documents/data/Value Added/teacher_impact_kernal_noise.png")
+  # save plot 1 
   png(paste0(paste0(out_plot,"teacher_impact_kernal_noise.png")),
       height = 1200, width = 2100, type = "cairo")
   print(diog_plot1)
   dev.off()  
   
+  # save plot 2
   png(paste0(paste0(out_plot,"Average_teacher_impact_kernal.png")),
       height = 1200, width = 2100, type = "cairo")
   print(diog_plot2)
+  dev.off()  
+  
+  # save plot 3 
+  png(paste0(paste0(out_plot,"linear_weight.png")),
+      height = 1200, width = 2100, type = "cairo")
+  print(lin_w_plot)
+  dev.off()  
+  
+  png(paste0(paste0(out_plot,"rawlsian_weight.png")),
+      height = 1200, width = 2100, type = "cairo")
+  print(rawlsian_w_plot)
+  dev.off()  
+  
+  png(paste0(paste0(out_plot,"Kernal_weight.png")),
+      height = 1200, width = 2100, type = "cairo")
+  print(mr_w_plot)
   dev.off()  
   
   
