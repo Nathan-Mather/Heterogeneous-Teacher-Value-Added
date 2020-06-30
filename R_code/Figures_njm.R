@@ -207,4 +207,82 @@ r_dt <- simulate_test_data(n_schools               = 20,
   print(mr_w_plot)
   dev.off()  
   
+#===================#
+# ==== MC plots ====
+#===================#
+  
+  # fill in all the weight types 
+  mc_linear[, weight_type := "Linear"]
+  mc_kernal[, weight_type := "Kernal"]
+  mc_rawlsian[, weight_type := "rawlsian"]
+
+  
+  #===============================#
+  # ==== standard caterpillar ====
+  #===============================#
+
+  # function to make standard caterpillar plots and save them 
+  cat_plottR_st <- function(in_data){
+    setorder(in_data, mean_standard)
+    in_data[, standard_id :=.I]
+    in_data[, standard_lc := mean_standard - 1.96*sd_standard]
+    in_data[, standard_uc := mean_standard + 1.96*sd_standard]
+    weight_type <- unique(in_data$weight_type)
+    
+    standard_cat_plot <- ggplot(in_data, aes(x = standard_id, y = mean_standard)) +
+      geom_point(size = 3, color = "#db7093", alpha = 1) + 
+      geom_errorbar(aes(ymin=standard_lc, ymax=standard_uc), width=.2, color = "#db7093") +
+      ggtitle("Standard VA Results", subtitle = weight_type) +
+      ylab("Value Added") + 
+      xlab("Teacher Order") +
+      plot_attributes
+    
+    png(paste0(paste0(out_plot,"standard_", weight_type, "_caterpillar.png")),
+        height = 1500, width = 1500, type = "cairo")
+    print(standard_cat_plot)
+    dev.off()  
+    
+    return(standard_cat_plot)
+    
+  }
+
+  # run this. Would be easier to lapply over a list but already set up with way...
+  cat_plottR_st(mc_linear)
+  cat_plottR_st(mc_kernal)
+  cat_plottR_st(mc_rawlsian)
+  
+  
+  #=========================#
+  # ==== ww caterpillar ====
+  #=========================#
+  # function to make WW caterpillar plots and save them 
+  cat_plottR_st <- function(in_data){
+    setorder(in_data, mean_weighted)
+    in_data[, ww_id :=.I]
+    in_data[, ww_lc := mean_weighted - 1.96*sd_weighted]
+    in_data[, ww_uc := mean_weighted + 1.96*sd_weighted]
+    weight_type <- unique(in_data$weight_type)
+    
+    ww_cat_plot <- ggplot(in_data, aes(x = ww_id, y = mean_weighted)) +
+      geom_point(size = 3, color = "#db7093", alpha = 1) + 
+      geom_errorbar(aes(ymin=ww_lc, ymax=ww_uc), width=.2, color = "#db7093") +
+      ggtitle("Welfare Weighted VA Results", subtitle = weight_type) +
+      ylab("Weighted Value Added") + 
+      xlab("Teacher Order") +
+      plot_attributes
+    
+    png(paste0(paste0(out_plot,"ww_", weight_type, "_caterpillar.png")),
+        height = 1500, width = 1500, type = "cairo")
+    print(ww_cat_plot)
+    dev.off()  
+    
+    return(ww_cat_plot)
+    
+  }
+  
+  # run this. Would be easier to lapply over a list but already set up with way...
+  cat_plottR_st(mc_linear)
+  cat_plottR_st(mc_kernal)
+  cat_plottR_st(mc_rawlsian)
+  
   
