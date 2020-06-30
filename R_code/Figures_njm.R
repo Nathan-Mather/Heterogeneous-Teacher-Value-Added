@@ -27,6 +27,9 @@ if(my_wd %like% "Nmath_000"){
   # set path for monte carlo data 
   mc_path <- "c:/Users/Nmath_000/Documents/data/Value Added/"
   
+  # set path for stress test data 
+  stress_path <- "c:/Users/Nmath_000/Documents/data/Value Added/MC_stress_test/"
+  
   #set path for plots to save 
   out_plot <- "c:/Users/Nmath_000/Documents/data/Value Added/"
   
@@ -89,7 +92,8 @@ r_dt <- simulate_test_data(n_schools               = 20,
   E_teacher_ability <- 0
   E_Teacher_center <- 0
   n_row_dt <- nrow(r_dt)
-  r_dt[, diog_teacher_impact := E_teacher_ability - abs(stud_ability_1 - E_Teacher_center)* teacher_ability_drop_off + rnorm(n_row_dt, sd = teacher_va_epsilon)]
+  
+  r_dt[, diog_teacher_impact := E_teacher_ability -pmin(abs(stud_ability_1 - E_Teacher_center), 2)* teacher_ability_drop_off + rnorm(n_row_dt, sd = teacher_va_epsilon)]
   diog_plot1 <- ggplot(data = r_dt, aes(x= test_1, y = diog_teacher_impact)) +
     geom_point(size = 6, color = "#db7093", alpha = .5) +
     ggtitle("Example Teacher's Impact:", subtitle =  "Mean and Center = 0") +
@@ -113,7 +117,7 @@ r_dt <- simulate_test_data(n_schools               = 20,
     
     n_rows <- length( teach_data$teacher_ability)
     
-    teacher_impact_v <- teach_data$teacher_ability - abs(rep(in_student_ability,n_rows) - teach_data$teacher_center)* teacher_ability_drop_off + rnorm(n_rows, sd = teacher_va_epsilon)
+    teacher_impact_v <- teach_data$teacher_ability -  pmin(abs(rep(in_student_ability,n_rows) - teach_data$teacher_center), 2)* teacher_ability_drop_off + rnorm(n_rows, sd = teacher_va_epsilon)
     
     # get the mean 
     mean_impact <- mean(teacher_impact_v)
@@ -240,12 +244,12 @@ r_dt <- simulate_test_data(n_schools               = 20,
     in_data[, standard_uc := mean_standard_norm + 1.96*sd_standard_norm]
     weight_type <- unique(in_data$weight_type)
     
-    standard_cat_plot <- ggplot(in_data, aes(x = standard_id, y = mean_standard_norm)) +
+    standard_cat_plot <- ggplot(in_data, aes(x = tid, y = mean_standard_norm)) +
       geom_point(size = 3, color = "#db7093", alpha = 1) + 
       geom_errorbar(aes(ymin=standard_lc, ymax=standard_uc), width=.2, color = "#db7093") +
       ggtitle("Standard VA Results", subtitle = weight_type) +
       ylab("Value Added") + 
-      xlab("Teacher Order") +
+      xlab("True Teacher Order") +
       ylim(-6,5)+
       plot_attributes
     
@@ -275,12 +279,12 @@ r_dt <- simulate_test_data(n_schools               = 20,
     in_data[, ww_uc := mean_weighted_norm + 1.96*sd_weighted_norm]
     weight_type <- unique(in_data$weight_type)
     
-    ww_cat_plot <- ggplot(in_data, aes(x = ww_id, y = mean_weighted_norm)) +
+    ww_cat_plot <- ggplot(in_data, aes(x = tid, y = mean_weighted_norm)) +
       geom_point(size = 3, color = "#db7093", alpha = 1) + 
       geom_errorbar(aes(ymin=ww_lc, ymax=ww_uc), width=.2, color = "#db7093") +
       ggtitle("Welfare Weighted VA Results", subtitle = weight_type) +
       ylab("Weighted Value Added") + 
-      xlab("Teacher Order") +
+      xlab("True Teacher Order") +
       ylim(-6,5)+
       plot_attributes
     
@@ -378,4 +382,40 @@ r_dt <- simulate_test_data(n_schools               = 20,
   histogram_sum_Stat_fun(mc_kernal)
   histogram_sum_Stat_fun(mc_rawlsian)
   
+#============================#
+# ==== stress test plots ====
+#============================#
+#note: in future iterations we can do this on the simulations.
+  
+  # make sure that all the stress test data is alone in one folder 
+  # this lists all the fiels 
+  file_list <- list.files(stress_path)
+  
+  # initalize list for data 
+  stress_list <- setNames(vector("list", length = length(file_list)), file_list)
+
+  # load up files and add type indicators 
+  stress_test_readR <- function(file_name){
     
+    out_dt <- fread(paste0(stress_path, file_name))
+    file_info <- strsplit(file_name, "_")[[1]][1]
+    temp <- strsplit(file_info, "[[:digit:]]")[[1]]
+    temp <- subset(temp, temp != "")
+    weight_type <- temp[[1]]
+    statistic <- temp[[2]]
+    value   <- paste0(stringr::str_extract_all(file_info, "[[:digit:]]" )[[1]], collapse = "")
+    
+    # put info into data.table 
+    out_dt[, weight_type := weight_type]
+    out_dt[, statistic := statistic]
+    out_dt[, value := value]
+    # stor it in list 
+    stress_list[[file_name]] <- out_dt
+    
+  }
+
+  # now run this reader funciton on all the file paths 
+  stress_data_ls <- lapply(file_list, stress_test_readR)  
+  stress_data_dt <- rbindlist(stress_data_ls)
+  
+  
