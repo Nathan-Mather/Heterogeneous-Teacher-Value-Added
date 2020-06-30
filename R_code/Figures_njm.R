@@ -46,6 +46,7 @@ mc_rawlsian <- fread(paste0(mc_path, "rawlsian_MC.csv"))
 # load packages and our functions 
 library(data.table)
 library(ggplot2)
+library(xtable)
 
 #====================#
 # ==== set parms ====
@@ -66,8 +67,8 @@ teacher_va_epsilon = .1
 plot_attributes <- theme_classic() + 
   theme(text = element_text(size= 65),
         plot.title = element_text(vjust=0, hjust = 0.5, colour = "black",face = "bold", size =80),
-        plot.subtitle = element_text(color = "black",hjust = 0.5, size =80),
-        legend.title = element_text( colour = "black", size = 65))
+        plot.subtitle = element_text(color = "black",hjust = 0.5, size =80))
+  
 
 #==================================#
 # ==== Single simulation plots ====
@@ -215,7 +216,17 @@ r_dt <- simulate_test_data(n_schools               = 20,
   mc_linear[, weight_type := "Linear"]
   mc_kernal[, weight_type := "Kernal"]
   mc_rawlsian[, weight_type := "rawlsian"]
-
+  
+  for( in_data in list(mc_linear,mc_kernal, mc_rawlsian)){
+    # Renormalize everything so they have the same mean and variance
+    in_data[, mean_weighted_norm := (mean_weighted - mean(mean_weighted))/sd(mean_weighted)]
+    in_data[, mean_standard_norm := (mean_standard - mean(mean_standard))/sd(mean_standard)]
+    in_data[, true_ww := (true_ww - mean(true_ww))/sd(true_ww)]
+    
+    # now renormalize standard deviations 
+    in_data[, sd_weighted_norm := sd_weighted/sd(mean_weighted)]
+    in_data[, sd_standard_norm := sd_standard/sd(mean_standard)]
+  }
   
   #===============================#
   # ==== standard caterpillar ====
@@ -223,18 +234,19 @@ r_dt <- simulate_test_data(n_schools               = 20,
 
   # function to make standard caterpillar plots and save them 
   cat_plottR_st <- function(in_data){
-    setorder(in_data, mean_standard)
+    setorder(in_data, mean_standard_norm)
     in_data[, standard_id :=.I]
-    in_data[, standard_lc := mean_standard - 1.96*sd_standard]
-    in_data[, standard_uc := mean_standard + 1.96*sd_standard]
+    in_data[, standard_lc := mean_standard_norm - 1.96*sd_standard_norm]
+    in_data[, standard_uc := mean_standard_norm + 1.96*sd_standard_norm]
     weight_type <- unique(in_data$weight_type)
     
-    standard_cat_plot <- ggplot(in_data, aes(x = standard_id, y = mean_standard)) +
+    standard_cat_plot <- ggplot(in_data, aes(x = standard_id, y = mean_standard_norm)) +
       geom_point(size = 3, color = "#db7093", alpha = 1) + 
       geom_errorbar(aes(ymin=standard_lc, ymax=standard_uc), width=.2, color = "#db7093") +
       ggtitle("Standard VA Results", subtitle = weight_type) +
       ylab("Value Added") + 
       xlab("Teacher Order") +
+      ylim(-6,5)+
       plot_attributes
     
     png(paste0(paste0(out_plot,"standard_", weight_type, "_caterpillar.png")),
@@ -257,18 +269,19 @@ r_dt <- simulate_test_data(n_schools               = 20,
   #=========================#
   # function to make WW caterpillar plots and save them 
   cat_plottR_st <- function(in_data){
-    setorder(in_data, mean_weighted)
+    setorder(in_data, mean_weighted_norm)
     in_data[, ww_id :=.I]
-    in_data[, ww_lc := mean_weighted - 1.96*sd_weighted]
-    in_data[, ww_uc := mean_weighted + 1.96*sd_weighted]
+    in_data[, ww_lc := mean_weighted_norm - 1.96*sd_weighted_norm]
+    in_data[, ww_uc := mean_weighted_norm + 1.96*sd_weighted_norm]
     weight_type <- unique(in_data$weight_type)
     
-    ww_cat_plot <- ggplot(in_data, aes(x = ww_id, y = mean_weighted)) +
+    ww_cat_plot <- ggplot(in_data, aes(x = ww_id, y = mean_weighted_norm)) +
       geom_point(size = 3, color = "#db7093", alpha = 1) + 
       geom_errorbar(aes(ymin=ww_lc, ymax=ww_uc), width=.2, color = "#db7093") +
       ggtitle("Welfare Weighted VA Results", subtitle = weight_type) +
       ylab("Weighted Value Added") + 
       xlab("Teacher Order") +
+      ylim(-6,5)+
       plot_attributes
     
     png(paste0(paste0(out_plot,"ww_", weight_type, "_caterpillar.png")),
@@ -285,4 +298,84 @@ r_dt <- simulate_test_data(n_schools               = 20,
   cat_plottR_st(mc_kernal)
   cat_plottR_st(mc_rawlsian)
   
+  #======================================#
+  # ==== histogram and summary stats ====
+  #======================================#
   
+  histogram_sum_Stat_fun <- function(in_data){
+  
+    # grab weight type 
+    weight_type <- unique(in_data$weight_type)
+    
+    # Calculate the mean squared distance from the rank of the truth
+    setorder(in_data, mean_standard_norm)
+    in_data[, baseline := (.I - tid)^2]
+    in_data[, baseline_count := (.I - tid != 0)]
+    in_data[, baseline_count_num := abs(.I - tid)]
+    
+    setorder(in_data, mean_weighted_norm)
+    in_data[, weighted := (.I - tid)^2]
+    in_data[, weighted_count := (.I - tid != 0)]
+    in_data[, weighted_count_num := abs(.I - tid)]
+    
+    # start a data.table of results 
+    sum_stats <- list()
+    sum_stats[[1]] <- data.table(Statistic = "Mean Squared Distance", 
+                      Standard = mean(in_data$baseline),
+                      Weighted = mean(in_data$weighted))
+    
+    sum_stats[[2]] <- data.table(Statistic = "Mean Absolute Distance", 
+                                 Standard =  mean(in_data$baseline_count_num),
+                                 Weighted =  mean(in_data$weighted_count_num))
+    
+    sum_stats[[3]] <- data.table(Statistic = "# of Rank Inversions", 
+                                 Standard =  sum(in_data$baseline_count),
+                                 Weighted =sum(in_data$weighted_count))
+    
+    sum_stats[[4]] <- data.table(Statistic = "Correlation to Truth", 
+                                 Standard =  cor(in_data$mean_standard_norm, in_data$true_ww),
+                                 Weighted = cor(in_data$mean_weighted_norm, in_data$true_ww))
+    
+    
+    out_sum_stats <- rbindlist(sum_stats)
+    # save summ stats as latex table 
+    print(xtable(out_sum_stats, type = "latex"),
+          file = paste0(out_plot,"sum_stats_", weight_type, ".tex"),
+          include.rownames = FALSE,
+          floating = FALSE)
+
+    # Histogram of the density and distance of rank inversions
+    # set binwidth parm
+    b_width <- 3
+    
+    out_histogram <- ggplot(in_data) + 
+      geom_histogram( aes(baseline_count_num, fill = "Standard"), alpha = .4, colour="black", binwidth = b_width) +
+      geom_histogram( aes(weighted_count_num, fill = "Weighted"), alpha = .4, colour="black", binwidth = b_width) +
+      ggtitle("Deviation From True Rank",
+              subtitle = weight_type) + 
+      xlab("Difference in Rank From Truth")+
+      scale_fill_manual(values= c("#56B4E9", "#D55E00")) +
+      plot_attributes + 
+      theme(legend.title = element_blank(),
+            legend.position = c(0.8, 0.8),
+            legend.key.size = unit(4, "cm"))
+    
+    # save plot and table 
+    png(paste0(paste0(out_plot,"Histrogram_", weight_type, ".png")),
+        height = 1100, width = 2300, type = "cairo")
+    print(out_histogram)
+    dev.off()  
+    
+    # LIST OF OUTPUT 
+    out_list <- list()
+    out_list[["hist"]] <- out_histogram
+    out_list[["sum_stats"]] <- out_sum_stats
+  }
+
+  
+  # run on different simulations 
+  histogram_sum_Stat_fun(mc_linear)
+  histogram_sum_Stat_fun(mc_kernal)
+  histogram_sum_Stat_fun(mc_rawlsian)
+  
+    
