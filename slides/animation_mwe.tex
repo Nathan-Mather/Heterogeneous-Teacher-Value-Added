@@ -1,0 +1,180 @@
+
+\documentclass{beamer}
+\newcommand\hmmax{0}
+\newcommand\bmmax{0}
+\mode<presentation> {
+
+% The Beamer class comes with a number of default slide themes
+% which change the colors and layouts of slides. Below this is a list
+% of all the themes, uncomment each in turn to see what they look like.
+
+\usetheme{Boadilla}
+
+%\usetheme{default}
+
+%\usetheme{PaloAlto}
+
+
+%\usetheme{Goettingen}
+
+%\usetheme{Frankfurt}
+
+%\usetheme{Luebeck}
+%\usetheme{Madrid}
+
+
+
+
+% As well as themes, the Beamer class has a number of color themes
+% for any slide theme. Uncomment each of these in turn to see how it
+% changes the colors of your current slide theme.
+
+%\usecolortheme{albatross}
+%\usecolortheme{beaver}
+%\usecolortheme{beetle}
+%\usecolortheme{crane}
+%\usecolortheme{dolphin}
+%\usecolortheme{dove}
+%\usecolortheme{fly}
+%\usecolortheme{lily}
+%\usecolortheme{orchid}
+%\usecolortheme{rose}
+\usecolortheme{seagull}
+%\usecolortheme{seahorse}
+%\usecolortheme{whale}
+%\usecolortheme{wolverine}
+
+%\setbeamertemplate{footline} % To remove the footer line in all slides uncomment this line
+%\setbeamertemplate{footline}[page number] % To replace the footer line in all slides with a simple slide count uncomment this line
+\setbeamertemplate{navigation symbols}{} % To remove the navigation symbols from the bottom of all slides uncomment this line
+\setbeamertemplate{itemize items}[square]
+\setbeamertemplate{itemize subitem}[triangle]
+\setbeamertemplate{enumerate items}[default]
+\setbeamertemplate{section in toc}{\inserttocsectionnumber.~\inserttocsection}
+\setbeamercolor{subsection in toc}{bg=white,fg=structure}
+\setbeamertemplate{subsection in toc}{%
+  \hspace{1.2em}{\rule[0.3ex]{3pt}{3pt}}~\inserttocsubsection\par}
+
+
+}
+%\usepackage{bm}
+\usepackage{graphicx} % Allows including images
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{xcolor,bbm,xcomment,wasysym,accents,commath,mathrsfs,dsfont,bm}
+\usepackage{appendixnumberbeamer}
+\usepackage{textcomp}
+\usepackage{animate}
+\usepackage{colortbl}
+\usepackage{natbib}
+\usepackage{subcaption} 
+\usepackage{tikz}
+\usetikzlibrary{calc,patterns,positioning}
+\usepackage[draft]{tikzpeople}
+\bibliographystyle{ecta}
+
+
+\definecolor{callout_orange}{RGB}{255,135,25}
+\definecolor{callout_blue}{RGB}{0,68,255}
+\definecolor{callout_red}{RGB}{255,59,13}
+
+% New commands
+%\newcommand*\dif{\mathop{}\!\mathrm{d}}
+\newcommand\widebar[1]{\mathop{\overline{#1}}}
+\newcommand\pdv[2]{\frac{\partial #1}{\partial #2}}
+\newcommand\dv[2]{\frac{d #1}{d #2}}
+
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+% Make Section Header Frames
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
+\AtBeginSubsection[]{
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsectionhead: \\ \insertsubsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
+
+
+\tikzset{
+    invisible/.style={opacity=0},
+    visible on/.style={alt={#1{}{invisible}}},
+    alt/.code args={<#1>#2#3}{%
+      \alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}} % \pgfkeysalso doesn't change the path
+    },
+  }
+
+
+
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\title[Optimal Wind Subsidies]{More than Just a Big Fan} % The short title appears at the bottom of every slide, the full title is only on the title page
+\subtitle{Optimal Subsidies with Multiple Policy Instruments \\an Application to the US Wind Industry}
+\author{Michael D Ricks} % Your name
+\institute[UMich] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
+{
+University of Michigan \\ % Your institution for the title page
+\medskip
+\textit{ricksmi{\fontfamily{qag}\selectfont @}umich.edu} % Your email address
+}
+\date{\today} % Date, can be changed to a custom date
+
+\begin{document}
+
+
+\begin{frame}{This Model Characterizes Important Responses}
+Differentiating $\mathcal{Q}(\tau)$ in respect to taxes $\tau_t \: t=O,I$:
+\uncover<2->{
+{\small
+\begin{align*}
+\pdv{\mathcal{Q}(\tau)}{\tau_{t}} =
+  &N\int_{\underaccent{\bar}{m}}^{\skew{4}\bar{m}} \int_{\underaccent{\bar}{c}}^{\skew{3}\bar{c}} \Bigg[ 
+\alt<4,5>{{\color{callout_orange}{\bm{q^{*}(p,\tau,c_j,m_j) \pdv{F^{*}(\tau,c_j,m_j)}{\tau_t}}}}}{q^*(p,\tau,c_j,m_j) \pdv{F^*(c_j,m_j)}{\tau_t}}
+ \enspace + \\
+  & \int_0^{F^*(\tau,c_j,m_j)} \alt<6,7>{{\color{callout_blue}{\bm{\pdv{\tilde{q}}{x_j}\dv{x_j}{\tau_t}}}}}{\pdv{\tilde{q}}{x_j}\dv{x_j}{\tau_t}}+\alt<8,9>{{\color{callout_red}{\bm{\pdv{\tilde{q}}{v_j}  \left (\pdv{v_j}{\tau_t} + \pdv{v_j}{x_j}\dv{x_j}{\tau_t} \right )}}}}{\pdv{\tilde{q}}{v_j}  \left (\pdv{v_j}{\tau_t} + \pdv{v_j}{x_j}\dv{x_j}{\tau_t} \right )} \Bigg ] \, \dif{F(F_j)} \dif{F(c_j)}\dif{F(m_j)} 
+\end{align*}
+}}%
+
+\vspace{12pt}
+
+
+\uncover<3->{
+
+For a given  $\Delta \tau$ the change in output  $\Delta \mathcal{Q}$ includes
+\begin{enumerate}
+    \item<4->  \alt<4,5>{{\color{callout_orange}{\textbf{entry by marginally profitable firms  \uncover<5>{ $\bm{\pdv{F^{*}(\tau,c_{j},m_{j})}{\tau_{O}} {\scalebox{.9}{$\bm{\lessgtr}$}} \pdv{F^{*}(\tau,c_{j},m_{j})}{\tau_{I}}}$}}}}}{entry by marginally profitable firms $\pdv{F^{*}(\tau,c_{j},m_{j})}{\tau_{O}} {\scalebox{.9}{$\lessgtr$}} \pdv{F^{*}(\tau,c_{j},m_{j})}{\tau_{I}}$}
+    \item<6-> \alt<6,7>{{\color{callout_blue}{\textbf{increased investment among non-marginal entrants} \uncover<7>{$\bm{\dv{x_j}{\tau_O} {\scalebox{.85}{$\overset{?}{<}$}} \dv{x_j}{\tau_I}}$}}}}{increased investment among non-marginal entrants $\dv{x_j}{\tau_O}{\scalebox{.85}{$\overset{?}{<}$}} \dv{x_j}{\tau_I}$ }
+    %For an output subsidy this eect will be brought about because each unit of capital will generate more revenue whereas an investment subsidy reduces the cost.
+    \item<8->  \alt<8,9>{{\color{callout_red}{\textbf{changed utilization among non-marginal entrants \uncover<9>{$\bm{\pdv{v_j}{\tau_O} {\scalebox{.85}{$\bm{>}$}}  \pdv{v_j}{\tau_I}=0}$}}}}}{changed utilization among non-marginal entrants $ \pdv{v_j}{\tau_O} {\scalebox{.85}{$>$}}  \pdv{v_j}{\tau_I}=0$}
+    %driven (1) directly by the subsidy and (2) indirectly by the changes in capacity investment}}}}{changed utilization driven (1) directly by the taxes and (2)indirectly by the changes in capacity investment}
+    \begin{itemize}
+        \item<10> Assume $\pdv{v_j}{x_j}=0$ 
+    \end{itemize}
+\end{enumerate}
+    
+}
+% STUFF FROM BEFORE HOW DO I TIE THIS INTO SAEZ 2001 
+%I commented out the first order conditions, but essentially what they say is that for each policy the marginal increase in costs through (1) paying a higher price for what was produced already (2) paying the given price for the change in production need to be equal to the increase of quantity multiplied by the shadow value on the quantity restraint.
+
+% If I assume homogeneous treatment effects I obtain the following closed form solution to the optimal tax problem:
+
+\end{frame}
+\end{document}
