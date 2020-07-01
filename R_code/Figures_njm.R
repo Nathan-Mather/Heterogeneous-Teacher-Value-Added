@@ -361,7 +361,8 @@ r_dt <- simulate_test_data(n_schools               = 67,
     out_histogram <- ggplot(in_data) + 
       geom_histogram( aes(baseline_count_num, fill = "Standard"), alpha = .4, colour="black", binwidth = b_width) +
       geom_histogram( aes(weighted_count_num, fill = "Weighted"), alpha = .4, colour="black", binwidth = b_width) +
-      xlab("Difference in Rank From Truth")+
+      ylab("Number of Teachers") +
+      xlab("Difference in Rank From Truth") +
       scale_fill_manual(values= c("#77AADD", "#EE8866")) +
       plot_attributes + 
       theme(legend.title = element_blank(),
@@ -479,7 +480,8 @@ r_dt <- simulate_test_data(n_schools               = 67,
         geom_histogram( aes(baseline_count_num, fill = "Standard"), alpha = .4, colour="black", binwidth = b_width) +
         geom_histogram( aes(weighted_count_num, fill = "Weighted"), alpha = .4, colour="black", binwidth = b_width) +
         ggtitle(paste0(value," ", statistic)) + 
-        xlab("Difference in Rank From Truth")+
+        ylab("Number of Teachers") +
+        xlab("Difference in Rank From Truth") +
         scale_fill_manual(values= c("#77AADD", "#EE8866")) +
         scale_x_continuous(limits = c(-3,130)) +
         ylim(0,70) +
