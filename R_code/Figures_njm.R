@@ -12,6 +12,17 @@ rm(list = ls(pos = ".GlobalEnv"), pos = ".GlobalEnv")
 options(scipen = 999)
 cat("\f")
 
+# load packages and our functions 
+library(data.table)
+library(ggplot2)
+library(xtable)
+
+# load font things.  Must download Lato Regular 400 first: https://fonts.google.com/specimen/Lato
+# install.packages("extrafont")
+# library(extrafont)
+# font_import("Lato")
+# loadfonts()
+
 # check users
 my_wd <- getwd()
 
@@ -25,7 +36,7 @@ if(my_wd %like% "Nmath_000"){
   source("c:/Users/Nmath_000/Documents/Research/Heterogeneous-Teacher-Value-Added/R_code/weighting_functions.R")
   
   # set path for monte carlo data 
-  mc_path <- "c:/Users/Nmath_000/Documents/data/Value Added/"
+  mc_path <- "c:/Users/Nmath_000/Documents/data/Value Added/mc_data/"
   
   # set path for stress test data 
   stress_path <- "c:/Users/Nmath_000/Documents/data/Value Added/MC_stress_test/"
@@ -42,20 +53,10 @@ if(my_wd %like% "Nmath_000"){
 }
 
 # load mc data 
-mc_linear <- fread(paste0(mc_path, "linear_MC.csv"))
-mc_kernal <- fread(paste0(mc_path, "mr_MC.csv"))
-mc_rawlsian <- fread(paste0(mc_path, "rawlsian_MC.csv"))
+mc_linear <- fread(paste0(mc_path, "linear100Student_MC.csv"))
+mc_kernal <- fread(paste0(mc_path, "mr100Student_MC.csv"))
+mc_rawlsian <- fread(paste0(mc_path, "rawlsian100Students_MC.csv"))
 
-# load packages and our functions 
-library(data.table)
-library(ggplot2)
-library(xtable)
-
-# load font things.  Must download Lato Regular 400 first: https://fonts.google.com/specimen/Lato
-# install.packages("extrafont")
-# library(extrafont)
-# font_import("Lato")
-# loadfonts()
 
 
 
@@ -66,7 +67,7 @@ library(xtable)
 lin_alpha = 2 # For linear weights
 pctile = .4 # For rawlsian weights
 v_alpha = 1 # For v weights
-mrpctile = .4 # For mr weights
+mrpctile = .3 # For mr weights
 mrdist = .2 # for mr weights
 teacher_ability_drop_off = .15
 teacher_va_epsilon = .1
@@ -85,10 +86,10 @@ plot_attributes <- theme_classic() +
 # ==== Single simulation plots ====
 #==================================#
 set.seed(123)
-r_dt <- simulate_test_data(n_schools               = 20,
+r_dt <- simulate_test_data(n_schools               = 67,
                            min_stud                = 200,
                            max_stud                = 200, 
-                           n_stud_per_teacher      = 30,
+                           n_stud_per_teacher      = 100,
                            test_SEM                = .07,
                            teacher_va_epsilon      = teacher_va_epsilon,
                            teacher_ability_drop_off = teacher_ability_drop_off)
@@ -279,7 +280,7 @@ r_dt <- simulate_test_data(n_schools               = 20,
   # ==== ww caterpillar ====
   #=========================#
   # function to make WW caterpillar plots and save them 
-  cat_plottR_st <- function(in_data){
+  cat_plottR_ww <- function(in_data){
     setorder(in_data, mean_weighted_norm)
     in_data[, ww_id :=.I]
     in_data[, ww_lc := mean_weighted_norm - 1.96*sd_weighted_norm]
@@ -305,9 +306,9 @@ r_dt <- simulate_test_data(n_schools               = 20,
   }
   
   # run this. Would be easier to lapply over a list but already set up with way...
-  cat_plottR_st(mc_linear)
-  cat_plottR_st(mc_kernal)
-  cat_plottR_st(mc_rawlsian)
+  cat_plottR_ww(mc_linear)
+  cat_plottR_ww(mc_kernal)
+  cat_plottR_ww(mc_rawlsian)
   
   #======================================#
   # ==== histogram and summary stats ====
