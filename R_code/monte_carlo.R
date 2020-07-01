@@ -49,14 +49,14 @@ registerDoRNG()
 nsims = 10
 set.seed(42)
 opt_weight_type <-"rawlsian" # "linear" or "rawlsian" or "equal" or "v" or "mr"
-teacher_ability_drop_off = 0.25
+teacher_ability_drop_off = 0.15
 lin_alpha = 2 # For linear weights
 pctile = .4 # For rawlsian weights
 v_alpha = 1 # For v weights
-mrpctile = .4 # For mr weights
+mrpctile = .3 # For mr weights
 mrdist = .2 # for mr weights
-
-
+num_students = 100
+teacher_va_epsilon = .05
 
 
 # ================== #
@@ -64,12 +64,12 @@ mrdist = .2 # for mr weights
 # ================== #
 
 # generate simulated data. do a very small sample so stuff runs quickly 
-r_dt <- simulate_test_data(n_schools               = 20,
+r_dt <- simulate_test_data(n_schools               = round((133*num_students)/200),
                            min_stud                = 200,
                            max_stud                = 200, 
-                           n_stud_per_teacher      = 30,
+                           n_stud_per_teacher      = num_students,
                            test_SEM                = .07,
-                           teacher_va_epsilon      = .1,
+                           teacher_va_epsilon      = teacher_va_epsilon,
                            teacher_ability_drop_off = teacher_ability_drop_off)
 
 # convert teacher_id to a factor so we can treat it as a dummy 
@@ -208,6 +208,9 @@ new[, tid := .I]
 
 # Merge on the "true" welfare-weighted effect
 out <- merge(out, new, "teacher_id")
+
+# Write the csv
+write.csv(out, paste0(out_plot, '/', opt_weight_type, teacher_va_epsilon*100, 'Epsilon_MC.csv'))
 
 # Renormalize everything so they have the same mean and variance
 out[, mean_weighted := (mean_weighted - mean(mean_weighted))/sd(mean_weighted)]
