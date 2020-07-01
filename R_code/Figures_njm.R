@@ -360,7 +360,7 @@ r_dt <- simulate_test_data(n_schools               = 20,
       geom_histogram( aes(baseline_count_num, fill = "Standard"), alpha = .4, colour="black", binwidth = b_width) +
       geom_histogram( aes(weighted_count_num, fill = "Weighted"), alpha = .4, colour="black", binwidth = b_width) +
       xlab("Difference in Rank From Truth")+
-      scale_fill_manual(values= c("#77AADD", " #EE8866")) +
+      scale_fill_manual(values= c("#77AADD", "#EE8866")) +
       plot_attributes + 
       theme(legend.title = element_blank(),
             legend.position = c(0.8, 0.8),
@@ -478,7 +478,7 @@ r_dt <- simulate_test_data(n_schools               = 20,
         geom_histogram( aes(weighted_count_num, fill = "Weighted"), alpha = .4, colour="black", binwidth = b_width) +
         ggtitle(paste0(weight_type, " Weight ", statistic, " = ", value)) + 
         xlab("Difference in Rank From Truth")+
-        scale_fill_manual(values= c("#77AADD", " #EE8866")) +
+        scale_fill_manual(values= c("#77AADD", "#EE8866")) +
         scale_x_continuous(limits = c(-3,130)) +
         ylim(0,70) +
         plot_attributes +
