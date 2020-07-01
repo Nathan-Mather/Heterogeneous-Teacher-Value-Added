@@ -150,9 +150,8 @@ r_dt <- simulate_test_data(n_schools               = 20,
   
   lin_w_plot <- ggplot(data = r_dt, aes(x= test_1, y = linear_weights)) + 
     geom_point(size = 6, color = "#ffaabb", alpha = .75) + 
-    ggtitle("Example Linear Weight") +
-    ylab("Student Weight") +
-    xlab("Student Test 1") + xlim(-4,4) +
+    ylab("Welfare Weight") +
+    xlab("Ex Ante Expected Performance") + xlim(-4,4) +
     plot_attributes
         
   print(lin_w_plot)      
@@ -166,9 +165,8 @@ r_dt <- simulate_test_data(n_schools               = 20,
   
   rawlsian_w_plot <- ggplot(data = r_dt, aes(x= test_1, y = rawlsian_weight)) + 
     geom_point(size = 6, color = "#ffaabb", alpha = .75) + 
-    ggtitle("Example Rawlsian Weight") +
-    ylab("Student Weight") + ylim(0,1) + 
-    xlab("Student Test 1") + xlim(-4,4) +
+    ylab("Welfare Weight") + ylim(0,1) + 
+    xlab("Ex Ante Expected Performance") + xlim(-4,4) +
     plot_attributes
   
   print(rawlsian_w_plot)
@@ -179,9 +177,8 @@ r_dt <- simulate_test_data(n_schools               = 20,
 
   mr_w_plot <- ggplot(data = r_dt, aes(x= test_1, y = mr_weight)) + 
     geom_point(size = 6, color = "#ffaabb", alpha = .75) + 
-    ggtitle("Example Kernal Weight") +
-    ylab("Student Weight") + ylim(0,1) +
-    xlab("Student Test 1") + xlim(-4,4) +
+    ylab("Welfare Weight") + ylim(0,1) +
+    xlab("Ex Ante Expected Performance") + xlim(-4,4) +
     plot_attributes
   
   print(mr_w_plot)
@@ -341,20 +338,15 @@ r_dt <- simulate_test_data(n_schools               = 20,
     out_histogram <- ggplot(in_data) + 
       geom_histogram( aes(baseline_count_num, fill = "Standard"), alpha = .4, colour="black", binwidth = b_width) +
       geom_histogram( aes(weighted_count_num, fill = "Weighted"), alpha = .4, colour="black", binwidth = b_width) +
-      ggtitle("Deviation From True Rank",
-              subtitle = weight_type) + 
       xlab("Difference in Rank From Truth")+
-      scale_fill_manual(values= c("#56B4E9", "#D55E00")) +
+      scale_fill_manual(values= c("#77AADD", " #EE8866")) +
       plot_attributes + 
       theme(legend.title = element_blank(),
             legend.position = c(0.8, 0.8),
             legend.key.size = unit(4, "cm"))
-    
-    # save plot and table 
-    png(paste0(paste0(out_plot,"Histrogram_", weight_type, ".png")),
-        height = 1100, width = 2300, type = "cairo")
-    print(out_histogram)
-    dev.off()  
+ 
+     # save plot  
+     ggsave(paste0(weight_type, "_histogram.pdf"), out_histogram, width=9, height=3)
     
     # LIST OF OUTPUT 
     out_list <- list()
@@ -462,7 +454,7 @@ r_dt <- simulate_test_data(n_schools               = 20,
         geom_histogram( aes(weighted_count_num, fill = "Weighted"), alpha = .4, colour="black", binwidth = b_width) +
         ggtitle(paste0(weight_type, " Weight ", statistic, " = ", value)) + 
         xlab("Difference in Rank From Truth")+
-        scale_fill_manual(values= c("#56B4E9", "#D55E00")) +
+        scale_fill_manual(values= c("#77AADD", " #EE8866")) +
         scale_x_continuous(limits = c(-3,130)) +
         ylim(0,70) +
         plot_attributes +
@@ -471,11 +463,8 @@ r_dt <- simulate_test_data(n_schools               = 20,
               legend.key.size = unit(4, "cm"))
       
  
-      # save plot and table 
-      png(paste0(paste0(out_plot,"Histrogram_", weight_type, "_",statistic, "_",value, ".png")),
-          height = 1200, width = 2100, type = "cairo")
-      print(out_histogram)
-      dev.off()  
+       # save plot  
+       ggsave(paste0(weight_type, "_histogram_",statistic,"_",value, ".pdf"), out_histogram, width=9, height=4)
       
       # LIST OF OUTPUT 
       return(out_histogram)
