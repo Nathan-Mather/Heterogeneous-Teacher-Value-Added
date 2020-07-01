@@ -253,8 +253,8 @@ r_dt <- simulate_test_data(n_schools               = 67,
     weight_type <- unique(in_data$weight_type)
     
     standard_cat_plot <- ggplot(in_data, aes(x = tid, y = mean_standard_norm)) +
-      geom_point(size = 3, color = "#ffaabb", alpha = 1) + 
-      geom_errorbar(aes(ymin=standard_lc, ymax=standard_uc), width=.2, color = "#ffaabb") +
+      geom_point(size = 5, color = "#ffaabb", alpha = 1) + 
+      geom_errorbar(aes(ymin=standard_lc, ymax=standard_uc), width=.6, color = "#ffaabb") +
       ylab("Traditional Value Added") + 
       xlab("True Teacher Order") +
       ylim(-6,6)+
@@ -288,12 +288,12 @@ r_dt <- simulate_test_data(n_schools               = 67,
     weight_type <- unique(in_data$weight_type)
     
     ww_cat_plot <- ggplot(in_data, aes(x = tid, y = mean_weighted_norm)) +
-      geom_point(size = 4, color = "#ffaabb",  alpha = 1) + 
-      geom_errorbar(aes(ymin=ww_lc, ymax=ww_uc), width=.4, color = "#ffaabb") +
+      geom_point(size = 5, color = "#ffaabb",  alpha = 1) + 
+      geom_errorbar(aes(ymin=ww_lc, ymax=ww_uc), width=.6, color = "#ffaabb") +
       ylab("WLS Welfare Added") + 
       xlab("True Teacher Order") +
       ylim(-6,6)+
-      xlim(0,150)
+      xlim(0,150)+
       plot_attributes
     
      # save plot  
