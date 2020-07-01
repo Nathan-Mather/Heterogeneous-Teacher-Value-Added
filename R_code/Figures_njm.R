@@ -51,6 +51,14 @@ library(data.table)
 library(ggplot2)
 library(xtable)
 
+# load font things.  Must download Lato Regular 400 first: https://fonts.google.com/specimen/Lato
+install.packages("extrafont")
+library(extrafont)
+font_import("Lato")
+loadfonts()
+
+
+
 #====================#
 # ==== set parms ====
 #====================#
@@ -68,10 +76,10 @@ teacher_va_epsilon = .1
 #=========================#
 
 plot_attributes <- theme_classic() + 
-  theme(text = element_text(size= 65),
+  theme(text = element_text(size= 65, family ="Lato"),
         plot.title = element_text(vjust=0, hjust = 0.5, colour = "black",face = "bold", size =80),
         plot.subtitle = element_text(color = "black",hjust = 0.5, size =80))
-  
+
 
 #==================================#
 # ==== Single simulation plots ====
@@ -95,10 +103,9 @@ r_dt <- simulate_test_data(n_schools               = 20,
   
   r_dt[, diog_teacher_impact := E_teacher_ability -pmin(abs(stud_ability_1 - E_Teacher_center), 2)* teacher_ability_drop_off + rnorm(n_row_dt, sd = teacher_va_epsilon)]
   diog_plot1 <- ggplot(data = r_dt, aes(x= test_1, y = diog_teacher_impact)) +
-    geom_point(size = 6, color = "#db7093", alpha = .5) +
-    ggtitle("Example Teacher's Impact:", subtitle =  "Mean and Center = 0") +
-    ylab("Expected Teacher Impact") + 
-    xlab("Student Test 1") +
+    geom_point(size = 6, color = "#ffaabb", alpha = .75) +
+    ylab("Example Teacher's Impact") + 
+    xlab("Ex Ante Expected Performance") +
     plot_attributes
   
   print(diog_plot1)
@@ -128,10 +135,9 @@ r_dt <- simulate_test_data(n_schools               = 20,
   
   # now plot it 
   diog_plot2 <- ggplot(data = r_dt, aes(x= test_1, y = ave_teacher_impact)) +
-    geom_point(size = 6, color = "#db7093", alpha = .5) +
-    ggtitle("Average Teacher Impact") +
-    ylab("Average Expected teacher Impact") + 
-    xlab("Student Test 1") +
+    geom_point(size = 6, color = "#ffaabb", alpha = .75) +
+    ylab("Average Teacher Impact") + 
+    xlab("Ex Ante Expected Performance") +
     plot_attributes
   
   print(diog_plot2)
@@ -143,10 +149,9 @@ r_dt <- simulate_test_data(n_schools               = 20,
   r_dt[, linear_weights := linear_weight_fun(alpha = lin_alpha, in_test_1 = test_1)]
   
   lin_w_plot <- ggplot(data = r_dt, aes(x= test_1, y = linear_weights)) + 
-    geom_point(size = 6, color = "#db7093", alpha = .5) + 
-    ggtitle("Example Linear Weight") +
-    ylab("Student Weight") + 
-    xlab("Student Test 1") +
+    geom_point(size = 6, color = "#ffaabb", alpha = .75) + 
+    ylab("Welfare Weight") +
+    xlab("Ex Ante Expected Performance") + xlim(-4,4) +
     plot_attributes
         
   print(lin_w_plot)      
@@ -159,10 +164,9 @@ r_dt <- simulate_test_data(n_schools               = 20,
   r_dt[, rawlsian_weight := rawlsian_weight_fun(pctile, test_1)]
   
   rawlsian_w_plot <- ggplot(data = r_dt, aes(x= test_1, y = rawlsian_weight)) + 
-    geom_point(size = 6, color = "#db7093", alpha = .5) + 
-    ggtitle("Example Rawlsian Weight") +
-    ylab("Student Weight") + 
-    xlab("Student Test 1") +
+    geom_point(size = 6, color = "#ffaabb", alpha = .75) + 
+    ylab("Welfare Weight") + ylim(0,1) + 
+    xlab("Ex Ante Expected Performance") + xlim(-4,4) +
     plot_attributes
   
   print(rawlsian_w_plot)
@@ -172,10 +176,9 @@ r_dt <- simulate_test_data(n_schools               = 20,
   r_dt[,  mr_weight := mr_weight_fun(mrpctile, mrdist, test_1)]
 
   mr_w_plot <- ggplot(data = r_dt, aes(x= test_1, y = mr_weight)) + 
-    geom_point(size = 6, color = "#db7093", alpha = .5) + 
-    ggtitle("Example Kernal Weight") +
-    ylab("Student Weight") + 
-    xlab("Student Test 1") +
+    geom_point(size = 6, color = "#ffaabb", alpha = .75) + 
+    ylab("Welfare Weight") + ylim(0,1) +
+    xlab("Ex Ante Expected Performance") + xlim(-4,4) +
     plot_attributes
   
   print(mr_w_plot)
@@ -184,33 +187,20 @@ r_dt <- simulate_test_data(n_schools               = 20,
   # ==== save single simulation plots ====
   #=======================================#
   
-  # save plot 1 
-  png(paste0(paste0(out_plot,"teacher_impact_kernal_noise.png")),
-      height = 1200, width = 2100, type = "cairo")
-  print(diog_plot1)
-  dev.off()  
-  
+  # save plot 1  (Save as PDF since LATEX converts PNG to PDF before compiling anyway)
+  ggsave("fig1_teacher_impact.pdf", diog_plot1, width=9, height=4)
+
   # save plot 2
-  png(paste0(paste0(out_plot,"Average_teacher_impact_kernal.png")),
-      height = 1200, width = 2100, type = "cairo")
-  print(diog_plot2)
-  dev.off()  
+  ggsave("fig2_average_teacher.pdf", diog_plot2, width=9, height=4)
   
   # save plot 3 
-  png(paste0(paste0(out_plot,"linear_weight.png")),
-      height = 1200, width = 2100, type = "cairo")
-  print(lin_w_plot)
-  dev.off()  
+  ggsave("fig3_linear_weight.pdf", lin_w_plot, width=9, height=4)
   
-  png(paste0(paste0(out_plot,"rawlsian_weight.png")),
-      height = 1200, width = 2100, type = "cairo")
-  print(rawlsian_w_plot)
-  dev.off()  
-  
-  png(paste0(paste0(out_plot,"Kernal_weight.png")),
-      height = 1200, width = 2100, type = "cairo")
-  print(mr_w_plot)
-  dev.off()  
+  # save plot 6
+  ggsave("fig6_rawlsian_weight.pdf", rawlsian_w_plot, width=9, height=4)
+
+  # save plot 9 
+  ggsave("fig9_triangle_weight.pdf", mr_w_plot, width=9, height=4)
   
 #===================#
 # ==== MC plots ====
@@ -246,19 +236,17 @@ r_dt <- simulate_test_data(n_schools               = 20,
     weight_type <- unique(in_data$weight_type)
     
     standard_cat_plot <- ggplot(in_data, aes(x = tid, y = mean_standard_norm)) +
-      geom_point(size = 3, color = "#db7093", alpha = 1) + 
-      geom_errorbar(aes(ymin=standard_lc, ymax=standard_uc), width=.2, color = "#db7093") +
-      ggtitle("Standard VA Results", subtitle = weight_type) +
-      ylab("Value Added") + 
+      geom_point(size = 3, color = "#ffaabb", alpha = 1) + 
+      geom_errorbar(aes(ymin=standard_lc, ymax=standard_uc), width=.2, color = "#ffaabb") +
+      ylab("Traditional Value Added") + 
       xlab("True Teacher Order") +
-      ylim(-6,5)+
+      ylim(-6,6)+
       plot_attributes
-    
-    png(paste0(paste0(out_plot,"standard_", weight_type, "_caterpillar.png")),
-        height = 1500, width = 1500, type = "cairo")
-    print(standard_cat_plot)
-    dev.off()  
-    
+
+     # save plot  
+     ggsave(paste0("standard_", weight_type, "_caterpillar.pdf"), standard_cat_plot, width=4, height=4)
+  
+
     return(standard_cat_plot)
     
   }
@@ -281,18 +269,15 @@ r_dt <- simulate_test_data(n_schools               = 20,
     weight_type <- unique(in_data$weight_type)
     
     ww_cat_plot <- ggplot(in_data, aes(x = tid, y = mean_weighted_norm)) +
-      geom_point(size = 3, color = "#db7093", alpha = 1) + 
-      geom_errorbar(aes(ymin=ww_lc, ymax=ww_uc), width=.2, color = "#db7093") +
-      ggtitle("Welfare Weighted VA Results", subtitle = weight_type) +
-      ylab("Weighted Value Added") + 
+      geom_point(size = 3, color = "#ffaabb",  alpha = 1) + 
+      geom_errorbar(aes(ymin=ww_lc, ymax=ww_uc), width=.2, color = "#ffaabb") +
+      ylab("WLS Welfare Added") + 
       xlab("True Teacher Order") +
-      ylim(-6,5)+
+      ylim(-6,6)+
       plot_attributes
     
-    png(paste0(paste0(out_plot,"ww_", weight_type, "_caterpillar.png")),
-        height = 1500, width = 1500, type = "cairo")
-    print(ww_cat_plot)
-    dev.off()  
+     # save plot  
+     ggsave(paste0("ww_", weight_type, "_caterpillar.pdf"), ww_cat_plot, width=4, height=4)
     
     return(ww_cat_plot)
     
@@ -353,20 +338,15 @@ r_dt <- simulate_test_data(n_schools               = 20,
     out_histogram <- ggplot(in_data) + 
       geom_histogram( aes(baseline_count_num, fill = "Standard"), alpha = .4, colour="black", binwidth = b_width) +
       geom_histogram( aes(weighted_count_num, fill = "Weighted"), alpha = .4, colour="black", binwidth = b_width) +
-      ggtitle("Deviation From True Rank",
-              subtitle = weight_type) + 
       xlab("Difference in Rank From Truth")+
-      scale_fill_manual(values= c("#56B4E9", "#D55E00")) +
+      scale_fill_manual(values= c("#77AADD", " #EE8866")) +
       plot_attributes + 
       theme(legend.title = element_blank(),
             legend.position = c(0.8, 0.8),
             legend.key.size = unit(4, "cm"))
-    
-    # save plot and table 
-    png(paste0(paste0(out_plot,"Histrogram_", weight_type, ".png")),
-        height = 1100, width = 2300, type = "cairo")
-    print(out_histogram)
-    dev.off()  
+ 
+     # save plot  
+     ggsave(paste0(weight_type, "_histogram.pdf"), out_histogram, width=9, height=3)
     
     # LIST OF OUTPUT 
     out_list <- list()
@@ -474,7 +454,7 @@ r_dt <- simulate_test_data(n_schools               = 20,
         geom_histogram( aes(weighted_count_num, fill = "Weighted"), alpha = .4, colour="black", binwidth = b_width) +
         ggtitle(paste0(weight_type, " Weight ", statistic, " = ", value)) + 
         xlab("Difference in Rank From Truth")+
-        scale_fill_manual(values= c("#56B4E9", "#D55E00")) +
+        scale_fill_manual(values= c("#77AADD", " #EE8866")) +
         scale_x_continuous(limits = c(-3,130)) +
         ylim(0,70) +
         plot_attributes +
@@ -483,11 +463,8 @@ r_dt <- simulate_test_data(n_schools               = 20,
               legend.key.size = unit(4, "cm"))
       
  
-      # save plot and table 
-      png(paste0(paste0(out_plot,"Histrogram_", weight_type, "_",statistic, "_",value, ".png")),
-          height = 1200, width = 2100, type = "cairo")
-      print(out_histogram)
-      dev.off()  
+       # save plot  
+       ggsave(paste0(weight_type, "_histogram_",statistic,"_",value, ".pdf"), out_histogram, width=9, height=4)
       
       # LIST OF OUTPUT 
       return(out_histogram)
