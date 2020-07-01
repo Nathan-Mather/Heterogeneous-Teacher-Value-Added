@@ -19,7 +19,23 @@ font_import()
 loadfonts()
 
 
+# set directories 
+# check users
+my_wd <- getwd()
 
+# set paths based on users 
+if(my_wd %like% "Nmath_000"){
+  
+  # set path for stress test data 
+  stress_path <- "c:/Users/Nmath_000/Documents/data/Value Added/MC_stress_test/"
+  #set path for plots to save 
+  out_plot <- "c:/Users/Nmath_000/Documents/data/Value Added/"
+  
+
+}else{
+  stress_path <- '/home/tanner/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/stress_test/'
+  out_plot <- "/home/tanner/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code/"
+}
 
 #===========================#
 # ==== load stress data ====
@@ -27,7 +43,6 @@ loadfonts()
 
 #note: in future iterations we can do this on the simulations.
 
-stress_path <- '/home/tanner/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/stress_test/'
 
 plot_attributes <- theme_classic() + 
   theme(text = element_text(size= 65),
@@ -112,7 +127,7 @@ cat_plottR_st <- function(in_data){
     scale_color_manual(labels = c('Standard', 'Weighted', 'True Value'), values = c("#77aadd", "#ffaabb", "black"))
   
   # save plot  
-  ggsave(paste0("/home/tanner/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code/ww_", weight_type, "_caterpillar", statistic, value, ".pdf"), ww_cat_plot, width=4, height=4)
+  ggsave(paste0(out_plot, "ww_", weight_type, "_caterpillar", statistic, value, ".pdf"), ww_cat_plot, width=4, height=4)
   
   return(ww_cat_plot)
   

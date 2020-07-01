@@ -253,12 +253,16 @@ r_dt <- simulate_test_data(n_schools               = 67,
     weight_type <- unique(in_data$weight_type)
     
     standard_cat_plot <- ggplot(in_data, aes(x = tid, y = mean_standard_norm)) +
-      geom_point(size = 5, color = "#ffaabb", alpha = 1) + 
-      geom_errorbar(aes(ymin=standard_lc, ymax=standard_uc), width=.6, color = "#ffaabb") +
+      geom_point(size = 5, aes(color = "Standard VA"), alpha = 1) + 
+      geom_point(aes( y = true_ww,  color = "Truth"),size = 4, alpha = .4) +
+      scale_color_manual(values= c("#ffaabb", "#77AADD")) +
+      geom_errorbar(aes(ymin=standard_lc, ymax=standard_uc), width= 1, color = "#ffaabb") +
       ylab("Traditional Value Added") + 
       xlab("True Teacher Order") +
       ylim(-6,6)+
-      plot_attributes
+      plot_attributes + 
+      theme(legend.title = element_blank(),
+            legend.position = c(0.8, 0.8))
 
      # save plot  
     png(paste0(paste0(out_plot,"standard_", weight_type, "_caterpillar.png")),
@@ -288,14 +292,18 @@ r_dt <- simulate_test_data(n_schools               = 67,
     weight_type <- unique(in_data$weight_type)
     
     ww_cat_plot <- ggplot(in_data, aes(x = tid, y = mean_weighted_norm)) +
-      geom_point(size = 5, color = "#ffaabb",  alpha = 1) + 
-      geom_errorbar(aes(ymin=ww_lc, ymax=ww_uc), width=.6, color = "#ffaabb") +
+      geom_point(aes(color = "Weighted VA"), size = 5,  alpha = 1) + 
+      geom_point(aes( y = true_ww,  color = "Truth"),size = 4, alpha = .4) +
+      scale_color_manual(values= c("#77AADD", "#ffaabb"),
+                         guide=guide_legend(reverse=TRUE)) +
+      geom_errorbar(aes(ymin=ww_lc, ymax=ww_uc), width= 1, color = "#ffaabb") +
       ylab("WLS Welfare Added") + 
       xlab("True Teacher Order") +
       ylim(-6,6)+
       xlim(0,150)+
-      plot_attributes
-    
+      plot_attributes +
+      theme(legend.title = element_blank(),
+            legend.position = c(0.8, 0.8))
      # save plot  
     png(paste0(paste0(out_plot,"ww_", weight_type, "_caterpillar.png")),
         height = 1500, width = 1500, type = "cairo")
