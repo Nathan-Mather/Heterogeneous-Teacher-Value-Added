@@ -52,10 +52,10 @@ library(ggplot2)
 library(xtable)
 
 # load font things.  Must download Lato Regular 400 first: https://fonts.google.com/specimen/Lato
-install.packages("extrafont")
-library(extrafont)
-font_import("Lato")
-loadfonts()
+# install.packages("extrafont")
+# library(extrafont)
+# font_import("Lato")
+# loadfonts()
 
 
 
@@ -76,7 +76,7 @@ teacher_va_epsilon = .1
 #=========================#
 
 plot_attributes <- theme_classic() + 
-  theme(text = element_text(size= 65, family ="Lato"),
+  theme(text = element_text(size= 65),
         plot.title = element_text(vjust=0, hjust = 0.5, colour = "black",face = "bold", size =80),
         plot.subtitle = element_text(color = "black",hjust = 0.5, size =80))
 
@@ -165,7 +165,8 @@ r_dt <- simulate_test_data(n_schools               = 20,
   
   rawlsian_w_plot <- ggplot(data = r_dt, aes(x= test_1, y = rawlsian_weight)) + 
     geom_point(size = 6, color = "#ffaabb", alpha = .75) + 
-    ylab("Welfare Weight") + ylim(0,1) + 
+    ylab("Welfare Weight") + 
+    scale_y_continuous(breaks = seq(0, 1, by = .25), limits = c(0,1.02)) +
     xlab("Ex Ante Expected Performance") + xlim(-4,4) +
     plot_attributes
   
@@ -186,22 +187,34 @@ r_dt <- simulate_test_data(n_schools               = 20,
   #=======================================#
   # ==== save single simulation plots ====
   #=======================================#
-  
-  # save plot 1  (Save as PDF since LATEX converts PNG to PDF before compiling anyway)
-  ggsave("fig1_teacher_impact.pdf", diog_plot1, width=9, height=4)
-
+  # save plot 1 
+  png(paste0(paste0(out_plot,"teacher_impact_kernal_noise.png")),
+      height = 1200, width = 2100, type = "cairo")
+  print(diog_plot1)
+  dev.off()  
   # save plot 2
-  ggsave("fig2_average_teacher.pdf", diog_plot2, width=9, height=4)
+  
+  png(paste0(paste0(out_plot,"Average_teacher_impact_kernal.png")),
+      height = 1200, width = 2100, type = "cairo")
+  print(diog_plot2)
+  dev.off()  
   
   # save plot 3 
-  ggsave("fig3_linear_weight.pdf", lin_w_plot, width=9, height=4)
+  png(paste0(paste0(out_plot,"linear_weight.png")),
+      height = 1200, width = 2100, type = "cairo")
+  print(lin_w_plot)
+  dev.off() 
   
   # save plot 6
-  ggsave("fig6_rawlsian_weight.pdf", rawlsian_w_plot, width=9, height=4)
-
-  # save plot 9 
-  ggsave("fig9_triangle_weight.pdf", mr_w_plot, width=9, height=4)
+  png(paste0(paste0(out_plot,"rawlsian_weight.png")),
+      height = 1200, width = 2100, type = "cairo")
+  print(rawlsian_w_plot)
+  dev.off()  
   
+  png(paste0(paste0(out_plot,"Kernal_weight.png")),
+      height = 1200, width = 2100, type = "cairo")
+  print(mr_w_plot)
+  dev.off() 
 #===================#
 # ==== MC plots ====
 #===================#
@@ -211,17 +224,20 @@ r_dt <- simulate_test_data(n_schools               = 20,
   mc_kernal[, weight_type := "Kernal"]
   mc_rawlsian[, weight_type := "rawlsian"]
   
-  # normalize everything 
-  for( in_data in list(mc_linear,mc_kernal, mc_rawlsian)){
-    # Renormalize everything so they have the same mean and variance
-    in_data[, mean_weighted_norm := (mean_weighted - mean(mean_weighted))/sd(mean_weighted)]
-    in_data[, mean_standard_norm := (mean_standard - mean(mean_standard))/sd(mean_standard)]
-    in_data[, true_ww := (true_ww - mean(true_ww))/sd(true_ww)]
-    
-    # now renormalize standard deviations 
-    in_data[, sd_weighted_norm := sd_weighted/sd(mean_weighted)]
-    in_data[, sd_standard_norm := sd_standard/sd(mean_standard)]
-  }
+  #===============================#
+  # ==== normalize everything ====
+  #===============================#
+
+    for( in_data in list(mc_linear,mc_kernal, mc_rawlsian)){
+      # Renormalize everything so they have the same mean and variance
+      in_data[, mean_weighted_norm := (mean_weighted - mean(mean_weighted))/sd(mean_weighted)]
+      in_data[, mean_standard_norm := (mean_standard - mean(mean_standard))/sd(mean_standard)]
+      in_data[, true_ww := (true_ww - mean(true_ww))/sd(true_ww)]
+      
+      # now renormalize standard deviations 
+      in_data[, sd_weighted_norm := sd_weighted/sd(mean_weighted)]
+      in_data[, sd_standard_norm := sd_standard/sd(mean_standard)]
+    }
   
   #===============================#
   # ==== standard caterpillar ====
@@ -244,8 +260,10 @@ r_dt <- simulate_test_data(n_schools               = 20,
       plot_attributes
 
      # save plot  
-     ggsave(paste0("standard_", weight_type, "_caterpillar.pdf"), standard_cat_plot, width=4, height=4)
-  
+    png(paste0(paste0(out_plot,"standard_", weight_type, "_caterpillar.png")),
+        height = 1500, width = 1500, type = "cairo")
+    print(standard_cat_plot)
+    dev.off()  
 
     return(standard_cat_plot)
     
@@ -277,7 +295,10 @@ r_dt <- simulate_test_data(n_schools               = 20,
       plot_attributes
     
      # save plot  
-     ggsave(paste0("ww_", weight_type, "_caterpillar.pdf"), ww_cat_plot, width=4, height=4)
+    png(paste0(paste0(out_plot,"ww_", weight_type, "_caterpillar.png")),
+        height = 1500, width = 1500, type = "cairo")
+    print(ww_cat_plot)
+    dev.off()  
     
     return(ww_cat_plot)
     
@@ -346,7 +367,10 @@ r_dt <- simulate_test_data(n_schools               = 20,
             legend.key.size = unit(4, "cm"))
  
      # save plot  
-     ggsave(paste0(weight_type, "_histogram.pdf"), out_histogram, width=9, height=3)
+    png(paste0(paste0(out_plot,"Histrogram_", weight_type, ".png")),
+        height = 1100, width = 2300, type = "cairo")
+    print(out_histogram)
+    dev.off()  
     
     # LIST OF OUTPUT 
     out_list <- list()
@@ -464,8 +488,10 @@ r_dt <- simulate_test_data(n_schools               = 20,
       
  
        # save plot  
-       ggsave(paste0(weight_type, "_histogram_",statistic,"_",value, ".pdf"), out_histogram, width=9, height=4)
-      
+      png(paste0(paste0(out_plot,"Histrogram_", weight_type, "_",statistic, "_",value, ".png")),
+          height = 1200, width = 2100, type = "cairo")
+      print(out_histogram)
+      dev.off()  
       # LIST OF OUTPUT 
       return(out_histogram)
   
