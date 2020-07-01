@@ -288,11 +288,12 @@ r_dt <- simulate_test_data(n_schools               = 67,
     weight_type <- unique(in_data$weight_type)
     
     ww_cat_plot <- ggplot(in_data, aes(x = tid, y = mean_weighted_norm)) +
-      geom_point(size = 3, color = "#ffaabb",  alpha = 1) + 
-      geom_errorbar(aes(ymin=ww_lc, ymax=ww_uc), width=.2, color = "#ffaabb") +
+      geom_point(size = 4, color = "#ffaabb",  alpha = 1) + 
+      geom_errorbar(aes(ymin=ww_lc, ymax=ww_uc), width=.4, color = "#ffaabb") +
       ylab("WLS Welfare Added") + 
       xlab("True Teacher Order") +
       ylim(-6,6)+
+      xlim(0,150)
       plot_attributes
     
      # save plot  
@@ -477,7 +478,7 @@ r_dt <- simulate_test_data(n_schools               = 67,
       out_histogram <- ggplot(in_data) + 
         geom_histogram( aes(baseline_count_num, fill = "Standard"), alpha = .4, colour="black", binwidth = b_width) +
         geom_histogram( aes(weighted_count_num, fill = "Weighted"), alpha = .4, colour="black", binwidth = b_width) +
-        ggtitle(paste0(weight_type, " Weight ", statistic, " = ", value)) + 
+        ggtitle(paste0(value," ", statistic)) + 
         xlab("Difference in Rank From Truth")+
         scale_fill_manual(values= c("#77AADD", "#EE8866")) +
         scale_x_continuous(limits = c(-3,130)) +
