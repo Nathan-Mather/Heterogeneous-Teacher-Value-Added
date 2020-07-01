@@ -140,28 +140,45 @@
 \end{frame}
 
 %------------------------------------------------
+% What is Value added 
+%------------------------------------------------
+\begin{frame}{Value Added Measures: The Goal}
+\begin{wideitemize}
+    \item Value added measures (VAM) identify the most and least effective teachers
+    \item We know teachers respond to incentives
+    \begin{itemize}
+        \item {\color{gray}{\citep{jacob2003rotten,neal2010left,pope2017multidimensional}}}
+    \end{itemize}
+    \item We know VAM capture something real
+    \begin{itemize}
+        \item {\color{gray}{\citep{chetty2014measuring2,pope2017multidimensional}}}
+    \end{itemize}
+    \item We know there is heterogeneity VAM do not catch
+    \begin{itemize}
+        \item {\color{gray}{\citep{ehrenberg1995teachers,dee2005teacher}}}
+    \end{itemize}
+\end{wideitemize}
+
+\end{frame}
+
+%------------------------------------------------
 % Why do we care 
 %------------------------------------------------
-\begin{frame}{Value Added Measures}
+\begin{frame}{Value Added Measures: A Policy Disconnect  }
 \begin{wideitemize}
-    \item The goal of value added measures (VAM) is to determine who are the most and least effective educators and schools
-    
-    \item Disconnect between traditional VAM and education policy such as No Child Left Behind
-    
-    \item VAM are mean-oriented statistics; VAM represents a teachers average value imparted to their students
-    
+
+    \item Disconnect between VAM and education policy such as No Child Left Behind
     \begin{itemize}
-        \vspace{2mm}
+        \item VAM are mean-oriented statistics: a teachers average impact on students' scores
         \item Carries \textbf{implicit normative} welfare weights 
     \end{itemize}
     
     \item  We propose a set of more flexible heterogeneous VAM 
     \begin{itemize}
-        \vspace{2mm}
-        \setlength{\itemsep}{2mm}
         \item Assess teachers' heterogeneous impacts
-        \item  Weight impact on students according to an \textbf{explicit normative} policy goal or welfare criterion
+        \item  Weight effects according to an \textbf{explicit normative} policy goal or welfare criterion
     \end{itemize}
+
 
 \end{wideitemize}
 
@@ -176,45 +193,22 @@
 \begin{wideenumerate}
      \item Build a welfare-relevant framework for VAM (and other educational statistics) 
      \begin{itemize}
-         \item Flexible to any policy or normative goal 
+         \item Can we accommodate any policy or normative goal?
      \end{itemize}
-    \item Estimate VA Heterogeneity Along the Achievement Distribution
+    \item Estimate VA heterogeneity along the achievement distribution
     \begin{itemize}
         \item Do certain teachers excel at teaching certain students? 
     \end{itemize}
     \item Simulate data to test new methods
     \begin{itemize}
-        \item Are these methods feasible 
-        \item Simulations to consider implications of policies
+        \item Are these methods feasible? Accurate? Informative? 
     \end{itemize}
     \item Employ methods in real data
     \begin{itemize}
-        \vspace{2mm}
-    	\setlength{\itemsep}{2mm}
-        \item Analyze rank inversions and implications for welfare
+        \item What implications do rank inversions have for welfare?
+        \item What implications are there for possible policies?
     \end{itemize}  
 
-\end{wideenumerate}
-\end{frame}
-%-----------------------------------------------
-% Why is this useful ?
-%-----------------------------------------------
-
-\begin{frame}{Purpose of New Methods ( I THINK CUT THIS OUT AND JUST SAY IT}
-\begin{wideenumerate}
-    \item Investigate teacher heterogeneity 
-        \begin{itemize}
-            \item Do teachers shift rank based on different welfare/policy goals? 
-        \end{itemize}
-    \item Industry use
-    \begin{itemize}
-        \item Align teacher incentives and assessment with policy goals 
-        \item Put teachers in the correct role with students that match their strengths
-    \end{itemize}
-    \item Academic use 
-        \begin{itemize}
-            \item Assess outcomes in explicitly normative way (did policy X achieve its goal?) 
-        \end{itemize}
 \end{wideenumerate}
 \end{frame}
 
@@ -224,43 +218,14 @@
 \begin{frame}[c]{Today's Talk}
 
 \begin{wideenumerate}
-    \item Big picture, does this look like it is worth pursuing?
-    \item Next steps (or steps we haven't thought about)?
+    \item Big picture, does this look like it is worth continuing?
+    \item Which of our possible next steps are most worth pursuing?
     \item What first order concerns should we be aware of and thinking about?
 
 \end{wideenumerate}
 \end{frame}
 
 
-
-%------------------------------------------------
-% What do we know and not know
-%------------------------------------------------
-\begin{frame}{Does Heterogeneity Matter? *** I LIKE THIS SLIDE BUT NOT SURE WHERE IT FITS}
-
-\begin{wideitemize}
-    \item We know teachers respond to incentives
-    \begin{itemize}
-        \item {\color{gray}{\citep{jacob2003rotten,NCLB,pope2017multidimensional}}}
-    \end{itemize}
-    \item We know VAM capture something real
-    \begin{itemize}
-        \item {\color{gray}{\citep{chetty2014measuring2,pope2017multidimensional}}}
-    \end{itemize}
-    \item We know there is heterogeneity VAM do not catch
-    \begin{itemize}
-        \item {\color{gray}{\citep{ehrenberg1995teachers,dee2005teacher}}}
-    \end{itemize}
-    % This means we aren't necessarily incentivizing everything we want to be
-    
-    \vfill
-    \item \textbf{How much does teacher value added vary across the achievement distribution?} %We are intersted in this within and across teachers right?
-    \vspace{-14pt}
-    \vspace{5mm}
-    \item \textbf{What does this mean for welfare and policy?}
-    \vfill
-\end{wideitemize}
-\end{frame}
 
 
 %------------------------------------------------------------------------------------------
@@ -270,6 +235,33 @@
 %------------------------------------------------------------------------------------------
 \section{Welfare and Value Added}
 
+%------------------------------------------------
+% Estimating STANDARD Value Added 
+%------------------------------------------------
+
+\begin{frame}{Estimating Standard  Value Added}
+
+\begin{wideitemize}
+    \item In theory test scores are a function of testing ability, value added, and noise
+    \begin{align*}
+    y_{ijt}  &= a_{it} + \epsilon_{ijt} \\
+    y_{ijt}  &= a_{it-1} + VA_j(a_{it-1}) + \epsilon_{ijt}
+    \end{align*}
+ 
+    \item We don't observe testing ability. Traditional VAM assumptions:
+    \begin{itemize}
+        \item Predict testing ability with characteristics (including lagged scores): $X_{it}$
+        \item Assume homogeneity within and across teachers $VA_j(\cdot)=\gamma_j$ with no $ij$ error
+    \end{itemize}
+    \begin{align*}
+    y_{ijt}  &= \beta X_{it} +\Gamma D_{it} +\mu_{jt} + \eta_{it}
+    \end{align*}
+    
+    \item Note the $\mu_{jt}$ variation could pick up $ij$ variation.
+       
+    
+\end{wideitemize}
+\end{frame}
 
 %------------------------------------------------
 % Obligatory model going over the logic 
@@ -277,7 +269,7 @@
 \begin{frame}{Modeling Value Added As Social Welfare}
 
 \begin{wideitemize}
-    \item We can think of the following social welfare function (discrete for now)
+    \item We can think of the following social welfare function
     \begin{itemize}
         \item $\omega(x_i,y_i)$ weights: likely based on \textit{ex ante} expected performance
         % Talk about the concavity here?
@@ -287,12 +279,12 @@
     W  = \sum_i \omega(x_i,y_i) v(x_i,y_i) 
     \] 
     
-    \item Value added scores take the average gains for students among each teacher
+    \item Traditional VAM take the average gains for students among each teacher
     \begin{itemize}
-        \item If $x_i$ is \textit{ex ante} expected performance, $v(\cdot) = y_i - x_i$
+        \item Let $x_i$ be \textit{ex ante} expected performance, estimated as $\hat{y}_i$, then $\tilde{v}(\cdot) = y_i - \hat{y}_i$
     \end{itemize}
     \[
-    W_{VA}  = \sum_i \frac{(y_i-x_i)}{N_{j(i)}} \hspace{3em}
+    \hat{W}_{VA}  = \sum_i \frac{(y_i-\hat{y}_i)}{N_{j(i)}} \hspace{3em}
     \]
     
     \item This implies $\omega(x_i,y_i)=\frac{1}{N_j}$, which is (almost) utilitarian
@@ -306,62 +298,61 @@
 
 
 \end{frame}
-%------------------------------------------------
-% Estimating STANDARD Value Added 
-%------------------------------------------------
 
-\begin{frame}{Estimating Standard  Value Added}
+
+%------------------------------------------------
+% Obligatory model going over the logic 
+%------------------------------------------------
+\begin{frame}{``Welfare Added''}
 
 \begin{wideitemize}
-    \item In theory test scores are a function of testing ability, value added, and noise
+    \item Let $\hat{v}_j(x_i,y_i)$ estimate a teacher's heterogeneous value added, $\mathbb{E}[v(\cdot)|x_i,j]$
     
-    \begin{align*}
-    y_{ijt}  &= a_{it} + \epsilon_{ijt} \\
-    y_{ijt}  &= a_{it-1} + VA_j(a_{it-1}) + \epsilon_{ijt}
-    \end{align*}
- 
-    \item We don't observe testing ability. Traditional assumptions
+    \item Then the estimated ``Welfare Added'' by this teacher is  
+    \[
+    \hat{W}_j  = \sum_{i\in j} \omega(x_i,y_i) \hat{v}_j(x_i,y_i) 
+    \] 
+    
+    \item Consider the following examples:
     \begin{itemize}
-        \item Predict testing ability with characteristics (including lagged scores): $X_{it}$
-        \item Assume homogeneity within and across teachers $VA_j=\gamma d_j$ with no $ij$ error
+        \item Utilitarian: All students are weighted equally $\omega(x_i,y_i) = 1$
+        \item Rawlsian: We care only about students below some cutoff, $c$, $\omega(x_i,y_i) = \mathds{1}(x_i\leq c)$
+        \item Pareto: We care about the lower achieving students more $ \omega(x_i,y_i)=  \frac{\alpha x_\mathrm{m}^\alpha}{x_i^{\alpha+1}}$ 
     \end{itemize}
-        
-    \begin{align*}
-    y_{ijt}  &= \beta X_{it} +\Gamma D_{it} +\mu_{jt} + \eta_{it}
-    \end{align*}
     
-    \item {\color{gray}{This might be the other place to talk about the $\mu_{jt}$ term picking up ij variation.}}
-       
-    
+    \item But estimating Welfare Added requires an estimate of $\mathbb{E}[v(\cdot)|x_i,j]$
 \end{wideitemize}
-\end{frame}
 
+
+\end{frame}
 
 %-----------------------------------------------
 % Motivation for Weighted VAM 
 %-----------------------------------------------
 
-\begin{frame}{Motivation from the Social Welfare function}
+\begin{frame}{Estimating Effect Heterogeneity}
 
 \begin{wideitemize}
-    \item Imagine the SP only cares about students exactly 1.5$\sigma$ below average
+    \item Intuitively, imagine a pointwise approach for estimating $\hat{v}_j(x_i,y_i)$
     
-    \item<2-> Two problems with binning students by \textit{ex ante} expected score and estimating VA
+    \item Binning students by \textit{ex ante} expected score and estimating VA has two problems
     \begin{enumerate}
-        \item<3-> We don't have infinite data, so bins would be too small
-        \item<4-> Even if we did, we don't know the \textit{ex ante} expected score
+        \item We don't have infinite data, so bins would be too small
+        \item We don't actually know the \textit{ex ante} expected score
     \end{enumerate}
 
-    \item<5-> $\hat{y}_{it} = \hat{\beta}_1X_i + \sum \hat{\beta}_jy_{ij-1}$ consistent for expected score
+    \item $\hat{y}_{it} = \hat{\beta} X_{it} $ consistently predicts expected score, but with error
     \begin{itemize}
-        \item But prediction error means that binning no longer works %(do we need to formalize this? That the ammount of students who SP cares about should be decreasing from that point out)
+        \item The distribution of $\hat{y_i}|x_i$ will be centered at and decreasing from $x_i$
     \end{itemize}
 
-    \item<6-> We propose three methods that (not only deal with but) capitalize on this
+%+ \sum \hat{\beta}_jy_{it-j} because we define X as including lagged scores
+
+    \item We propose three methods that (not only deal with but) capitalize on this
     \begin{enumerate}
-        \item WLS regression with weights defined by the distance from the target (e.g., -1.5$\sigma$)
+        \item WLS regression with weights defined by the Exogenous policy preference
         \item Quantile regression evaluated at the relevant percentile
-        \item Kernel regression of effect of $D_j$ over achievement distribution
+        \item Kernel regression of effect of each teacher over achievement distribution
     \end{enumerate}
 
 \end{wideitemize}
@@ -378,6 +369,29 @@
 
 
 %-------------------------------------------------------------
+% Estimating Weighted Value added with our first method: set up
+%-------------------------------------------------------------
+\begin{frame}{Weighted VAM: Using Weighted Least Squares}
+
+\begin{wideitemize}
+
+    % set up the method 
+    \item We want to estimate coefficients of pretest and other covariates like normal 
+    \item Partial out covariates in unweighted regression
+    \item Want to weight the impact of students on teachers
+    \item Estimate effects of teachers and weight prediction by achievement
+        \begin{itemize}
+        \item  WLS is consistent in models ``fully saturated'' with binary  variables  \citet{solon2015we} 
+        \end{itemize}
+
+\end{wideitemize}
+
+
+
+\end{frame}
+
+
+%-------------------------------------------------------------
 % Estimating Weighted Value added with our first method
 %-------------------------------------------------------------
 
@@ -385,200 +399,266 @@
 \begin{frame}{Weighted VAM: Using Weighted Least Squares}
 
 \begin{wideitemize}
-    \item WLS is consistent in models ``fully saturated'' with binary  variables  \citet{solon2015we} 
-    % i.e.,  it is consistent for average partial effects in the population represented by the reweighted sample.
-    \begin{enumerate}
-        \item<2-> Predict $y$ with $X$ and lagged $y$ and assign weights $W_p$
-        % weights target the point in the achievemnet distribution of interest
-        \item<3-> Use Frisch-Waugh-Lovell to partial out these predictors from $D_j$
-        \item<4-> Estimate effects of teachers, $D_j$, weighting by predicted achievement
-    \end{enumerate}
-    
+ \item Let Y be tests, X, controls including pretest, and D a matrix of student-teacher links
+\item  Traditional Value Added:
     \begin{align*}
     Y &= \beta X + \Gamma D + \eta \\
-    \\
-    \alt<3-4>{(\hat{\beta}_{OLS},\hat{\Gamma}_{OLS}) &= \left ((\beta,\Gamma)'(\beta,\Gamma) \right ) ^{-1} (\beta,\Gamma)' Y \\
-    \hat{\Gamma}_{OLS} &= \hat{\Gamma}_{FWL} =  (\tilde{\Gamma}'\tilde{\Gamma}  ) ^{-1} \tilde{\Gamma}' Y \\}%
-    {\\
-    \\}
-    \\
-    \alt<4>{\hat{\Gamma}_{p} &= \left (\tilde{\Gamma}'W_p\tilde{\Gamma} \right ) ^{-1} \tilde{\Gamma}'W_p Y}{} \\
+    (\hat{\beta}_{OLS},\hat{\Gamma}_{OLS}) &= \left ((X,D)'(X,D) \right ) ^{-1} (X,D)' Y 
     \end{align*}
-    
+\item Let $\tilde{D}$ be residuals from regression of D on X \citep{frisch1933partial}
+\[
+\hat{\Gamma}_{OLS} = \hat{\Gamma}_{FWL} =  (\tilde{D}'\tilde{D}  ) ^{-1} \tilde{D}' Y
+\]
+\item Weighted estimate of welfare added, given weights $W_p$, is
+\[
+\hat{\Gamma}_{p} = \left (\tilde{D}'W_p\tilde{D} \right ) ^{-1} \tilde{D}'W_p Y
+\]
+
 
 \end{wideitemize}
 
-
-
 \end{frame}
 
+
+
+
+
 %------------------------------------------------
-% Does this first method work? 
+% Testing on Simulated Data 
 %-------------------------------------------------
-\begin{frame}{Preliminary Results Look Promising}
+\begin{frame}{Testing on Simulated Data  }
 
 
 \begin{wideitemize}
-\item Today we'll report on some simple simulation exercises:
+\item Students have a testing ability $\alpha_{it} \sim \mathcal{N}(0,1)$
+\item Teachers have relative teaching ability  $\gamma_{j} \sim \mathcal{N}(0,0.1)$
+\item Teachers have an area where they are most effective $C_{j} \sim  \mathcal{N}(0,1)$
+\item Their impact drops off at rate .15 (capped at .3) as they move away from $C_{j}$
+\item Teachers impact student testing ability such that: 
+\begin{align*}
+\alpha_{it+1} &= \alpha_{it} + \gamma_{j} - 0.15\min(|\alpha_{it} - C_{j}|, 2)  + \epsilon_{it} \\
+\epsilon_{it} &\sim  \mathcal{N}(0,0.1) 
+\end{align*}
+
+
+\item Tests distributed as $ T_{it} \sim \mathcal{N}(\alpha_{it},0.07)$
+\end{wideitemize}
+\end{frame}
+
+%------------------------------------------------
+%plot: Example Teacher Impact
+%-----------------------------------------------
+
+\begin{frame}{Example Teacher Impact} 
+
+\centering
+
+\includegraphics[width=.85\linewidth]{slides/Figures/teacher_impact_kernal_noise.png}
+
+\end{frame}
+
+%------------------------------------------------
+%plot: Average Teacher Impact
+%-----------------------------------------------
+
+\begin{frame}{Average Teacher Impact}
+
+\centering
+
+\includegraphics[width=.85\linewidth]{slides/Figures/Average_teacher_impact_kernal.png}
+
+\end{frame}
+
+%------------------------------------------------
+% Monte Carlo 
+%-----------------------------------------------
+\begin{frame}{Monte Carlo Simulation: Calibration}
+\begin{wideitemize}
+\item Test the performance of our welfare added estimates against Standard VA
+\item Metrics compared to True Welfare Weighted teacher impact
 \begin{itemize}
-    \item
-    \item 
+        \item Teacher impact times weight using simulated student ability (rather than test 1)
 \end{itemize}
-\item
+\item 10,000 simulations 
+\item 100 students per teacher 
+\item 132 teachers 
+\item 13,200 students
 \end{wideitemize}
 \end{frame}
+
+
+%------------------------------------------------
+%plot: Linear weight
+%-----------------------------------------------
+
+\begin{frame}{Linear Weights} 
+
+\centering
+
+\includegraphics[width=.85\linewidth]{slides/Figures/linear_weight.png}
+
+\end{frame}
+
+%------------------------------------------------
+%plot: Linear caterpillar plots 
+%-----------------------------------------------
+
+\begin{frame}{Linear Weights: Welfare Added Estimates} 
+
+\centering
+ \includegraphics[width=0.475\textwidth]{slides/Figures/standard_Linear_caterpillar.png}
+  \includegraphics[width=0.475\textwidth]{slides/Figures/ww_Linear_caterpillar.png}
+\end{frame}
+
+%------------------------------------------------
+%figures: Linear histogram and sum stats 
+%-----------------------------------------------
+
+\begin{frame}{Linear Weight: Performance Indicators} 
+
+\centering
+
+\includegraphics[width=.75\linewidth]{slides/Figures/Histrogram_Linear.png}
+
+\scalebox{.8}{
+    \input{slides/Figures/sum_stats_Linear}
+}
+\end{frame}
+
+
+%------------------------------------------------
+%plot: rawlsian weight
+%-----------------------------------------------
+
+\begin{frame}{Rawlsian Weights}
+
+\centering
+
+\includegraphics[width=.85\linewidth]{slides/Figures/rawlsian_weight.png}
+
+\end{frame}
+
+%------------------------------------------------
+%plot: rawlsian caterpillar plots 
+%-----------------------------------------------
+
+\begin{frame}{Rawlsian Weights: Welfare Added} 
+
+\centering
+ \includegraphics[width=0.475\textwidth]{slides/Figures/standard_rawlsian_caterpillar.png}
+  \includegraphics[width=0.475\textwidth]{slides/Figures/ww_rawlsian_caterpillar.png}
+\end{frame}
+
+
+%------------------------------------------------
+%figures: rawlsian histogram and sum stats 
+%-----------------------------------------------
+
+\begin{frame}{Rawlsian Weights: Performance Indicators} 
+
+\centering
+
+\includegraphics[width=.75\linewidth]{slides/Figures/Histrogram_rawlsian.png}
+
+\scalebox{.8}{
+    \input{slides/Figures/sum_stats_rawlsian}
+}
+\end{frame}
+
+%------------------------------------------------
+%plot: Kernal weight
+%-----------------------------------------------
+
+\begin{frame}{Triangular Weights}
+
+\centering
+
+\includegraphics[width=.85\linewidth]{slides/Figures/Kernal_weight.png}
+
+\end{frame}
+
+
+%------------------------------------------------
+%plot: Kernal caterpillar plots 
+%-----------------------------------------------
+
+\begin{frame}{VA Results: Triangular Weights} 
+
+\centering
+ \includegraphics[width=0.475\textwidth]{slides/Figures/standard_Kernal_caterpillar.png}
+  \includegraphics[width=0.475\textwidth]{slides/Figures/ww_Kernal_caterpillar.png}
+\end{frame}
+
+%------------------------------------------------
+%figures: Kernal histogram and sum stats 
+%-----------------------------------------------
+
+\begin{frame}{VA results: Triangular Weights} 
+
+\centering
+
+\includegraphics[width=.75\linewidth]{slides/Figures/Histrogram_Kernal.png}
+
+\scalebox{.8}{
+    \input{slides/Figures/sum_stats_Kernal}
+}
+\end{frame}
+
+
+%------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------------
+% stress test 
+%------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------------
+\section{Stress Test Weighted VAM}
+
+
 %------------------------------------------------
 %plot 
 %-----------------------------------------------
 
-\begin{frame}{[Plot corr($VA$,$\hat{VA}$) against var($\eta_{it}$)]} % or \mu_{jt}?
+\begin{frame}{WLS Measures Welfare Best When Pooling Across Years}
+\vfill
 
-\centering
-\scalebox{.8}{\parbox{\linewidth}{%   
-    \begin{align*}
-    estimating equation
-    \end{align*}
-}}
-\includegraphics[width=.85\linewidth]{Slides/a.pdf}
+\begin{figure}
+    \includegraphics[width=.3\textwidth]{slides/Figures/Histrogram_rawlsian_Students_15.png}\hfill
+    \includegraphics[width=.3\textwidth]{slides/Figures/Histrogram_rawlsian_Students_30.png}\hfill
+    \includegraphics[width=.3\textwidth]{slides/Figures/Histrogram_rawlsian_Students_60.png}\hfill
+    \\ \vspace{1em}
+    \includegraphics[width=.3\textwidth]{slides/Figures/Histrogram_rawlsian_Students_100.png}\hfill
+    \includegraphics[width=.3\textwidth]{slides/Figures/Histrogram_rawlsian_Students_140.png}\hfill
+    \includegraphics[width=.3\textwidth]{slides/Figures/Histrogram_rawlsian_Students_200.png}\hfill
+\end{figure}
 
-\end{frame}
-
-%------------------------------------------------
-%plot 
-%-----------------------------------------------
-
-\begin{frame}{[Plot pct $\hat{VA}$ outside of 95\% CI of lowest) against var($\eta_{it}$) or $\mu_{jt}$?]} 
-\centering
-\scalebox{.8}{\parbox{\linewidth}{%   
-    \begin{align*}
-    estimating equation
-    \end{align*}
-}}
-\includegraphics[width=.85\linewidth]{Slides/a.pdf}
+\vfill
 
 \end{frame}
 
 
-%----------------------------------
-% Method Two: Kernel Regression
-%------------------------------------
 
-\begin{frame}{Weighted VAM: Kernel Regression}
+%-------------------------------------------------------------
+\begin{frame}{Measure Welfare Best When Pooling Across Years}
+\vfill
 
-\begin{wideitemize}
-
-    \item Assuming continuity, the best estimate for the value of $y$ at a point $x$,  is using a kernel
-    \item Kernel weighting has a theoretical analogue: 
-    \begin{itemize}
-        \item The welfare for a SP who only cares about students at $x$ (but doesn't observe types)
-    \end{itemize}
- 
-    
-    % I'm not sure technically how to implement this.. Is it E[Y|\hat{Y}] for each D?
-    \item ... \citep{}
-    \begin{itemize}
-        \item Predict $y$ with $X$ and lagged $y$ and assign $\hat{y}$
-        \item For each $j$ estimate $\mathbb{E}[y|\hat{y}]$ nonparametrically
-    \end{itemize}
-
-    \item Not re-estimating the model under different weights (or objective functions)
-    \item More data hungry \color{gray}{(when to talk about heterogeneity vs changes over time?)
-    \item Bandwidth selection...? (Also a place to talk about measuring scores in pctle vs $\sigma$?)}
-
-\end{wideitemize}
-\end{frame}
-
-%----------------------------------
-% Plot 
-%--------------------------------------
-\begin{frame}{[Plot estimate against the truth for one or two sets of weights ]} 
-\centering
-\scalebox{.8}{\parbox{\linewidth}{%   
-    \begin{align*}
-    estimating equation
-    \end{align*}
-}}
-\includegraphics[width=.85\linewidth]{Slides/a.pdf}
-
-\end{frame}
-
-%----------------------------------
-% Plot 
-%--------------------------------------
-\begin{frame}{[Plot corr(VA(W),$\hat{VA}(W)$) over $W$]} 
-\centering
-\scalebox{.8}{\parbox{\linewidth}{%   
-    \begin{align*}
-    estimating equation
-    \end{align*}
-}}
-\includegraphics[width=.85\linewidth]{Slides/a.pdf}
-
-\end{frame}
-
-%----------------------------------
-% Plot 
-%--------------------------------------
-\begin{frame}{[Caterpillar Plot (for what weight?)]}
-
-\centering
-\scalebox{.8}{\parbox{\linewidth}{%   
-    \begin{align*}
-    estimating equation
-    \end{align*}
-}}
-\includegraphics[width=.85\linewidth]{Slides/a.pdf}
-
-\end{frame}
-
-%----------------------------------
-% Plot 
-%--------------------------------------
-\begin{frame}{[Plot number of rank inversions (or square loss) over $W$}
-
-\centering
-\scalebox{.8}{\parbox{\linewidth}{%   
-    \begin{align*}
-    estimating equation
-    \end{align*}
-}}
-\includegraphics[width=.85\linewidth]{Slides/a.pdf}
-
-\end{frame}
-
-%----------------------------------
-% Plot 
-%--------------------------------------
-\begin{frame}{[Some figures (and or tables) exploring how $\mathbb{E}[N_j]$ and var($\eta$) ]}
-
-\centering
-%\includegraphics[width=.9\linewidth]{Slides/}
-
+\begin{figure}
+    % Caterpillar Graph?
+    \only<1>{
+    \includegraphics[width=.45\textwidth]{slides/Figures/ww_rawlsian_caterpillar30.pdf}\hfill
+    \includegraphics[width=.45\textwidth]{slides/Figures/ww_rawlsian_caterpillar60.pdf}}
+    %\includegraphics[width=.3\textwidth]{slides/Figures/Histrogram_rawlsian_Students_60.png}\h
+    %\\
+    \only<2>{
+    \includegraphics[width=.45\textwidth]{slides/Figures/ww_rawlsian_caterpillar100.pdf}\hfill
+    \includegraphics[width=.45\textwidth]{slides/Figures/ww_rawlsian_caterpillar200.pdf}}
+    %\includegraphics[width=.3\textwidth]{slides/Figures/Histrogram_rawlsian_Students_200.png}\hfill
+\end{figure}
+\vfill
 \end{frame}
 
 
-%----------------------------------
-% Method three: Quantile Regression
-%--------------------------------------
-\begin{frame}{Weighted VAM: Quantile Regression}
+%-------------------------------------------------------------
+% Did we want a frame showing that once there are a lot of students var(e_it) doesn't matter? We could just say it.
 
-\begin{wideitemize}
-
-    \item Quantile regressions recover the ... \citep{}
-    \begin{enumerate}
-        %\item Predict $y$ with $X$ and lagged $y$ and assign $\hat{y}$
-        \item Estimate the effect of teachers $D_j$ at the $p$th quantile (conditional on X)
-        % There is a tension here about whether we want the Xs to be evaluated at the given quantile or not...
-        %\item \color{gray}{or Use Frisch-Waugh-Lovell to partial out mean predictors then estimate effects of teachers on students at the (unconditional) $p$th quantile]?}
-        
-    \end{enumerate}
-    \item {\color{gray}{Is it really that simple?}}
-    \item Would the SP care about conditioning on X at the $p$th quantile or on average?
-    \item How to estimate many fixed effects in quantile models? 
-    \item Conditional quantile on $X$ needed, but not on $D$? or also on $D$?
-
-\end{wideitemize}
-\end{frame}
 
 %------------------------------------------------------------------------------------------------------
 % CONCLUDING SECTION 
@@ -586,35 +666,28 @@
 \section{Feedback and Next Steps}
 
 %------------------------------------------------
-\begin{frame}{Next Steps}
+\begin{frame}[label=next]{Next Steps}
 
 \begin{wideitemize}
-    \item 
-\end{wideitemize}
-
-\end{frame}
-
-
-%------------------------------------------------
-\begin{frame}{Questions and Feedback}
-
-\begin{wideitemize}
-    \item 
-    \item<2-> 
-    \begin{itemize}
-        \item 
-        \item 
-    \end{itemize}
-    \item<3-> 
-    \vspace{12pt}
-    \item<4-> \textbf{What are your questions, suggestions, and thoughts?} 
+    \item Explore quantile and kernel methods
     
-
+    \hyperlink{methods}{\beamerbutton{Methods}}
+    
+    \item Other checks on method performance (e.g., nonrandom assignment)
+    
+    \item Apply for real data  (Discuss some options)
+    
+    \item All else equal we want to prioritize getting data with
+    \begin{itemize}
+        \item Tests every year (with minimal changes in testing structure)
+        \item As many years as possible (since we want to explore pooling vs time-series)
+        \item Information to control for unobservables \citep[e.g.,][]{schellenberg2020parents}
+    \end{itemize}
+    
+    \item Extensions like teacher effort, teacher PPF, long term effects, policy counterfactuals
 \end{wideitemize}
 
 \end{frame}
-
-
 
 %------------------------------------------------
 
@@ -622,8 +695,8 @@
 \begin{frame}[c]
 \centering
 \Huge{\centerline{To Be Continued...}}
-\normalsize njmather{\fontfamily{qag}\selectfont @}umich.edu
-ricksmi{\fontfamily{qag}\selectfont @}umich.edu
+\normalsize njmather{\fontfamily{qag}\selectfont @}umich.edu \hspace{2em}
+ricksmi{\fontfamily{qag}\selectfont @}umich.edu \hspace{2em} \normalsize teastmond{\fontfamily{qag}\selectfont @}ucsd.edu
 \end{frame}
 
 %------------------------------------------------
@@ -647,14 +720,85 @@ ricksmi{\fontfamily{qag}\selectfont @}umich.edu
 %----------------------------------------------------------------------------------------
 
 
-\begin{frame}{}
+\begin{frame}[label=methods]{Other Methods: Overview}
+
+\begin{wideitemize}
+
+\item WLS has both pros and cons:
+\begin{itemize}
+    \item Intuitive and can estimate both VA heterogeneity and ``welfare added'' % for any welfare function
+    \item The three-step procedure is unwieldy and will make inference challenging
+    %    Especially given  multiple hypothesis tests we'd need to conduct at each point along the achievement distribution on the same data 
+    \item Does it actually work econometrically...? 
+    %(is seemingly unrelated regressions invalidated by reweighting in the second stage?)
+\end{itemize}
+
+\item We propose two other methods that could estimate heterogeneous VAM:
+\begin{itemize}
+    \item Conditional quantile regression
+    \item Semiparametric index model
+\end{itemize}
+
+\end{wideitemize}
 
 \end{frame}
 
 
+%----------------------------------
+% Method two: Quantile Regression
+%--------------------------------------
+\begin{frame}{Other Methods: Conditional Quantile Regression}
 
+\begin{wideitemize}
+
+    \item Conditional quantile regressions recover the ... \citep{}
+    
+    \item Simpler estimation procedure
+    \begin{enumerate}
+        \item Estimate the effect of teachers, $D_j$, at each conditional quantile ($p$)
+        % There is a tension here about whether we want the Xs to be evaluated at the given quantile or not...
+        %\item \color{gray}{or Use Frisch-Waugh-Lovell to partial out mean predictors then estimate effects of teachers on students at the (unconditional) $p$th quantile]?}
+        \item Integrate over the effects using desired welfare weights
+    \end{enumerate}
+
+    \item Intuitive analogue to VAM methods that residualize out $X_i$ and run VAM on residuals
+    
+    \item Now the effect of $X_i$ is also being evaluated at the $p$th quantile (not the mean)...
+    
+
+\end{wideitemize}
+\end{frame}
+
+%----------------------------------
+% Method Three: Kernel Regression
+%------------------------------------
+
+\begin{frame}{Other Methods: Semiparametric Index Model}
+
+\begin{wideitemize}
+
+    \item This method flows (most) directly from the SP motivation about weights
+    
+    \item  Nonparametrically identify teacher $j$'s effects over the achievement distribution
+    \begin{itemize}
+        \item Estimate $y_i = g_j(\beta X_i) +e_i$ using (or adapting?) Ichimura's method \citep{ichimura1993semiparametric}
+        \item Integrate over the effects using desired welfare weights
+    \end{itemize}
+    
+    \item Intuitive analogue: predict $\hat{y_i}$ then estimate $\mathbb{E}[y_i|\hat{y_i},j=j']$ for each teacher $j'$
+
+    \item This will probably only work if we pool over years
+    \item Bandwidth selection...? 
+    %(Also a place to talk about measuring scores in pctle vs $\sigma$?)
+
+\end{wideitemize}
+
+\vfill
+\begin{flushleft}
+
+\hyperlink{next}{\beamerbutton{Back}}
+\end{flushleft}
+\end{frame}
 
 \end{document}
-
-
 
