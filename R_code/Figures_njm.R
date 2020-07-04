@@ -370,7 +370,7 @@ r_dt <- simulate_test_data(n_schools               = 67,
       geom_histogram( aes(baseline_count_num, fill = "Standard"), alpha = .4, colour="black", binwidth = b_width) +
       geom_histogram( aes(weighted_count_num, fill = "Weighted"), alpha = .4, colour="black", binwidth = b_width) +
       ylab("Number of Teachers") +
-      xlab("Difference in Rank From Truth") +
+      xlab("Difference in Rank From Truth")+
       scale_fill_manual(values= c("#77AADD", "#EE8866")) +
       plot_attributes + 
       theme(legend.title = element_blank(),
@@ -489,7 +489,7 @@ r_dt <- simulate_test_data(n_schools               = 67,
         geom_histogram( aes(weighted_count_num, fill = "Weighted"), alpha = .4, colour="black", binwidth = b_width) +
         ggtitle(paste0(value," ", statistic)) + 
         ylab("Number of Teachers") +
-        xlab("Difference in Rank From Truth") +
+        xlab("Difference in Rank From Truth")+
         scale_fill_manual(values= c("#77AADD", "#EE8866")) +
         scale_x_continuous(limits = c(-3,130)) +
         ylim(0,70) +
@@ -516,5 +516,83 @@ r_dt <- simulate_test_data(n_schools               = 67,
     res <- lapply(stress_data_ls, histogram_stress_fun)
     
     
+    #==================================#
+    # ==== stress test catarpillar ====
+    #==================================#
+    # These should really be combined with the functions above but THIS IS LASY MINUTE STUF 
+    # function to make WW caterpillar plots and save them 
+    cat_plottR_ww_stress <- function(in_data){
+      
+      # grab data info
+      weight_type <- unique(in_data$weight_type)
+      statistic <- unique(in_data$statistic)
+      value <- unique(in_data$value)
+      
+      setorder(in_data, mean_weighted_norm)
+      in_data[, ww_id :=.I]
+      in_data[, ww_lc := mean_weighted_norm - 1.96*sd_weighted_norm]
+      in_data[, ww_uc := mean_weighted_norm + 1.96*sd_weighted_norm]
+
+      ww_cat_plot <- ggplot(in_data, aes(x = tid, y = mean_weighted_norm)) +
+        geom_point(aes(color = "Weighted VA"), size = 5,  alpha = 1) + 
+        geom_point(aes( y = true_ww,  color = "Truth"),size = 4, alpha = .4) +
+        scale_color_manual(values= c("#77AADD", "#ffaabb"),
+                           guide=guide_legend(reverse=TRUE)) +
+        geom_errorbar(aes(ymin=ww_lc, ymax=ww_uc), width= 1, color = "#ffaabb") +
+        ylab("WLS Welfare Added") + 
+        xlab("True Teacher Order") +
+        ggtitle(paste0(value," ", statistic))+
+        ylim(-6,6)+
+        xlim(0,150)+
+        plot_attributes +
+        theme(legend.title = element_blank(),
+              legend.position = c(0.8, 0.8))
+      # save plot  
+      png(paste0(paste0(out_plot,"ww_", weight_type, "_",statistic, "_",value, "_caterpillar.png")),
+          height = 1500, width = 1500, type = "cairo")
+      print(ww_cat_plot)
+      dev.off()  
+      
+      return(ww_cat_plot)
+      
+    }
+    res_ww_cat <- lapply(stress_data_ls, cat_plottR_ww_stress)
     
+    
+    cat_plottR_st_stress <- function(in_data){
+      
+      # grab data info
+      weight_type <- unique(in_data$weight_type)
+      statistic <- unique(in_data$statistic)
+      value <- unique(in_data$value)
+      
+      setorder(in_data, mean_standard_norm)
+      in_data[, standard_id :=.I]
+      in_data[, standard_lc := mean_standard_norm - 1.96*sd_standard_norm]
+      in_data[, standard_uc := mean_standard_norm + 1.96*sd_standard_norm]
+      weight_type <- unique(in_data$weight_type)
+      
+      ww_cat_plot <- ggplot(in_data, aes(x = tid, y = mean_standard_norm)) +
+        geom_point(aes(color = "Standard VA"), size = 5,  alpha = 1) + 
+        geom_point(aes( y = true_ww,  color = "Truth"),size = 4, alpha = .4) +
+        scale_color_manual(values= c("#ffaabb", "#77AADD")) +
+        geom_errorbar(aes(ymin=standard_lc, ymax=standard_uc), width= 1, color = "#ffaabb") +
+        ylab("Value Added") + 
+        xlab("True Teacher Order") +
+        ggtitle(paste0(value," ", statistic))+
+        ylim(-6,6)+
+        xlim(0,150)+
+        plot_attributes +
+        theme(legend.title = element_blank(),
+              legend.position = c(0.8, 0.8))
+      # save plot  
+      png(paste0(paste0(out_plot,"st_", weight_type, "_",statistic, "_",value, "_caterpillar.png")),
+          height = 1500, width = 1500, type = "cairo")
+      print(ww_cat_plot)
+      dev.off()  
+      
+      return(ww_cat_plot)
+      
+    }
+    res_st_cat <- lapply(stress_data_ls, cat_plottR_st_stress)
     
