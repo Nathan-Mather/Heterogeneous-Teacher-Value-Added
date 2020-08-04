@@ -40,17 +40,15 @@ out_plot <- "c:/Users/Nmath_000/Documents/data/Value Added/"
 eps_steps <- seq(0,2,by=.01)
 counter <- 0
 correlation <- rep(0,length(eps_steps))
-for (var in eps_steps)
+for (var_i in eps_steps)
 {
   counter <- counter + 1
   
   # === generate simulated data ===
-  r_dt <- simulate_test_data(n_schools               = 20,
-                           min_stud                = 200,
-                           max_stud                = 200, 
+  r_dt <- simulate_test_data(n_teacher               = 160,
                            n_stud_per_teacher      = 25,
                            test_SEM                = .07,
-                           teacher_va_epsilon      = var,
+                           teacher_va_epsilon      = var_i,
                            teacher_ability_drop_off = .25)
 
 
@@ -102,17 +100,15 @@ print(diog_plot1)
 eps_steps <- seq(0,2,by=.01)
 counter <- 0
 pct_above <- rep(0,length(eps_steps))
-for (var in eps_steps)
+for (var_i in eps_steps)
 {
   counter <- counter + 1
   
   # === generate simulated data ===
-  r_dt <- simulate_test_data(n_schools               = 20,
-                             min_stud                = 200,
-                             max_stud                = 200, 
+  r_dt <- simulate_test_data(n_teacher               = 160,
                              n_stud_per_teacher      = 25,
                              test_SEM                = .07,
-                             teacher_va_epsilon      = var,
+                             teacher_va_epsilon      = var_i,
                              teacher_ability_drop_off = .25)
   
   

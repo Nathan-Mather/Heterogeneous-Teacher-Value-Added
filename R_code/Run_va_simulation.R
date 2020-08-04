@@ -57,9 +57,7 @@ source("~/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Val
 #===================#
 
 # generate simulated data. do a very small sample so stuff runs quickly 
-r_dt <- simulate_test_data(n_schools               = 20,
-                           min_stud                = 200,
-                           max_stud                = 200, 
+r_dt <- simulate_test_data(n_teacher               = 140,
                            n_stud_per_teacher      = 30,
                            test_SEM                = .07,
                            teacher_va_epsilon      = .1,

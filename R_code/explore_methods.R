@@ -29,9 +29,7 @@ library(quantreg)
 
 
 # === generate simulated data for one teacher over ~7 years (with high dropoff for visualization ) ===
-r_dt <- simulate_test_data(n_schools               = 1,
-                           min_stud                = 200,
-                           max_stud                = 200, 
+r_dt <- simulate_test_data(n_teacher               = 1,
                            n_stud_per_teacher      = 200,
                            test_SEM                = .07,
                            teacher_va_epsilon      = .1,
@@ -73,9 +71,7 @@ abline(-.25,1)
 n=20
 
 # === generate simulated data over ~7 years ===
-r_dt <- simulate_test_data(n_schools               = 20,
-                           min_stud                = 200,
-                           max_stud                = 200, 
+r_dt <- simulate_test_data(n_teacher               = 20,
                            n_stud_per_teacher      = 200,
                            test_SEM                = .07,
                            teacher_va_epsilon      = .1,

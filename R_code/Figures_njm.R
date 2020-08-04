@@ -86,9 +86,7 @@ plot_attributes <- theme_classic() +
 # ==== Single simulation plots ====
 #==================================#
 set.seed(123)
-r_dt <- simulate_test_data(n_schools               = 67,
-                           min_stud                = 200,
-                           max_stud                = 200, 
+r_dt <- simulate_test_data(n_teacher               = 140,
                            n_stud_per_teacher      = 100,
                            test_SEM                = .07,
                            teacher_va_epsilon      = teacher_va_epsilon,

@@ -64,9 +64,7 @@ teacher_va_epsilon = .05
 # ================== #
 
 # generate simulated data. do a very small sample so stuff runs quickly 
-r_dt <- simulate_test_data(n_schools               = round((133*num_students)/200),
-                           min_stud                = 200,
-                           max_stud                = 200, 
+r_dt <- simulate_test_data(n_teacher               = 140,
                            n_stud_per_teacher      = num_students,
                            test_SEM                = .07,
                            teacher_va_epsilon      = teacher_va_epsilon,
@@ -114,7 +112,7 @@ out <- foreach(i = 1:nsims, .combine = 'comb', .multicombine = TRUE) %dopar% { #
   # I need this for it to work on windows clusters since libraries arent recognized on every cluseter
   require(data.table)
   # Resample the student data
-  r_dt <- simulate_test_data(teacher_dt = r_dt[, c("school", "teacher_id", "teacher_ability", "teacher_center")])
+  r_dt <- simulate_test_data(teacher_dt = r_dt[, c( "teacher_id", "teacher_ability", "teacher_center")])
 
   # First run the standard VA 
   # run regression 

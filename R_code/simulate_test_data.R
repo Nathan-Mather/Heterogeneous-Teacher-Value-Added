@@ -68,8 +68,7 @@ library(data.table)
   # uncomment the chunk by highlighting and hitting ctrl+shift+c
   #
   # n_schools                = 20
-  # min_stud                 = 200
-  # max_stud                 = 200
+  # n_teacher                = 140
   # n_stud_per_teacher       = 30
   # test_SEM                 = .07
   # teacher_va_epsilon       = .1
@@ -84,53 +83,26 @@ library(data.table)
   #==========================#
   
   # start of the function
-  simulate_test_data <- function(n_schools                = 20,
-                                 min_stud                 = 200,
-                                 max_stud                 = 200, 
+  simulate_test_data <- function(n_teacher                = 140,
                                  n_stud_per_teacher       = 30,
                                  test_SEM                 = .07,
                                  teacher_va_epsilon       = .1,
                                  teacher_ability_drop_off = .15,
                                  teacher_dt               = NULL,
-                                 school_id                = "school",
                                  teacher_id               = "teacher_id",
                                  teacher_ability          = "teacher_ability",
                                  teacher_center           = "teacher_center"){
     
     # Generate the teacher information if not provided.
     if (is.null(teacher_dt)) {
-      # generate an empty list to fill in with schools 
-      r_dt <- vector("list", length = n_schools)
       
-      # fill in schools data.tables with random numbers of rows (students)
-      for(i in 1:n_schools){
-        
-        r_dt[[i]] <- data.table(school = rep(i,  round(runif(1,  min_stud, max_stud))))
-        
-      }
+      # generate data of proper length with students 
+      r_dt <- data.table(stud_id = 1:(n_teacher*n_stud_per_teacher))
       
-      # stack up lists into one data.table 
-      r_dt <- rbindlist(r_dt)
-      
-      # add students 
-      r_dt[, stud_id := .I]
-      
-      # now assign teachers within school 
-      # start by getting the number of teachers needed per school 
-      r_dt[, teach_needed := ceiling(.N/n_stud_per_teacher) , school]
-      
-      # now get the number of students per teacher 
-      r_dt[, stud_per_teach := ceiling(.N/teach_needed) , school]
-      
-      # now fill in teacher ID by repeating the number 1 to teach_needed, stud_per_teach times and cut off the vector at .N in each school
-      r_dt[, teacher_id := unlist(lapply(1:unique(teach_needed), rep, unique(stud_per_teach)))[1:.N], school]
-      
-      # update teacher Id to be unique combo of teacher number and school number 
-      r_dt[, teacher_id := paste0(school, "_", teacher_id)]
-      
-      # drop extra vars
-      r_dt[, c("teach_needed", "stud_per_teach") := NULL]
-      
+      # assign teachers 
+      teach_vector <- unlist(lapply(1:n_teacher, rep, times =  n_stud_per_teacher))
+      r_dt[, teacher_id := teach_vector]
+  
       # assign teacher's an overall ability. and a "center" where they perform best 
       r_dt[, teacher_ability := rnorm(1, mean =0, sd = .1), teacher_id]
       r_dt[, teacher_center := rnorm(1, mean =0, sd = 1), teacher_id]
@@ -141,9 +113,12 @@ library(data.table)
       
       # Rename columns as needed
       setnames(r_dt, 
-               old = c(school_id, teacher_id, teacher_ability, teacher_center), 
-               new = c("school", "teacher_id", "teacher_ability", "teacher_center"))
+               old = c(teacher_id, teacher_ability, teacher_center), 
+               new = c( "teacher_id", "teacher_ability", "teacher_center"))
 
+      # grab needed vars 
+      r_dt <- r_dt[, c( "teacher_id", "teacher_ability", "teacher_center")]
+      
       # add students 
       r_dt[, stud_id := .I]
     }
