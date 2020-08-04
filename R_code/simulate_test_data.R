@@ -67,19 +67,18 @@ library(data.table)
   # and then run the function line by line.
   # uncomment the chunk by highlighting and hitting ctrl+shift+c
   #
-  #   # parameters for school, teacher sizes
-    #note: for now just doing one grade
-  #   n_schools = 20             # number of schools
-  #   min_stud  = 200           # minimum students per school
-  #   max_stud  = 200       # maximum number of students
-  #   n_stud_per_teacher = 30      # goal number of students per teacher
-  # 
-  # #   # parameters for test
-  #   test_SEM = .07 # this is a complete guess at this point. Need to brush up on psychometrics
-  # 
-  #   # uncertainty for teacher ability translating into student growth
-  # teacher_va_epsilon  = .1
-  # teacher_ability_drop_off     = .15
+  # n_schools                = 20
+  # min_stud                 = 200
+  # max_stud                 = 200
+  # n_stud_per_teacher       = 30
+  # test_SEM                 = .07
+  # teacher_va_epsilon       = .1
+  # teacher_ability_drop_off = .15
+  # teacher_dt               = NULL
+  # school_id                = "school"
+  # teacher_id               = "teacher_id"
+  # teacher_ability          = "teacher_ability"
+  # teacher_center           = "teacher_center"
   #==========================#
   # ==== Define Function ====
   #==========================#
@@ -138,14 +137,13 @@ library(data.table)
       
     } else {
       # Create the data table
-      r_dt = teacher_dt
+      r_dt <- copy(teacher_dt)
       
       # Rename columns as needed
-      names(r_dt)[names(r_dt) == school_id] <- "school"
-      names(r_dt)[names(r_dt) == teacher_id] <- "teacher_id"
-      names(r_dt)[names(r_dt) == teacher_ability] <- "teacher_ability"
-      names(r_dt)[names(r_dt) == teacher_center] <- "teacher_center"
-      
+      setnames(r_dt, 
+               old = c(school_id, teacher_id, teacher_ability, teacher_center), 
+               new = c("school", "teacher_id", "teacher_ability", "teacher_center"))
+
       # add students 
       r_dt[, stud_id := .I]
     }
