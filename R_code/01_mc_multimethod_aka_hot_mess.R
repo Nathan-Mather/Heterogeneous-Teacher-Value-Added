@@ -22,9 +22,9 @@ if(my_wd %like% "Nmath_000"){
 # load packages and our functions 
 library(data.table)
 library(broom)
-source(paste0(base_path, "Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R"))
-source(paste0(base_path, "Heterogeneous-Teacher-Value-Added/R_code/ww_va_function.R"))
-source(paste0(base_path, "Heterogeneous-Teacher-Value-Added/R_code/weighting_functions.R"))
+source(paste0(base_path, "Heterogeneous-Teacher-Value-Added/R_code/functions/simulate_test_data.R"))
+source(paste0(base_path, "Heterogeneous-Teacher-Value-Added/R_code/functions/ww_va_function.R"))
+source(paste0(base_path, "Heterogeneous-Teacher-Value-Added/R_code/functions/weighting_functions.R"))
 library(Matrix)
 library(ggplot2)
 library(doParallel)

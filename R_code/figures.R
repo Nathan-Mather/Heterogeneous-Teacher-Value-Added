@@ -21,8 +21,8 @@ opt_weight_type <- "linear"
 # load packages and our functions 
 library(data.table)
 library(broom)
-source("c:/Users/Nmath_000/Documents/Research/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R")  #set this path
-# source("~/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R")
+source("c:/Users/Nmath_000/Documents/Research/Heterogeneous-Teacher-Value-Added/R_code/functions/simulate_test_data.R")  #set this path
+# source("~/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code/functions/simulate_test_data.R")
 library(Matrix)
 library(ggplot2)
 

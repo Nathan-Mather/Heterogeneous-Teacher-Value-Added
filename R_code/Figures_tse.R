@@ -34,7 +34,7 @@ if(my_wd %like% "Nmath_000"){
 
 }else{
   stress_path <- '/home/tanner/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/stress_test/'
-  out_plot <- "/home/tanner/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code/"
+  out_plot <- "/home/tanner/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code/functions/"
 }
 
 #===========================#

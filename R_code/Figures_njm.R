@@ -30,10 +30,10 @@ my_wd <- getwd()
 if(my_wd %like% "Nmath_000"){
   
   # source simulated data path 
-  source("c:/Users/Nmath_000/Documents/Research/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R") 
+  source("c:/Users/Nmath_000/Documents/Research/Heterogeneous-Teacher-Value-Added/R_code/functions/simulate_test_data.R") 
 
   # source weighting funciton 
-  source("c:/Users/Nmath_000/Documents/Research/Heterogeneous-Teacher-Value-Added/R_code/weighting_functions.R")
+  source("c:/Users/Nmath_000/Documents/Research/Heterogeneous-Teacher-Value-Added/R_code/functions/weighting_functions.R")
   
   # set path for monte carlo data 
   mc_path <- "c:/Users/Nmath_000/Documents/data/Value Added/mc_data/"
@@ -48,7 +48,7 @@ if(my_wd %like% "Nmath_000"){
 # tanner  
 }else{
   
-  source("~/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R")
+  source("~/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code/functions/simulate_test_data.R")
   
 }
 

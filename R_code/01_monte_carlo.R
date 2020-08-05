@@ -2,37 +2,50 @@
 # == Run the Monte Carlo Simulation == #
 # ==================================== #
 
+# clear data.
+rm(list = ls(pos = ".GlobalEnv"), pos = ".GlobalEnv")
+# no scientific notation 
+options(scipen = 999)
+# clean console history 
+cat("\f")
+
 # ================ #
 # ==== set up ==== #
 # ================ #
 
-# clear data.
-rm(list = ls(pos = ".GlobalEnv"), pos = ".GlobalEnv")
-options(scipen = 999)
-cat("\f")
 
-# check users (can do something here eventually to automatically pick a user)
+# check users. (NOTE TO MIKE, add something unique to your base working directory to detect when it is your computer)
 my_wd <- getwd()
 if(my_wd %like% "Nmath_000"){
+  # base directory 
   base_path <- "c:/Users/Nmath_000/Documents/Research/"
+  
+  # path for plots to save
+  out_plot <- "c:/Users/Nmath_000/Documents/data/Value Added/"
+  
 }else{
+  # base directory 
   base_path <- "~/Documents/Research/HeterogenousTeacherVA/Git/"
+  
+  # path for plots to save 
+  out_plot <- "~/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code"
+  
 }
 
 # load packages and our functions 
+func_path <- "Heterogeneous-Teacher-Value-Added/R_code/functions/"
+source(paste0(base_path, func_path, "simulate_test_data.R"))
+source(paste0(base_path, func_path, "ww_va_function.R"))
+source(paste0(base_path, func_path, "weighting_functions.R"))
+
 library(data.table)
 library(broom)
-source(paste0(base_path, "Heterogeneous-Teacher-Value-Added/R_code/simulate_test_data.R"))
-source(paste0(base_path, "Heterogeneous-Teacher-Value-Added/R_code/ww_va_function.R"))
-source(paste0(base_path, "Heterogeneous-Teacher-Value-Added/R_code/weighting_functions.R"))
 library(Matrix)
 library(ggplot2)
 library(doParallel)
 library(matrixStats)
 library(doRNG)
 
-#set path for plots to save 
-out_plot <- "~/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code"
 
 # Set parallel options
 if(my_wd %like% "Nmath_000"){
@@ -45,9 +58,12 @@ myCluster <- makeCluster(20, # number of cores to use
 registerDoParallel(myCluster)
 registerDoRNG()
 
-# Set the number of simulations and other options
-nsims = 10
+#=======================#
+# ==== script parms ====
+#=======================#
 set.seed(42)
+
+nsims = 3
 opt_weight_type <-"rawlsian" # "linear" or "rawlsian" or "equal" or "v" or "mr"
 teacher_ability_drop_off = 0.15
 lin_alpha = 2 # For linear weights
