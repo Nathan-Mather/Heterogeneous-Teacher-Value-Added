@@ -101,7 +101,7 @@ library(data.table)
       
       # assign teachers 
       teach_vector <- unlist(lapply(1:n_teacher, rep, times =  n_stud_per_teacher))
-      r_dt[, teacher_id := teach_vector]
+      r_dt[, teacher_id := as.factor(teach_vector)]
   
       # assign teacher's an overall ability. and a "center" where they perform best 
       r_dt[, teacher_ability := rnorm(1, mean =0, sd = .1), teacher_id]

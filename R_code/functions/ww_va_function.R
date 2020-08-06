@@ -98,7 +98,7 @@ ww_va <- function(in_data = NULL,
   #===========================#
   # reorganize them for easier comparison
   ww_va_coef_dt <- data.table(ww_va_coef, keep.rownames = TRUE)
-  colnames(ww_va_coef_dt) <- c(in_teacher_id, "ww_va1")
+  colnames(ww_va_coef_dt) <- c(in_teacher_id, "ww_va")
   ww_va_coef_dt[, (in_teacher_id) := gsub("^d_", "", get(in_teacher_id))]
 
   return(ww_va_coef_dt)

@@ -56,3 +56,42 @@ v_weight_fun <- function(alpha, in_test_1){
   weight <- alpha*abs(in_test_1 - median_score)
 }
 
+
+
+
+# write a function that takes an option and calculates the proper weight 
+ww_general_fun <- function(weight_type  = NULL,
+                           in_test_1    = NULL,
+                           lin_alpha    = NULL,
+                           pctile       = NULL,
+                           v_alpha      = NULL,
+                           mrpctile     = NULL, 
+                           mrdist       = NULL){
+  
+  if(weight_type == "linear"){
+    
+     linear_weight_fun(alpha = lin_alpha, in_test_1 = in_test_1)
+    
+  } else if(weight_type == "rawlsian"){
+  
+     rawlsian_weight_fun(pctile, in_test_1)
+    
+  } else if(weight_type == "equal"){
+    
+    equal_weight_fun(in_test_1)
+    
+  } else if(weight_type == "v"){
+    
+    v_weight_fun(v_alpha, in_test_1)
+    
+  } else if(weight_type == "mr"){
+    
+    mr_weight_fun(mrpctile, mrdist, in_test_1)
+    
+  }
+}
+
+
+
+
+
