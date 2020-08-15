@@ -24,6 +24,7 @@ library(ggplot2)
 library(doParallel)
 library(matrixStats)
 library(doRNG)
+library(readxl)
 
 
 # check users. (NOTE TO MIKE, add something unique to your base working directory to detect when it is your computer)
@@ -33,7 +34,7 @@ if(my_wd %like% "Nmath_000"){
   base_path <- "c:/Users/Nmath_000/Documents/Research/"
   
   # path for data to save
-  out_data <- "c:/Users/Nmath_000/Documents/data/Value Added/"
+  out_data <- "c:/Users/Nmath_000/Documents/data/Value Added/mc_data/"
   
 }else{
   # base directory 
@@ -44,16 +45,23 @@ if(my_wd %like% "Nmath_000"){
   
 }
 
+# load model_xwalk 
+model_xwalk <- data.table(read_excel(paste0(base_path, "Heterogeneous-Teacher-Value-Added/R_code/model_xwalk.xlsx")))
+
 # load our functions now that we have a file path 
 func_path <- "Heterogeneous-Teacher-Value-Added/R_code/functions/"
 source(paste0(base_path, func_path, "simulate_test_data.R"))
 source(paste0(base_path, func_path, "ww_va_function.R"))
 source(paste0(base_path, func_path, "weighting_functions.R"))
+source(paste0(base_path, func_path, "true_ww_impact.R"))
 
 
 #======================#
 # ==== set options ====
 #======================#
+
+# paralell option 
+do_parallel <- FALSE
 
 # Set parallel options
 if(my_wd %like% "Nmath_000"){
@@ -63,13 +71,14 @@ if(my_wd %like% "Nmath_000"){
   myCluster <- makeCluster(20, # number of cores to use
                            type = "FORK") # type of cluster (Must be "PSOCK" on Windows)
 }
-registerDoParallel(myCluster)
-registerDoRNG()
+if(do_parallel){
+  registerDoParallel(myCluster)
+  registerDoRNG()
+}
 
 #====================================#
 # ==== Single Iteration Function ====
 #====================================#
-
 
 # # Single iteration funciton inputs for debug
 # in_dt = r_dt # go down and run the function to get r_dt so you can debug
@@ -134,17 +143,11 @@ single_iteration_fun <- function(in_dt        = NULL,
     # not really a good name anyway 
   }
   
-  
   # Merge on the standard VA
   va_tab1 <- merge(va_tab1, ww_tab1, "teacher_id")
   
-  # mark up the weight type and options involved so we can do stuff by group
-  va_tab1[, weight_type := weight_type]
-  va_tab1[, lin_alpha := lin_alpha]
-  va_tab1[, pctile := pctile]
-  va_tab1[, v_alpha := v_alpha]
-  va_tab1[, mrpctile := mrpctile]
-  va_tab1[, mrdist := mrdist]
+  return(va_tab1[])
+
 }
 
 
@@ -152,77 +155,103 @@ single_iteration_fun <- function(in_dt        = NULL,
 # ==== run monte carlo ====
 #==========================#
 
-# set parameters for this monte carlo run 
-# CODEING NOTE: We could just fill this stuff into every function but some of it gets used twice. 
-# that is an opportunity to miss somthing and make a mistake. It also just makes it annoying
-# to change parameters so lets just set everything here. Might be a way to write the functions 
-# to avoid this but I couldn't figure it out and I dont mind this global parameter type approach. 
-nsims = 3
-p_n_teacher  = 140
-p_num_students = 100
-p_teacher_va_epsilon = .05
-p_teacher_ability_drop_off = 0.15
-p_test_SEM = .07
-p_weight_type = "rawlsian" # "linear" or "rawlsian" or "equal" or "v" or "mr"
-p_method =  "wls" # "wls" or "semip" or "qtle"
-p_pctile = .4
-p_lin_alpha = NULL # For linear weights
-p_v_alpha = NULL # For v weights
-p_mrpctile = NULL # For mr weights
-p_mrdist = NULL # for mr weights
+# i <- 1
 
+# initialize list for MC runs 
+mc_res_list <- vector("list", length = nrow(model_xwalk))
 
-# simulate initial data 
-r_dt <- simulate_test_data(n_teacher               = p_n_teacher,
-                           n_stud_per_teacher      = p_num_students,
-                           test_SEM                = p_test_SEM,
-                           teacher_va_epsilon      = p_teacher_va_epsilon,
-                           teacher_ability_drop_off = p_teacher_ability_drop_off)
+# loop over wxalk to run this 
+for(i in 1:nrow(model_xwalk)){
 
-# Get true WW impact 
-teacher_info <- true_ww_fun(in_dt                    = r_dt,
-                            teacher_ability_drop_off = p_teacher_va_epsilon,
-                            grid_size                = 10000,
-                            weight_type              = p_weight_type,
-                            lin_alpha                = p_lin_alpha,
-                            pctile                   = p_pctile,
-                            v_alpha                  = p_v_alpha,
-                            mrpctile                 = p_mrpctile, 
-                            mrdist                   = p_mrdist)
+  # set parameters for this monte carlo run
+  run_id                     <- model_xwalk[i, run_id]
+  nsims                      <- model_xwalk[i, nsims]
+  p_n_teacher                <- model_xwalk[i, n_teacher]
+  p_n_stud_per_teacher       <- model_xwalk[i, n_stud_per_teacher]
+  p_teacher_va_epsilon       <- model_xwalk[i, teacher_va_epsilon]
+  p_teacher_ability_drop_off <- model_xwalk[i, teacher_ability_drop_off]
+  p_test_SEM                 <- model_xwalk[i, test_SEM]
+  p_weight_type              <- model_xwalk[i, weight_type]
+  p_method                   <- model_xwalk[i, method]
+  p_lin_alpha                <- model_xwalk[i, lin_alpha] # For linear weights
+  p_pctile                   <- model_xwalk[i, pctile] # for rawlsian 
+  p_v_alpha                  <- model_xwalk[i, v_alpha]# For v weights
+  p_mrpctile                 <- model_xwalk[i, mrpctile] # For mr weights
+  p_mrdist                   <- model_xwalk[i, mrdist] # for mr weights
   
+  # simulate initial data 
+  r_dt <- simulate_test_data(n_teacher               = p_n_teacher,
+                             n_stud_per_teacher      = p_n_stud_per_teacher,
+                             test_SEM                = p_test_SEM,
+                             teacher_va_epsilon      = p_teacher_va_epsilon,
+                             teacher_ability_drop_off = p_teacher_ability_drop_off)
+  
+  # Get true WW impact 
+  teacher_info <- true_ww_fun(in_dt                    = r_dt,
+                              teacher_ability_drop_off = p_teacher_va_epsilon,
+                              grid_size                = 10000,
+                              weight_type              = p_weight_type,
+                              lin_alpha                = p_lin_alpha,
+                              pctile                   = p_pctile,
+                              v_alpha                  = p_v_alpha,
+                              mrpctile                 = p_mrpctile, 
+                              mrdist                   = p_mrdist)
+    
+  # run a monte carlo with whatever parameters you want 
+  if(do_parallel){
+    mc_res <- foreach(j = 1:nsims) %dopar% single_iteration_fun(in_dt        = r_dt,
+                                                                weight_type  = p_weight_type,
+                                                                method       = p_method,
+                                                                lin_alpha    = p_lin_alpha,
+                                                                pctile       = p_pctile,
+                                                                v_alpha      = p_v_alpha,
+                                                                mrpctile     = p_mrpctile, 
+                                                                mrdist       = p_mrpctile)
+  }else{
+    mc_res <- foreach(j = 1:nsims) %do% single_iteration_fun(in_dt        = r_dt,
+                                                             weight_type  = p_weight_type,
+                                                             method       = p_method,
+                                                             lin_alpha    = p_lin_alpha,
+                                                             pctile       = p_pctile,
+                                                             v_alpha      = p_v_alpha,
+                                                             mrpctile     = p_mrpctile, 
+                                                             mrdist       = p_mrpctile)
+  }
 
+# stack the results for this run 
+mc_res <- rbindlist(mc_res)
 
-# run a monte carlo with whatever parameters you want 
-mc_res <- foreach(i = 1:nsims) %dopar% single_iteration_fun(in_dt        = r_dt,
-                                                            weight_type  = p_weight_type,
-                                                            method       = p_method,
-                                                            lin_alpha    = p_lin_alpha,
-                                                            pctile       = p_pctile,
-                                                            v_alpha      = p_v_alpha,
-                                                            mrpctile     = p_mrpctile, 
-                                                            mrdist       = p_mrpctile)
+# Get the mean estiamtes for each teacher.The by groups are all descriptive variables 
+mean_tab <- mc_res[, list(mean_standard = mean(estimate),
+                          sd_standard   = sd(estimate),
+                          mean_weighted = mean(ww_va),
+                          sd_weighted   = sd(ww_va)),
+                   by = teacher_id]
 
-# here we could run it with other parameters and just stack the results 
+# add some more indicators 
+mean_tab[, run_id := run_id]
+mean_tab[, nsims := nsims]
+
+# merge on teacher info 
+mean_tab <- merge(mean_tab, teacher_info, "teacher_id")
+
+# put results in a list 
+mc_res_list[[i]] <- mean_tab
+
+# close loop over model 
+}
+
+# Let go of the processors
+if(do_parallel){
+  stopCluster(myCluster)
+}
 
 #=========================#
 # ==== combine results ====
 #=========================#
 
-# stack the results 
-mc_res <- rbindlist(mc_res)
-
-# Get the mean estiamtes for each teacher.The by groups are all descriptive variables 
-by_vars <- setdiff(colnames(mc_res), c("estimate", "ww_va"))
-mean_tab <- mc_res[, list(mean_standard = mean(estimate),
-                          sd_standard   = sd(estimate),
-                          mean_weighted = mean(ww_va),
-                          sd_weighted   = sd(ww_va)), 
-                   by = by_vars]
-
-# merge on teacher info 
-mean_tab <- merge(mean_tab, teacher_info, "teacher_id")
-
-
+  # stack up all the runs 
+  mc_res_full <- rbindlist(mc_res_list)
 
 #===============#
 # ==== save ====
@@ -233,7 +262,7 @@ mean_tab <- merge(mean_tab, teacher_info, "teacher_id")
 date_time <- gsub("-", "_", Sys.time())
 date_time <- gsub(":", "_", date_time)
 date_time <- gsub(" ", "__", date_time)
-write.csv(mean_tab, paste0(out_plot, '/', "mc_results_", date_time,".csv" ))
+write.csv(mc_res_full, paste0(out_data, '/', "mc_results_", date_time,".csv" ))
 
 
 
