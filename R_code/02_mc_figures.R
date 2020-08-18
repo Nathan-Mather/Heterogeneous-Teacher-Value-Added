@@ -1,6 +1,9 @@
-# ======================================= #
-# ==== Generate the Caterpillar Plot ==== #
-# ======================================= ## clear data.
+
+
+#=====================#
+# ==== MC figures ====
+#=====================#
+
 rm(list = ls(pos = ".GlobalEnv"), pos = ".GlobalEnv")
 # no scientific notation 
 options(scipen = 999)
@@ -17,7 +20,7 @@ set.seed(42)
 # load packages 
 library(data.table)
 library(ggplot2)
-
+library(gridExtra)
 
 
 # check users. (NOTE TO MIKE, add something unique to your base working directory to detect when it is your computer)
@@ -29,6 +32,9 @@ if(my_wd %like% "Nmath_000"){
   # path for data to save
   in_data <- "c:/Users/Nmath_000/Documents/data/Value Added/mc_data/"
   
+  # path for plots
+  out_plot <- "c:/Users/Nmath_000/Documents/data/Value Added/mc_plots/"
+  
 }else{
   # base directory 
   base_path <- "~/Documents/Research/HeterogenousTeacherVA/Git/"
@@ -38,442 +44,218 @@ if(my_wd %like% "Nmath_000"){
   
 }
 
+
+#=========================#
+# ==== set plot style ====
+#=========================#
+
+plot_attributes <- theme_classic() + 
+  theme(text = element_text(size= 20),
+        plot.title = element_text(vjust=0, hjust = 0.5, colour = "black",face = "bold", size =25),
+        plot.subtitle = element_text(color = "black",hjust = 0.5, size =25),
+        legend.title = element_text(size=10))
+
+
 #====================#
 # ==== load data ====
 #====================#
 
 # get the most recent data 
 files <- list.files(in_data)
-files <- grep("mc_results_",files, value = TRUE)
-files <- sort(files,decreasing = TRUE)
+res_files <- grep("mc_results_",files, value = TRUE)
+res_files <- sort(res_files,decreasing = TRUE)
 
 # load most recent data 
-res_dt <- fread(paste0(in_data, files[[1]]))
+res_dt <- fread(paste0(in_data, res_files[[1]]))
 
+# load the most recent xwalk corresponding to that data 
+xwalk_files <- grep("mc_xwalk_",files, value = TRUE)
+xwalk_files <- sort(xwalk_files,decreasing = TRUE)
 
-#==============================#
-# ==== Difference measures ====
-#==============================#
+# load most recent xwalk 
+model_xwalk <- fread(paste0(in_data, xwalk_files[[1]]))
 
+# check that the xwalk and data match 
+date_1 <- gsub("mc_xwalk_", "", xwalk_files[[1]])
+date_2 <- gsub("mc_results_", "",  res_files[[1]])
+if(date_1 != date_2) warning("xwalk date and data date don't match. Make sure they actually go together so you dont mislabel graphs")
 
-# Calculate the mean squared distance from the rank of the truth
-res_dt <- res_dt[order(mean_standard_norm)]
-res_dt[, baseline := (.I - teacher_id)^2]
-res_dt[, baseline_count := (.I - teacher_id != 0)]
-res_dt[, baseline_count_num := abs(.I - teacher_id)]
-
-res_dt <- res_dt[order(mean_weighted)]
-res_dt[, weighted := (.I - teacher_id)^2]
-res_dt[, weighted_count := (.I - teacher_id != 0)]
-res_dt[, weighted_count_num := abs(.I - teacher_id)]
-
-# Display the mean squared distance for both
-sum(res_dt$baseline)
-sum(res_dt$weighted)
-
-# Display the number of rank inversions for both
-sum(res_dt$baseline_count)
-sum(res_dt$weighted_count)
-
-#==================#
-# ==== Figures ====
-#==================#
-
-# Histogram of the density and distance of rank inversions
-c1 <- rgb(0, 0, 255,max = 255, alpha = 80, names = "blue")
-c2 <- rgb(0, 255, 0, max = 255, alpha = 80, names = "green")
-
-h1 <- hist(res_dt$baseline_count_num, breaks=seq(0,max(res_dt$baseline_count_num),l=15))
-h2 <- hist(res_dt$weighted_count_num, breaks=seq(0,max(res_dt$weighted_count_num),l=15))
-
-plot(h1, col = c1)
-plot(h2, col = c2, add = TRUE) # Blue is the baseline, green the weighted
-
-#plot(r_dt$stud_ability_1, r_dt$weights_true)
-
-# differences in correlation 
-res_dt[, cor(mean_standard, true_ww)]
-res_dt[, cor(mean_weighted, true_ww)]
-
-# Let go of the processors
-stopCluster(myCluster)
-
-#===================#
-# ==== MC plots ====
-#===================#
-
-# fill in all the weight types 
-mc_linear[, weight_type := "Linear"]
-mc_kernal[, weight_type := "Kernal"]
-mc_rawlsian[, weight_type := "rawlsian"]
-
+if(nrow(model_xwalk) != length(unique(res_dt$run_id))) stop("The Xwalk information does not match up to the data you loaded in")
+  
 #===============================#
 # ==== normalize everything ====
 #===============================#
 
-for( in_data in list(mc_linear,mc_kernal, mc_rawlsian)){
-  # Renormalize everything so they have the same mean and variance
-  in_data[, mean_weighted_norm := (mean_weighted - mean(mean_weighted))/sd(mean_weighted)]
-  in_data[, mean_standard_norm := (mean_standard - mean(mean_standard))/sd(mean_standard)]
-  in_data[, true_ww := (true_ww - mean(true_ww))/sd(true_ww)]
-  
-  # now renormalize standard deviations 
-  in_data[, sd_weighted_norm := sd_weighted/sd(mean_weighted)]
-  in_data[, sd_standard_norm := sd_standard/sd(mean_standard)]
-}
-
-#===============================#
-# ==== standard caterpillar ====
-#===============================#
-
-# function to make standard caterpillar plots and save them 
-cat_plottR_st <- function(in_data){
-  setorder(in_data, mean_standard_norm)
-  in_data[, standard_id :=.I]
-  in_data[, standard_lc := mean_standard_norm - 1.96*sd_standard_norm]
-  in_data[, standard_uc := mean_standard_norm + 1.96*sd_standard_norm]
-  weight_type <- unique(in_data$weight_type)
-  
-  standard_cat_plot <- ggplot(in_data, aes(x = tid, y = mean_standard_norm)) +
-    geom_point(size = 5, aes(color = "Standard VA"), alpha = 1) + 
-    geom_point(aes( y = true_ww,  color = "Truth"),size = 4, alpha = .4) +
-    scale_color_manual(values= c("#ffaabb", "#77AADD")) +
-    geom_errorbar(aes(ymin=standard_lc, ymax=standard_uc), width= 1, color = "#ffaabb") +
-    ylab("Traditional Value Added") + 
-    xlab("True Teacher Order") +
-    ylim(-6,6)+
-    plot_attributes + 
-    theme(legend.title = element_blank(),
-          legend.position = c(0.8, 0.8))
-  
-  # save plot  
-  png(paste0(paste0(out_plot,"standard_", weight_type, "_caterpillar.png")),
-      height = 1500, width = 1500, type = "cairo")
-  print(standard_cat_plot)
-  dev.off()  
-  
-  return(standard_cat_plot)
-  
-}
-
-# run this. Would be easier to lapply over a list but already set up with way...
-cat_plottR_st(mc_linear)
-cat_plottR_st(mc_kernal)
-cat_plottR_st(mc_rawlsian)
-
-
-#=========================#
-# ==== ww caterpillar ====
-#=========================#
-# function to make WW caterpillar plots and save them 
-cat_plottR_ww <- function(in_data){
-  setorder(in_data, mean_weighted_norm)
-  in_data[, ww_id :=.I]
-  in_data[, ww_lc := mean_weighted_norm - 1.96*sd_weighted_norm]
-  in_data[, ww_uc := mean_weighted_norm + 1.96*sd_weighted_norm]
-  weight_type <- unique(in_data$weight_type)
-  
-  ww_cat_plot <- ggplot(in_data, aes(x = tid, y = mean_weighted_norm)) +
-    geom_point(aes(color = "Weighted VA"), size = 5,  alpha = 1) + 
-    geom_point(aes( y = true_ww,  color = "Truth"),size = 4, alpha = .4) +
-    scale_color_manual(values= c("#77AADD", "#ffaabb"),
-                       guide=guide_legend(reverse=TRUE)) +
-    geom_errorbar(aes(ymin=ww_lc, ymax=ww_uc), width= 1, color = "#ffaabb") +
-    ylab("WLS Welfare Added") + 
-    xlab("True Teacher Order") +
-    ylim(-6,6)+
-    xlim(0,150)+
-    plot_attributes +
-    theme(legend.title = element_blank(),
-          legend.position = c(0.8, 0.8))
-  # save plot  
-  png(paste0(paste0(out_plot,"ww_", weight_type, "_caterpillar.png")),
-      height = 1500, width = 1500, type = "cairo")
-  print(ww_cat_plot)
-  dev.off()  
-  
-  return(ww_cat_plot)
-  
-}
-
-# run this. Would be easier to lapply over a list but already set up with way...
-cat_plottR_ww(mc_linear)
-cat_plottR_ww(mc_kernal)
-cat_plottR_ww(mc_rawlsian)
-
-#======================================#
-# ==== histogram and summary stats ====
-#======================================#
-
-histogram_sum_Stat_fun <- function(in_data){
-  
-  # grab weight type 
-  weight_type <- unique(in_data$weight_type)
-  
-  # Calculate the mean squared distance from the rank of the truth
-  setorder(in_data, mean_standard_norm)
-  in_data[, baseline := (.I - tid)^2]
-  in_data[, baseline_count := (.I - tid != 0)]
-  in_data[, baseline_count_num := abs(.I - tid)]
-  
-  setorder(in_data, mean_weighted_norm)
-  in_data[, weighted := (.I - tid)^2]
-  in_data[, weighted_count := (.I - tid != 0)]
-  in_data[, weighted_count_num := abs(.I - tid)]
-  
-  # start a data.table of results 
-  sum_stats <- list()
-  sum_stats[[1]] <- data.table(Statistic = "Mean Squared Distance", 
-                               Standard = mean(in_data$baseline),
-                               Weighted = mean(in_data$weighted))
-  
-  sum_stats[[2]] <- data.table(Statistic = "Mean Absolute Distance", 
-                               Standard =  mean(in_data$baseline_count_num),
-                               Weighted =  mean(in_data$weighted_count_num))
-  
-  
-  sum_stats[[3]] <- data.table(Statistic = "Correlation to Truth", 
-                               Standard =  cor(in_data$mean_standard_norm, in_data$true_ww),
-                               Weighted = cor(in_data$mean_weighted_norm, in_data$true_ww))
-  
-  
-  out_sum_stats <- rbindlist(sum_stats)
-  # save summ stats as latex table 
-  print(xtable(out_sum_stats, type = "latex"),
-        file = paste0(out_plot,"sum_stats_", weight_type, ".tex"),
-        include.rownames = FALSE,
-        floating = FALSE)
-  
-  # Histogram of the density and distance of rank inversions
-  # set binwidth parm
-  b_width <- 3
-  
-  out_histogram <- ggplot(in_data) + 
-    geom_histogram( aes(baseline_count_num, fill = "Standard"), alpha = .4, colour="black", binwidth = b_width) +
-    geom_histogram( aes(weighted_count_num, fill = "Weighted"), alpha = .4, colour="black", binwidth = b_width) +
-    ylab("Number of Teachers") +
-    xlab("Difference in Rank From Truth")+
-    scale_fill_manual(values= c("#77AADD", "#EE8866")) +
-    plot_attributes + 
-    theme(legend.title = element_blank(),
-          legend.position = c(0.8, 0.8),
-          legend.key.size = unit(4, "cm"))
-  
-  # save plot  
-  png(paste0(paste0(out_plot,"Histrogram_", weight_type, ".png")),
-      height = 1100, width = 2300, type = "cairo")
-  print(out_histogram)
-  dev.off()  
-  
-  # LIST OF OUTPUT 
-  out_list <- list()
-  out_list[["hist"]] <- out_histogram
-  out_list[["sum_stats"]] <- out_sum_stats
-}
-
-
-# run on different simulations 
-histogram_sum_Stat_fun(mc_linear)
-histogram_sum_Stat_fun(mc_kernal)
-histogram_sum_Stat_fun(mc_rawlsian)
-
-#============================#
-# ==== stress test plots ====
-#============================#
-
-#===========================#
-# ==== load stress data ====
-#===========================#
-
-#note: in future iterations we can do this on the simulations.
-
-# make sure that all the stress test data is alone in one folder 
-# this lists all the fiels 
-file_list <- list.files(stress_path)
-
-# initalize list for data. It's most efficient if you set the length and I'm naming them for reference
-stress_list <- setNames(vector("list", length = length(file_list)), file_list)
-
-# load up files and add type indicators 
-stress_test_readR <- function(file_name){
-  # laod the data 
-  out_dt <- fread(paste0(stress_path, file_name))
-  
-  # grab everything before the "_"
-  file_info <- strsplit(file_name, "_")[[1]][1]
-  
-  # split it up by things before and after the first digit
-  temp <- strsplit(file_info, "[[:digit:]]")[[1]]
-  temp <- subset(temp, temp != "")
-  
-  # grab the info we need 
-  weight_type <- temp[[1]]
-  statistic <- temp[[2]]
-  value   <- paste0(stringr::str_extract_all(file_info, "[[:digit:]]" )[[1]], collapse = "")
-  
-  # put info into data.table 
-  out_dt[, weight_type := weight_type]
-  out_dt[, statistic := statistic]
-  out_dt[, value := value]
-  # stor it in list 
-  stress_list[[file_name]] <- out_dt
-  
-}
-
-# now run this reader funciton on all the file paths 
-stress_data_ls <- lapply(file_list, stress_test_readR)  
-stress_data_dt <- rbindlist(stress_data_ls)
-
-#=======================#
-# ==== normalize it ====
-#=======================#
-
 # Renormalize everything so they have the same mean and variance
-stress_data_dt[, mean_weighted_norm := (mean_weighted - mean(mean_weighted))/sd(mean_weighted), by = c("weight_type", "statistic", "value")]
-stress_data_dt[, mean_standard_norm := (mean_standard - mean(mean_standard))/sd(mean_standard), by = c("weight_type", "statistic", "value")]
-stress_data_dt[, true_ww := (true_ww - mean(true_ww))/sd(true_ww), by = c("weight_type", "statistic", "value")]
+res_dt[, mean_ww_norm := (mean_ww - mean(mean_ww))/sd(mean_ww), by = run_id]
+res_dt[, mean_standard_norm := (mean_standard - mean(mean_standard))/sd(mean_standard), by = run_id]
+res_dt[, true_ww_impact := (true_ww_impact - mean(true_ww_impact))/sd(true_ww_impact), by = run_id]
 
 # now renormalize standard deviations 
-stress_data_dt[, sd_weighted_norm := sd_weighted/sd(mean_weighted), by = c("weight_type", "statistic", "value")]
-stress_data_dt[, sd_standard_norm := sd_standard/sd(mean_standard), by = c("weight_type", "statistic", "value")]
+res_dt[, sd_ww_norm := sd_ww/sd(mean_ww), by = run_id]
+res_dt[, sd_standard_norm := sd_standard/sd(mean_standard), by = run_id]
+
+#====================#
+# ==== get ranks ====
+#====================#
+
+setorder(res_dt, mean_standard_norm)
+res_dt[, standard_rank := 1:.N, run_id]
+res_dt[, standard_lc := mean_standard_norm - 1.96*sd_standard_norm]
+res_dt[, standard_uc := mean_standard_norm + 1.96*sd_standard_norm]
+
+setorder(res_dt, mean_ww_norm)
+res_dt[, ww_rank := 1:.N, run_id]
+res_dt[, ww_lc := mean_ww_norm - 1.96*sd_ww_norm]
+res_dt[, ww_uc := mean_ww_norm + 1.96*sd_ww_norm]
+
+setorder(res_dt, true_ww_impact)
+res_dt[, true_ww_rank :=1:.N, run_id]
+
+#================================#
+# ==== get distance measures ====
+#================================#
+# Calculate the mean squared distance from the rank of the truth
+res_dt[, standard_MSE := (standard_rank - true_ww_rank)^2]
+res_dt[, standard_MAE := abs(standard_rank - true_ww_rank)]
+
+res_dt[, ww_MSE := (ww_rank - true_ww_rank)^2]
+res_dt[, ww_MAE := abs(ww_rank - true_ww_rank)]
 
 
-#=================================#
-# ==== stress test histograms ====
-#=================================#
+#==========================#
+# ==== loop over xwalk ====
+#==========================#
 
-# make histograms for various student levels 
-histogram_stress_fun <- function(in_data){
+
+for(i in 1:nrow(model_xwalk)){
   
-  # grab data info
-  weight_type <- unique(in_data$weight_type)
-  statistic <- unique(in_data$statistic)
-  value <- unique(in_data$value)
+  # grab run_id 
+  run_id_i <- model_xwalk[i, run_id]
   
-  # Calculate the mean squared distance from the rank of the truth
-  setorder(in_data, mean_standard_norm)
-  in_data[, baseline := (.I - tid)^2]
-  in_data[, baseline_count := (.I - tid != 0)]
-  in_data[, baseline_count_num := abs(.I - tid)]
+  # subset data to this mc run 
+  res_sub <- res_dt[run_id == run_id_i]
   
-  setorder(in_data, mean_weighted_norm)
-  in_data[, weighted := (.I - tid)^2]
-  in_data[, weighted_count := (.I - tid != 0)]
-  in_data[, weighted_count_num := abs(.I - tid)]
+  # get table of run info 
+  # make table of parameters 
+  parms_tab <- melt.data.table(model_xwalk[i], measure.vars = colnames(model_xwalk))
+  parms_tab <- parms_tab[!is.na(value)]
   
+  # put parameters in grob
+  parms_tbl <- tableGrob(parms_tab, rows=NULL, cols = NULL, theme = ttheme_default(base_size = 9))
+
+  #===============================#
+  # ==== standard caterpillar ====
+  #===============================#
   
-  # Histogram of the density and distance of rank inversions
-  # set binwidth parm
-  b_width <- 3
+
+    standard_cat_plot <- ggplot(res_sub, aes(x = true_ww_rank, y = mean_standard_norm)) +
+      geom_point(size = 1.5, aes(color = "Standard VA"), alpha = 1) + 
+      geom_point(aes( y = true_ww_impact,  color = "Truth"),size = 1, alpha = .4) +
+      scale_color_manual(values= c("#ffaabb", "#77AADD")) +
+      geom_errorbar(aes(ymin=standard_lc, ymax=standard_uc), width= 1, color = "#ffaabb") +
+      ylab("Impact") + 
+      xlab("True Teacher Order") +
+      ylim(-6,6)+
+      plot_attributes + 
+      theme(legend.title = element_blank(),
+            legend.position = c(0.8, 0.8))
+    
+  # add parameters 
+  standard_cat_plot2 <- grid.arrange(standard_cat_plot, parms_tbl,
+                             layout_matrix = rbind(c(1, 1, 1, 2)))
+
+
+  # save it 
+  ggsave(filename = paste0(out_plot,"standard_cat_run_",  run_id_i, ".png"), 
+         plot     = standard_cat_plot2, 
+         width    = 9, 
+         height   = 4)
   
-  out_histogram <- ggplot(in_data) + 
-    geom_histogram( aes(baseline_count_num, fill = "Standard"), alpha = .4, colour="black", binwidth = b_width) +
-    geom_histogram( aes(weighted_count_num, fill = "Weighted"), alpha = .4, colour="black", binwidth = b_width) +
-    ggtitle(paste0(value," ", statistic)) + 
-    ylab("Number of Teachers") +
-    xlab("Difference in Rank From Truth")+
-    scale_fill_manual(values= c("#77AADD", "#EE8866")) +
-    scale_x_continuous(limits = c(-3,130)) +
-    ylim(0,70) +
-    plot_attributes +
-    theme(legend.title = element_blank(),
-          legend.position = c(0.8, 0.8),
-          legend.key.size = unit(4, "cm"))
+
   
+  #=========================#
+  # ==== ww caterpillar ====
+  #=========================#
   
+
+    ww_cat_plot <- ggplot(res_sub, aes(x = true_ww_rank, y = mean_ww_norm)) +
+      geom_point(aes(color = "Weighted VA"), size = 2,  alpha = 1) + 
+      geom_point(aes( y = true_ww_impact,  color = "Truth"),size = 1, alpha = .4) +
+      scale_color_manual(values= c("#77AADD", "#ffaabb"),
+                         guide=guide_legend(reverse=TRUE)) +
+      geom_errorbar(aes(ymin=ww_lc, ymax=ww_uc), width= 1, color = "#ffaabb") +
+      ylab("Impact") + 
+      xlab("True Teacher Order") +
+      ylim(-6,6)+
+      xlim(0,150)+
+      plot_attributes +
+      theme(legend.title = element_blank(),
+            legend.position = c(0.2, 0.8))
+  # add parameters 
+  ww_cat_plot2 <- grid.arrange(ww_cat_plot, parms_tbl,
+                                     layout_matrix = rbind(c(1, 1, 1, 2)))
   # save plot  
-  png(paste0(paste0(out_plot,"Histrogram_", weight_type, "_",statistic, "_",value, ".png")),
-      height = 1200, width = 2100, type = "cairo")
-  print(out_histogram)
-  dev.off()  
-  # LIST OF OUTPUT 
-  return(out_histogram)
-  
-}
-
-# split data. can't use previous list since I normalized the stacked dt 
-stress_data_ls<- split(stress_data_dt[statistic == "Students"], by = c("weight_type", "statistic", "value"))
-
-# now apply function to list 
-res <- lapply(stress_data_ls, histogram_stress_fun)
+  ggsave(filename = paste0(out_plot,"ww_cat_run_",  run_id_i, ".png"), 
+         plot     = ww_cat_plot2, 
+         width    = 9, 
+         height   = 4)
 
 
-#==================================#
-# ==== stress test catarpillar ====
-#==================================#
-# These should really be combined with the functions above but THIS IS LASY MINUTE STUF 
-# function to make WW caterpillar plots and save them 
-cat_plottR_ww_stress <- function(in_data){
+  #======================================#
+  # ==== histogram and summary stats ====
+  #======================================#
   
-  # grab data info
-  weight_type <- unique(in_data$weight_type)
-  statistic <- unique(in_data$statistic)
-  value <- unique(in_data$value)
-  
-  setorder(in_data, mean_weighted_norm)
-  in_data[, ww_id :=.I]
-  in_data[, ww_lc := mean_weighted_norm - 1.96*sd_weighted_norm]
-  in_data[, ww_uc := mean_weighted_norm + 1.96*sd_weighted_norm]
-  
-  ww_cat_plot <- ggplot(in_data, aes(x = tid, y = mean_weighted_norm)) +
-    geom_point(aes(color = "Weighted VA"), size = 5,  alpha = 1) + 
-    geom_point(aes( y = true_ww,  color = "Truth"),size = 4, alpha = .4) +
-    scale_color_manual(values= c("#77AADD", "#ffaabb"),
-                       guide=guide_legend(reverse=TRUE)) +
-    geom_errorbar(aes(ymin=ww_lc, ymax=ww_uc), width= 1, color = "#ffaabb") +
-    ylab("WLS Welfare Added") + 
-    xlab("True Teacher Order") +
-    ggtitle(paste0(value," ", statistic))+
-    ylim(-6,6)+
-    xlim(0,150)+
-    plot_attributes +
-    theme(legend.title = element_blank(),
-          legend.position = c(0.8, 0.8))
-  # save plot  
-  png(paste0(paste0(out_plot,"ww_", weight_type, "_",statistic, "_",value, "_caterpillar.png")),
-      height = 1500, width = 1500, type = "cairo")
-  print(ww_cat_plot)
-  dev.off()  
-  
-  return(ww_cat_plot)
-  
-}
-res_ww_cat <- lapply(stress_data_ls, cat_plottR_ww_stress)
 
+    # start a data.table of results 
+    sum_stats <- list()
+    sum_stats[[1]] <- data.table(Statistic = "Mean Squared Distance", 
+                                 Standard = mean(res_sub$standard_MSE),
+                                 Weighted = mean(res_sub$ww_MSE))
+    
+    sum_stats[[2]] <- data.table(Statistic = "Mean Absolute Distance", 
+                                 Standard =  mean(res_sub$standard_MAE),
+                                 Weighted =  mean(res_sub$ww_MAE))
+    
+    
+    sum_stats[[3]] <- data.table(Statistic = "Correlation to Truth", 
+                                 Standard =  cor(res_sub$mean_standard_norm, res_sub$true_ww_rank),
+                                 Weighted = cor(res_sub$mean_ww_norm, res_sub$true_ww_rank))
+    
+    
+    out_sum_stats <- rbindlist(sum_stats)
+    
+    # put sum stats in a grob
+    out_sum_stats_tbl <- tableGrob(out_sum_stats, rows=NULL, theme = ttheme_default(base_size = 8))
+    
+    # Histogram of the density and distance of rank inversions
+    # set binwidth parm
+    b_width <- 3
+    
+    out_histogram <- ggplot(res_sub) + 
+      geom_histogram( aes(standard_MAE, fill = "Standard"), alpha = .4, colour="black", binwidth = b_width) +
+      geom_histogram( aes(ww_MAE, fill = "Weighted"), alpha = .4, colour="black", binwidth = b_width) +
+      ylab("Number of Teachers") +
+      xlab("Difference in Rank From Truth")+
+      scale_fill_manual(values= c("#77AADD", "#EE8866")) +
+      plot_attributes + 
+      theme(legend.title = element_blank(),
+            legend.position = c(0.8, 0.8),
+            legend.key.size = unit(.5, "cm"))
+    
+    
+    # add parameters 
+    out_histogram2 <- grid.arrange(out_histogram, parms_tbl, out_sum_stats_tbl,
+                                 layout_matrix = rbind(c(1, 1, 1, 2),
+                                                       c(1, 1, 1, 2),
+                                                       c(1, 1, 1, 2),
+                                                       c(3, 3, 3, 3)))
+    
+    # save plot  
+    ggsave(filename = paste0(out_plot,"hist_run_",  run_id_i, ".png"), 
+           plot     = out_histogram2, 
+           width    = 9, 
+           height   = 4)
+    
+}# close for loop 
 
-cat_plottR_st_stress <- function(in_data){
-  
-  # grab data info
-  weight_type <- unique(in_data$weight_type)
-  statistic <- unique(in_data$statistic)
-  value <- unique(in_data$value)
-  
-  setorder(in_data, mean_standard_norm)
-  in_data[, standard_id :=.I]
-  in_data[, standard_lc := mean_standard_norm - 1.96*sd_standard_norm]
-  in_data[, standard_uc := mean_standard_norm + 1.96*sd_standard_norm]
-  weight_type <- unique(in_data$weight_type)
-  
-  ww_cat_plot <- ggplot(in_data, aes(x = tid, y = mean_standard_norm)) +
-    geom_point(aes(color = "Standard VA"), size = 5,  alpha = 1) + 
-    geom_point(aes( y = true_ww,  color = "Truth"),size = 4, alpha = .4) +
-    scale_color_manual(values= c("#ffaabb", "#77AADD")) +
-    geom_errorbar(aes(ymin=standard_lc, ymax=standard_uc), width= 1, color = "#ffaabb") +
-    ylab("Value Added") + 
-    xlab("True Teacher Order") +
-    ggtitle(paste0(value," ", statistic))+
-    ylim(-6,6)+
-    xlim(0,150)+
-    plot_attributes +
-    theme(legend.title = element_blank(),
-          legend.position = c(0.8, 0.8))
-  # save plot  
-  png(paste0(paste0(out_plot,"st_", weight_type, "_",statistic, "_",value, "_caterpillar.png")),
-      height = 1500, width = 1500, type = "cairo")
-  print(ww_cat_plot)
-  dev.off()  
-  
-  return(ww_cat_plot)
-  
-}
-res_st_cat <- lapply(stress_data_ls, cat_plottR_st_stress)

@@ -55,6 +55,11 @@ source(paste0(base_path, func_path, "ww_va_function.R"))
 source(paste0(base_path, func_path, "weighting_functions.R"))
 source(paste0(base_path, func_path, "true_ww_impact.R"))
 
+# geta time stamp 
+date_time <- gsub("-", "_", Sys.time())
+date_time <- gsub(":", "_", date_time)
+date_time <- gsub(" ", "__", date_time)
+
 
 #======================#
 # ==== set options ====
@@ -224,8 +229,8 @@ mc_res <- rbindlist(mc_res)
 # Get the mean estiamtes for each teacher.The by groups are all descriptive variables 
 mean_tab <- mc_res[, list(mean_standard = mean(estimate),
                           sd_standard   = sd(estimate),
-                          mean_weighted = mean(ww_va),
-                          sd_weighted   = sd(ww_va)),
+                          mean_ww = mean(ww_va),
+                          sd_ww   = sd(ww_va)),
                    by = teacher_id]
 
 # add some more indicators 
@@ -259,11 +264,10 @@ if(do_parallel){
 
 
 # dependign on what parameters we change and stuff we can change the name of this 
-date_time <- gsub("-", "_", Sys.time())
-date_time <- gsub(":", "_", date_time)
-date_time <- gsub(" ", "__", date_time)
-write.csv(mc_res_full, paste0(out_data, '/', "mc_results_", date_time,".csv" ))
+write.csv(mc_res_full, paste0(out_data, '/', "mc_results_", date_time,".csv" ), row.names = FALSE)
 
+# save a compy of the most recent xwalk also so there are no mixups 
+write.csv(model_xwalk, paste0(out_data, '/', "mc_xwalk_", date_time,".csv" ), row.names = FALSE)
 
 
 
