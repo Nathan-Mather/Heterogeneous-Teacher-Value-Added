@@ -33,7 +33,7 @@ semip_va <- function(in_data = NULL,
     # m <- npindex(test_2~test_1+ ... , data = r_dt[in_teacher_id==teach_i])
   
   # For now just estimate the relationship between test1 and test2 nonparametrically
-    m <- npreg(test_2~test_1, data = in_data[in_teacher_id==teach_i],exdat=points)
+    m <- npreg(test_2~test_1, data = in_data[get(in_teacher_id)==teach_i],exdat=points)
   
     
     npresults[counter,] <-fitted(m)
