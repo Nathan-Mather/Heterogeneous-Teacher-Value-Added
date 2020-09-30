@@ -35,8 +35,12 @@ semip_va <- function(in_data = NULL,
   # For now just estimate the relationship between test1 and test2 nonparametrically
     m <- npreg(test_2~test_1, data = in_data[get(in_teacher_id)==teach_i],exdat=points)
   
-    
+    # 
     npresults[counter,] <-fitted(m)
+    
+    # desired end result 
+    # Matrix of fitted values: rows are teachers columns are evaluation points. 
+    
   }
   
   #===========================#

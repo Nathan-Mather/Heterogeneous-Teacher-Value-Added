@@ -141,6 +141,8 @@ single_iteration_fun <- function(in_dt        = NULL,
   if(method=="semip"){
     # put implimentation here. Call output ww_tab1 or rename that object everywhere 
     # not really a good name anyway 
+    
+   # awnip_va_function()
   }
   
   if(method=="qtle"){
