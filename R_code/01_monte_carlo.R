@@ -51,9 +51,10 @@ model_xwalk <- data.table(read_excel(paste0(base_path, "Heterogeneous-Teacher-Va
 # load our functions now that we have a file path 
 func_path <- "Heterogeneous-Teacher-Value-Added/R_code/functions/"
 source(paste0(base_path, func_path, "simulate_test_data.R"))
-source(paste0(base_path, func_path, "ww_va_function.R"))
+source(paste0(base_path, func_path, "binned_va_function.R"))
 source(paste0(base_path, func_path, "weighting_functions.R"))
 source(paste0(base_path, func_path, "true_ww_impact.R"))
+source(paste0(base_path, func_path, "teacher_impact.R"))
 
 # geta time stamp 
 date_time <- gsub("-", "_", Sys.time())
@@ -133,25 +134,25 @@ single_iteration_fun <- function(in_dt        = NULL,
                                           mrdist       = mrdist)]
   
   # check method option
-  if(method=="wls"){
-    # Estimate the weighted VA
-    ww_tab1 <- ww_va(in_data = in_dt, in_weights = weight_type)
+  if(method=="bin"){
+    # Estimate the binned VA
+    output <- binned_va(in_data = in_dt)
   }
   
   if(method=="semip"){
-    # put implimentation here. Call output ww_tab1 or rename that object everywhere 
+    # put implementation here. Call output or rename that object everywhere 
     # not really a good name anyway 
     
    # awnip_va_function()
   }
   
   if(method=="qtle"){
-    # put implimentation here. Call output ww_tab1 or rename that object everywhere 
+    # put implementation here. Call output or rename that object everywhere 
     # not really a good name anyway 
   }
   
   # Merge on the standard VA
-  va_tab1 <- merge(va_tab1, ww_tab1, "teacher_id")
+  va_tab1 <- merge(va_tab1, output, "teacher_id")
   
   return(va_tab1[])
 
@@ -265,10 +266,10 @@ if(do_parallel){
 #===============#
 
 
-# dependign on what parameters we change and stuff we can change the name of this 
+# depending on what parameters we change and stuff we can change the name of this 
 write.csv(mc_res_full, paste0(out_data, '/', "mc_results_", date_time,".csv" ), row.names = FALSE)
 
-# save a compy of the most recent xwalk also so there are no mixups 
+# save a copy of the most recent xwalk also so there are no mixups 
 write.csv(model_xwalk, paste0(out_data, '/', "mc_xwalk_", date_time,".csv" ), row.names = FALSE)
 
 
