@@ -25,7 +25,9 @@ library(doParallel)
 library(matrixStats)
 library(doRNG)
 library(readxl)
-
+library(doRNG)
+library(np) # non parametric library
+library(quantreg)
 
 # check users. (NOTE TO MIKE, add something unique to your base working directory to detect when it is your computer)
 my_wd <- getwd()
@@ -142,7 +144,7 @@ single_iteration_fun <- function(in_dt        = NULL,
     # put implimentation here. Call output ww_tab1 or rename that object everywhere 
     # not really a good name anyway 
     
-   # awnip_va_function()
+    semip_va(in_data = in_dt )
   }
   
   if(method=="qtle"){

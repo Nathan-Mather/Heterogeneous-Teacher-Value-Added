@@ -47,7 +47,12 @@ semip_va <- function(in_data = NULL,
   # ==== clean up results ====
   #===========================#
   # reorganize them for easier comparison
-  #npresults[ ,teacher_id:= u_teachers]
-  return(npresults)
+  npresults <- data.table(npresults)
+  npresults[ ,teacher_id:= u_teachers]
+  
+  # put it in a list with the points 
+  res_list <- list(results = npresults,
+                   points = points)
+  return(res_list)
   
 }

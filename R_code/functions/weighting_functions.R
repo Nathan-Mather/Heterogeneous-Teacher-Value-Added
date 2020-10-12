@@ -43,8 +43,28 @@ mr_weight_fun <- function(pctile, dist, in_test_1){
 # Rawlsian weights
 # pctile is the cutoff percentile above which we give zero weight, between 0 and 1
 # in_test_1 is the weighting variable
-rawlsian_weight_fun <- function(pctile, in_test_1){
-  weight <- as.integer(in_test_1 <= quantile(in_test_1, pctile)) + 0.0001 # Is there a better way to do this and allow the weighting matrix to be always nonsingular?
+# pctile_val is for when you have the numeric value of the percentile already. 
+# this is usefull for applying this weighting scheme to other data sets or points
+rawlsian_weight_fun <- function(pctile = NULL,
+                                in_test_1 ,
+                                pctile_val = NULL){
+  
+  if(is.null(pctile_val) & is.null(pctile)){
+    stop("Need to specify a pctile or pctile_val")
+  }
+  if(!is.null(pctile_val) & !is.null(pctile)){
+    stop("Need to specify a pctile or pctile_va, cannot have both")
+  }
+    
+  if(!is.null(pctile)){
+    weight <- as.integer(in_test_1 <= quantile(in_test_1, pctile)) + 0.0001 # Is there a better way to do this and allow the weighting matrix to be always nonsingular?
+  }
+  
+  if(!is.null(pctile_val)){
+    weight <- as.integer(in_test_1 <= pctile_val) + 0.0001 # Is there a better way to do this and allow the weighting matrix to be always nonsingular?
+  }
+  
+  return(weight)
 }
 
 
