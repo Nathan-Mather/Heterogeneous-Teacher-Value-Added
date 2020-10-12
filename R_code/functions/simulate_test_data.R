@@ -27,6 +27,28 @@
 
 library(data.table)
 
+# check users. (NOTE TO MIKE, add something unique to your base working directory to detect when it is your computer)
+my_wd <- getwd()
+if(my_wd %like% "Nmath_000"){
+  # base directory 
+  base_path <- "c:/Users/Nmath_000/Documents/Research/"
+  
+  # path for data to save
+  out_data <- "c:/Users/Nmath_000/Documents/data/Value Added/mc_data/"
+  
+}else{
+  # base directory 
+  base_path <- "~/Documents/Research/HeterogenousTeacherVA/Git/"
+  
+  # path for data to save 
+  out_data <- "~/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code"
+  
+}
+
+# load our functions now that we have a file path 
+func_path <- "Heterogeneous-Teacher-Value-Added/R_code/functions/"
+source(paste0(base_path, func_path, "teacher_impact.R"))
+
 #======================================#
 # ==== Simulate test data function ====
 #======================================#
@@ -87,11 +109,14 @@ library(data.table)
                                  n_stud_per_teacher       = 30,
                                  test_SEM                 = .07,
                                  teacher_va_epsilon       = .1,
-                                 teacher_ability_drop_off = .15,
+                                 impact_type              = "MLRN",
+                                 impact_function          = 1,
+                                 max_diff                 = .1,
                                  teacher_dt               = NULL,
                                  teacher_id               = "teacher_id",
                                  teacher_ability          = "teacher_ability",
-                                 teacher_center           = "teacher_center"){
+                                 teacher_center           = "teacher_center",
+                                 teacher_max              = "teacher_max"){
     
     # Generate the teacher information if not provided.
     if (is.null(teacher_dt)) {
@@ -103,9 +128,10 @@ library(data.table)
       teach_vector <- unlist(lapply(1:n_teacher, rep, times =  n_stud_per_teacher))
       r_dt[, teacher_id := as.factor(teach_vector)]
   
-      # assign teacher's an overall ability. and a "center" where they perform best 
+      # assign teacher's an overall ability and a "center" where they perform best 
       r_dt[, teacher_ability := rnorm(1, mean =0, sd = .1), teacher_id]
-      r_dt[, teacher_center := rnorm(1, mean =0, sd = 1), teacher_id]
+      r_dt[, teacher_center := runif(1, min = -2, max = 2), teacher_id]
+      r_dt[, teacher_max := runif(1, min = 0, max = max_diff)]
       
     } else {
       # Create the data table
@@ -139,7 +165,13 @@ library(data.table)
     n_row_dt <- nrow(r_dt)
     
     # get teacher impact on student without noise 
-    r_dt[, teacher_impact := teacher_ability - pmin(abs(stud_ability_1 - teacher_center), 2) * teacher_ability_drop_off]
+    #r_dt[, teacher_impact := teacher_ability - pmin(abs(stud_ability_1 - teacher_center), 2) * teacher_ability_drop_off]
+    r_dt[, teacher_impact := teacher_impact(teacher_ability  = r_dt$teacher_ability,
+                                            teacher_center   = r_dt$teacher_center,
+                                            teacher_max      = r_dt$teacher_max,
+                                            stud_ability_1   = r_dt$stud_ability_1,
+                                            type             = impact_type,
+                                            func_num         = impact_function)]
     
     # as impact to student with noise 
     r_dt[, stud_ability_2 := stud_ability_1 + teacher_impact + rnorm(n_row_dt, sd = teacher_va_epsilon)]
