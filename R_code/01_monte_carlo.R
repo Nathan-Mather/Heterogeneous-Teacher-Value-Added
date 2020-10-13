@@ -108,7 +108,7 @@ single_iteration_fun <- function(in_dt        = NULL,
                                  mrpctile     = NULL, 
                                  mrdist       = NULL){
   
-  # I need this for it to work on windows clusters since libraries arent loaded  on every cluseter
+  # I need this for it to work on windows clusters since libraries are not loaded  on every cluster
   require(data.table)
   
   # Resample the student data
@@ -170,7 +170,7 @@ single_iteration_fun <- function(in_dt        = NULL,
 # initialize list for MC runs 
 mc_res_list <- vector("list", length = nrow(model_xwalk))
 
-# loop over wxalk to run this 
+# loop over xwalk to run this 
 for(i in 1:nrow(model_xwalk)){
 
   # set parameters for this monte carlo run
@@ -231,7 +231,7 @@ for(i in 1:nrow(model_xwalk)){
 # stack the results for this run 
 mc_res <- rbindlist(mc_res)
 
-# Get the mean estiamtes for each teacher.The by groups are all descriptive variables 
+# Get the mean estimates for each teacher.The by groups are all descriptive variables 
 mean_tab <- mc_res[, list(mean_standard = mean(estimate),
                           sd_standard   = sd(estimate),
                           mean_ww = mean(ww_va),
