@@ -13,11 +13,19 @@ equal_weight_fun <- function(in_test_1){
 # Linear weighting function
 # alpha is how much we weight the minimum compared to the maximum 
 # in_test_1 is the weighting variable
-linear_weight_fun <- function(alpha, in_test_1){
-  quntile_lh <- quantile(in_test_1, probs = c(.1,.9))
-  low_score <- quntile_lh["10%"]
-  high_score <- quntile_lh["90%"]
-  weight <-  alpha-(in_test_1-low_score)*(1/(high_score-low_score))*(alpha-1)
+linear_weight_fun <- function(alpha, 
+                              in_test_1,
+                              quantiles = c(.1,.9),
+                              quant_val_l = NULL,
+                              quant_val_h = NULL){
+  if(is.null(quant_val_l) | is.null(quant_val_h)){
+    print("Calculating quantiles from in_test_1")
+    quntile_lh <- quantile(in_test_1, probs = quantiles)
+    quant_val_l <- quntile_lh["10%"]
+    quant_val_h <- quntile_lh["90%"]
+  }
+  
+  weight <-  alpha-(in_test_1-quant_val_l)*(1/(quant_val_h-quant_val_l))*(alpha-1)
   weight <- weight/sum(weight) # I think it is more helpful if the weights sum to one in talking about them, though it does not affect the estimates at all.
 }
 
@@ -25,12 +33,20 @@ linear_weight_fun <- function(alpha, in_test_1){
 # Mike Ricks weights - I changed these a bit so there is a "kernel" around the pctile we care about and it is 0.0001 elsewhere
 # pctile is the percentile that we give full weight to, between 0 and 1
 # dist is the maximum distance away from pctile that observations get weight (in terms of percentiles, between 0 and 1)
-mr_weight_fun <- function(pctile, dist, in_test_1){
-  w_i <- quantile(in_test_1, pctile)
-  min_score <- quantile(in_test_1, max(pctile - dist, 0))
-  max_score <- quantile(in_test_1, min(pctile + dist, 100))
+mr_weight_fun <- function(pctile = NULL,
+                          dist,
+                          in_test_1,
+                          pctile_val = NULL,
+                          min_score  = NULL,
+                          max_score = NULL){
   
-  weight <- (in_test_1 > min_score & in_test_1 <= w_i)*(in_test_1 - min_score)/(w_i - min_score) + (in_test_1 < max_score & in_test_1 > w_i)*(1 - (in_test_1-w_i)/(max_score-w_i)) + 0.0001
+  if(is.null(pctile_val) | is.null(min_score) | is.null(max_score)){
+    pctile_val <- quantile(in_test_1, pctile)
+    min_score <- quantile(in_test_1, max(pctile - dist, 0))
+    max_score <- quantile(in_test_1, min(pctile + dist, 100))
+  }
+  
+  weight <- (in_test_1 > min_score & in_test_1 <= pctile_val)*(in_test_1 - min_score)/(pctile_val - min_score) + (in_test_1 < max_score & in_test_1 > pctile_val)*(1 - (in_test_1-pctile_val)/(max_score-pctile_val)) + 0.0001
 }
 
 #w_i <- median(r_dt$test_1)
@@ -46,7 +62,9 @@ mr_weight_fun <- function(pctile, dist, in_test_1){
 # pctile_val is for when you have the numeric value of the percentile already. 
 # this is usefull for applying this weighting scheme to other data sets or points
 rawlsian_weight_fun <- function(pctile = NULL,
-                                in_test_1 ,
+                                weight_below = 1.0001,
+                                weight_above = .0001,
+                                in_test_1 = NULL,
                                 pctile_val = NULL){
   
   if(is.null(pctile_val) & is.null(pctile)){
@@ -57,11 +75,11 @@ rawlsian_weight_fun <- function(pctile = NULL,
   }
     
   if(!is.null(pctile)){
-    weight <- as.integer(in_test_1 <= quantile(in_test_1, pctile)) + 0.0001 # Is there a better way to do this and allow the weighting matrix to be always nonsingular?
+    weight <- ifelse(in_test_1 <= quantile(in_test_1, pctile), weight_below, weight_above) # Is there a better way to do this and allow the weighting matrix to be always nonsingular?
   }
   
   if(!is.null(pctile_val)){
-    weight <- as.integer(in_test_1 <= pctile_val) + 0.0001 # Is there a better way to do this and allow the weighting matrix to be always nonsingular?
+    weight <- ifelse(in_test_1 <= pctile_val, weight_below, weight_above)
   }
   
   return(weight)
@@ -71,19 +89,27 @@ rawlsian_weight_fun <- function(pctile = NULL,
 # V-Shaped weights (Inverse Mike Ricks weights? ;) )
 # alpha is the slope away from the mean
 # in_test_1 is the weighting variable
-v_weight_fun <- function(alpha, in_test_1){
-  median_score <- median(in_test_1)
-  weight <- alpha*abs(in_test_1 - median_score)
+v_weight_fun <- function(alpha, 
+                         in_test_1, 
+                         median_val = NULL){
+  if(is.null(median_val)){
+    median_val <- median(in_test_1)
+  }
+  weight <- alpha*abs(in_test_1 - median_val)
 }
 
 
 
 
-# write a function that takes an option and calculates the proper weight 
+# write a function that takes a type option and calculates the proper weight 
+# what it wont take though is the "Val" arguments. This function is for adding 
+# weights to the same data set that we are deriving the percentiles from 
 ww_general_fun <- function(weight_type  = NULL,
                            in_test_1    = NULL,
                            lin_alpha    = NULL,
                            pctile       = NULL,
+                           weight_below = 1.0001,
+                           weight_above = .0001,
                            v_alpha      = NULL,
                            mrpctile     = NULL, 
                            mrdist       = NULL){
@@ -94,7 +120,10 @@ ww_general_fun <- function(weight_type  = NULL,
     
   } else if(weight_type == "rawlsian"){
   
-     rawlsian_weight_fun(pctile, in_test_1)
+     rawlsian_weight_fun(pctile = pctile,
+                         weight_below = weight_below,
+                         weight_above = weight_above,
+                         in_test_1 = in_test_1)
     
   } else if(weight_type == "equal"){
     
