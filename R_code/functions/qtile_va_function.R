@@ -1,7 +1,6 @@
 # define function and set default column names to what we have been using 
-semip_va <- function(in_data = NULL,
+qtilep_va <- function(in_data = NULL,
                      in_teacher_id = "teacher_id",
-                     in_stud_id    = "stud_id",
                      in_pre_test   = "test_1",
                      in_post_test  = "test_2",
                      ptle = seq(.01,.99,by=.02)){
@@ -22,29 +21,18 @@ semip_va <- function(in_data = NULL,
   #=========================#
   
   # convert teacher_id to a factor so we can treat it as a dummy 
-  in_data[, teacher_id := as.factor(teacher_id)]
+  in_data[, (in_teacher_id) := as.factor(get(in_teacher_id))]
   
   # Run quantie regressions
-  rqfit <- rq(test_2 ~ test_1 + teacher_id -1, data = in_data, tau = ptle)
-  
- sum_res <- summary(rqfit,se = "iid", covariance = TRUE)
- 
- # varianve covariance. 
- # sum_res[[1]]$cov
+  my_formula <- as.formula(paste0(in_post_test, " ~ ", in_pre_test, " + ", in_teacher_id, " - 1"))
+  rqfit <- rq(my_formula, data = in_data, tau = ptle)
+  rqfit_coefs <- rqfit$coefficients
 
- # write a loop to sort these better. At least for now so its easy 
- coefs_list <- vector("list", length = length(sum_res))
- for(j in 1:length(sum_res)){
-   
-  tau_j <- sum_res[[j]][["tau"]]
-  coefs_j <- data.table(sum_res[[j]][["coefficients"]], keep.rownames = TRUE)
-  coefs_j[, tau := tau_j]
-  coefs_list[[j]] <- coefs_j
- }
- 
- coefs_dt <- rbindlist(coefs_list)
- 
- setnames(coefs_dt, c("rn", "Std. Error"), c("teacher_id", "se"))
+  # make coefs long 
+  coefs_dt <- data.table(rqfit_coefs, keep.rownames = TRUE)
+  setnames(coefs_dt, colnames(coefs_dt), gsub("tau= ", "", colnames(coefs_dt)))
+  coefs_dt <-  melt.data.table(coefs_dt, id.vars = "rn")
+  setnames(coefs_dt, c("rn", "variable", "value"), c("teacher_id", "tau", "qtile_est"))
  
   ## I (NATE) think this should come after aggregation. Not 100% sure thouogh 
   # # Standardize coefs (whne should I do this? If I don't at some point things look really wrong...)
