@@ -59,8 +59,10 @@ source(paste0(base_path, func_path, "true_ww_impact.R"))
 source(paste0(base_path, func_path, "teacher_impact.R"))
 source(paste0(base_path, func_path, "qtile_aggregation.R"))
 source(paste0(base_path, func_path, "qtile_va_function.R"))
+source(paste0(base_path, func_path, "welfare_statistic.R"))
 
-# geta time stamp 
+
+# get a time stamp 
 date_time <- gsub("-", "_", Sys.time())
 date_time <- gsub(":", "_", date_time)
 date_time <- gsub(" ", "__", date_time)
@@ -70,8 +72,8 @@ date_time <- gsub(" ", "__", date_time)
 # ==== set options ====
 #======================#
 
-# paralell option 
-do_parallel <- FALSE
+# parallel option 
+do_parallel <- TRUE
 
 # Set parallel options
 if(my_wd %like% "Nmath_000"){
@@ -114,7 +116,8 @@ single_iteration_fun <- function(in_dt        = NULL,
                                  weight_above = NULL,
                                  v_alpha      = NULL,
                                  mrpctile     = NULL, 
-                                 mrdist       = NULL){
+                                 mrdist       = NULL,
+                                 npoints      = NULL){
   
   # I need this for it to work on windows clusters since libraries are not loaded  on every cluster
   require(data.table)
@@ -133,45 +136,20 @@ single_iteration_fun <- function(in_dt        = NULL,
   # Return just the estimates
   va_tab1 <- va_tab1[term %like% "teacher_id", c("teacher_id", "estimate")]
   
-  # Now run the weighted VA
-  # Generate the weights
-  in_dt[, (weight_type) := ww_general_fun(weight_type  = weight_type,
-                                          in_test_1    = test_1,
-                                          lin_alpha    = lin_alpha,
-                                          pctile       = pctile,
-                                          weight_below = weight_below,
-                                          weight_above = weight_above,
-                                          v_alpha      = v_alpha,
-                                          mrpctile     = mrpctile, 
-                                          mrdist       = mrdist)]
-  
-  # Generate a grid over which we can get the true welfare added.
-  grid <- unlist(lapply(seq(-3, 3, length.out = npoints), rep, times =  length(unique(r_dt$teacher_id))))
-  
-  # Attach teacher ids.
-  welfare <- unique(in_dt[, c('teacher_id', 'teacher_ability', 'teacher_center', 'teacher_max')])
-  welfare <- do.call('rbind', replicate(npoints, welfare, simplify=FALSE))
-  welfare <- welfare[, grid := grid]
-  
-  # Get the weights for each place in the grid. ################ Need to update weights other than Rawlsian.
-  welfare[, weight := ww_general_fun(weight_type  = weight_type,
-                                     in_test_1    = grid,
-                                     weight_below = weight_below,
-                                     weight_above = weight_above,
-                                     pctile_val   = quantile(in_dt$test_1, pctile))]
-  
-  # Get the teacher impact for the grid.
-  welfare[, true_impact := teacher_impact(teacher_ability  = teacher_ability,
-                                          teacher_center   = teacher_center,
-                                          teacher_max      = teacher_max,
-                                          stud_ability_1   = in_dt$stud_ability_1,
-                                          other_data       = grid,
-                                          type             = impact_type,
-                                          func_num         = impact_function)]
-  
-  # Calculate the true welfare.
-  welfare[, true_welfare := sum(weight*true_impact), by='teacher_id']
-  welfare <- unique(welfare[, c('teacher_id', 'grid', 'weight', 'true_welfare', 'true_impact')])
+  # Get the welfare statistic for the standard VA.
+  va_tab1 <- welfare_statistic(in_dt           = in_dt,
+                               output          = va_tab1,
+                               type            = 'standard', 
+                               npoints         = npoints,
+                               weight_type     = weight_type,
+                               in_test_1       = in_dt$test_1,
+                               pctile          = pctile,
+                               weight_below    = weight_above,
+                               weight_above    = weight_below,
+                               v_alpha         = v_alpha,
+                               mrpctile        = mrpctile, 
+                               mrdist          = mrpctile)
+
     
   # check method option
   if(method=="bin"){
@@ -185,28 +163,20 @@ single_iteration_fun <- function(in_dt        = NULL,
       }
     }
     
-    # Calculate the estimated teacher impact.
-    output[, range_low := as.numeric(sub('\\(', '', sapply(strsplit(category, ','), '[', 1)))]
-    output[, range_high := as.numeric(sub('\\]', '', sapply(strsplit(category, ','), '[', 2)))]
-    output[, baseline := .SD[1, estimate], by='teacher_id']
-    
-    output[category != '', temp1 := min(range_low), by='teacher_id']
-    output[category != '', temp2 := max(range_high), by='teacher_id']
-    output[range_low == temp1, range_low := -100]
-    output[range_high == temp2, range_high := 100]
+    # Get the estimated welfare.
+    output <- welfare_statistic(in_dt           = in_dt,
+                                output          = output,
+                                type            = 'bin', 
+                                npoints         = npoints,
+                                weight_type     = weight_type,
+                                in_test_1       = in_dt$test_1,
+                                pctile          = pctile,
+                                weight_below    = weight_above,
+                                weight_above    = weight_below,
+                                v_alpha         = v_alpha,
+                                mrpctile        = mrpctile, 
+                                mrdist          = mrpctile)
 
-    welfare[, estimate := mapply((function(x, y) output[output$teacher_id == x & 
-                                                        output$range_low < y &
-                                                        output$range_high >= y, estimate] + 
-                                                 output[output$teacher_id == x & 
-                                                        output$range_low < y &
-                                                        output$range_high >= y, baseline]), teacher_id, grid)]
-    
-    #ggplot() + geom_point(data=welfare[teacher_id == 6], aes(x=grid, y=true_impact), color='red') +
-    #  geom_point(data=welfare[teacher_id == 6], aes(x=grid, y=estimate))
-    
-    output <- welfare[, c('teacher_id', 'true_welfare', 'estimate')]
-    
   }
 
   if(method=="semip"){
@@ -226,16 +196,18 @@ single_iteration_fun <- function(in_dt        = NULL,
     
     
     # Now aggregate them 
-    output    <- qtile_agg(in_test_1   = in_dt$test_1,
-                          in_coefs     = qtile_res,
-                          weight_type  = weight_type,
-                          lin_alpha    = lin_alpha,
-                          pctile       = pctile,
-                          weight_below = weight_below,
-                          weight_above = weight_above,
-                          v_alpha      = v_alpha,
-                          mrpctile     = mrpctile,
-                          mrdist       = mrdist)
+    output <- welfare_statistic(in_dt           = in_dt,
+                                output          = output,
+                                type            = 'quant', 
+                                npoints         = npoints,
+                                weight_type     = weight_type,
+                                in_test_1       = in_dt$test_1,
+                                pctile          = pctile,
+                                weight_below    = weight_above,
+                                weight_above    = weight_below,
+                                v_alpha         = v_alpha,
+                                mrpctile        = mrpctile, 
+                                mrdist          = mrpctile)
  
   }
   
@@ -263,7 +235,8 @@ for(i in 1:nrow(model_xwalk)){
   # run parameters 
   run_id                     <- model_xwalk[i, run_id]  # keep track of what run it is 
   nsims                      <- model_xwalk[i, nsims]   # how many simulations to do 
-  # teacger parms 
+  p_npoints                  <- model_xwalk[i, npoints] # number of grid points over which to calculate welfare added
+  # teacher parms 
   p_n_teacher                <- model_xwalk[i, n_teacher] # number of teachers 
   p_n_stud_per_teacher       <- model_xwalk[i, n_stud_per_teacher] # students per teaher
   p_teacher_va_epsilon       <- model_xwalk[i, teacher_va_epsilon] # SD of noise on teacher impacy 
@@ -283,7 +256,6 @@ for(i in 1:nrow(model_xwalk)){
   p_mrdist                   <- model_xwalk[i, mrdist] # for mr weights
   
   # simulate initial data 
-  #NOTE: NEED TO UPDATE THIS WITH TANNERS THING AND ALSO UPDATE THE PARAMETERS IN THE XWALK ...........................
   r_dt <- simulate_test_data(n_teacher                = p_n_teacher,
                              n_stud_per_teacher       = p_n_stud_per_teacher,
                              test_SEM                 = p_test_SEM,
@@ -294,17 +266,19 @@ for(i in 1:nrow(model_xwalk)){
   
   
   # Get true WW impact 
-  # NOTE: THIS ALSO NEEDS TO BE REPLACED, it does not work the way it should since the trth chagnes with the sample 
-  # will need to put in the new rawlsian parameters also 
-  teacher_info <- true_ww_fun(in_dt                    = r_dt,
-                              teacher_ability_drop_off = p_teacher_va_epsilon,
-                              grid_size                = 10000,
-                              weight_type              = p_weight_type,
-                              lin_alpha                = p_lin_alpha,
-                              pctile                   = p_pctile,
-                              v_alpha                  = p_v_alpha,
-                              mrpctile                 = p_mrpctile, 
-                              mrdist                   = p_mrdist)
+  teacher_info <- welfare_statistic(in_dt           = r_dt,
+                                    type            = 'true', 
+                                    npoints         = p_npoints,
+                                    weight_type     = p_weight_type,
+                                    in_test_1       = r_dt$test_1,
+                                    pctile          = p_pctile,
+                                    weight_below    = p_weight_below,
+                                    weight_above    = p_weight_above,
+                                    v_alpha         = p_v_alpha,
+                                    mrpctile        = p_mrpctile, 
+                                    mrdist          = p_mrpctile,
+                                    impact_type     = p_impact_type,
+                                    impact_function = p_impact_function)
     
   # run a monte carlo with whatever parameters you want 
   if(do_parallel){
@@ -317,8 +291,10 @@ for(i in 1:nrow(model_xwalk)){
                                                                 weight_below = p_weight_below,
                                                                 v_alpha      = p_v_alpha,
                                                                 mrpctile     = p_mrpctile, 
-                                                                mrdist       = p_mrpctile)
-  }else{
+                                                                mrdist       = p_mrpctile,
+                                                                npoints      = p_npoints)
+    
+  } else {
     mc_res <- foreach(j = 1:nsims) %do% single_iteration_fun(in_dt        = r_dt,
                                                              weight_type  = p_weight_type,
                                                              method       = p_method,
@@ -328,7 +304,8 @@ for(i in 1:nrow(model_xwalk)){
                                                              weight_below = p_weight_below,
                                                              v_alpha      = p_v_alpha,
                                                              mrpctile     = p_mrpctile, 
-                                                             mrdist       = p_mrpctile)
+                                                             mrdist       = p_mrpctile,
+                                                             npoints      = p_npoints)
     
   }
 
