@@ -116,7 +116,7 @@ single_iteration_fun <- function(in_dt        = NULL,
                                  mrpctile     = NULL, 
                                  mrdist       = NULL){
   
-  # I need this for it to work on windows clusters since libraries arent loaded  on every cluseter
+  # I need this for it to work on windows clusters since libraries are not loaded  on every cluster
   require(data.table)
   
   # Resample the student data
@@ -145,12 +145,70 @@ single_iteration_fun <- function(in_dt        = NULL,
                                           mrpctile     = mrpctile, 
                                           mrdist       = mrdist)]
   
+  # Generate a grid over which we can get the true welfare added.
+  grid <- unlist(lapply(seq(-3, 3, length.out = npoints), rep, times =  length(unique(r_dt$teacher_id))))
+  
+  # Attach teacher ids.
+  welfare <- unique(in_dt[, c('teacher_id', 'teacher_ability', 'teacher_center', 'teacher_max')])
+  welfare <- do.call('rbind', replicate(npoints, welfare, simplify=FALSE))
+  welfare <- welfare[, grid := grid]
+  
+  # Get the weights for each place in the grid. ################ Need to update weights other than Rawlsian.
+  welfare[, weight := ww_general_fun(weight_type  = weight_type,
+                                     in_test_1    = grid,
+                                     weight_below = weight_below,
+                                     weight_above = weight_above,
+                                     pctile_val   = quantile(in_dt$test_1, pctile))]
+  
+  # Get the teacher impact for the grid.
+  welfare[, true_impact := teacher_impact(teacher_ability  = teacher_ability,
+                                          teacher_center   = teacher_center,
+                                          teacher_max      = teacher_max,
+                                          stud_ability_1   = in_dt$stud_ability_1,
+                                          other_data       = grid,
+                                          type             = impact_type,
+                                          func_num         = impact_function)]
+  
+  # Calculate the true welfare.
+  welfare[, true_welfare := sum(weight*true_impact), by='teacher_id']
+  welfare <- unique(welfare[, c('teacher_id', 'grid', 'weight', 'true_welfare', 'true_impact')])
+    
   # check method option
   if(method=="bin"){
     # Estimate the binned VA
     output <- binned_va(in_data = in_dt)
+    
+    # Fix the first teacher. ###################### Check this later.
+    for(row in unique(output$category)) {
+      if (row != '') {
+        output <- rbindlist(list(output, list(1, row, 0)))
+      }
+    }
+    
+    # Calculate the estimated teacher impact.
+    output[, range_low := as.numeric(sub('\\(', '', sapply(strsplit(category, ','), '[', 1)))]
+    output[, range_high := as.numeric(sub('\\]', '', sapply(strsplit(category, ','), '[', 2)))]
+    output[, baseline := .SD[1, estimate], by='teacher_id']
+    
+    output[category != '', temp1 := min(range_low), by='teacher_id']
+    output[category != '', temp2 := max(range_high), by='teacher_id']
+    output[range_low == temp1, range_low := -100]
+    output[range_high == temp2, range_high := 100]
+
+    welfare[, estimate := mapply((function(x, y) output[output$teacher_id == x & 
+                                                        output$range_low < y &
+                                                        output$range_high >= y, estimate] + 
+                                                 output[output$teacher_id == x & 
+                                                        output$range_low < y &
+                                                        output$range_high >= y, baseline]), teacher_id, grid)]
+    
+    #ggplot() + geom_point(data=welfare[teacher_id == 6], aes(x=grid, y=true_impact), color='red') +
+    #  geom_point(data=welfare[teacher_id == 6], aes(x=grid, y=estimate))
+    
+    output <- welfare[, c('teacher_id', 'true_welfare', 'estimate')]
+    
   }
-  
+
   if(method=="semip"){
     # put implementation here. Call output or rename that object everywhere 
     # not really a good name anyway 
@@ -198,7 +256,7 @@ single_iteration_fun <- function(in_dt        = NULL,
 # initialize list for MC runs 
 mc_res_list <- vector("list", length = nrow(model_xwalk))
 
-# loop over wxalk to run this 
+# loop over xwalk to run this 
 for(i in 1:nrow(model_xwalk)){
 
   # set parameters for this monte carlo run
@@ -277,7 +335,7 @@ for(i in 1:nrow(model_xwalk)){
 # stack the results for this run 
 mc_res <- rbindlist(mc_res)
 
-# Get the mean estiamtes for each teacher.The by groups are all descriptive variables 
+# Get the mean estimates for each teacher.The by groups are all descriptive variables 
 mean_tab <- mc_res[, list(mean_standard = mean(estimate),
                           sd_standard   = sd(estimate),
                           mean_ww = mean(ww_va),

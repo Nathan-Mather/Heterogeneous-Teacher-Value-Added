@@ -62,7 +62,7 @@ mr_weight_fun <- function(pctile = NULL,
 # pctile is the cutoff percentile above which we give zero weight, between 0 and 1
 # in_test_1 is the weighting variable
 # pctile_val is for when you have the numeric value of the percentile already. 
-# this is usefull for applying this weighting scheme to other data sets or points
+# this is useful for applying this weighting scheme to other data sets or points
 rawlsian_weight_fun <- function(pctile = NULL,
                                 weight_below = 1.0001,
                                 weight_above = .0001,
@@ -114,7 +114,8 @@ ww_general_fun <- function(weight_type  = NULL,
                            weight_above = .0001,
                            v_alpha      = NULL,
                            mrpctile     = NULL, 
-                           mrdist       = NULL){
+                           mrdist       = NULL,
+                           pctile_val   = NULL){
   
   if(weight_type == "linear"){
     
@@ -125,7 +126,8 @@ ww_general_fun <- function(weight_type  = NULL,
      rawlsian_weight_fun(pctile = pctile,
                          weight_below = weight_below,
                          weight_above = weight_above,
-                         in_test_1 = in_test_1)
+                         in_test_1 = in_test_1,
+                         pctile_val = pctile_val)
     
   } else if(weight_type == "equal"){
     
