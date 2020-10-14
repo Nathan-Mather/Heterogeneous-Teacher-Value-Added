@@ -87,7 +87,7 @@ qtile_agg <- function(in_test_1  = NULL,
   # aggregate estimates 
   tot_weight <- tau_xwalk[, sum(weight)]
   
-  ww_qtile_va <- w_coefs_dt[, list(ww_qtile_est = sum(qtile_est*weight/tot_weight)),
+  ww_qtile_va <- w_coefs_dt[, list(ww_va = sum(qtile_est*weight/tot_weight)),
                             teacher_id]
   
   

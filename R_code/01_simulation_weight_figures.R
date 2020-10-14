@@ -63,11 +63,6 @@ func_path <- "Heterogeneous-Teacher-Value-Added/R_code/functions/"
 source(paste0(base_path, func_path, "simulate_test_data.R"))
 source(paste0(base_path, func_path, "weighting_functions.R"))
 
-# load mc data 
-mc_linear <- fread(paste0(mc_path, "linear100Student_MC.csv"))
-mc_kernal <- fread(paste0(mc_path, "mr100Student_MC.csv"))
-mc_rawlsian <- fread(paste0(mc_path, "rawlsian100Students_MC.csv"))
-
 # load model_xwalk 
 model_xwalk <- data.table(read_excel(paste0(base_path, "Heterogeneous-Teacher-Value-Added/R_code/model_xwalk.xlsx")))
 
@@ -90,7 +85,7 @@ plot_attributes <- theme_classic() +
 #========================#
 
 # get parms for teacher plot 
-teach_parms <- c("n_teacher", "n_stud_per_teacher", "teacher_va_epsilon", "teacher_ability_drop_off", "test_SEM")
+teach_parms <- c("n_teacher", "n_stud_per_teacher", "teacher_va_epsilon", "test_SEM", "impact_type", "impact_function", "max_diff" )
 
 # start by subsetting to parms for this section and removing duplicates 
 teach_plot_xwalk <- model_xwalk[,teach_parms, with = FALSE]

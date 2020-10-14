@@ -22,7 +22,6 @@ linear_weight_fun <- function(alpha,
                               quant_val_l = NULL,
                               quant_val_h = NULL){
   if(is.null(quant_val_l) | is.null(quant_val_h)){
-    print("Calculating quantiles from in_test_1")
     quntile_lh <- quantile(in_test_1, probs = quantiles)
     quant_val_l <- quntile_lh["10%"]
     quant_val_h <- quntile_lh["90%"]

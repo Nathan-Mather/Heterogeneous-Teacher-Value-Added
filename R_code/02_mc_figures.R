@@ -219,10 +219,9 @@ for(i in 1:nrow(model_xwalk)){
     
     
     sum_stats[[3]] <- data.table(Statistic = "Correlation to Truth", 
-                                 Standard =  cor(res_sub$mean_standard_norm, res_sub$true_ww_rank),
-                                 Weighted = cor(res_sub$mean_ww_norm, res_sub$true_ww_rank))
-    
-    
+                                 Standard =  cor(res_sub$mean_standard_norm, res_sub$true_ww_rank, method  = "kendall" , use="pairwise"),
+                                 Weighted = cor(res_sub$mean_ww_norm, res_sub$true_ww_rank, method  = "kendall" , use="pairwise"))
+
     out_sum_stats <- rbindlist(sum_stats)
     
     # put sum stats in a grob

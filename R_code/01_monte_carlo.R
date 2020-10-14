@@ -90,17 +90,19 @@ if(do_parallel){
 # ==== Single Iteration Function ====
 #====================================#
 
-# # Single iteration funciton inputs for debug
-# in_dt = r_dt # go down and run the function to get r_dt so you can debug
-# weight_type <-"rawlsian" # "linear" or "rawlsian" or "equal" or "v" or "mr"
-# lin_alpha = 2 # For linear weights
-# pctile = .4 # For rawlsian weights
-# v_alpha = 1 # For v weights
-# mrpctile = .3 # For mr weights
-# mrdist = .2 # for mr weights
-# method =  "wls" # "wls" or "semip" or "qtle"
-# weight_below = .8
-# weight_above = .2
+# # run inside of MC function up until this single_iteration_fun to get debug parms 
+# in_dt        = r_dt
+# weight_type  = p_weight_type
+# method       = p_method
+# lin_alpha    = p_lin_alpha
+# pctile       = p_pctile
+# weight_below = p_weight_below
+# weight_above = p_weight_above
+# v_alpha      = p_v_alpha
+# mrpctile     = p_mrpctile
+# mrdist       = p_mrdist
+
+
 
 # this is what a single run of the monte carlo will do 
 single_iteration_fun <- function(in_dt        = NULL,
@@ -153,7 +155,7 @@ single_iteration_fun <- function(in_dt        = NULL,
     # put implementation here. Call output or rename that object everywhere 
     # not really a good name anyway 
     
-    semip_va(in_data = in_dt )
+    output <- semip_va(in_data = in_dt )
   }
   
   if(method=="qtle"){
@@ -162,7 +164,7 @@ single_iteration_fun <- function(in_dt        = NULL,
                            in_teacher_id = "teacher_id",
                            in_pre_test   = "test_1",
                            in_post_test  = "test_2",
-                           ptle = seq(.01,.99,by=.04))
+                           ptle = seq(.02,.98,by=.04))
     
     
     # Now aggregate them 
@@ -200,15 +202,20 @@ mc_res_list <- vector("list", length = nrow(model_xwalk))
 for(i in 1:nrow(model_xwalk)){
 
   # set parameters for this monte carlo run
-  run_id                     <- model_xwalk[i, run_id]
-  nsims                      <- model_xwalk[i, nsims]
-  p_n_teacher                <- model_xwalk[i, n_teacher]
-  p_n_stud_per_teacher       <- model_xwalk[i, n_stud_per_teacher]
-  p_teacher_va_epsilon       <- model_xwalk[i, teacher_va_epsilon]
-  p_teacher_ability_drop_off <- model_xwalk[i, teacher_ability_drop_off]
-  p_test_SEM                 <- model_xwalk[i, test_SEM]
-  p_weight_type              <- model_xwalk[i, weight_type]
-  p_method                   <- model_xwalk[i, method]
+  # run parameters 
+  run_id                     <- model_xwalk[i, run_id]  # keep track of what run it is 
+  nsims                      <- model_xwalk[i, nsims]   # how many simulations to do 
+  # teacger parms 
+  p_n_teacher                <- model_xwalk[i, n_teacher] # number of teachers 
+  p_n_stud_per_teacher       <- model_xwalk[i, n_stud_per_teacher] # students per teaher
+  p_teacher_va_epsilon       <- model_xwalk[i, teacher_va_epsilon] # SD of noise on teacher impacy 
+  p_test_SEM                 <- model_xwalk[i, test_SEM]  # SEM of test 
+  p_impact_type              <- model_xwalk[i, impact_type]  
+  p_impact_function          <- model_xwalk[i, impact_function]  
+  p_max_diff                 <- model_xwalk[i, max_diff]  
+  # weight and estimation parameters 
+  p_weight_type              <- model_xwalk[i, weight_type] # style of social planner pareto weights
+  p_method                   <- model_xwalk[i, method] # method of estimation used 
   p_lin_alpha                <- model_xwalk[i, lin_alpha] # For linear weights
   p_pctile                   <- model_xwalk[i, pctile] # for rawlsian 
   p_weight_below             <- model_xwalk[i, weight_below ] # for rawlsian 
@@ -219,9 +226,14 @@ for(i in 1:nrow(model_xwalk)){
   
   # simulate initial data 
   #NOTE: NEED TO UPDATE THIS WITH TANNERS THING AND ALSO UPDATE THE PARAMETERS IN THE XWALK ...........................
-  r_dt <- simulate_test_data(n_teacher               = p_n_teacher,
-                             n_stud_per_teacher      = p_n_stud_per_teacher,
-                             test_SEM                = p_test_SEM)
+  r_dt <- simulate_test_data(n_teacher                = p_n_teacher,
+                             n_stud_per_teacher       = p_n_stud_per_teacher,
+                             test_SEM                 = p_test_SEM,
+                             teacher_va_epsilon       = p_teacher_va_epsilon,
+                             impact_type              = p_impact_type,
+                             impact_function          = p_impact_function,
+                             max_diff                 = p_max_diff)
+  
   
   # Get true WW impact 
   # NOTE: THIS ALSO NEEDS TO BE REPLACED, it does not work the way it should since the trth chagnes with the sample 
@@ -259,6 +271,7 @@ for(i in 1:nrow(model_xwalk)){
                                                              v_alpha      = p_v_alpha,
                                                              mrpctile     = p_mrpctile, 
                                                              mrdist       = p_mrpctile)
+    
   }
 
 # stack the results for this run 
