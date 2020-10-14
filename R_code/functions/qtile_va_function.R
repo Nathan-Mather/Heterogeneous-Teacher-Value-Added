@@ -29,11 +29,18 @@ qtilep_va <- function(in_data = NULL,
   rqfit_coefs <- rqfit$coefficients
 
   # make coefs long 
+  
+  # start by making it data.table 
   coefs_dt <- data.table(rqfit_coefs, keep.rownames = TRUE)
+  
+  # change names before melting to save computing time 
   setnames(coefs_dt, colnames(coefs_dt), gsub("tau= ", "", colnames(coefs_dt)))
-  coefs_dt <-  melt.data.table(coefs_dt, id.vars = "rn")
+  coefs_dt[, rn := gsub(in_teacher_id, "", rn)]
+  
+  coefs_dt <-  melt.data.table(coefs_dt, id.vars = "rn", variable.factor = FALSE)
   setnames(coefs_dt, c("rn", "variable", "value"), c("teacher_id", "tau", "qtile_est"))
- 
+  coefs_dt[, tau := as.numeric(tau)]
+  
   ## I (NATE) think this should come after aggregation. Not 100% sure thouogh 
   # # Standardize coefs (whne should I do this? If I don't at some point things look really wrong...)
   # std_coefs <- matrix(0,length(unique(in_data[[in_teacher_id]])),length(ptle))

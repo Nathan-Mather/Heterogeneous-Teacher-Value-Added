@@ -57,6 +57,8 @@ source(paste0(base_path, func_path, "binned_va_function.R"))
 source(paste0(base_path, func_path, "weighting_functions.R"))
 source(paste0(base_path, func_path, "true_ww_impact.R"))
 source(paste0(base_path, func_path, "teacher_impact.R"))
+source(paste0(base_path, func_path, "qtile_aggregation.R"))
+source(paste0(base_path, func_path, "qtile_va_function.R"))
 
 # geta time stamp 
 date_time <- gsub("-", "_", Sys.time())
@@ -222,12 +224,23 @@ single_iteration_fun <- function(in_dt        = NULL,
     
     
     # Now aggregate them 
+    output    <- qtile_agg(in_test_1   = in_dt$test_1,
+                          in_coefs     = qtile_res,
+                          weight_type  = weight_type,
+                          lin_alpha    = lin_alpha,
+                          pctile       = pctile,
+                          weight_below = weight_below,
+                          weight_above = weight_above,
+                          v_alpha      = v_alpha,
+                          mrpctile     = mrpctile,
+                          mrdist       = mrdist)
+ 
   }
   
   # Merge on the standard VA
-  va_tab1 <- merge(va_tab1, output, "teacher_id")
+  va_tab2 <- merge(va_tab1, output, "teacher_id")
   
-  return(va_tab1[])
+  return(va_tab2[])
 
 }
 
