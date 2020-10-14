@@ -13,6 +13,9 @@ equal_weight_fun <- function(in_test_1){
 # Linear weighting function
 # alpha is how much we weight the minimum compared to the maximum 
 # in_test_1 is the weighting variable
+
+# I thought if thus right as I was finishing but a smarter way to code the "val" thing would have been 
+# to just include an option to have two data sets. ONe for getting parameters and one for issueing weights. 
 linear_weight_fun <- function(alpha, 
                               in_test_1,
                               quantiles = c(.1,.9),
