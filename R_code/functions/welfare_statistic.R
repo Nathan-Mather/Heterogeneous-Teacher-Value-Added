@@ -78,11 +78,13 @@ welfare_statistic <- function(in_dt           = NULL,
   } else if (type == 'bin') {
     
     # Get the numeric range for each category.
+    output <- as.data.table(output)
     output[, range_low := as.numeric(sub('\\(', '', sapply(strsplit(category, ','), '[', 1)))]
     output[, range_high := as.numeric(sub('\\]', '', sapply(strsplit(category, ','), '[', 2)))]
-    
+
     # Get the baseline estimate for each teacher.
     output[, baseline := .SD[1, estimate], by='teacher_id']
+    
     
     # Make the overall minimum very low and the overall maximum very high to capture all.
     output[category != '', temp1 := min(range_low), by='teacher_id']
@@ -99,9 +101,9 @@ welfare_statistic <- function(in_dt           = NULL,
                                                           output$range_high >= y, baseline]), teacher_id, grid)]
     
     # Calculate and return the estimated welfare.
-    welfare[, estimated_welfare := sum(estimate*weight), by='teacher_id']
+    welfare[, alternative_welfare := sum(estimate*weight), by='teacher_id']
     
-    return(unique(welfare[, c('teacher_id', 'estimated_welfare')]))
+    return(unique(welfare[, c('teacher_id', 'alternative_welfare')]))
     
     
   } else if (type == 'quant') {
@@ -178,7 +180,7 @@ welfare_statistic <- function(in_dt           = NULL,
     # aggregate estimates 
     tot_weight <- tau_xwalk[, sum(weight)]
     
-    ww_qtile_va <- w_coefs_dt[, list(estimated_welfare = sum(qtile_est*weight/tot_weight)),
+    ww_qtile_va <- w_coefs_dt[, list(alternative_welfare = sum(qtile_est*weight/tot_weight)),
                               teacher_id]
     
     

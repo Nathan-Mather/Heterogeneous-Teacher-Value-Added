@@ -28,6 +28,7 @@ library(readxl)
 library(doRNG)
 library(np) # non parametric library
 library(quantreg)
+library(tidyr)
 
 # check users. (NOTE TO MIKE, add something unique to your base working directory to detect when it is your computer)
 my_wd <- getwd()
@@ -118,12 +119,12 @@ single_iteration_fun <- function(in_dt        = NULL,
                                  mrpctile     = NULL, 
                                  mrdist       = NULL,
                                  npoints      = NULL){
-  
-  # I need this for it to work on windows clusters since libraries are not loaded  on every cluster
+
+  # I need this for it to work on windows clusters since libraries are not loaded on every cluster
   require(data.table)
   
   # Resample the student data
-  in_dt <- simulate_test_data(teacher_dt = in_dt[, c( "teacher_id", "teacher_ability", "teacher_center")])
+  in_dt <- simulate_test_data(teacher_dt = in_dt[, c( "teacher_id", "teacher_ability", "teacher_center", "teacher_max")])
   
   # First run the standard VA 
   # run regression 
@@ -150,18 +151,15 @@ single_iteration_fun <- function(in_dt        = NULL,
                                mrpctile        = mrpctile, 
                                mrdist          = mrpctile)
 
-    
+  
   # check method option
   if(method=="bin"){
-    # Estimate the binned VA
+    # Estimate the binned VA.
     output <- binned_va(in_data = in_dt)
     
-    # Fix the first teacher. ###################### Check this later.
-    for(row in unique(output$category)) {
-      if (row != '') {
-        output <- rbindlist(list(output, list(1, row, 0)))
-      }
-    }
+    # Fill in missing estimates with 0 (so that we end up with teacher_ability).
+    output <- complete(output, teacher_id, category)
+    for (i in seq_along(output)) set(output, i=which(is.na(output[[i]])), j=i, value=0)
     
     # Get the estimated welfare.
     output <- welfare_statistic(in_dt           = in_dt,
@@ -176,7 +174,7 @@ single_iteration_fun <- function(in_dt        = NULL,
                                 v_alpha         = v_alpha,
                                 mrpctile        = mrpctile, 
                                 mrdist          = mrpctile)
-
+    print('here2')
   }
 
   if(method=="semip"){
@@ -214,7 +212,7 @@ single_iteration_fun <- function(in_dt        = NULL,
   # Merge on the standard VA
   va_tab2 <- merge(va_tab1, output, "teacher_id")
   
-  return(va_tab2[])
+  return(va_tab2)
 
 }
 
@@ -264,7 +262,6 @@ for(i in 1:nrow(model_xwalk)){
                              impact_function          = p_impact_function,
                              max_diff                 = p_max_diff)
   
-  
   # Get true WW impact 
   teacher_info <- welfare_statistic(in_dt           = r_dt,
                                     type            = 'true', 
@@ -279,9 +276,9 @@ for(i in 1:nrow(model_xwalk)){
                                     mrdist          = p_mrpctile,
                                     impact_type     = p_impact_type,
                                     impact_function = p_impact_function)
-    
+
   # run a monte carlo with whatever parameters you want 
-  if(do_parallel){
+  if (do_parallel) {
     mc_res <- foreach(j = 1:nsims) %dopar% single_iteration_fun(in_dt        = r_dt,
                                                                 weight_type  = p_weight_type,
                                                                 method       = p_method,
@@ -306,17 +303,17 @@ for(i in 1:nrow(model_xwalk)){
                                                              mrpctile     = p_mrpctile, 
                                                              mrdist       = p_mrpctile,
                                                              npoints      = p_npoints)
-    
+        
   }
 
 # stack the results for this run 
 mc_res <- rbindlist(mc_res)
 
 # Get the mean estimates for each teacher.The by groups are all descriptive variables 
-mean_tab <- mc_res[, list(mean_standard = mean(estimate),
-                          sd_standard   = sd(estimate),
-                          mean_ww = mean(ww_va),
-                          sd_ww   = sd(ww_va)),
+mean_tab <- mc_res[, list(mean_standard = mean(standard_welfare),
+                          sd_standard   = sd(standard_welfare),
+                          mean_ww = mean(alternative_welfare),
+                          sd_ww   = sd(alternative_welfare)),
                    by = teacher_id]
 
 # add some more indicators 
