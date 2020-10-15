@@ -41,10 +41,10 @@ if(my_wd %like% "Nmath_000"){
   
 }else{
   # base directory 
-  base_path <- "~/Documents/Research/HeterogenousTeacherVA/Git/"
+  base_path <- "/home/tanner/Documents/Research/HeterogenousTeacherVA/Git/"
   
   # path for data to save 
-  out_data <- "~/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code"
+  out_data <- "/home/tanner/Documents/Research/HeterogenousTeacherVA/Output/"
   
 }
 
@@ -118,7 +118,8 @@ single_iteration_fun <- function(in_dt        = NULL,
                                  v_alpha      = NULL,
                                  mrpctile     = NULL, 
                                  mrdist       = NULL,
-                                 npoints      = NULL){
+                                 npoints      = NULL,
+                                 weflare_dt   = NULL){
 
   # I need this for it to work on windows clusters since libraries are not loaded on every cluster
   require(data.table)
@@ -142,6 +143,7 @@ single_iteration_fun <- function(in_dt        = NULL,
                                output          = va_tab1,
                                type            = 'standard', 
                                npoints         = npoints,
+                               welfare         = welfare_dt,
                                weight_type     = weight_type,
                                in_test_1       = in_dt$test_1,
                                pctile          = pctile,
@@ -166,6 +168,7 @@ single_iteration_fun <- function(in_dt        = NULL,
                                 output          = output,
                                 type            = 'bin', 
                                 npoints         = npoints,
+                                welfare         = welfare_dt,
                                 weight_type     = weight_type,
                                 in_test_1       = in_dt$test_1,
                                 pctile          = pctile,
@@ -198,6 +201,7 @@ single_iteration_fun <- function(in_dt        = NULL,
                                 output          = output,
                                 type            = 'quant', 
                                 npoints         = npoints,
+                                welfare         = welfare_dt,
                                 weight_type     = weight_type,
                                 in_test_1       = in_dt$test_1,
                                 pctile          = pctile,
@@ -263,9 +267,24 @@ for(i in 1:nrow(model_xwalk)){
                              max_diff                 = p_max_diff)
   
   # Get true WW impact 
+  welfare_dt <- welfare_statistic(in_dt           = r_dt,
+                                  type            = 'true', 
+                                  npoints         = p_npoints,
+                                  weight_type     = p_weight_type,
+                                  in_test_1       = r_dt$test_1,
+                                  pctile          = p_pctile,
+                                  weight_below    = p_weight_below,
+                                  weight_above    = p_weight_above,
+                                  v_alpha         = p_v_alpha,
+                                  mrpctile        = p_mrpctile, 
+                                  mrdist          = p_mrpctile,
+                                  impact_type     = p_impact_type,
+                                  impact_function = p_impact_function)
+  
   teacher_info <- welfare_statistic(in_dt           = r_dt,
                                     type            = 'true', 
                                     npoints         = p_npoints,
+                                    welfare         = welfare_dt,
                                     weight_type     = p_weight_type,
                                     in_test_1       = r_dt$test_1,
                                     pctile          = p_pctile,
@@ -289,7 +308,8 @@ for(i in 1:nrow(model_xwalk)){
                                                                 v_alpha      = p_v_alpha,
                                                                 mrpctile     = p_mrpctile, 
                                                                 mrdist       = p_mrpctile,
-                                                                npoints      = p_npoints)
+                                                                npoints      = p_npoints,
+                                                                welfare_dt   = welfare_dt)
     
   } else {
     mc_res <- foreach(j = 1:nsims) %do% single_iteration_fun(in_dt        = r_dt,
@@ -302,7 +322,8 @@ for(i in 1:nrow(model_xwalk)){
                                                              v_alpha      = p_v_alpha,
                                                              mrpctile     = p_mrpctile, 
                                                              mrdist       = p_mrpctile,
-                                                             npoints      = p_npoints)
+                                                             npoints      = p_npoints,
+                                                             welfare_dt   = welfare_dt)
         
   }
 

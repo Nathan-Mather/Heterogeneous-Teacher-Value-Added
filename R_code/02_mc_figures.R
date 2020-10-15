@@ -37,11 +37,13 @@ if(my_wd %like% "Nmath_000"){
   
 }else{
   # base directory 
-  base_path <- "~/Documents/Research/HeterogenousTeacherVA/Git/"
+  base_path <- "/home/tanner/Documents/Research/HeterogenousTeacherVA/Git/"
   
   # path for data to save 
-  in_data <- "~/Documents/Research/HeterogenousTeacherVA/Git/Heterogeneous-Teacher-Value-Added/R_code"
+  in_data <- "/home/tanner/Documents/Research/HeterogenousTeacherVA/Output/"
   
+  # path for plots
+  out_plot <- "/home/tanner/Documents/Research/HeterogenousTeacherVA/Output/Figures/"
 }
 
 
@@ -89,7 +91,7 @@ if(nrow(model_xwalk) != length(unique(res_dt$run_id))) stop("The Xwalk informati
 # Renormalize everything so they have the same mean and variance
 res_dt[, mean_ww_norm := (mean_ww - mean(mean_ww))/sd(mean_ww), by = run_id]
 res_dt[, mean_standard_norm := (mean_standard - mean(mean_standard))/sd(mean_standard), by = run_id]
-res_dt[, true_ww_impact := (true_ww_impact - mean(true_ww_impact))/sd(true_ww_impact), by = run_id]
+res_dt[, true_ww_impact := (true_welfare - mean(true_welfare))/sd(true_welfare), by = run_id]
 
 # now renormalize standard deviations 
 res_dt[, sd_ww_norm := sd_ww/sd(mean_ww), by = run_id]
