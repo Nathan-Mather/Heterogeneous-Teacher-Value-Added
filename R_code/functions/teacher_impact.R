@@ -7,6 +7,9 @@ teacher_impact <- function(teacher_ability  = NULL,
                            teacher_center   = NULL,
                            teacher_max      = NULL,
                            stud_ability_1   = NULL,
+                           studmean         = NULL,
+                           studsd           = NULL,
+                           other_data       = NULL,
                            type             = 'MLRN',
                            func_num         = 1){
 
@@ -26,23 +29,28 @@ teacher_impact <- function(teacher_ability  = NULL,
   
   
   # Get the student ability mean and standard deviation.
-  studmean <- mean(stud_ability_1)
-  studsd <- sd(stud_ability_1)
+  if (is.null(studmean)) {
+    studmean <- mean(stud_ability_1)
+    studsd <- sd(stud_ability_1)
+  }
   
   
   # Generate a normalized variable based on sd to plug into the various impacts.
-  studpct <- (abs(stud_ability_1) < studmean + 2*studsd)*
-             ((stud_ability_1 - (studmean - 2*studsd))/(2*(studmean + 2*studsd))) + 
-             (stud_ability_1 >= studmean + 2*studsd)
+  if (is.null(other_data)) {
+    studpct <- (abs(stud_ability_1) < studmean + 2*studsd)*
+               ((stud_ability_1 - (studmean - 2*studsd))/(2*(studmean + 2*studsd))) + 
+               (stud_ability_1 >= studmean + 2*studsd)
+  }
+  else {
+    studpct <- (abs(other_data) < studmean + 2*studsd)*
+      ((other_data - (studmean - 2*studsd))/(2*(studmean + 2*studsd))) + 
+      (other_data >= studmean + 2*studsd)
+  }
   
   teachpct <- (abs(teacher_center) < 2)*
     ((teacher_center + 2)/4) + 
     (teacher_center >= 2)
   
-  impact <- teacher_ability +
-    (studpct >= teachpct - width)*(studpct < teachpct + width)*
-    (teacher_max - (teacher_max/width)*abs(teachpct - studpct)) -
-    width*teacher_max
   
   # Check which teacher impact function is specified.
   if (type == 'MLR') {
@@ -112,7 +120,7 @@ teacher_impact <- function(teacher_ability  = NULL,
     # No - Not Monotone, Non-linear, Not Rank Similar.
     if (func_num == 1) {
       # Spike in middle
-      return(teacher_ability +
+      return(teacher_ability + 
                (studpct >= teachpct - width)*(studpct < teachpct + width)*
                (teacher_max - (teacher_max/width)*abs(teachpct - studpct)) -
                width*teacher_max)
