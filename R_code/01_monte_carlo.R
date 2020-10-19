@@ -186,7 +186,12 @@ single_iteration_fun <- function(in_dt              = NULL,
   
   
   # Run the standard VA.
-  va_out1 <- lm(test_2 ~ test_1 + teacher_id - 1, data = in_dt)
+  if (covariates == 0) {
+    va_out1 <- lm(test_2 ~ test_1 + teacher_id - 1, data = in_dt)
+  } else {
+    va_out1 <- lm(test_2 ~ test_1 + teacher_id + school_av_test + stud_sex +
+                    stud_frpl + stud_att - 1, data = in_dt) ###### Check this
+  }
   
   # Clean results.
   va_tab1 <- data.table(broom::tidy(va_out1))
@@ -213,11 +218,20 @@ single_iteration_fun <- function(in_dt              = NULL,
   # Check method option.
   if (method=="bin") {
     # Estimate the binned VA.
-    output <- binned_va(in_data = in_dt)
+    if (covariates == 0) {
+      output <- binned_va(in_data = in_dt)
+    } else {
+      output <- binned_va(in_data = in_dt,
+                          formula = paste0('test_2 ~ test_1 + teacher_id + ',
+                                           'categories + teacher_id*categories',
+                                           ' + school_av_test + stud_sex + ',
+                                           'stud_frpl + stud_att - 1'))
+    }
     
     # Fill in missing estimates with 0 (so that we end up with teacher_ability).
     output <- complete(output, teacher_id, category)
-    for (i in seq_along(output)) set(output, i=which(is.na(output[[i]])), j=i, value=0)
+    for (i in seq_along(output)) set(output, i=which(is.na(output[[i]])), j=i,
+                                     value=0)
     
     # Calculate the welfare statistic for each teacher.
     output <- welfare_statistic(in_dt           = in_dt,
@@ -428,8 +442,10 @@ mean_tab <- merge(mean_tab, teacher_info, "teacher_id")
 
 # Write to the file.
 print(paste0('Finished with simulation ', i))
-write.table(mean_tab, paste0(out_data, '/', "mc_results_", date_time,".csv" ), 
-            sep = ",", col.names = !file.exists(paste0(out_data, '/', "mc_results_", date_time,".csv" )), 
+write.table(mean_tab, paste0(out_data, '/', "mc_results_", date_time, ".csv"), 
+            sep = ",", col.names = !file.exists(paste0(out_data, '/',
+                                                       "mc_results_",
+                                                       date_time, ".csv")), 
             append = T, row.names = FALSE)
 
 } # Close Monte Carlo loop.

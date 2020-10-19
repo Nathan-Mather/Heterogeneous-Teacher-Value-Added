@@ -1,5 +1,5 @@
 # =========================================================================== #
-# ======================= Simulated student test data ======================= #
+# ======================= Simulate test data function ======================= #
 # =========================================================================== #
 # - Keywords:
 #  - #note I will use the tags #note for things I think are important.
@@ -8,13 +8,6 @@
 
 # - Purpose of code:
 #  - Create simulated student test data to test value added code.
-
-
-
-
-# =========================================================================== #
-# ======================= Simulate test data function ======================= #
-# =========================================================================== #
 
   # ========================================================================= #
   # ========================= Roxygen documentation ========================= #
@@ -103,7 +96,7 @@
                                  stud_sorting             = 0,
                                  rho                      = 0.2,
                                  ta_sd                    = 0.1,
-                                 sa_sd                    = 1){
+                                 sa_sd                    = 1) {
     
     # Generate the teacher information if not provided.
     if (is.null(teacher_dt)) {
