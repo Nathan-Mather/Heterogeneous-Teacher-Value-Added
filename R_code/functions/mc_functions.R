@@ -1,0 +1,214 @@
+# =========================================================================== #
+# ========================== Monte Carlo Functions ========================== #
+# =========================================================================== #
+# - Purpose of code:
+#  - Put together the functions used in the Monte Carlo code.
+
+
+
+
+# =========================================================================== #
+# ======================== Single Iteration Function ======================== #
+# =========================================================================== #
+
+  # ========================================================================= #
+  # ========================= Roxygen documentation ========================= #
+  # ========================================================================= #
+  
+  #'@param 
+  #'@details 
+  #'@examples 
+
+
+  # ========================================================================= #
+  # ============================ debug parameters =========================== #
+  # ========================================================================= #
+
+  # Run inside of MC loop up until the single_iteration_fun to get debug
+  #  parms.
+  
+  # in_dt              = r_dt
+  # weight_type        = p_weight_type
+  # method             = p_method
+  # lin_alpha          = p_lin_alpha
+  # pctile             = p_pctile
+  # weight_above       = p_weight_above
+  # weight_below       = p_weight_below
+  # v_alpha            = p_v_alpha
+  # mrpctile           = p_mrpctile
+  # mrdist             = p_mrpctile
+  # npoints            = p_npoints
+  # n_teacher          = p_n_teacher
+  # n_stud_per_teacher = p_n_stud_per_teacher
+  # test_SEM           = p_test_SEM
+  # teacher_va_epsilon = p_teacher_va_epsilon
+  # impact_type        = p_impact_type
+  # impact_function    = p_impact_function
+  # max_diff           = p_max_diff
+  # covariates         = p_covariates
+  # peer_effects       = p_peer_effects
+  # stud_sorting       = p_stud_sorting
+  # rho                = p_rho
+  # ta_sd              = p_ta_sd
+  # sa_sd              = p_sa_sd
+
+
+  # ========================================================================= #
+  # ============================ Define Function ============================ #
+  # ========================================================================= #
+
+  # Start of the function.
+  single_iteration_fun <- function(in_dt              = NULL,
+                                   weight_type        = NULL,
+                                   method             = NULL, 
+                                   lin_alpha          = NULL,
+                                   pctile             = NULL,
+                                   weight_below       = NULL,
+                                   weight_above       = NULL,
+                                   v_alpha            = NULL,
+                                   mrpctile           = NULL, 
+                                   mrdist             = NULL,
+                                   npoints            = NULL,
+                                   n_teacher          = NULL,
+                                   n_stud_per_teacher = NULL,
+                                   test_SEM           = NULL,
+                                   teacher_va_epsilon = NULL,
+                                   impact_type        = NULL,
+                                   impact_function    = NULL,
+                                   max_diff           = NULL,
+                                   covariates         = NULL,
+                                   peer_effects       = NULL,
+                                   stud_sorting       = NULL,
+                                   rho                = NULL,
+                                   ta_sd              = NULL,
+                                   sa_sd              = NULL){
+    
+    # I need this for it to work on windows clusters since libraries are not
+    #  loaded on every cluster.
+    require(data.table)
+    
+    # Resample the student data.
+    in_dt <- simulate_test_data(n_teacher          = n_teacher,
+                                n_stud_per_teacher = n_stud_per_teacher,
+                                test_SEM           = test_SEM,
+                                teacher_va_epsilon = teacher_va_epsilon,
+                                impact_type        = impact_type,
+                                impact_function    = impact_function,
+                                max_diff           = max_diff,
+                                teacher_dt         = in_dt[, c("teacher_id",
+                                                               "teacher_ability",
+                                                               "teacher_center",
+                                                               "teacher_max")],
+                                covariates         = covariates,
+                                peer_effects       = peer_effects,
+                                stud_sorting       = stud_sorting,
+                                rho                = rho,
+                                ta_sd              = ta_sd,
+                                sa_sd              = sa_sd)
+    
+    
+    # Run the standard VA.
+    if (covariates == 0) {
+      va_out1 <- lm(test_2 ~ test_1 + teacher_id - 1, data = in_dt)
+    } else {
+      va_out1 <- lm(test_2 ~ test_1 + teacher_id + school_av_test + stud_sex +
+                      stud_frpl + stud_att - 1, data = in_dt) ###### Check this
+    }
+    
+    # Clean results.
+    va_tab1 <- data.table(broom::tidy(va_out1))
+    va_tab1[, teacher_id := gsub("teacher_id", "", term)]
+    
+    # Return just the estimates
+    va_tab1 <- va_tab1[term %like% "teacher_id", c("teacher_id", "estimate")]
+    
+    # Get the welfare statistic for the standard VA.
+    va_tab1 <- welfare_statistic(in_dt           = in_dt,
+                                 output          = va_tab1,
+                                 type            = 'standard', 
+                                 npoints         = npoints,
+                                 weight_type     = weight_type,
+                                 in_test_1       = in_dt$test_1,
+                                 pctile          = pctile,
+                                 weight_below    = weight_above,
+                                 weight_above    = weight_below,
+                                 v_alpha         = v_alpha,
+                                 mrpctile        = mrpctile, 
+                                 mrdist          = mrdist)
+    
+    
+    # Check method option.
+    if (method=="bin") {
+      # Estimate the binned VA.
+      if (covariates == 0) {
+        output <- binned_va(in_data = in_dt)
+      } else {
+        output <- binned_va(in_data = in_dt,
+                            reg_formula = paste0('test_2 ~ test_1 + teacher_id + ',
+                                                 'categories + teacher_id*categories',
+                                                 ' + school_av_test + stud_sex + ',
+                                                 'stud_frpl + stud_att - 1'))
+      }
+      
+      # Fill in missing estimates with 0 (so that we end up with teacher_ability).
+      output <- complete(output, teacher_id, category)
+      for (i in seq_along(output)) set(output, i=which(is.na(output[[i]])), j=i,
+                                       value=0)
+      
+      # Calculate the welfare statistic for each teacher.
+      output <- welfare_statistic(in_dt           = in_dt,
+                                  output          = output,
+                                  type            = 'bin', 
+                                  npoints         = npoints,
+                                  weight_type     = weight_type,
+                                  in_test_1       = in_dt$test_1,
+                                  pctile          = pctile,
+                                  weight_below    = weight_above,
+                                  weight_above    = weight_below,
+                                  v_alpha         = v_alpha,
+                                  mrpctile        = mrpctile, 
+                                  mrdist          = mrdist)
+    }
+    
+    
+    if (method=="semip") {
+      # put implementation here. Call output or rename that object everywhere 
+      # not really a good name anyway 
+      
+      output <- semip_va(in_data = in_dt )
+    }
+    
+    
+    if (method=="qtle") {
+      # Run quantile regression and get estimates for a grid of tau values.
+      qtile_res <- qtilep_va(in_data       = in_dt,
+                             in_teacher_id = "teacher_id",
+                             in_pre_test   = "test_1",
+                             in_post_test  = "test_2",
+                             ptle          = seq(.02, .98, by=.04))
+      
+      
+      # Calculate the welfare statistic for each teacher.
+      output <- welfare_statistic(in_dt           = in_dt,
+                                  output          = qtile_res,
+                                  type            = 'quant', 
+                                  npoints         = npoints,
+                                  weight_type     = weight_type,
+                                  in_test_1       = in_dt$test_1,
+                                  pctile          = pctile,
+                                  weight_below    = weight_above,
+                                  weight_above    = weight_below,
+                                  v_alpha         = v_alpha,
+                                  mrpctile        = mrpctile, 
+                                  mrdist          = mrdist)
+      
+    }
+    
+    
+    # Merge on the standard VA
+    va_tab2 <- merge(va_tab1, output, "teacher_id")
+    
+    # Return the estimates.
+    return(va_tab2)
+    
+  } # End function.
