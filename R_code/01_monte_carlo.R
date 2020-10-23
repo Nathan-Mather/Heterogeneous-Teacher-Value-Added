@@ -178,6 +178,42 @@ for(i in 1:nrow(model_xwalk)){
   # Run just a single draw if specified, otherwise run the Monte Carlo.
   if (single_run == 1) {
     
+    # Run the standard VA.
+    va_tab1 <- standard_va_stat(in_dt              = r_dt,
+                                single_run         = single_run,
+                                weight_type        = p_weight_type, # Weighting parameters
+                                method             = p_method,
+                                lin_alpha          = p_lin_alpha,
+                                pctile             = p_pctile,
+                                weight_above       = p_weight_above,
+                                weight_below       = p_weight_below,
+                                v_alpha            = p_v_alpha,
+                                mrpctile           = p_mrpctile, 
+                                mrdist             = p_mrdist,
+                                npoints            = p_npoints,
+                                n_teacher          = p_n_teacher, # Simulated data parameters
+                                n_stud_per_teacher = p_n_stud_per_teacher,
+                                test_SEM           = p_test_SEM,
+                                teacher_va_epsilon = p_teacher_va_epsilon,
+                                impact_type        = p_impact_type,
+                                impact_function    = p_impact_function,
+                                max_diff           = p_max_diff,
+                                covariates         = p_covariates,
+                                peer_effects       = p_peer_effects,
+                                stud_sorting       = p_stud_sorting,
+                                rho                = p_rho,
+                                ta_sd              = p_ta_sd,
+                                sa_sd              = p_sa_sd)
+    
+    # Run the alternative VA and bootstrap standard errors.
+    if (type == 'bin') {
+      
+    } else if (type == 'qtle') {
+      
+    } else if (type == 'semip') {
+      
+    }
+    
   } else {
     # Run a Monte Carlo with the specified parameters. 
     if (do_parallel) {
@@ -261,7 +297,7 @@ for(i in 1:nrow(model_xwalk)){
                                                          date_time, ".csv")), 
               append = T, row.names = FALSE)
 
-  } # Close the else loop.
+  } # Close the single run else clause.
 } # Close Monte Carlo loop.
 
 

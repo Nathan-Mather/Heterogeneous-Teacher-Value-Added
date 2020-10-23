@@ -26,8 +26,6 @@
   
   # Start of the function.
   standard_va_stat <- function(in_dt              = NULL,
-                               index              = NULL,
-                               boot               = NULL,
                                weight_type        = NULL,
                                method             = NULL, 
                                lin_alpha          = NULL,
@@ -52,11 +50,6 @@
                                ta_sd              = NULL,
                                sa_sd              = NULL) {
     
-    # Allow the bootstrap to pick the sample if needed.
-    if (!is.null(boot)) {
-      in_dt <- in_dt[index] 
-    }
-    
     # Run the standard VA.
     if (covariates == 0) {
       va_out1 <- lm(test_2 ~ test_1 + teacher_id - 1, data = in_dt)
@@ -69,30 +62,9 @@
     va_tab1 <- data.table(broom::tidy(va_out1))
     va_tab1[, teacher_id := gsub("teacher_id", "", term)]
     
-    # Return just the estimates
-    va_tab1 <- va_tab1[term %like% "teacher_id", c("teacher_id", "estimate")]
-    
-    # Get the welfare statistic for the standard VA.
-    va_tab1 <- welfare_statistic(in_dt           = in_dt,
-                                 output          = va_tab1,
-                                 type            = 'standard', 
-                                 npoints         = npoints,
-                                 weight_type     = weight_type,
-                                 in_test_1       = in_dt$test_1,
-                                 pctile          = pctile,
-                                 weight_below    = weight_above,
-                                 weight_above    = weight_below,
-                                 v_alpha         = v_alpha,
-                                 mrpctile        = mrpctile, 
-                                 mrdist          = mrdist)
-    
-    # Return the full data if in the MC or just the estimates for the bootstrap.
-    if (is.null(boot)) {
-      return(va_tab1)
-    } else {
-      return(va_tab1$standard_welfare)
-    }
-    
+    # Return just the estimates and standard errors.
+    return(va_tab1[term %like% "teacher_id", c("teacher_id", "estimate", "std.error")])
+  
   } # End function.
   
   

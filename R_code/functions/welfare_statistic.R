@@ -128,16 +128,6 @@
       return(unique(welfare[, c('teacher_id', 'true_welfare')]))
       
       
-    } else if (type == 'standard') {
-      
-      # Merge on the estimate.
-      welfare <- merge(welfare, output, 'teacher_id') #################### Check this. Does this keep all rows in 'welfare' and merge on the estimate?
-      
-      # Simply return the weighted sum.
-      welfare[, standard_welfare := sum(estimate*weight), by='teacher_id']
-      return(unique(welfare[, c('teacher_id', 'standard_welfare')]))
-      
-      
     } else if (type == 'bin') {
       
       # Get the numeric range for each category.
