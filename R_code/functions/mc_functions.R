@@ -8,6 +8,279 @@
 
 
 # =========================================================================== #
+# ======================== Standard VA Stat Function ======================== #
+# =========================================================================== #
+
+  # ========================================================================= #
+  # ========================= Roxygen documentation ========================= #
+  # ========================================================================= #
+  
+  #'@param 
+  #'@details 
+  #'@examples
+
+
+  # ========================================================================= #
+  # ============================ Define Function ============================ #
+  # ========================================================================= #
+  
+  # Start of the function.
+  standard_va_stat <- function(in_dt              = NULL,
+                               index              = NULL,
+                               boot               = NULL,
+                               weight_type        = NULL,
+                               method             = NULL, 
+                               lin_alpha          = NULL,
+                               pctile             = NULL,
+                               weight_below       = NULL,
+                               weight_above       = NULL,
+                               v_alpha            = NULL,
+                               mrpctile           = NULL, 
+                               mrdist             = NULL,
+                               npoints            = NULL,
+                               n_teacher          = NULL,
+                               n_stud_per_teacher = NULL,
+                               test_SEM           = NULL,
+                               teacher_va_epsilon = NULL,
+                               impact_type        = NULL,
+                               impact_function    = NULL,
+                               max_diff           = NULL,
+                               covariates         = NULL,
+                               peer_effects       = NULL,
+                               stud_sorting       = NULL,
+                               rho                = NULL,
+                               ta_sd              = NULL,
+                               sa_sd              = NULL) {
+    
+    # Allow the bootstrap to pick the sample if needed.
+    if (!is.null(boot)) {
+      in_dt <- in_dt[index] 
+    }
+    
+    # Run the standard VA.
+    if (covariates == 0) {
+      va_out1 <- lm(test_2 ~ test_1 + teacher_id - 1, data = in_dt)
+    } else {
+      va_out1 <- lm(test_2 ~ test_1 + teacher_id + school_av_test + stud_sex +
+                      stud_frpl + stud_att - 1, data = in_dt) ###### Check this
+    }
+    
+    # Clean results.
+    va_tab1 <- data.table(broom::tidy(va_out1))
+    va_tab1[, teacher_id := gsub("teacher_id", "", term)]
+    
+    # Return just the estimates
+    va_tab1 <- va_tab1[term %like% "teacher_id", c("teacher_id", "estimate")]
+    
+    # Get the welfare statistic for the standard VA.
+    va_tab1 <- welfare_statistic(in_dt           = in_dt,
+                                 output          = va_tab1,
+                                 type            = 'standard', 
+                                 npoints         = npoints,
+                                 weight_type     = weight_type,
+                                 in_test_1       = in_dt$test_1,
+                                 pctile          = pctile,
+                                 weight_below    = weight_above,
+                                 weight_above    = weight_below,
+                                 v_alpha         = v_alpha,
+                                 mrpctile        = mrpctile, 
+                                 mrdist          = mrdist)
+    
+    # Return the full data if in the MC or just the estimates for the bootstrap.
+    if (is.null(boot)) {
+      return(va_tab1)
+    } else {
+      return(va_tab1$standard_welfare)
+    }
+    
+  } # End function.
+  
+  
+  
+
+# =========================================================================== #
+# ========================= Binned VA Stat Function ========================= #
+# =========================================================================== #
+
+  # ========================================================================= #
+  # ========================= Roxygen documentation ========================= #
+  # ========================================================================= #
+  
+  #'@param 
+  #'@details 
+  #'@examples
+  
+  
+  # ========================================================================= #
+  # ============================ Define Function ============================ #
+  # ========================================================================= #
+  
+  # Start of the function.
+  binned_va_stat <- function(in_dt              = NULL,
+                               index              = NULL,
+                               boot               = NULL,
+                               weight_type        = NULL,
+                               method             = NULL, 
+                               lin_alpha          = NULL,
+                               pctile             = NULL,
+                               weight_below       = NULL,
+                               weight_above       = NULL,
+                               v_alpha            = NULL,
+                               mrpctile           = NULL, 
+                               mrdist             = NULL,
+                               npoints            = NULL,
+                               n_teacher          = NULL,
+                               n_stud_per_teacher = NULL,
+                               test_SEM           = NULL,
+                               teacher_va_epsilon = NULL,
+                               impact_type        = NULL,
+                               impact_function    = NULL,
+                               max_diff           = NULL,
+                               covariates         = NULL,
+                               peer_effects       = NULL,
+                               stud_sorting       = NULL,
+                               rho                = NULL,
+                               ta_sd              = NULL,
+                               sa_sd              = NULL) {
+    
+    # Allow the bootstrap to pick the sample if needed.
+    if (!is.null(boot)) {
+      in_dt <- in_dt[index] 
+    }
+    
+    # Estimate the binned VA.
+    if (covariates == 0) {
+      output <- binned_va(in_data = in_dt)
+    } else {
+      output <- binned_va(in_data = in_dt,
+                          reg_formula = paste0('test_2 ~ test_1 + teacher_id + ',
+                                               'categories + teacher_id*categories',
+                                               ' + school_av_test + stud_sex + ',
+                                               'stud_frpl + stud_att - 1'))
+    }
+    
+    # Fill in missing estimates with 0 (so that we end up with teacher_ability).
+    output <- complete(output, teacher_id, category)
+    for (i in seq_along(output)) set(output, i=which(is.na(output[[i]])), j=i,
+                                     value=0)
+    
+    # Calculate the welfare statistic for each teacher.
+    output <- welfare_statistic(in_dt           = in_dt,
+                                output          = output,
+                                type            = 'bin', 
+                                npoints         = npoints,
+                                weight_type     = weight_type,
+                                in_test_1       = in_dt$test_1,
+                                pctile          = pctile,
+                                weight_below    = weight_above,
+                                weight_above    = weight_below,
+                                v_alpha         = v_alpha,
+                                mrpctile        = mrpctile, 
+                                mrdist          = mrdist)
+    
+    # Return the full data if in the MC or just the estimates for the bootstrap.
+    if (is.null(boot)) {
+      return(output)
+    } else {
+      return(output$alternative_welfare)
+    }
+    
+  } # End function.
+
+
+
+  
+# =========================================================================== #
+# ======================== Quantile VA Stat Function ======================== #
+# =========================================================================== #
+  
+  # ========================================================================= #
+  # ========================= Roxygen documentation ========================= #
+  # ========================================================================= #
+  
+  #'@param 
+  #'@details 
+  #'@examples
+  
+  
+  # ========================================================================= #
+  # ============================ Define Function ============================ #
+  # ========================================================================= #
+  
+  # Start of the function.
+  quantile_va_stat <- function(in_dt              = NULL,
+                               index              = NULL,
+                               boot               = NULL,
+                               weight_type        = NULL,
+                               method             = NULL, 
+                               lin_alpha          = NULL,
+                               pctile             = NULL,
+                               weight_below       = NULL,
+                               weight_above       = NULL,
+                               v_alpha            = NULL,
+                               mrpctile           = NULL, 
+                               mrdist             = NULL,
+                               npoints            = NULL,
+                               n_teacher          = NULL,
+                               n_stud_per_teacher = NULL,
+                               test_SEM           = NULL,
+                               teacher_va_epsilon = NULL,
+                               impact_type        = NULL,
+                               impact_function    = NULL,
+                               max_diff           = NULL,
+                               covariates         = NULL,
+                               peer_effects       = NULL,
+                               stud_sorting       = NULL,
+                               rho                = NULL,
+                               ta_sd              = NULL,
+                               sa_sd              = NULL) {
+      
+    # Allow the bootstrap to pick the sample if needed.
+    if (!is.null(boot)) {
+      in_dt <- in_dt[index] 
+    }
+    
+    # Run quantile regression and get estimates for a grid of tau values.
+    qtile_res <- qtilep_va(in_data       = in_dt,
+                           in_teacher_id = "teacher_id",
+                           in_pre_test   = "test_1",
+                           in_post_test  = "test_2",
+                           ptle          = seq(.02, .98, by=.04))
+    
+    
+    # Calculate the welfare statistic for each teacher.
+    output <- welfare_statistic(in_dt           = in_dt,
+                                output          = qtile_res,
+                                type            = 'quant', 
+                                npoints         = npoints,
+                                weight_type     = weight_type,
+                                in_test_1       = in_dt$test_1,
+                                pctile          = pctile,
+                                weight_below    = weight_above,
+                                weight_above    = weight_below,
+                                v_alpha         = v_alpha,
+                                mrpctile        = mrpctile, 
+                                mrdist          = mrdist)
+    
+    # Return the full data if in the MC or just the estimates for the bootstrap.
+    if (is.null(boot)) {
+      return(output)
+    } else {
+      return(output$alternative_welfare)
+    }
+    
+  } # End function.
+
+
+
+# =========================================================================== #
+# ===================== Semiparametric VA Stat Function ===================== #
+# =========================================================================== #
+
+
+
+
+# =========================================================================== #
 # ======================== Single Iteration Function ======================== #
 # =========================================================================== #
 
@@ -81,7 +354,7 @@
                                    stud_sorting       = NULL,
                                    rho                = NULL,
                                    ta_sd              = NULL,
-                                   sa_sd              = NULL){
+                                   sa_sd              = NULL) {
     
     # I need this for it to work on windows clusters since libraries are not
     #  loaded on every cluster.
@@ -108,66 +381,61 @@
     
     
     # Run the standard VA.
-    if (covariates == 0) {
-      va_out1 <- lm(test_2 ~ test_1 + teacher_id - 1, data = in_dt)
-    } else {
-      va_out1 <- lm(test_2 ~ test_1 + teacher_id + school_av_test + stud_sex +
-                      stud_frpl + stud_att - 1, data = in_dt) ###### Check this
-    }
-    
-    # Clean results.
-    va_tab1 <- data.table(broom::tidy(va_out1))
-    va_tab1[, teacher_id := gsub("teacher_id", "", term)]
-    
-    # Return just the estimates
-    va_tab1 <- va_tab1[term %like% "teacher_id", c("teacher_id", "estimate")]
-    
-    # Get the welfare statistic for the standard VA.
-    va_tab1 <- welfare_statistic(in_dt           = in_dt,
-                                 output          = va_tab1,
-                                 type            = 'standard', 
-                                 npoints         = npoints,
-                                 weight_type     = weight_type,
-                                 in_test_1       = in_dt$test_1,
-                                 pctile          = pctile,
-                                 weight_below    = weight_above,
-                                 weight_above    = weight_below,
-                                 v_alpha         = v_alpha,
-                                 mrpctile        = mrpctile, 
-                                 mrdist          = mrdist)
+    va_tab1 <- standard_va_stat(in_dt              = in_dt,
+                                weight_type        = weight_type,
+                                method             = method, 
+                                lin_alpha          = lin_alpha,
+                                pctile             = pctile,
+                                weight_below       = weight_below,
+                                weight_above       = weight_above,
+                                v_alpha            = v_alpha,
+                                mrpctile           = mrpctile, 
+                                mrdist             = mrdist,
+                                npoints            = npoints,
+                                n_teacher          = n_teacher,
+                                n_stud_per_teacher = n_stud_per_teacher,
+                                test_SEM           = test_SEM,
+                                teacher_va_epsilon = teacher_va_epsilon,
+                                impact_type        = impact_type,
+                                impact_function    = impact_function,
+                                max_diff           = max_diff,
+                                covariates         = covariates,
+                                peer_effects       = peer_effects,
+                                stud_sorting       = stud_sorting,
+                                rho                = rho,
+                                ta_sd              = ta_sd,
+                                sa_sd              = sa_sd)
     
     
     # Check method option.
     if (method=="bin") {
-      # Estimate the binned VA.
-      if (covariates == 0) {
-        output <- binned_va(in_data = in_dt)
-      } else {
-        output <- binned_va(in_data = in_dt,
-                            reg_formula = paste0('test_2 ~ test_1 + teacher_id + ',
-                                                 'categories + teacher_id*categories',
-                                                 ' + school_av_test + stud_sex + ',
-                                                 'stud_frpl + stud_att - 1'))
-      }
       
-      # Fill in missing estimates with 0 (so that we end up with teacher_ability).
-      output <- complete(output, teacher_id, category)
-      for (i in seq_along(output)) set(output, i=which(is.na(output[[i]])), j=i,
-                                       value=0)
+      # Run the binned VA.
+      output <- binned_va_stat(in_dt              = in_dt,
+                                  weight_type        = weight_type,
+                                  method             = method, 
+                                  lin_alpha          = lin_alpha,
+                                  pctile             = pctile,
+                                  weight_below       = weight_below,
+                                  weight_above       = weight_above,
+                                  v_alpha            = v_alpha,
+                                  mrpctile           = mrpctile, 
+                                  mrdist             = mrdist,
+                                  npoints            = npoints,
+                                  n_teacher          = n_teacher,
+                                  n_stud_per_teacher = n_stud_per_teacher,
+                                  test_SEM           = test_SEM,
+                                  teacher_va_epsilon = teacher_va_epsilon,
+                                  impact_type        = impact_type,
+                                  impact_function    = impact_function,
+                                  max_diff           = max_diff,
+                                  covariates         = covariates,
+                                  peer_effects       = peer_effects,
+                                  stud_sorting       = stud_sorting,
+                                  rho                = rho,
+                                  ta_sd              = ta_sd,
+                                  sa_sd              = sa_sd)
       
-      # Calculate the welfare statistic for each teacher.
-      output <- welfare_statistic(in_dt           = in_dt,
-                                  output          = output,
-                                  type            = 'bin', 
-                                  npoints         = npoints,
-                                  weight_type     = weight_type,
-                                  in_test_1       = in_dt$test_1,
-                                  pctile          = pctile,
-                                  weight_below    = weight_above,
-                                  weight_above    = weight_below,
-                                  v_alpha         = v_alpha,
-                                  mrpctile        = mrpctile, 
-                                  mrdist          = mrdist)
     }
     
     
@@ -175,32 +443,37 @@
       # put implementation here. Call output or rename that object everywhere 
       # not really a good name anyway 
       
-      output <- semip_va(in_data = in_dt )
+      output <- semip_va(in_data = in_dt)
     }
     
     
     if (method=="qtle") {
-      # Run quantile regression and get estimates for a grid of tau values.
-      qtile_res <- qtilep_va(in_data       = in_dt,
-                             in_teacher_id = "teacher_id",
-                             in_pre_test   = "test_1",
-                             in_post_test  = "test_2",
-                             ptle          = seq(.02, .98, by=.04))
       
-      
-      # Calculate the welfare statistic for each teacher.
-      output <- welfare_statistic(in_dt           = in_dt,
-                                  output          = qtile_res,
-                                  type            = 'quant', 
-                                  npoints         = npoints,
-                                  weight_type     = weight_type,
-                                  in_test_1       = in_dt$test_1,
-                                  pctile          = pctile,
-                                  weight_below    = weight_above,
-                                  weight_above    = weight_below,
-                                  v_alpha         = v_alpha,
-                                  mrpctile        = mrpctile, 
-                                  mrdist          = mrdist)
+      # Run the quantile VA.
+      output <- quantile_va_stat(in_dt              = in_dt,
+                                 weight_type        = weight_type,
+                                 method             = method, 
+                                 lin_alpha          = lin_alpha,
+                                 pctile             = pctile,
+                                 weight_below       = weight_below,
+                                 weight_above       = weight_above,
+                                 v_alpha            = v_alpha,
+                                 mrpctile           = mrpctile, 
+                                 mrdist             = mrdist,
+                                 npoints            = npoints,
+                                 n_teacher          = n_teacher,
+                                 n_stud_per_teacher = n_stud_per_teacher,
+                                 test_SEM           = test_SEM,
+                                 teacher_va_epsilon = teacher_va_epsilon,
+                                 impact_type        = impact_type,
+                                 impact_function    = impact_function,
+                                 max_diff           = max_diff,
+                                 covariates         = covariates,
+                                 peer_effects       = peer_effects,
+                                 stud_sorting       = stud_sorting,
+                                 rho                = rho,
+                                 ta_sd              = ta_sd,
+                                 sa_sd              = sa_sd)
       
     }
     

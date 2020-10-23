@@ -112,7 +112,8 @@ for(i in 1:nrow(model_xwalk)){
   # Set parameters for this Monte Carlo run.
   # Run parameters.
   run_id                     <- model_xwalk[i, run_id]             # keep track of what run it is 
-  nsims                      <- model_xwalk[i, nsims]              # how many simulations to do 
+  nsims                      <- model_xwalk[i, nsims]              # how many simulations to do
+  single_run                 <- model_xwalk[i, single_run]         # whether or not to run just one draw and calculate bootstrap SE's
   p_npoints                  <- model_xwalk[i, npoints]            # number of grid points over which to calculate welfare added
   
   # Simulated data parameters.
@@ -174,88 +175,93 @@ for(i in 1:nrow(model_xwalk)){
                                     impact_function = p_impact_function)
 
   
-  # Run a Monte Carlo with the specified parameters. 
-  if (do_parallel) {
-    mc_res <- foreach(j = 1:nsims) %dopar% single_iteration_fun(in_dt              = r_dt,
-                                                                weight_type        = p_weight_type, # Weighting parameters
-                                                                method             = p_method,
-                                                                lin_alpha          = p_lin_alpha,
-                                                                pctile             = p_pctile,
-                                                                weight_above       = p_weight_above,
-                                                                weight_below       = p_weight_below,
-                                                                v_alpha            = p_v_alpha,
-                                                                mrpctile           = p_mrpctile, 
-                                                                mrdist             = p_mrdist,
-                                                                npoints            = p_npoints,
-                                                                n_teacher          = p_n_teacher, # Simulated data parameters
-                                                                n_stud_per_teacher = p_n_stud_per_teacher,
-                                                                test_SEM           = p_test_SEM,
-                                                                teacher_va_epsilon = p_teacher_va_epsilon,
-                                                                impact_type        = p_impact_type,
-                                                                impact_function    = p_impact_function,
-                                                                max_diff           = p_max_diff,
-                                                                covariates         = p_covariates,
-                                                                peer_effects       = p_peer_effects,
-                                                                stud_sorting       = p_stud_sorting,
-                                                                rho                = p_rho,
-                                                                ta_sd              = p_ta_sd,
-                                                                sa_sd              = p_sa_sd)
+  # Run just a single draw if specified, otherwise run the Monte Carlo.
+  if (single_run == 1) {
     
   } else {
-    mc_res <- foreach(j = 1:nsims) %do% single_iteration_fun(in_dt              = r_dt,
-                                                             weight_type        = p_weight_type, # Weighting parameters
-                                                             method             = p_method,
-                                                             lin_alpha          = p_lin_alpha,
-                                                             pctile             = p_pctile,
-                                                             weight_above       = p_weight_above,
-                                                             weight_below       = p_weight_below,
-                                                             v_alpha            = p_v_alpha,
-                                                             mrpctile           = p_mrpctile, 
-                                                             mrdist             = p_mrdist,
-                                                             npoints            = p_npoints,
-                                                             n_teacher          = p_n_teacher, # Simulated data parameters
-                                                             n_stud_per_teacher = p_n_stud_per_teacher,
-                                                             test_SEM           = p_test_SEM,
-                                                             teacher_va_epsilon = p_teacher_va_epsilon,
-                                                             impact_type        = p_impact_type,
-                                                             impact_function    = p_impact_function,
-                                                             max_diff           = p_max_diff,
-                                                             covariates         = p_covariates,
-                                                             peer_effects       = p_peer_effects,
-                                                             stud_sorting       = p_stud_sorting,
-                                                             rho                = p_rho,
-                                                             ta_sd              = p_ta_sd,
-                                                             sa_sd              = p_sa_sd)
-        
-  }
-
+    # Run a Monte Carlo with the specified parameters. 
+    if (do_parallel) {
+      mc_res <- foreach(j = 1:nsims) %dopar% single_iteration_fun(in_dt              = r_dt,
+                                                                  weight_type        = p_weight_type, # Weighting parameters
+                                                                  method             = p_method,
+                                                                  lin_alpha          = p_lin_alpha,
+                                                                  pctile             = p_pctile,
+                                                                  weight_above       = p_weight_above,
+                                                                  weight_below       = p_weight_below,
+                                                                  v_alpha            = p_v_alpha,
+                                                                  mrpctile           = p_mrpctile, 
+                                                                  mrdist             = p_mrdist,
+                                                                  npoints            = p_npoints,
+                                                                  n_teacher          = p_n_teacher, # Simulated data parameters
+                                                                  n_stud_per_teacher = p_n_stud_per_teacher,
+                                                                  test_SEM           = p_test_SEM,
+                                                                  teacher_va_epsilon = p_teacher_va_epsilon,
+                                                                  impact_type        = p_impact_type,
+                                                                  impact_function    = p_impact_function,
+                                                                  max_diff           = p_max_diff,
+                                                                  covariates         = p_covariates,
+                                                                  peer_effects       = p_peer_effects,
+                                                                  stud_sorting       = p_stud_sorting,
+                                                                  rho                = p_rho,
+                                                                  ta_sd              = p_ta_sd,
+                                                                  sa_sd              = p_sa_sd)
+      
+    } else {
+      mc_res <- foreach(j = 1:nsims) %do% single_iteration_fun(in_dt              = r_dt,
+                                                               weight_type        = p_weight_type, # Weighting parameters
+                                                               method             = p_method,
+                                                               lin_alpha          = p_lin_alpha,
+                                                               pctile             = p_pctile,
+                                                               weight_above       = p_weight_above,
+                                                               weight_below       = p_weight_below,
+                                                               v_alpha            = p_v_alpha,
+                                                               mrpctile           = p_mrpctile, 
+                                                               mrdist             = p_mrdist,
+                                                               npoints            = p_npoints,
+                                                               n_teacher          = p_n_teacher, # Simulated data parameters
+                                                               n_stud_per_teacher = p_n_stud_per_teacher,
+                                                               test_SEM           = p_test_SEM,
+                                                               teacher_va_epsilon = p_teacher_va_epsilon,
+                                                               impact_type        = p_impact_type,
+                                                               impact_function    = p_impact_function,
+                                                               max_diff           = p_max_diff,
+                                                               covariates         = p_covariates,
+                                                               peer_effects       = p_peer_effects,
+                                                               stud_sorting       = p_stud_sorting,
+                                                               rho                = p_rho,
+                                                               ta_sd              = p_ta_sd,
+                                                               sa_sd              = p_sa_sd)
+          
+    }
   
-# Stack the results for this run.
-mc_res <- rbindlist(mc_res)
+    
+  # Stack the results for this run.
+  mc_res <- rbindlist(mc_res)
+  
+  # Get the mean estimates for each teacher. The by groups are all descriptive
+  #  variables.
+  mean_tab <- mc_res[, list(mean_standard = mean(standard_welfare),
+                            sd_standard   = sd(standard_welfare),
+                            mean_ww = mean(alternative_welfare),
+                            sd_ww   = sd(alternative_welfare)),
+                     by = teacher_id]
+  
+  # Add some more indicators.
+  mean_tab[, run_id := run_id]
+  mean_tab[, nsims := nsims]
+  
+  # Merge on teacher info.
+  mean_tab <- merge(mean_tab, teacher_info, "teacher_id")
+  
+  # Write to the file.
+  print(paste0('Finished with simulation ', i))
+  write.table(mean_tab, paste0(out_data, '/', "mc_results_", date_time, ".csv"), 
+              sep = ",", col.names = !file.exists(paste0(out_data, '/',
+                                                         "mc_results_",
+                                                         date_time, ".csv")), 
+              append = T, row.names = FALSE)
 
-# Get the mean estimates for each teacher. The by groups are all descriptive
-#  variables.
-mean_tab <- mc_res[, list(mean_standard = mean(standard_welfare),
-                          sd_standard   = sd(standard_welfare),
-                          mean_ww = mean(alternative_welfare),
-                          sd_ww   = sd(alternative_welfare)),
-                   by = teacher_id]
-
-# Add some more indicators.
-mean_tab[, run_id := run_id]
-mean_tab[, nsims := nsims]
-
-# Merge on teacher info.
-mean_tab <- merge(mean_tab, teacher_info, "teacher_id")
-
-# Write to the file.
-print(paste0('Finished with simulation ', i))
-write.table(mean_tab, paste0(out_data, '/', "mc_results_", date_time, ".csv"), 
-            sep = ",", col.names = !file.exists(paste0(out_data, '/',
-                                                       "mc_results_",
-                                                       date_time, ".csv")), 
-            append = T, row.names = FALSE)
-
+  } # Close the else loop.
 } # Close Monte Carlo loop.
 
 
