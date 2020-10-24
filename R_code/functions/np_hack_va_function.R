@@ -1,5 +1,5 @@
 # define function and set default column names to what we have been using 
-semip_va <- function(in_data = NULL,
+np_hack_va <- function(in_data = NULL,
                   in_teacher_id = "teacher_id",
                   in_stud_id    = "stud_id",
                   in_pre_test   = "test_1",
