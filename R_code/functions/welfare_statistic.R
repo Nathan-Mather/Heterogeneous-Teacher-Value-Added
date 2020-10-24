@@ -243,12 +243,12 @@
     } else if (type == 'np_hack') {
     
     # Take output as a j by npoints matrix of fitted values
-    if (ncol(output)==npoints) {
+    if (length(output$points)==npoints) {
       # add reshaped fitted values to data (should opperate column by column to match weights)
-      welfare[  , fit := as.vector(output)  ]
+      welfare[  , fit := as.vector(output$results)  ]
 
       # Approximate integration over weights
-      welfare[  , WA_temp  := sum(weight*output) , teacher_id]
+      welfare[  , WA_temp  := sum(weight*fit) , teacher_id]
 
       # Grab unique values for each teacher
       ww_np_hack_va <- unique(welfare[, c('teacher_id', 'WA_temp')])
