@@ -1,3 +1,16 @@
+# =========================================================================== #
+# ===================== Calculate the Welfare Statistic ===================== #
+# =========================================================================== #
+# - Purpose of code:
+#  - Perform semiparametric estimation to get fitted values.
+#  - Note this code doesn't work yet.
+
+# =========================================================================== #
+# ===================== Define Function ===================== #
+# =========================================================================== #
+# - Purpose of code:
+#  - Calculate the welfare statistic for each of our methods.
+
 # define function and set default column names to what we have been using 
 semip_va <- function(in_data = NULL,
                   in_teacher_id = "teacher_id",
@@ -30,11 +43,8 @@ semip_va <- function(in_data = NULL,
   for(teach_i in u_teachers){
     counter <- counter +1
   # Once we have controls I think we want to include them all in this index model
-    # m <- npindex(test_2~test_1+ ... , data = r_dt[in_teacher_id==teach_i])
-  
-  # For now just estimate the relationship between test1 and test2 nonparametrically
-    m <- npreg(test_2~test_1, data = in_data[get(in_teacher_id)==teach_i],exdat=points)
-  
+     m <- npindex(test_2~test_1+ covariates , data = r_dt[in_teacher_id==teach_i])
+
     # 
     npresults[counter,] <-fitted(m)
     
