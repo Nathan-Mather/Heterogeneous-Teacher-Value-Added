@@ -4,7 +4,7 @@ semip_va <- function(in_data = NULL,
                   in_stud_id    = "stud_id",
                   in_pre_test   = "test_1",
                   in_post_test  = "test_2",
-                  points =   points = seq(from=-4, to=4, by=.025)){
+                  points =  seq(-3, 3, length.out = npoints){
   
   #=======================#
   # ==== error checks ====
