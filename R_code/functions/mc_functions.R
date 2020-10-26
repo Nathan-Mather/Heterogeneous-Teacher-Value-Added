@@ -19,6 +19,8 @@
   #'@details 
   #'@examples
 
+# #debug parms
+# use the single iteration function parms below 
 
   # ========================================================================= #
   # ============================ Define Function ============================ #

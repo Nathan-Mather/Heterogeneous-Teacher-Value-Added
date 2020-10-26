@@ -9,6 +9,11 @@
 # - Purpose of code:
 #  - Create simulated student test data to test value added code.
 
+
+# - notes for future work 
+# teacher's per school is hard coded in at 20 which also means number of teachers
+# needs to be a multiple of 20 
+
   # ========================================================================= #
   # ========================= Roxygen documentation ========================= #
   # ========================================================================= #
@@ -145,6 +150,8 @@
     #  rho.
     stopifnot(stud_sorting == 0 | (stud_sorting == 1 & !is.null(rho)))
     
+    # Get the total number of students.
+    n_row_dt <- nrow(r_dt)
     
     # Generate the student data.
     if (covariates == 1) {
@@ -158,14 +165,14 @@
       
       # Assign student characteristics, including sex, free and reduced
       #  price lunch status, and attendance.
-      r_dt[, stud_sex := runif(nrow(r_dt), min = 0, max = 1) > 0.5]
-      r_dt[, stud_frpl := runif(nrow(r_dt), min = 0, max = 1) > 0.6]
+      r_dt[, stud_sex := runif(n_row_dt, min = 0, max = 1) > 0.5]
+      r_dt[, stud_frpl := runif(n_row_dt, min = 0, max = 1) > 0.6]
       r_dt[, stud_att := 180 - (8 - 4*stud_frpl)*abs(rnorm(nrow(r_dt), mean = 0
                                                            ,sd = 1))]
       
       # Create partially unobserved ability (higher mean re-centers test_1 in
       #  expectation).
-      r_dt[, stud_ability_1 := rnorm(nrow(r_dt),
+      r_dt[, stud_ability_1 := rnorm(n_row_dt,
                                      mean = stud_sorting*
                                        (sa_sd*rho*teacher_ability/ta_sd) +
                                        school_av_test + stud_sex*0.1 -
@@ -175,7 +182,7 @@
 
     } else if (covariates == 0) {
       # Now create unobserved ability.
-      r_dt[, stud_ability_1 := rnorm(nrow(r_dt), mean = 0, sd = sa_sd)]
+      r_dt[, stud_ability_1 := rnorm(n_row_dt, mean = 0, sd = sa_sd)]
       
     } else {
       stop("Error covariates must be 0 or 1")
@@ -183,10 +190,8 @@
     
     
     # Assign each student a test score.
-    r_dt[, test_1 := mapply(rnorm, n= 1, mean = stud_ability_1, sd = test_SEM) ]
-    
-    # Get the total number of students.
-    n_row_dt <- nrow(r_dt)
+    r_dt[, test_1 := rnorm(n_row_dt, mean = stud_ability_1, sd = test_SEM) ]
+
     
     # Get true teacher impact on students without noise.
     r_dt[, teacher_impact :=

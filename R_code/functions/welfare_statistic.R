@@ -41,7 +41,7 @@
   
   # in_dt           = in_dt
   # output          = output
-  # type            = 'bin' 
+  # type            = 'bin'
   # npoints         = npoints
   # weight_type     = weight_type
   # in_test_1       = in_dt$test_1
@@ -49,9 +49,24 @@
   # weight_below    = weight_above
   # weight_above    = weight_below
   # v_alpha         = v_alpha
-  # mrpctile        = mrpctile 
+  # mrpctile        = mrpctile
   # mrdist          = mrdist
   
+  # # # parms from MC run
+  # in_dt           = r_dt
+  # type            = 'true'
+  # npoints         = p_npoints
+  # weight_type     = p_weight_type
+  # in_test_1       = r_dt$test_1
+  # pctile          = p_pctile
+  # weight_below    = p_weight_below
+  # weight_above    = p_weight_above
+  # v_alpha         = p_v_alpha
+  # mrpctile        = p_mrpctile
+  # mrdist          = p_mrdist
+  # impact_type     = p_impact_type
+  # impact_function = p_impact_function
+
   
   # ========================================================================= #
   # ============================ Define Function ============================ #
