@@ -255,28 +255,28 @@
       # return the aggregate estimates 
       return(ww_qtile_va)
       
-    } else if (type == 'np_hack') {
+    }else if (type == 'np_hack') {
     
     # Take output as a j by npoints matrix of fitted values
     if (length(output$points)==npoints) {
       # add reshaped fitted values to data (should opperate column by column to match weights)
-      welfare[  , fit := as.vector(output$results)  ]
-
+      welfare[  , fit := as.matrix(output$results[ , 1:npoints,],ncol(1))  ]
+      
       # Approximate integration over weights
       welfare[  , WA_temp  := sum(weight*fit) , teacher_id]
-
+      
       # Grab unique values for each teacher
       ww_np_hack_va <- unique(welfare[, c('teacher_id', 'WA_temp')])
-
+      
       # Standardize to mean zero var one
-      ww_np_hack_va[, WA := (WA_temp-mean(WA-temp))/sd(WA_temp)]
-
-
+      ww_np_hack_va[, WA := (WA_temp-mean(WA_temp))/sd(WA_temp)]
+      
+      
       # return the  estimates 
       return(ww_np_hack_va)    
     } else {
-    stop("dimensions of fitted values and weights inconsistant")
-  }
+      stop("dimensions of fitted values and weights inconsistant")
+    }
     
     
   } else if (type == 'semi') {
