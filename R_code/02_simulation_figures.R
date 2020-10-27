@@ -27,7 +27,7 @@ plot_attributes <- theme_classic() +
 
 # Set various graph options.
 truth_color <- 'black'
-truth_alpha <- 0.25
+truth_alpha <- 0.5
 
 standard_color <- '#ffaabb'
 standard_alpha <- 0.5
@@ -37,6 +37,9 @@ binned_alpha <- 0.5
 
 quantile_color <- 'darkgreen'
 quantile_alpha <- 0.5
+
+np_color <- 'firebrick'
+np_alpha <- 0.5
 
 
 
@@ -88,6 +91,7 @@ if(my_wd %like% "Nmath_000"){
 func_path <- "Heterogeneous-Teacher-Value-Added/R_code/functions/"
 source(paste0(base_path, func_path, "binned_va_function.R"))
 source(paste0(base_path, func_path, "mc_functions.R"))
+source(paste0(base_path, func_path, "np_hack_va_function.R"))
 source(paste0(base_path, func_path, "qtile_va_function.R"))
 source(paste0(base_path, func_path, "simulate_test_data.R"))
 source(paste0(base_path, func_path, "teacher_impact.R"))
@@ -155,7 +159,7 @@ for(i in 1:1) { #nrow(model_xwalk)){
   
   # Simulate necessary data.
   teacher_ex <- simulate_test_data(n_teacher          = 2,
-                                   n_stud_per_teacher = 1000,
+                                   n_stud_per_teacher = 300,
                                    test_SEM           = p_test_SEM,
                                    teacher_va_epsilon = .05, #p_teacher_va_epsilon,
                                    impact_type        = p_impact_type,
@@ -188,7 +192,7 @@ for(i in 1:1) { #nrow(model_xwalk)){
   
   # Estimate the binned VA.
   if (p_covariates == 0) {
-    output <- binned_va(in_data = teacher_ex)
+    output <- binned_va(in_data = teacher_ex, num_cats = 5)
   } else {
     output <- binned_va(in_data = teacher_ex,
                         reg_formula = paste0('test_2 ~ test_1 + teacher_id + ',
@@ -232,6 +236,8 @@ for(i in 1:1) { #nrow(model_xwalk)){
                          in_post_test  = "test_2",
                          ptle          = seq(.02, .98, by=.04))
   
+  #qtile_res[, qtile_est := (qtile_est - mean(qtile_est))/(sd(qtile_est)), tau]
+  
   # Calculate the estimated teacher impact.
   l1 <- teacher_ex$test_1
   vals <- seq(.02, .98, by=.04)
@@ -241,13 +247,33 @@ for(i in 1:1) { #nrow(model_xwalk)){
   teacher_ex[, quantile := mapply((function(x,y)  qtile_res[teacher_id == x &
                                                             abs(tau - y) < .02, qtile_est]), teacher_id, pct_val)]
   
+  teacher_ex[, quantile := (quantile - mean(quantile))/sd(quantile), pct_val]
+  
+  # Run the NP regression.
+  np_res <- np_hack_va(in_data       = teacher_ex,
+                       in_teacher_id = "teacher_id",
+                       in_pre_test   = "test_1",
+                       in_post_test  = "test_2",
+                       npoints       = p_npoints)
+  
+  
+  # Get the coefficients and subtract off the pre-test score.
+  teacher_ex[, np := mapply((function(x,y)  as.matrix(np_res$results[, 1:p_npoints],
+                                                      ncol(1))[x, which.min(abs(np_res$points - y))]),
+                            teacher_id, test_1)]
+  
+  teacher_ex[, np := np - test_1]
+
+  # Put together the example teacher plot.
   plot <- ggplot(data = teacher_ex[teacher_id == 2]) +
     geom_point(aes(x = stud_ability_1, y = teacher_impact), size = 2, color = truth_color, alpha = truth_alpha) +
     geom_point(aes(x = stud_ability_1, y = standard), size = 2, color = standard_color, alpha = standard_alpha) +
     geom_point(aes(x = stud_ability_1, y = binned), size = 2, color = binned_color, alpha = binned_alpha) + 
-    #geom_point(aes(x = stud_ability_1, y = quantile), size = 2, color = quantile_color, alpha = quantile_alpha) + 
+    geom_point(aes(x = stud_ability_1, y = quantile), size = 2, color = quantile_color, alpha = quantile_alpha) +
+    geom_point(aes(x = stud_ability_1, y = np), size = 2, color = np_color, alpha = np_alpha) + 
     ylab("Teacher's Impact") + 
     xlab("Student Ability") +
     plot_attributes
   print(plot)
+  
 } # Close overall loop.
