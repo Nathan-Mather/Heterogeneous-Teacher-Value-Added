@@ -4,7 +4,7 @@ np_hack_va <- function(in_data = NULL,
                   in_stud_id    = "stud_id",
                   in_pre_test   = "test_1",
                   in_post_test  = "test_2",
-                  points =  seq(-3, 3, length.out = npoints){
+                  points =  seq(-3, 3, length.out = npoints)){
   
   #=======================#
   # ==== error checks ====
