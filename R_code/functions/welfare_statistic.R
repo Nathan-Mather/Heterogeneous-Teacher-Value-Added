@@ -263,7 +263,7 @@
     
     # Take output as a j by npoints matrix of fitted values
     if (length(output$points)==npoints) {
-      # add reshaped fitted values to data (should opperate column by column to match weights)
+      # add reshaped fitted values to data (should operate column by column to match weights)
       welfare[  , fit := as.matrix(output$results[ , 1:npoints,],ncol(1))  ]
       
       # Approximate integration over weights
