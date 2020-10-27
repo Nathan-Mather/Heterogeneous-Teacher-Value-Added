@@ -499,13 +499,44 @@ np_hack_va_stat <- function(in_dt              = NULL,
     }
     
     
-    if (method=="semip") {
-      # put implementation here. Call output or rename that object everywhere 
-      # not really a good name anyway 
-      
-      output <- semip_va(in_data = in_dt)
-    }
+  if (method=="semip") {
+    # put implementation here. Call output or rename that object everywhere 
+    # not really a good name anyway 
     
+    output <- semip_va(in_data = in_dt)
+  }
+  
+  
+  if (method=="np_hack") {
+
+    # Run the NP VA.
+    output <- np_hack_va_stat(in_dt              = in_dt,
+                               weight_type        = weight_type,
+                               method             = method, 
+                               lin_alpha          = lin_alpha,
+                               pctile             = pctile,
+                               weight_below       = weight_below,
+                               weight_above       = weight_above,
+                               v_alpha            = v_alpha,
+                               mrpctile           = mrpctile, 
+                               mrdist             = mrdist,
+                               npoints            = npoints,
+                               n_teacher          = n_teacher,
+                               n_stud_per_teacher = n_stud_per_teacher,
+                               test_SEM           = test_SEM,
+                               teacher_va_epsilon = teacher_va_epsilon,
+                               impact_type        = impact_type,
+                               impact_function    = impact_function,
+                               max_diff           = max_diff,
+                               covariates         = covariates,
+                               peer_effects       = peer_effects,
+                               stud_sorting       = stud_sorting,
+                               rho                = rho,
+                               ta_sd              = ta_sd,
+                               sa_sd              = sa_sd)
+    
+  }  
+  
     
     if (method=="qtle") {
       
