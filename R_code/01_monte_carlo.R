@@ -47,7 +47,14 @@ if (my_wd %like% "Nmath_000") {
   # Path for data to save.
   out_data <- "c:/Users/Nmath_000/Documents/data/Value Added/mc_data/"
   
-} else {
+}  else if (my_wd %like% "ricksmi") {
+  # Base directory. 
+  base_path <- "c:/Users/ricksmi/Desktop/vam/"
+  
+  # Path for data to save.
+  out_data <- "c:/Users/ricksmi/Desktop/vam/data/mc/"
+  
+}  else {
   # Base directory. 
   base_path <- "/home/tanner/Documents/Research/HeterogenousTeacherVA/Git/"
   
@@ -62,9 +69,10 @@ model_xwalk <- data.table(read_excel(paste0(base_path,
 
 # Load our functions now that we have a file path.
 func_path <- "Heterogeneous-Teacher-Value-Added/R_code/functions/"
-source(paste0(base_path, func_path, "binned_va_function.R"))
 source(paste0(base_path, func_path, "mc_functions.R"))
+source(paste0(base_path, func_path, "binned_va_function.R"))
 source(paste0(base_path, func_path, "qtile_va_function.R"))
+source(paste0(base_path, func_path, "np_hack_va_function.R"))
 source(paste0(base_path, func_path, "simulate_test_data.R"))
 source(paste0(base_path, func_path, "teacher_impact.R"))
 source(paste0(base_path, func_path, "weighting_functions.R"))

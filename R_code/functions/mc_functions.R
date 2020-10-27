@@ -19,6 +19,8 @@
   #'@details 
   #'@examples
 
+# #debug parms
+# use the single iteration function parms below 
 
   # ========================================================================= #
   # ============================ Define Function ============================ #
@@ -264,6 +266,92 @@
 
 
 
+
+# =========================================================================== #
+# ===================== Rough Nonparam VA Stat Function ===================== #
+# =========================================================================== #
+
+
+# ========================================================================= #
+# ========================= Roxygen documentation ========================= #
+# ========================================================================= #
+
+#'@param 
+#'@details 
+#'@examples
+
+
+# ========================================================================= #
+# ============================ Define Function ============================ #
+# ========================================================================= #
+
+# Start of the function.
+np_hack_va_stat <- function(in_dt              = NULL,
+                             index              = NULL,
+                             boot               = NULL,
+                             weight_type        = NULL,
+                             method             = NULL, 
+                             lin_alpha          = NULL,
+                             pctile             = NULL,
+                             weight_below       = NULL,
+                             weight_above       = NULL,
+                             v_alpha            = NULL,
+                             mrpctile           = NULL, 
+                             mrdist             = NULL,
+                             npoints            = NULL,
+                             n_teacher          = NULL,
+                             n_stud_per_teacher = NULL,
+                             test_SEM           = NULL,
+                             teacher_va_epsilon = NULL,
+                             impact_type        = NULL,
+                             impact_function    = NULL,
+                             max_diff           = NULL,
+                             covariates         = NULL,
+                             peer_effects       = NULL,
+                             stud_sorting       = NULL,
+                             rho                = NULL,
+                             ta_sd              = NULL,
+                             sa_sd              = NULL) {
+  
+  # Allow the bootstrap to pick the sample if needed.
+  if (!is.null(boot)) {
+    in_dt <- in_dt[index] 
+  }
+  
+  # Run quantile regression and get estimates for a grid of tau values.
+  np_res <- np_hack_va(in_data       = in_dt,
+                         in_teacher_id = "teacher_id",
+                         in_pre_test   = "test_1",
+                         in_post_test  = "test_2",
+                         npoints =  npoints)
+  
+  
+  # Calculate the welfare statistic for each teacher.
+  output <- welfare_statistic(in_dt           = in_dt,
+                              output          = np_res,
+                              type            = 'np_hack', 
+                              npoints         = npoints,
+                              weight_type     = weight_type,
+                              in_test_1       = in_dt$test_1,
+                              pctile          = pctile,
+                              weight_below    = weight_above,
+                              weight_above    = weight_below,
+                              v_alpha         = v_alpha,
+                              mrpctile        = mrpctile, 
+                              mrdist          = mrdist)
+  
+  # Return the full data if in the MC or just the estimates for the bootstrap.
+  if (is.null(boot)) {
+    return(output)
+  } else {
+    return(output$alternative_welfare)
+  }
+  
+} # End function.
+
+
+
+
 # =========================================================================== #
 # ======================== Single Iteration Function ======================== #
 # =========================================================================== #
@@ -423,13 +511,44 @@
     }
     
     
-    if (method=="semip") {
-      # put implementation here. Call output or rename that object everywhere 
-      # not really a good name anyway 
-      
-      output <- semip_va(in_data = in_dt)
-    }
+  if (method=="semip") {
+    # put implementation here. Call output or rename that object everywhere 
+    # not really a good name anyway 
     
+    output <- semip_va(in_data = in_dt)
+  }
+  
+  
+  if (method=="np_hack") {
+
+    # Run the NP VA.
+    output <- np_hack_va_stat(in_dt              = in_dt,
+                               weight_type        = weight_type,
+                               method             = method, 
+                               lin_alpha          = lin_alpha,
+                               pctile             = pctile,
+                               weight_below       = weight_below,
+                               weight_above       = weight_above,
+                               v_alpha            = v_alpha,
+                               mrpctile           = mrpctile, 
+                               mrdist             = mrdist,
+                               npoints            = npoints,
+                               n_teacher          = n_teacher,
+                               n_stud_per_teacher = n_stud_per_teacher,
+                               test_SEM           = test_SEM,
+                               teacher_va_epsilon = teacher_va_epsilon,
+                               impact_type        = impact_type,
+                               impact_function    = impact_function,
+                               max_diff           = max_diff,
+                               covariates         = covariates,
+                               peer_effects       = peer_effects,
+                               stud_sorting       = stud_sorting,
+                               rho                = rho,
+                               ta_sd              = ta_sd,
+                               sa_sd              = sa_sd)
+    
+  }  
+  
     
     if (method=="qtle") {
       
