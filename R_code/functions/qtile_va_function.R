@@ -51,6 +51,8 @@ qtilep_va <- function(in_data = NULL,
   # 
   
   # need var cov matrix and standard errors 
+  # Return just the estimates.
+  coefs_dt <- output[teacher_id != "test_1", ]
   
   #===========================#
   # ==== clean up results ====

@@ -40,7 +40,8 @@
   # ========================================================================= #
   
   # in_dt           = in_dt
-  # output          = output
+  # output          = qtile_res      # NOTE ONLY USE ONE OF THESE
+  # output          = output          # NOTE ONLY USE ONE OF THESE 
   # type            = 'bin'
   # npoints         = npoints
   # weight_type     = weight_type
@@ -211,62 +212,42 @@
                                         probs = tau)]
         
         
-        # Next we need to get the relevant points from the data to apply our weights 
-        # then actually apply the weight 
-        if(weight_type == "linear"){
-          
-          # need to get weight quantile values 
-          quntile_lh <- quantile(in_test_1, probs = c(.1, .9))
-          quant_val_l <- quntile_lh["10%"]
-          quant_val_h <- quntile_lh["90%"]
-          
-          # now we can get weights for each quantile 
-          tau_xwalk[, weight := linear_weight_fun(in_test_1 = tau_val,
-                                                  alpha     = lin_alpha,
-                                                  quant_val_l = quant_val_l,
-                                                  quant_val_h = quant_val_h)]
-          
-        } else if(weight_type == "rawlsian"){
-          
-          # get weight percentile val 
-          w_pctile_val <- quantile(in_test_1, pctile)
-          
-          # now we can get weights for each quantile 
-          tau_xwalk[, weight := rawlsian_weight_fun(in_test_1 = tau_val,
-                                                    pctile_val = w_pctile_val,
-                                                    weight_below = weight_below,
-                                                    weight_above = weight_above)]
-          
-        } else if(weight_type == "v"){
-          
-          median_val <- median(in_test_1)
-          
-          # now we can get weights for each quantile 
-          tau_xwalk[, weight := v_weight_fun(in_test_1 = tau_val,
-                                             alpha     = v_alpha,
-                                             median_val= median_val)]
-          
-        } else if(weight_type == "mr"){
-          
-          # get parameters from data 
-          pctile_val <- quantile(in_test_1, pctile)
-          min_score <- quantile(in_test_1, max(pctile - mrdist, 0))
-          max_score <- quantile(in_test_1, min(pctile + mrdist, 100))
-          
-          # now we can get weights for each quantile 
-          tau_xwalk[, weight := mr_weight_fun(in_test_1  = tau_val,
-                                              pctile     = mrpctile,
-                                              dist       = mrdist, 
-                                              pctile_val = pctile_val,
-                                              min_score  = min_score,
-                                              max_score  = max_score)]
-          
-        }
+        # Get the weights for each place in the grid.
+        tau_xwalk[, weight := ww_general_fun(weight_type  = weight_type,
+                                           in_test_1    = tau_val,
+                                           lin_alpha    = lin_alpha,
+                                           quant_val_l  = quantile(in_dt$test_1, probs = 0.1),
+                                           quant_val_h  = quantile(in_dt$test_1, probs = 0.9),
+                                           pctile       = NULL,
+                                           weight_below = weight_below,
+                                           weight_above = weight_above,
+                                           v_alpha      = v_alpha,
+                                           median_va    = median(in_dt$test_1),
+                                           mrpctile     = mrpctile, 
+                                           mrdist       = mrdist,
+                                           min_score    = quantile(in_dt$test_1, max(pctile - mrdist, 0)),
+                                           max_score    = quantile(in_dt$test_1, min(pctile + mrdist, 100)),
+                                           pctile_val   = quantile(in_dt$test_1, pctile))]
         
+        
+        # adjust weights for student population using estiamted parameters 
+        stud_mean <- mean(in_test_1)
+        stud_sd   <- sd(in_test_1)
+        tau_xwalk[, weight := weight*dnorm(tau_val,
+                                         mean = stud_mean,
+                                         sd = stud_sd)]
+        
+        # Renormalize the weights. so each teacher's weight sums to 1
+        tau_xwalk[, tot_weight := sum(weight),]
+        tau_xwalk[, weight := weight/tot_weight]
+        tau_xwalk[, tot_weight := NULL]
         
         
         # now we merge those on 
         w_coefs_dt <- merge(in_coefs, tau_xwalk, "tau")
+        
+        # now standardize the estimates by quantile 
+        w_coefs_dt[, qtile_est := (qtile_est - mean(qtile_est))/(sd(qtile_est)), tau]
         
         # aggregate estimates 
         tot_weight <- tau_xwalk[, sum(weight)]
