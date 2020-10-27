@@ -311,7 +311,7 @@ np_hack_va_stat <- function(in_dt              = NULL,
                          in_teacher_id = "teacher_id",
                          in_pre_test   = "test_1",
                          in_post_test  = "test_2",
-                         points =  seq(-3, 3, length.out = npoints))
+                         npoints =  npoints)
   
   
   # Calculate the welfare statistic for each teacher.
