@@ -22,26 +22,27 @@ np_hack_va <- function(in_data = NULL,
   #=========================#
 
   # Initialize values
-  u_teachers <- unique(in_data[[in_teacher_id]])
-  npresults <- matrix( rep( 0, len=length(points)*length(u_teachers)), nrow = length(u_teachers)) 
-  counter = 0
-  
-  # Estimate relationship of test1 and test2 for each teacher
-  for(teach_i in u_teachers){
-    counter <- counter +1
-  # Once we have controls I think we want to include them all in this index model
-    # m <- npindex(test_2~test_1+ ... , data = r_dt[in_teacher_id==teach_i])
-  
-  # For now just estimate the relationship between test1 and test2 nonparametrically
-    m <- npreg(test_2~test_1, data = in_data[get(in_teacher_id)==teach_i],exdat=points)
-  
-    # 
-    npresults[counter,] <-fitted(m)
-    
-    # desired end result 
-    # Matrix of fitted values: rows are teachers columns are evaluation points. 
-    
-  }
+   points = seq(-3, 3, length.out = npoints)
+   u_teachers <- unique(in_data[[in_teacher_id]])
+   npresults <- matrix( rep( 0, len=npoints*length(u_teachers)), nrow = length(u_teachers)) 
+   counter = 0
+
+   # Estimate relationship of test1 and test2 for each teacher
+   for(teach_i in u_teachers){
+     counter <- counter +1
+     # Once we have controls I think we want to include them all in this index model
+     # m <- npindex(test_2~test_1+ ... , data = r_dt[in_teacher_id==teach_i])
+
+     # For now just estimate the relationship between test1 and test2 nonparametrically
+     m <- npreg(test_2~test_1, data = in_data[get(in_teacher_id)==teach_i],exdat=points)
+
+     # 
+     npresults[counter,] <-fitted(m)
+
+     # desired end result 
+     # Matrix of fitted values: rows are teachers columns are evaluation points. 
+
+   }
   
   #===========================#
   # ==== clean up results ====
