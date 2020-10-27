@@ -26,6 +26,7 @@
   
   # Start of the function.
   standard_va_stat <- function(in_dt              = NULL,
+                               single_run         = NULL,
                                weight_type        = NULL,
                                method             = NULL, 
                                lin_alpha          = NULL,
@@ -63,7 +64,18 @@
     va_tab1[, teacher_id := gsub("teacher_id", "", term)]
     
     # Return just the estimates and standard errors.
-    return(va_tab1[term %like% "teacher_id", c("teacher_id", "estimate", "std.error")])
+    if (!is.null(single_run)) {
+      setnames(va_tab1, old=c('estimate', 'std.error'), new=c('mean_standard',
+                                                              'sd_standard'))
+      
+      return(va_tab1[term %like% "teacher_id", c("teacher_id", "mean_standard",
+                                                 "sd_standard")])
+    } else {
+      setnames(va_tab1, old=c('estimate'), new=c('standard_welfare'))
+      
+      return(va_tab1[term %like% "teacher_id", c("teacher_id",
+                                                 "standard_welfare")])
+    }
   
   } # End function.
   
@@ -89,31 +101,31 @@
   
   # Start of the function.
   binned_va_stat <- function(in_dt              = NULL,
-                               index              = NULL,
-                               boot               = NULL,
-                               weight_type        = NULL,
-                               method             = NULL, 
-                               lin_alpha          = NULL,
-                               pctile             = NULL,
-                               weight_below       = NULL,
-                               weight_above       = NULL,
-                               v_alpha            = NULL,
-                               mrpctile           = NULL, 
-                               mrdist             = NULL,
-                               npoints            = NULL,
-                               n_teacher          = NULL,
-                               n_stud_per_teacher = NULL,
-                               test_SEM           = NULL,
-                               teacher_va_epsilon = NULL,
-                               impact_type        = NULL,
-                               impact_function    = NULL,
-                               max_diff           = NULL,
-                               covariates         = NULL,
-                               peer_effects       = NULL,
-                               stud_sorting       = NULL,
-                               rho                = NULL,
-                               ta_sd              = NULL,
-                               sa_sd              = NULL) {
+                             index              = NULL,
+                             boot               = NULL,
+                             weight_type        = NULL,
+                             method             = NULL, 
+                             lin_alpha          = NULL,
+                             pctile             = NULL,
+                             weight_below       = NULL,
+                             weight_above       = NULL,
+                             v_alpha            = NULL,
+                             mrpctile           = NULL, 
+                             mrdist             = NULL,
+                             npoints            = NULL,
+                             n_teacher          = NULL,
+                             n_stud_per_teacher = NULL,
+                             test_SEM           = NULL,
+                             teacher_va_epsilon = NULL,
+                             impact_type        = NULL,
+                             impact_function    = NULL,
+                             max_diff           = NULL,
+                             covariates         = NULL,
+                             peer_effects       = NULL,
+                             stud_sorting       = NULL,
+                             rho                = NULL,
+                             ta_sd              = NULL,
+                             sa_sd              = NULL) {
     
     # Allow the bootstrap to pick the sample if needed.
     if (!is.null(boot)) {

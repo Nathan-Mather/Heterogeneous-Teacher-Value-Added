@@ -83,7 +83,7 @@
     welfare <- unique(in_dt[, c('teacher_id', 'teacher_ability',
                                 'teacher_center', 'teacher_max')])
     welfare <- do.call('rbind', replicate(npoints, welfare, simplify=FALSE))
-    welfare <- welfare[, grid := grid]
+    welfare[, grid := grid]
     
     
     # Get the weights for each place in the grid.
@@ -102,6 +102,10 @@
                                        min_score    = quantile(in_dt$test_1, max(pctile - mrdist, 0)),
                                        max_score    = quantile(in_dt$test_1, min(pctile + mrdist, 100)),
                                        pctile_val   = quantile(in_dt$test_1, pctile))]
+    
+    
+    # Build in the standard normal weights.
+    welfare[, weight := weight*dnorm(grid)]
     
     
     # Renormalize the weights.
