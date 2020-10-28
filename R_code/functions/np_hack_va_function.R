@@ -1,11 +1,11 @@
 # define function and set default column names to what we have been using 
-np_hack_va <- function(in_data  = NULL,
-                  in_teacher_id = "teacher_id",
-                  in_stud_id    = "stud_id",
-                  in_pre_test   = "test_1",
-                  in_post_test  = "test_2",
-                  npoints       = seq(-3, 3, length.out = npoints),
-                  weighted_av   = FALSE){
+np_hack_va <- function(in_data       = NULL,
+                  in_teacher_id      = "teacher_id",
+                  in_stud_id         = "stud_id",
+                  in_pre_test        = "test_1",
+                  in_post_test       = "test_2",
+                  npoints            = seq(-3, 3, length.out = npoints),
+                  weighted_average   = FALSE){
 
   #=======================#
   # ==== error checks ====
@@ -21,7 +21,7 @@ np_hack_va <- function(in_data  = NULL,
   # =============================== #
   # ==== calculate standard va ==== #
   # =============================== #
-  if (weighted_av == TRUE) {
+  if (weighted_average == TRUE) {
     standard <- summary(lm(test_2 ~ test_1 + teacher_id - 1,
                            data=in_data))$coefficients
   }
@@ -51,7 +51,7 @@ np_hack_va <- function(in_data  = NULL,
     sds <- m$merr
     
     #
-    if (weighted_av == TRUE) {
+    if (weighted_average == TRUE) {
       npresults[counter,] <- (vals/sds^2 + standard[counter + 1, 1]/standard[counter + 1, 1]^2)/(1/sds^2 + 1/standard[counter + 1, 1]^2)
     } else {
       npresults[counter,] <- vals
