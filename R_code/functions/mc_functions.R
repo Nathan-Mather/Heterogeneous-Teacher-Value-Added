@@ -287,31 +287,32 @@
   
   # Start of the function.
   np_hack_va_stat <- function(in_dt              = NULL,
-                               index              = NULL,
-                               boot               = NULL,
-                               weight_type        = NULL,
-                               method             = NULL, 
-                               lin_alpha          = NULL,
-                               pctile             = NULL,
-                               weight_below       = NULL,
-                               weight_above       = NULL,
-                               v_alpha            = NULL,
-                               mrpctile           = NULL, 
-                               mrdist             = NULL,
-                               npoints            = NULL,
-                               n_teacher          = NULL,
-                               n_stud_per_teacher = NULL,
-                               test_SEM           = NULL,
-                               teacher_va_epsilon = NULL,
-                               impact_type        = NULL,
-                               impact_function    = NULL,
-                               max_diff           = NULL,
-                               covariates         = NULL,
-                               peer_effects       = NULL,
-                               stud_sorting       = NULL,
-                               rho                = NULL,
-                               ta_sd              = NULL,
-                               sa_sd              = NULL) {
+                              index              = NULL,
+                              boot               = NULL,
+                              weight_type        = NULL,
+                              method             = NULL, 
+                              lin_alpha          = NULL,
+                              pctile             = NULL,
+                              weight_below       = NULL,
+                              weight_above       = NULL,
+                              v_alpha            = NULL,
+                              mrpctile           = NULL, 
+                              mrdist             = NULL,
+                              npoints            = NULL,
+                              n_teacher          = NULL,
+                              n_stud_per_teacher = NULL,
+                              test_SEM           = NULL,
+                              teacher_va_epsilon = NULL,
+                              impact_type        = NULL,
+                              impact_function    = NULL,
+                              max_diff           = NULL,
+                              covariates         = NULL,
+                              peer_effects       = NULL,
+                              stud_sorting       = NULL,
+                              rho                = NULL,
+                              ta_sd              = NULL,
+                              sa_sd              = NULL,
+                              weighted_average   = NULL) {
     
     # Allow the bootstrap to pick the sample if needed.
     if (!is.null(boot)) {
@@ -320,10 +321,11 @@
     
     # Run quantile regression and get estimates for a grid of tau values.
     np_res <- np_hack_va(in_data         = in_dt,
-                           in_teacher_id = "teacher_id",
-                           in_pre_test   = "test_1",
-                           in_post_test  = "test_2",
-                           npoints       =  npoints)
+                         in_teacher_id   = "teacher_id",
+                         in_pre_test     = "test_1",
+                         in_post_test    = "test_2",
+                         npoints         =  npoints,
+                         weighted_average = weighted_average)
     
     
     # Calculate the welfare statistic for each teacher.
@@ -426,7 +428,8 @@
                                    stud_sorting       = NULL,
                                    rho                = NULL,
                                    ta_sd              = NULL,
-                                   sa_sd              = NULL) {
+                                   sa_sd              = NULL,
+                                   weighted_average   = NULL) {
     
     # I need this for it to work on windows clusters since libraries are not
     #  loaded on every cluster.
@@ -523,29 +526,30 @@
 
     # Run the NP VA.
     output <- np_hack_va_stat(in_dt              = in_dt,
-                               weight_type        = weight_type,
-                               method             = method, 
-                               lin_alpha          = lin_alpha,
-                               pctile             = pctile,
-                               weight_below       = weight_below,
-                               weight_above       = weight_above,
-                               v_alpha            = v_alpha,
-                               mrpctile           = mrpctile, 
-                               mrdist             = mrdist,
-                               npoints            = npoints,
-                               n_teacher          = n_teacher,
-                               n_stud_per_teacher = n_stud_per_teacher,
-                               test_SEM           = test_SEM,
-                               teacher_va_epsilon = teacher_va_epsilon,
-                               impact_type        = impact_type,
-                               impact_function    = impact_function,
-                               max_diff           = max_diff,
-                               covariates         = covariates,
-                               peer_effects       = peer_effects,
-                               stud_sorting       = stud_sorting,
-                               rho                = rho,
-                               ta_sd              = ta_sd,
-                               sa_sd              = sa_sd)
+                              weight_type        = weight_type,
+                              method             = method, 
+                              lin_alpha          = lin_alpha,
+                              pctile             = pctile,
+                              weight_below       = weight_below,
+                              weight_above       = weight_above,
+                              v_alpha            = v_alpha,
+                              mrpctile           = mrpctile, 
+                              mrdist             = mrdist,
+                              npoints            = npoints,
+                              n_teacher          = n_teacher,
+                              n_stud_per_teacher = n_stud_per_teacher,
+                              test_SEM           = test_SEM,
+                              teacher_va_epsilon = teacher_va_epsilon,
+                              impact_type        = impact_type,
+                              impact_function    = impact_function,
+                              max_diff           = max_diff,
+                              covariates         = covariates,
+                              peer_effects       = peer_effects,
+                              stud_sorting       = stud_sorting,
+                              rho                = rho,
+                              ta_sd              = ta_sd,
+                              sa_sd              = sa_sd,
+                              weighted_average   = weighted_average)
     
   }  
   

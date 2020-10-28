@@ -97,6 +97,8 @@ res_dt[, true_ww_impact := (true_welfare - mean(true_welfare))/sd(true_welfare),
 res_dt[, sd_ww_norm := sd_ww/sd(mean_ww), by = run_id]
 res_dt[, sd_standard_norm := sd_standard/sd(mean_standard), by = run_id]
 
+
+
 #====================#
 # ==== get ranks ====
 #====================#

@@ -144,13 +144,14 @@ for(i in 1:nrow(model_xwalk)){
   # Weight and estimation parameters.
   p_weight_type              <- model_xwalk[i, weight_type]        # style of social planner pareto weights
   p_method                   <- model_xwalk[i, method]             # method of estimation used 
-  p_lin_alpha                <- model_xwalk[i, lin_alpha]          # For linear weights
+  p_lin_alpha                <- model_xwalk[i, lin_alpha]          # for linear weights
   p_pctile                   <- model_xwalk[i, pctile]             # for rawlsian 
   p_weight_below             <- model_xwalk[i, weight_below ]      # for rawlsian 
   p_weight_above             <- model_xwalk[i, weight_above]       # for rawlsian 
-  p_v_alpha                  <- model_xwalk[i, v_alpha]            # For v weights
-  p_mrpctile                 <- model_xwalk[i, mrpctile]           # For mr weights
+  p_v_alpha                  <- model_xwalk[i, v_alpha]            # for v weights
+  p_mrpctile                 <- model_xwalk[i, mrpctile]           # for mr weights
   p_mrdist                   <- model_xwalk[i, mrdist]             # for mr weights
+  p_weghted_average          <- model_xwalk[i, weighted_average]   # whether or not to calculate a weighted average of standard and NP
   
   
   # Simulate initial data.
@@ -308,7 +309,8 @@ for(i in 1:nrow(model_xwalk)){
                                                                   stud_sorting       = p_stud_sorting,
                                                                   rho                = p_rho,
                                                                   ta_sd              = p_ta_sd,
-                                                                  sa_sd              = p_sa_sd)
+                                                                  sa_sd              = p_sa_sd,
+                                                                  weighted_average   = p_weighted_average)
       
     } else {
       mc_res <- foreach(j = 1:nsims) %do% single_iteration_fun(in_dt              = r_dt,
@@ -334,7 +336,8 @@ for(i in 1:nrow(model_xwalk)){
                                                                stud_sorting       = p_stud_sorting,
                                                                rho                = p_rho,
                                                                ta_sd              = p_ta_sd,
-                                                               sa_sd              = p_sa_sd)
+                                                               sa_sd              = p_sa_sd,
+                                                               weighted_average   = p_weighted_average)
           
     }
   

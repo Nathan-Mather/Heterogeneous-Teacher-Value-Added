@@ -41,6 +41,9 @@ quantile_alpha <- 0.5
 np_color <- 'firebrick'
 np_alpha <- 0.5
 
+np1_color <- 'gold'
+np1_alpha <- 0.5
+
 av_color <- '#ffaabb'
 av_alpha <- 0.5
 
@@ -115,9 +118,9 @@ model_xwalk <- fread(paste0(in_data, xwalk_files[[1]]))
 # =========================================================================== #
 # =============== Make Figures for each Different Simulation ================ #
 # =========================================================================== #
-
+i <- 1
 # Loop over xwalk to run this. 
-for(i in 1:nrow(model_xwalk)){
+for(i in 1:1) { #nrow(model_xwalk)){
   
   # Set seed.
   set.seed(42)
@@ -258,16 +261,29 @@ for(i in 1:nrow(model_xwalk)){
                        in_teacher_id = "teacher_id",
                        in_pre_test   = "test_1",
                        in_post_test  = "test_2",
-                       npoints       = p_npoints)
+                       npoints       = p_npoints,
+                       weighted_av   = FALSE)
   
   
-  # Get the coefficients and subtract off the pre-test score.
+  # Get the coefficients.
   teacher_ex[, np := mapply((function(x,y)  as.matrix(np_res$results[, 1:p_npoints],
                                                       ncol(1))[x, which.min(abs(np_res$points - y))]),
                             teacher_id, test_1)]
   
-  teacher_ex[, np := np - test_1]
-
+  # Run the NP regression weighted estimate.
+  np_res <- np_hack_va(in_data       = teacher_ex,
+                       in_teacher_id = "teacher_id",
+                       in_pre_test   = "test_1",
+                       in_post_test  = "test_2",
+                       npoints       = p_npoints,
+                       weighted_av   = TRUE)
+  
+  
+  # Get the coefficients and subtract off the pre-test score.
+  teacher_ex[, np1 := mapply((function(x,y)  as.matrix(np_res$results[, 1:p_npoints],
+                                                      ncol(1))[x, which.min(abs(np_res$points - y))]),
+                            teacher_id, test_1)]
+  
   
   # Put together the example teacher plot.
   teacher_example <- ggplot(data = teacher_ex[teacher_id == 2]) +
@@ -276,9 +292,11 @@ for(i in 1:nrow(model_xwalk)){
     geom_point(aes(x = stud_ability_1, y = binned), size = 2, color = binned_color, alpha = binned_alpha) + 
     geom_point(aes(x = stud_ability_1, y = quantile), size = 2, color = quantile_color, alpha = quantile_alpha) +
     geom_point(aes(x = stud_ability_1, y = np), size = 2, color = np_color, alpha = np_alpha) + 
+    geom_point(aes(x = stud_ability_1, y = np1), size = 2, color = np1_color, alpha = np1_alpha) + 
     ylab("Teacher's Impact") + 
     xlab("Student Ability") +
     plot_attributes
+  print(teacher_example)
 
   # Save the figure.
   ggsave(filename = paste0(out_plot, "teacher_example",  run_id, ".png"), 
