@@ -158,10 +158,10 @@ for(i in 1:1) { #nrow(model_xwalk)){
   # ========================================================================= #
   
   # Simulate necessary data.
-  teacher_ex <- simulate_test_data(n_teacher          = 2,
-                                   n_stud_per_teacher = 300,
+  teacher_ex <- simulate_test_data(n_teacher          = 4,
+                                   n_stud_per_teacher = 500,
                                    test_SEM           = p_test_SEM,
-                                   teacher_va_epsilon = .05, #p_teacher_va_epsilon,
+                                   teacher_va_epsilon = p_teacher_va_epsilon,
                                    impact_type        = p_impact_type,
                                    impact_function    = 1, #p_impact_function,
                                    max_diff           = p_max_diff,
@@ -172,9 +172,6 @@ for(i in 1:1) { #nrow(model_xwalk)){
                                    ta_sd              = p_ta_sd,
                                    sa_sd              = p_sa_sd)
   
-  
-  # Add in the noise.
-  #teacher_ex[, teacher_impact := teacher_impact + rnorm(nrow(teacher_ex), sd = .05)] #p_teacher_va_epsilon)]
   
   # Estimate standard value added.
   if (p_covariates == 0) {
@@ -189,6 +186,7 @@ for(i in 1:1) { #nrow(model_xwalk)){
   va_tab1[, teacher_id := gsub("teacher_id", "", term)]
   teacher_ex <- merge(teacher_ex, va_tab1[, c('teacher_id', 'estimate')], 'teacher_id')
   setnames(teacher_ex, c('estimate'), c('standard'))
+  
   
   # Estimate the binned VA.
   if (p_covariates == 0) {
@@ -214,7 +212,6 @@ for(i in 1:1) { #nrow(model_xwalk)){
   # Get the baseline estimate for each teacher.
   output[, baseline := .SD[1, estimate], by='teacher_id']
   
-  
   # Make the overall minimum very low and the overall maximum very high to capture all.
   output[category != '', temp1 := min(range_low), by='teacher_id']
   output[category != '', temp2 := max(range_high), by='teacher_id']
@@ -229,6 +226,7 @@ for(i in 1:1) { #nrow(model_xwalk)){
                                            output$range_low < y &
                                            output$range_high >= y, baseline]), teacher_id, test_1)]
   
+  
   # Run quantile regression and get estimates for a grid of tau values.
   qtile_res <- qtilep_va(in_data       = teacher_ex,
                          in_teacher_id = "teacher_id",
@@ -236,7 +234,11 @@ for(i in 1:1) { #nrow(model_xwalk)){
                          in_post_test  = "test_2",
                          ptle          = seq(.02, .98, by=.04))
   
-  #qtile_res[, qtile_est := (qtile_est - mean(qtile_est))/(sd(qtile_est)), tau]
+  qtile_constants <- qtile_res[teacher_id == 'test_1']
+  qtile_res <- qtile_res[teacher_id != 'test_1', ]
+  
+  qtile_res[, qtile_est := (qtile_est - mean(qtile_est))/sd(qtile_est), tau]
+  qtile_res[, qtile_est := mapply((function(x, y)  y + qtile_constants[tau == x, qtile_est]), tau, qtile_est)]
   
   # Calculate the estimated teacher impact.
   l1 <- teacher_ex$test_1
@@ -247,7 +249,6 @@ for(i in 1:1) { #nrow(model_xwalk)){
   teacher_ex[, quantile := mapply((function(x,y)  qtile_res[teacher_id == x &
                                                             abs(tau - y) < .02, qtile_est]), teacher_id, pct_val)]
   
-  teacher_ex[, quantile := (quantile - mean(quantile))/sd(quantile), pct_val]
   
   # Run the NP regression.
   np_res <- np_hack_va(in_data       = teacher_ex,
@@ -264,6 +265,7 @@ for(i in 1:1) { #nrow(model_xwalk)){
   
   teacher_ex[, np := np - test_1]
 
+  
   # Put together the example teacher plot.
   plot <- ggplot(data = teacher_ex[teacher_id == 2]) +
     geom_point(aes(x = stud_ability_1, y = teacher_impact), size = 2, color = truth_color, alpha = truth_alpha) +
