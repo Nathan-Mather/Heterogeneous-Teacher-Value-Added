@@ -156,8 +156,8 @@
     # Generate the student data.
     if (covariates == 1) {
       # Assign schools.
-      school_vector <- unlist(lapply(1:(n_teacher/20), rep,
-                                     times = n_stud_per_teacher*20))
+      school_vector <- unlist(lapply(1:(n_teacher/min(20, n_teacher)), rep,
+                                     times = n_stud_per_teacher*min(20, n_teacher)))
       r_dt[, school_id := as.factor(school_vector)]
       
       # Assign school characteristics.
