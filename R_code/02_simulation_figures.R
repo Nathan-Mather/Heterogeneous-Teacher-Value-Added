@@ -41,6 +41,9 @@ quantile_alpha <- 0.5
 np_color <- 'firebrick'
 np_alpha <- 0.5
 
+av_color <- '#ffaabb'
+av_alpha <- 0.5
+
 
 
 
@@ -114,7 +117,7 @@ model_xwalk <- fread(paste0(in_data, xwalk_files[[1]]))
 # =========================================================================== #
 
 # Loop over xwalk to run this. 
-for(i in 1:1) { #nrow(model_xwalk)){
+for(i in 1:nrow(model_xwalk)){
   
   # Set seed.
   set.seed(42)
@@ -159,11 +162,11 @@ for(i in 1:1) { #nrow(model_xwalk)){
   
   # Simulate necessary data.
   teacher_ex <- simulate_test_data(n_teacher          = 4,
-                                   n_stud_per_teacher = 500,
+                                   n_stud_per_teacher = p_n_stud_per_teacher,
                                    test_SEM           = p_test_SEM,
                                    teacher_va_epsilon = p_teacher_va_epsilon,
                                    impact_type        = p_impact_type,
-                                   impact_function    = 1, #p_impact_function,
+                                   impact_function    = p_impact_function,
                                    max_diff           = p_max_diff,
                                    covariates         = p_covariates,
                                    peer_effects       = p_peer_effects,
@@ -267,7 +270,7 @@ for(i in 1:1) { #nrow(model_xwalk)){
 
   
   # Put together the example teacher plot.
-  plot <- ggplot(data = teacher_ex[teacher_id == 2]) +
+  teacher_example <- ggplot(data = teacher_ex[teacher_id == 2]) +
     geom_point(aes(x = stud_ability_1, y = teacher_impact), size = 2, color = truth_color, alpha = truth_alpha) +
     geom_point(aes(x = stud_ability_1, y = standard), size = 2, color = standard_color, alpha = standard_alpha) +
     geom_point(aes(x = stud_ability_1, y = binned), size = 2, color = binned_color, alpha = binned_alpha) + 
@@ -276,6 +279,94 @@ for(i in 1:1) { #nrow(model_xwalk)){
     ylab("Teacher's Impact") + 
     xlab("Student Ability") +
     plot_attributes
-  print(plot)
+
+  # Save the figure.
+  ggsave(filename = paste0(out_plot, "teacher_example",  run_id, ".png"), 
+         plot     = teacher_example, 
+         width    = 9, 
+         height   = 4)
+  
+  
+  
+  # ========================================================================= #
+  # ========================= Average Teacher Figure ======================== #
+  # ========================================================================= #
+  
+  # Simulate necessary data.
+  teacher_av <- simulate_test_data(n_teacher          = p_n_teacher,
+                                   n_stud_per_teacher = p_n_stud_per_teacher,
+                                   test_SEM           = p_test_SEM,
+                                   teacher_va_epsilon = p_teacher_va_epsilon,
+                                   impact_type        = p_impact_type,
+                                   impact_function    = p_impact_function,
+                                   max_diff           = p_max_diff,
+                                   covariates         = p_covariates,
+                                   peer_effects       = p_peer_effects,
+                                   stud_sorting       = p_stud_sorting,
+                                   rho                = p_rho,
+                                   ta_sd              = p_ta_sd,
+                                   sa_sd              = p_sa_sd)
+  
+  # Get the average true impact per teacher across a grid.
+  grid <- seq(-3, 3, length.out = p_npoints)
+  teacher_av[, grid := mapply((function(xo)  grid[which.min(abs(grid - xo))]), stud_ability_1)]
+  
+  teacher_av[, av_impact := mean(teacher_impact), grid]
+  
+  # Save unique grid values.
+  grid1 <- unique(teacher_av[, c('grid', 'av_impact')])
+  
+  # Put together the example teacher plot.
+  teacher_average <- ggplot(data = grid1) +
+    geom_point(aes(x = grid, y = av_impact), size = 2, color = av_color, alpha = av_alpha) +
+    ylab("Average Teacher Impact") + 
+    xlab("Student Ability") +
+    plot_attributes
+  
+  # Save the figure.
+  ggsave(filename = paste0(out_plot, "average_teacher_example",  run_id, ".png"), 
+         plot     = teacher_average, 
+         width    = 9, 
+         height   = 4)
+  
+  
+  
+  # ========================================================================= #
+  # ========================= Example Weight Figure ========================= #
+  # ========================================================================= #
+  
+  # Make a data table.
+  weight_ex <- as.data.table(grid)
+  
+  
+  # Get the weights for each place in the grid.
+  weight_ex[, weight := ww_general_fun(weight_type  = p_weight_type,
+                                       in_test_1    = grid,
+                                       lin_alpha    = p_lin_alpha,
+                                       quant_val_l  = quantile(teacher_av$test_1, probs = 0.1),
+                                       quant_val_h  = quantile(teacher_av$test_1, probs = 0.9),
+                                       pctile       = NULL,
+                                       weight_below = p_weight_below,
+                                       weight_above = p_weight_above,
+                                       v_alpha      = p_v_alpha,
+                                       median_va    = median(teacher_av$test_1),
+                                       mrpctile     = p_mrpctile, 
+                                       mrdist       = p_mrdist,
+                                       min_score    = quantile(teacher_av$test_1, max(p_pctile - p_mrdist, 0)),
+                                       max_score    = quantile(teacher_av$test_1, min(p_pctile + p_mrdist, 100)),
+                                       pctile_val   = quantile(teacher_av$test_1, p_pctile))]
+
+  # Put together the example teacher plot.
+  weight_example <- ggplot(data = weight_ex) +
+    geom_point(aes(x = grid, y = weight), size = 2, color = av_color, alpha = av_alpha) +
+    ylab("Welfare Weight") + 
+    xlab("Ex Ante Expected Performance") +
+    plot_attributes
+  
+  # Save the figure.
+  ggsave(filename = paste0(out_plot, "weight_example",  run_id, ".png"), 
+         plot     = weight_example, 
+         width    = 9, 
+         height   = 4)
   
 } # Close overall loop.
