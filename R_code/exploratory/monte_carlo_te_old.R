@@ -45,6 +45,7 @@ library(ggplot2)
 library(doParallel)
 library(matrixStats)
 library(doRNG)
+library(splines)
 
 
 # Set parallel options

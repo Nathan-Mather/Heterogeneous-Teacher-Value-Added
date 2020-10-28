@@ -23,8 +23,8 @@
   # ========================================================================= #
   # ============================ debug parameters =========================== #
   # ========================================================================= #
-  
-  # in_data       = in_dt
+
+  # in_data       = r_dt
   # in_teacher_id = "teacher_id"
   # in_stud_id    = "stud_id"
   # in_pre_test   = "test_1"
@@ -43,7 +43,7 @@
                         in_stud_id    = "stud_id",
                         in_pre_test   = "test_1",
                         in_post_test  = "test_2",
-                        num_cats      = 10,
+                        num_cats      = 5,
                         reg_formula   = paste0("test_2 ~ test_1 + teacher_id",
                                                "+ categories",
                                                "+ teacher_id*categories - 1")) {
@@ -64,15 +64,15 @@
     output <- lm(reg_formula, data = in_data)
     
     # Clean results. 
-    output <- data.table(broom::tidy(output))
-    output[, teacher_id := gsub(paste0(in_teacher_id, "|:categories.*"), "",
+    coefs <- data.table(broom::tidy(output))
+    coefs[, teacher_id := gsub(paste0(in_teacher_id, "|:categories.*"), "",
                                 term)]
-    output[, category := gsub(paste0(in_teacher_id, "[0-9]+|:categories"), "",
+    coefs[, category := gsub(paste0(in_teacher_id, "[0-9]+|:categories"), "",
                               term)]
     
     # Return just the estimates.
-    output <- output[term %like% in_teacher_id, c("teacher_id", "category",
+    coefs <- coefs[term %like% in_teacher_id, c("teacher_id", "category",
                                                   "estimate")]
-    return(output)
+    return(coefs)
     
   } # End function.

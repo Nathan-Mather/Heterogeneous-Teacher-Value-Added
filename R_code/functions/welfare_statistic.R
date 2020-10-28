@@ -244,10 +244,16 @@
         
         
         # now we merge those on 
+        qtile_constants <- in_coefs[teacher_id == 'test_1']
+        in_coefs <- in_coefs[teacher_id != 'test_1', ]
+        
         w_coefs_dt <- merge(in_coefs, tau_xwalk, "tau")
         
         # now standardize the estimates by quantile 
+        
         w_coefs_dt[, qtile_est := (qtile_est - mean(qtile_est))/(sd(qtile_est)), tau]
+        w_coefs_dt[, qtile_est := mapply((function(x, y)  y + qtile_constants[tau == x, qtile_est]), tau, qtile_est)]
+        
         
         # aggregate estimates 
         tot_weight <- tau_xwalk[, sum(weight)]
@@ -264,17 +270,17 @@
         # Take output as a j by npoints matrix of fitted values
         if (length(output$points)==npoints) {
           
-          # add reshaped fitted values to data (should opperate column by column to match weights)
-          welfare[  , fit := as.matrix(output$results[ , 1:npoints,],ncol(1))  ]
+          # add reshaped fitted values to data (should operate column by column to match weights)
+          welfare[, fit := as.matrix(output$results[, 1:npoints,],ncol(1))]
           
           # Approximate integration over weights
-          welfare[  , WA_temp  := sum(weight*fit) , teacher_id]
+          welfare[, WA_temp := sum(weight*(fit - grid)), teacher_id]
           
           # Grab unique values for each teacher
           ww_np_hack_va <- unique(welfare[, c('teacher_id', 'WA_temp')])
           
           # Standardize to mean zero var one
-          ww_np_hack_va[, WA := (WA_temp-mean(WA_temp))/sd(WA_temp)]
+          ww_np_hack_va[, alternative_welfare := (WA_temp-mean(WA_temp))/sd(WA_temp)]
           
           
           # return the  estimates 

@@ -190,7 +190,6 @@ for(i in 1:nrow(model_xwalk)){
       ylab("Impact") + 
       xlab("True Teacher Order") +
       ylim(-6,6)+
-      xlim(0,150)+
       plot_attributes +
       theme(legend.title = element_blank(),
             legend.position = c(0.2, 0.8))
@@ -256,7 +255,7 @@ for(i in 1:nrow(model_xwalk)){
     ggsave(filename = paste0(out_plot,"hist_run_",  run_id_i, ".png"), 
            plot     = out_histogram2, 
            width    = 9, 
-           height   = 4)
+           height   = 5)
     
 }# close for loop 
 

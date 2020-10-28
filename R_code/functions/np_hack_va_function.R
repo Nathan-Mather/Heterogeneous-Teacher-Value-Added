@@ -5,7 +5,7 @@ np_hack_va <- function(in_data = NULL,
                   in_pre_test   = "test_1",
                   in_post_test  = "test_2",
                   npoints =  seq(-3, 3, length.out = npoints)){
-  
+
   #=======================#
   # ==== error checks ====
   #=======================#

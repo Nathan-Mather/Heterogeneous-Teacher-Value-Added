@@ -116,8 +116,8 @@ model_xwalk <- fread(paste0(in_data, xwalk_files[[1]]))
 # Loop over xwalk to run this. 
 for(i in 1:1) { #nrow(model_xwalk)){
   
-  # Set seed. 
-  set.seed(43)
+  # Set seed.
+  set.seed(42)
   
   # Set parameters for this Monte Carlo run.
   # Run parameters.
