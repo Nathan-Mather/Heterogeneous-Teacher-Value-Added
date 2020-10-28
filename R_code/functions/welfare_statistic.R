@@ -274,7 +274,7 @@
           welfare[, fit := as.matrix(output$results[, 1:npoints,],ncol(1))]
           
           # Approximate integration over weights
-          welfare[, WA_temp := sum(weight*(fit - grid)), teacher_id]
+          welfare[, WA_temp := sum(weight*(fit)), teacher_id]
           
           # Grab unique values for each teacher
           ww_np_hack_va <- unique(welfare[, c('teacher_id', 'WA_temp')])
