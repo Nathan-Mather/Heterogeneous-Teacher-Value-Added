@@ -151,7 +151,7 @@ for(i in 1:nrow(model_xwalk)){
   p_v_alpha                  <- model_xwalk[i, v_alpha]            # for v weights
   p_mrpctile                 <- model_xwalk[i, mrpctile]           # for mr weights
   p_mrdist                   <- model_xwalk[i, mrdist]             # for mr weights
-  p_weghted_average          <- model_xwalk[i, weighted_average]   # whether or not to calculate a weighted average of standard and NP
+  p_weighted_average          <- model_xwalk[i, weighted_average]   # whether or not to calculate a weighted average of standard and NP
   
   
   # Simulate initial data.

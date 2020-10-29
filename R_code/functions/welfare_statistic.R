@@ -187,10 +187,7 @@
         # Calculate the estimated teacher impact.
         welfare[, estimate := mapply((function(x, y) output[output$teacher_id == x & 
                                                               output$range_low < y &
-                                                              output$range_high >= y, estimate] + 
-                                                     output[output$teacher_id == x & 
-                                                              output$range_low < y &
-                                                              output$range_high >= y, baseline]), teacher_id, grid)]
+                                                              output$range_high >= y, estimate]), teacher_id, grid)]
         
         # Calculate and return the estimated welfare.
         welfare[, alternative_welfare := sum(estimate*weight), by='teacher_id']

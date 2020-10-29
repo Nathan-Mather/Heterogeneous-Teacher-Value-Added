@@ -5,7 +5,8 @@ np_hack_va <- function(in_data       = NULL,
                   in_pre_test        = "test_1",
                   in_post_test       = "test_2",
                   npoints            = seq(-3, 3, length.out = npoints),
-                  weighted_average   = FALSE){
+                  weighted_average   = FALSE,
+                  smoothing          = 1){
 
   #=======================#
   # ==== error checks ====
@@ -42,9 +43,12 @@ np_hack_va <- function(in_data       = NULL,
     counter <- counter + 1
     # Once we have controls I think we want to include them all in this index model
     # m <- npindex(test_2~test_1+ ... , data = r_dt[in_teacher_id==teach_i])
+    
+    # First calculate the the least-squares cross-validated bandwidth.
+    bw <- npregbw(test_2~test_1, data=in_data[get(in_teacher_id)==teach_i], exdat=points)
 
     # For now just estimate the relationship between test1 and test2 nonparametrically
-    m <- npreg(test_2~test_1, data=in_data[get(in_teacher_id)==teach_i], exdat=points) # Check if we want bwtype = "adaptive_nn"
+    m <- npreg(test_2~test_1, data=in_data[get(in_teacher_id)==teach_i], exdat=points, bws = bw$bw*smoothing) # Check if we want bwtype = "adaptive_nn"  , bws = bw
 
     # Extract the values and the standard errors.
     vals <- fitted(m) - points

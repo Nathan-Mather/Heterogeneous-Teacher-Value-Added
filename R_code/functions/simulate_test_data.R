@@ -120,7 +120,7 @@
       # Assign teachers a "center" for which students they best match. This is
       #  uniform between -2 and 2 standard deviations from the mean of student
       #  ability.
-      r_dt[, teacher_center := runif(1, min = -2, max = 2), teacher_id]
+      r_dt[, teacher_center := min(2, max(-2, rnorm(1, mean = 0, sd = sa_sd))), teacher_id]
       
       # Assign teachers a "max" which is the difference in impact between their
       #  best and worst matched students.

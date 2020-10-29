@@ -139,8 +139,8 @@
       output <- binned_va(in_data = in_dt)
     } else {
       output <- binned_va(in_data = in_dt,
-                          reg_formula = paste0('test_2 ~ test_1 + teacher_id + ',
-                                               'categories + teacher_id*categories',
+                          reg_formula = paste0('test_2 ~ test_1',
+                                               ' + teacher_id*categories',
                                                ' + school_av_test + stud_sex + ',
                                                'stud_frpl + stud_att - 1'))
     }
@@ -320,11 +320,11 @@
     }
     
     # Run quantile regression and get estimates for a grid of tau values.
-    np_res <- np_hack_va(in_data         = in_dt,
-                         in_teacher_id   = "teacher_id",
-                         in_pre_test     = "test_1",
-                         in_post_test    = "test_2",
-                         npoints         =  npoints,
+    np_res <- np_hack_va(in_data          = in_dt,
+                         in_teacher_id    = "teacher_id",
+                         in_pre_test      = "test_1",
+                         in_post_test     = "test_2",
+                         npoints          =  npoints,
                          weighted_average = weighted_average)
     
     

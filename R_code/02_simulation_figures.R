@@ -118,9 +118,9 @@ model_xwalk <- fread(paste0(in_data, xwalk_files[[1]]))
 # =========================================================================== #
 # =============== Make Figures for each Different Simulation ================ #
 # =========================================================================== #
-i <- 1
+
 # Loop over xwalk to run this. 
-for(i in 1:1) { #nrow(model_xwalk)){
+for(i in 1:nrow(model_xwalk)){
   
   # Set seed.
   set.seed(42)
@@ -199,8 +199,8 @@ for(i in 1:1) { #nrow(model_xwalk)){
     output <- binned_va(in_data = teacher_ex, num_cats = 5)
   } else {
     output <- binned_va(in_data = teacher_ex,
-                        reg_formula = paste0('test_2 ~ test_1 + teacher_id + ',
-                                             'categories + teacher_id*categories',
+                        reg_formula = paste0('test_2 ~ test_1',
+                                             ' + teacher_id*categories',
                                              ' + school_av_test + stud_sex + ',
                                              'stud_frpl + stud_att - 1'))
   }
@@ -227,10 +227,7 @@ for(i in 1:1) { #nrow(model_xwalk)){
   # Calculate the estimated teacher impact.
   teacher_ex[, binned := mapply((function(x, y) output[output$teacher_id == x & 
                                                         output$range_low < y &
-                                                        output$range_high >= y, estimate] + 
-                                  output[output$teacher_id == x & 
-                                           output$range_low < y &
-                                           output$range_high >= y, baseline]), teacher_id, test_1)]
+                                                        output$range_high >= y, estimate]), teacher_id, test_1)]
   
   
   # Run quantile regression and get estimates for a grid of tau values.
@@ -286,20 +283,19 @@ for(i in 1:1) { #nrow(model_xwalk)){
   
   
   # Put together the example teacher plot.
-  teacher_example <- ggplot(data = teacher_ex[teacher_id == 2]) +
+  teacher_example <- ggplot(data = teacher_ex[teacher_id == 3]) +
     geom_point(aes(x = stud_ability_1, y = teacher_impact), size = 2, color = truth_color, alpha = truth_alpha) +
     geom_point(aes(x = stud_ability_1, y = standard), size = 2, color = standard_color, alpha = standard_alpha) +
     geom_point(aes(x = stud_ability_1, y = binned), size = 2, color = binned_color, alpha = binned_alpha) + 
-    geom_point(aes(x = stud_ability_1, y = quantile), size = 2, color = quantile_color, alpha = quantile_alpha) +
+    #geom_point(aes(x = stud_ability_1, y = quantile), size = 2, color = quantile_color, alpha = quantile_alpha) +
     geom_point(aes(x = stud_ability_1, y = np), size = 2, color = np_color, alpha = np_alpha) + 
-    geom_point(aes(x = stud_ability_1, y = np1), size = 2, color = np1_color, alpha = np1_alpha) + 
+    #geom_point(aes(x = stud_ability_1, y = np1), size = 2, color = np1_color, alpha = np1_alpha) + 
     ylab("Teacher's Impact") + 
     xlab("Student Ability") +
     plot_attributes
-  print(teacher_example)
 
   # Save the figure.
-  ggsave(filename = paste0(out_plot, "teacher_example",  run_id, ".png"), 
+  ggsave(filename = paste0(out_plot, "teacher_example_",  run_id, ".png"), 
          plot     = teacher_example, 
          width    = 9, 
          height   = 4)
@@ -311,7 +307,7 @@ for(i in 1:1) { #nrow(model_xwalk)){
   # ========================================================================= #
   
   # Simulate necessary data.
-  teacher_av <- simulate_test_data(n_teacher          = p_n_teacher,
+  teacher_av <- simulate_test_data(n_teacher          = 1000, #p_n_teacher,
                                    n_stud_per_teacher = p_n_stud_per_teacher,
                                    test_SEM           = p_test_SEM,
                                    teacher_va_epsilon = p_teacher_va_epsilon,
@@ -325,10 +321,26 @@ for(i in 1:1) { #nrow(model_xwalk)){
                                    ta_sd              = p_ta_sd,
                                    sa_sd              = p_sa_sd)
   
-  # Get the average true impact per teacher across a grid.
-  grid <- seq(-3, 3, length.out = p_npoints)
-  teacher_av[, grid := mapply((function(xo)  grid[which.min(abs(grid - xo))]), stud_ability_1)]
+  # Generate a grid over which we can get the true welfare added.
+  grid <- unlist(lapply(seq(-3, 3, length.out = p_npoints), rep,
+                        times =length(unique(teacher_av$teacher_id))))
   
+  # Attach teacher ids.
+  teacher_av <- unique(teacher_av[, c('teacher_id', 'teacher_ability',
+                              'teacher_center', 'teacher_max')])
+  teacher_av <- do.call('rbind', replicate(p_npoints, teacher_av, simplify=FALSE))
+  teacher_av[, grid := grid]
+  
+  # Get the teacher impact over that grid.
+  teacher_av[, teacher_impact :=
+             teacher_impact(teacher_ability  = teacher_av$teacher_ability,
+                            teacher_center   = teacher_av$teacher_center,
+                            teacher_max      = teacher_av$teacher_max,
+                            stud_ability_1   = teacher_av$grid,
+                            type             = p_impact_type,
+                            func_num         = 1)] #p_impact_function)]
+  
+  # Get the average true impact per teacher across a grid.
   teacher_av[, av_impact := mean(teacher_impact), grid]
   
   # Save unique grid values.
@@ -340,9 +352,10 @@ for(i in 1:1) { #nrow(model_xwalk)){
     ylab("Average Teacher Impact") + 
     xlab("Student Ability") +
     plot_attributes
+  print(teacher_average)
   
   # Save the figure.
-  ggsave(filename = paste0(out_plot, "average_teacher_example",  run_id, ".png"), 
+  ggsave(filename = paste0(out_plot, "average_teacher_example_",  run_id, ".png"), 
          plot     = teacher_average, 
          width    = 9, 
          height   = 4)
@@ -382,7 +395,7 @@ for(i in 1:1) { #nrow(model_xwalk)){
     plot_attributes
   
   # Save the figure.
-  ggsave(filename = paste0(out_plot, "weight_example",  run_id, ".png"), 
+  ggsave(filename = paste0(out_plot, "weight_example_",  run_id, ".png"), 
          plot     = weight_example, 
          width    = 9, 
          height   = 4)
