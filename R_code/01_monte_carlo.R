@@ -12,7 +12,7 @@ options(scipen = 999)
 cat("\f")
 
 # Parallel options.
-do_parallel <- TRUE
+do_parallel <- FALSE
 ncores <- 20
 
 

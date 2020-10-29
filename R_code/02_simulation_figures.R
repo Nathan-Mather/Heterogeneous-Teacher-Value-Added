@@ -293,6 +293,7 @@ for(i in 1:nrow(model_xwalk)){
     ylab("Teacher's Impact") + 
     xlab("Student Ability") +
     plot_attributes
+  print(teacher_example)
 
   # Save the figure.
   ggsave(filename = paste0(out_plot, "teacher_example_",  run_id, ".png"), 

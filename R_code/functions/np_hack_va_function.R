@@ -4,10 +4,17 @@ np_hack_va <- function(in_data       = NULL,
                   in_stud_id         = "stud_id",
                   in_pre_test        = "test_1",
                   in_post_test       = "test_2",
-                  npoints            = seq(-3, 3, length.out = npoints),
+                  npoints            = 1000,
                   weighted_average   = FALSE,
                   smoothing          = 1){
-
+  # in_data       = r_dt
+  # in_teacher_id      = "teacher_id"
+  # in_stud_id         = "stud_id"
+  # in_pre_test        = "test_1"
+  # in_post_test       = "test_2"
+  # npoints            = p_npoints
+  # weighted_average   = p_weighted_average
+  # smoothing          = 1
   #=======================#
   # ==== error checks ====
   #=======================#
@@ -47,16 +54,26 @@ np_hack_va <- function(in_data       = NULL,
     # First calculate the the least-squares cross-validated bandwidth.
     bw <- npregbw(test_2~test_1, data=in_data[get(in_teacher_id)==teach_i], exdat=points)
 
-    # For now just estimate the relationship between test1 and test2 nonparametrically
-    m <- npreg(test_2~test_1, data=in_data[get(in_teacher_id)==teach_i], exdat=points, bws = bw$bw*smoothing) # Check if we want bwtype = "adaptive_nn"  , bws = bw
+    while (TRUE) {
 
-    # Extract the values and the standard errors.
-    vals <- fitted(m) - points
-    sds <- m$merr
+      # For now just estimate the relationship between test1 and test2 nonparametrically
+      m <- npreg(test_2~test_1, data=in_data[get(in_teacher_id)==teach_i], exdat=points, bws = bw$bw*smoothing) # Check if we want bwtype = "adaptive_nn"  , bws = bw
+  
+      # Extract the values and the standard errors.
+      vals <- fitted(m) - points
+      sds <- m$merr
+      
+      if (0 %in% sds) {
+        bw$bw <- bw$bw*1.05 # Arbitrary, check later.
+      } else {
+        break
+      }
+      
+    }
     
     #
     if (weighted_average == TRUE) {
-      npresults[counter,] <- (vals/sds^2 + standard[counter + 1, 1]/standard[counter + 1, 1]^2)/(1/sds^2 + 1/standard[counter + 1, 1]^2)
+      npresults[counter,] <- (vals/sds^2 + standard[counter + 1, 1]/standard[counter + 1, 2]^2)/(1/sds^2 + 1/standard[counter + 1, 2]^2)
     } else {
       npresults[counter,] <- vals
     }

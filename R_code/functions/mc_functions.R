@@ -341,6 +341,7 @@
                                 v_alpha         = v_alpha,
                                 mrpctile        = mrpctile, 
                                 mrdist          = mrdist)
+    print(output)
     
     # Return the full data if in the MC or just the estimates for the bootstrap.
     if (is.null(boot)) {
@@ -550,7 +551,7 @@
                               ta_sd              = ta_sd,
                               sa_sd              = sa_sd,
                               weighted_average   = weighted_average)
-    
+
   }  
   
     
