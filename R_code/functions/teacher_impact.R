@@ -84,7 +84,7 @@
         (other_data >= studmean + 2*studsd)
     }
     
-    teachpct <- (abs(teacher_center) < 2)*
+    teachpct <- (abs(teacher_center) <= 2)*
       ((teacher_center + 2)/4) + 
       (teacher_center >= 2)
 

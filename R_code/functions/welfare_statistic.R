@@ -173,10 +173,7 @@
         output <- as.data.table(output)
         output[, range_low := as.numeric(sub('\\(', '', sapply(strsplit(category, ','), '[', 1)))]
         output[, range_high := as.numeric(sub('\\]', '', sapply(strsplit(category, ','), '[', 2)))]
-    
-        # Get the baseline estimate for each teacher.
-        output[, baseline := .SD[1, estimate], by='teacher_id']
-        
+
         
         # Make the overall minimum very low and the overall maximum very high to capture all.
         output[category != '', temp1 := min(range_low), by='teacher_id']
@@ -188,10 +185,11 @@
         welfare[, estimate := mapply((function(x, y) output[output$teacher_id == x & 
                                                               output$range_low < y &
                                                               output$range_high >= y, estimate]), teacher_id, grid)]
-        
+
         # Calculate and return the estimated welfare.
+        welfare[, estimate := as.numeric(estimate)]
         welfare[, alternative_welfare := sum(estimate*weight), by='teacher_id']
-        
+
         return(unique(welfare[, c('teacher_id', 'alternative_welfare')]))
         
         
@@ -272,7 +270,7 @@
           
           # Approximate integration over weights
           welfare[, WA_temp := sum(weight*(fit)), teacher_id]
-          
+
           # Grab unique values for each teacher
           ww_np_hack_va <- unique(welfare[, c('teacher_id', 'WA_temp')])
           

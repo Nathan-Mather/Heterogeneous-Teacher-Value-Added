@@ -140,7 +140,7 @@
     } else {
       output <- binned_va(in_data = in_dt,
                           reg_formula = paste0('test_2 ~ test_1',
-                                               ' + teacher_id*categories',
+                                               ' + teacher_id:categories',
                                                ' + school_av_test + stud_sex + ',
                                                'stud_frpl + stud_att - 1'))
     }
@@ -341,7 +341,7 @@
                                 v_alpha         = v_alpha,
                                 mrpctile        = mrpctile, 
                                 mrdist          = mrdist)
-    print(output)
+
     
     # Return the full data if in the MC or just the estimates for the bootstrap.
     if (is.null(boot)) {
@@ -454,7 +454,7 @@
                                 rho                = rho,
                                 ta_sd              = ta_sd,
                                 sa_sd              = sa_sd)
-    
+
     
     # Run the standard VA.
     va_tab1 <- standard_va_stat(in_dt              = in_dt,
@@ -481,7 +481,7 @@
                                 rho                = rho,
                                 ta_sd              = ta_sd,
                                 sa_sd              = sa_sd)
-    
+
     
     # Check method option.
     if (method=="bin") {
@@ -588,6 +588,7 @@
     
     # Merge on the standard VA
     va_tab2 <- merge(va_tab1, output, "teacher_id")
+    
     
     # Return the estimates.
     return(va_tab2)

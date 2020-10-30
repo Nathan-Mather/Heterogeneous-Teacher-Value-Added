@@ -52,17 +52,16 @@ np_hack_va <- function(in_data       = NULL,
     # m <- npindex(test_2~test_1+ ... , data = r_dt[in_teacher_id==teach_i])
     
     # First calculate the the least-squares cross-validated bandwidth.
-    bw <- npregbw(test_2~test_1, data=in_data[get(in_teacher_id)==teach_i], exdat=points)
-
+    bw <- npregbw(test_2~test_1, data=in_data[get(in_teacher_id)==teach_i], exdat=points, na.action = na.omit)
+    
     while (TRUE) {
-
       # For now just estimate the relationship between test1 and test2 nonparametrically
-      m <- npreg(test_2~test_1, data=in_data[get(in_teacher_id)==teach_i], exdat=points, bws = bw$bw*smoothing) # Check if we want bwtype = "adaptive_nn"  , bws = bw
-  
+      m <- npreg(test_2~test_1, data=in_data[get(in_teacher_id)==teach_i], exdat=points, bws = bw$bw*smoothing,  na.action = na.omit) # Check if we want bwtype = "adaptive_nn"  , bws = bw
+
       # Extract the values and the standard errors.
       vals <- fitted(m) - points
       sds <- m$merr
-      
+
       if (0 %in% sds) {
         bw$bw <- bw$bw*1.05 # Arbitrary, check later.
       } else {
@@ -83,8 +82,9 @@ np_hack_va <- function(in_data       = NULL,
    }
   
   #===========================#
-  # ==== clean up results ====
+  # ==== clean up results ====#
   #===========================#
+  
   # reorganize them for easier comparison
   npresults <- data.table(npresults)
   npresults[ ,teacher_id:= u_teachers]
@@ -92,6 +92,7 @@ np_hack_va <- function(in_data       = NULL,
   # put it in a list with the points 
   res_list <- list(results = npresults,
                    points = points)
+  
   return(res_list)
   
 }

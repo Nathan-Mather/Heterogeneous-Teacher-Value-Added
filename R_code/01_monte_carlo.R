@@ -12,7 +12,7 @@ options(scipen = 999)
 cat("\f")
 
 # Parallel options.
-do_parallel <- FALSE
+do_parallel <- TRUE
 ncores <- 20
 
 
@@ -143,7 +143,7 @@ for(i in 1:nrow(model_xwalk)){
   
   # Weight and estimation parameters.
   p_weight_type              <- model_xwalk[i, weight_type]        # style of social planner pareto weights
-  p_method                   <- model_xwalk[i, method]             # method of estimation used 
+  p_method                   <- model_xwalk[i, method]             # method of estimation used
   p_lin_alpha                <- model_xwalk[i, lin_alpha]          # for linear weights
   p_pctile                   <- model_xwalk[i, pctile]             # for rawlsian 
   p_weight_below             <- model_xwalk[i, weight_below ]      # for rawlsian 

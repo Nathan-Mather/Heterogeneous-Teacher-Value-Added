@@ -45,7 +45,7 @@
                         in_post_test  = "test_2",
                         num_cats      = 5,
                         reg_formula   = paste0("test_2 ~ test_1",
-                                               "+ teacher_id*categories - 1")) {
+                                               "+ teacher_id:categories - 1")) {
     
     # Check that in_data is a data.table.
     if(!any(class(in_data) == "data.table")){

@@ -26,19 +26,19 @@ plot_attributes <- theme_classic() +
                                                 size =25))
 
 # Set various graph options.
-truth_color <- 'black'
+truth_color <- '#000000'
 truth_alpha <- 0.5
 
-standard_color <- '#ffaabb'
+standard_color <- '#0072B2'
 standard_alpha <- 0.5
 
-binned_color <- 'deepskyblue3'
+binned_color <- '#56B4E9'
 binned_alpha <- 0.5
 
 quantile_color <- 'darkgreen'
 quantile_alpha <- 0.5
 
-np_color <- 'firebrick'
+np_color <- '#009E73'
 np_alpha <- 0.5
 
 np1_color <- 'gold'
@@ -200,7 +200,7 @@ for(i in 1:nrow(model_xwalk)){
   } else {
     output <- binned_va(in_data = teacher_ex,
                         reg_formula = paste0('test_2 ~ test_1',
-                                             ' + teacher_id*categories',
+                                             ' + teacher_id:categories',
                                              ' + school_av_test + stud_sex + ',
                                              'stud_frpl + stud_att - 1'))
   }
@@ -283,17 +283,19 @@ for(i in 1:nrow(model_xwalk)){
   
   
   # Put together the example teacher plot.
-  teacher_example <- ggplot(data = teacher_ex[teacher_id == 3]) +
-    geom_point(aes(x = stud_ability_1, y = teacher_impact), size = 2, color = truth_color, alpha = truth_alpha) +
-    geom_point(aes(x = stud_ability_1, y = standard), size = 2, color = standard_color, alpha = standard_alpha) +
-    geom_point(aes(x = stud_ability_1, y = binned), size = 2, color = binned_color, alpha = binned_alpha) + 
+  teacher_example <- ggplot(data = teacher_ex[teacher_id == 1]) +
+    geom_point(aes(x = stud_ability_1, y = teacher_impact, color = 'Truth'), size = 2, alpha = truth_alpha) +
+    geom_point(aes(x = stud_ability_1, y = standard, color = 'Standard'), size = 2, alpha = standard_alpha) +
+    geom_point(aes(x = stud_ability_1, y = binned, color = 'Binned'), size = 2, alpha = binned_alpha) + 
     #geom_point(aes(x = stud_ability_1, y = quantile), size = 2, color = quantile_color, alpha = quantile_alpha) +
-    geom_point(aes(x = stud_ability_1, y = np), size = 2, color = np_color, alpha = np_alpha) + 
-    #geom_point(aes(x = stud_ability_1, y = np1), size = 2, color = np1_color, alpha = np1_alpha) + 
+    geom_point(aes(x = stud_ability_1, y = np, color = 'NP'), size = 2, alpha = np_alpha) + 
+    geom_point(aes(x = stud_ability_1, y = np1, color = 'Weighted Av.'), size = 2, alpha = np1_alpha) + 
     ylab("Teacher's Impact") + 
     xlab("Student Ability") +
-    plot_attributes
-  print(teacher_example)
+    plot_attributes + 
+    scale_color_manual(values = c(binned_color, np_color, standard_color, truth_color, np1_color)) +
+    theme(legend.title = element_blank(),
+          legend.position = 'bottom')
 
   # Save the figure.
   ggsave(filename = paste0(out_plot, "teacher_example_",  run_id, ".png"), 
@@ -308,7 +310,7 @@ for(i in 1:nrow(model_xwalk)){
   # ========================================================================= #
   
   # Simulate necessary data.
-  teacher_av <- simulate_test_data(n_teacher          = 1000, #p_n_teacher,
+  teacher_av <- simulate_test_data(n_teacher          = p_n_teacher,
                                    n_stud_per_teacher = p_n_stud_per_teacher,
                                    test_SEM           = p_test_SEM,
                                    teacher_va_epsilon = p_teacher_va_epsilon,
@@ -352,9 +354,9 @@ for(i in 1:nrow(model_xwalk)){
     geom_point(aes(x = grid, y = av_impact), size = 2, color = av_color, alpha = av_alpha) +
     ylab("Average Teacher Impact") + 
     xlab("Student Ability") +
+    ylim(-0.5, 0.5) + 
     plot_attributes
-  print(teacher_average)
-  
+
   # Save the figure.
   ggsave(filename = paste0(out_plot, "average_teacher_example_",  run_id, ".png"), 
          plot     = teacher_average, 
@@ -375,18 +377,18 @@ for(i in 1:nrow(model_xwalk)){
   weight_ex[, weight := ww_general_fun(weight_type  = p_weight_type,
                                        in_test_1    = grid,
                                        lin_alpha    = p_lin_alpha,
-                                       quant_val_l  = quantile(teacher_av$test_1, probs = 0.1),
-                                       quant_val_h  = quantile(teacher_av$test_1, probs = 0.9),
+                                       quant_val_l  = quantile(teacher_av$grid, probs = 0.1),
+                                       quant_val_h  = quantile(teacher_av$grid, probs = 0.9),
                                        pctile       = NULL,
                                        weight_below = p_weight_below,
                                        weight_above = p_weight_above,
                                        v_alpha      = p_v_alpha,
-                                       median_va    = median(teacher_av$test_1),
+                                       median_va    = median(teacher_av$grid),
                                        mrpctile     = p_mrpctile, 
                                        mrdist       = p_mrdist,
-                                       min_score    = quantile(teacher_av$test_1, max(p_pctile - p_mrdist, 0)),
-                                       max_score    = quantile(teacher_av$test_1, min(p_pctile + p_mrdist, 100)),
-                                       pctile_val   = quantile(teacher_av$test_1, p_pctile))]
+                                       min_score    = quantile(teacher_av$grid, max(p_pctile - p_mrdist, 0)),
+                                       max_score    = quantile(teacher_av$grid, min(p_pctile + p_mrdist, 100)),
+                                       pctile_val   = quantile(teacher_av$grid, p_pctile))]
 
   # Put together the example teacher plot.
   weight_example <- ggplot(data = weight_ex) +
@@ -394,7 +396,7 @@ for(i in 1:nrow(model_xwalk)){
     ylab("Welfare Weight") + 
     xlab("Ex Ante Expected Performance") +
     plot_attributes
-  
+
   # Save the figure.
   ggsave(filename = paste0(out_plot, "weight_example_",  run_id, ".png"), 
          plot     = weight_example, 
