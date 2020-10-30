@@ -80,6 +80,7 @@
                                 npoints         = 1000,
                                 weight_type     = NULL,
                                 in_test_1       = NULL,
+                                lin_alpha       = NULL,
                                 pctile          = NULL,
                                 weight_below    = NULL,
                                 weight_above    = NULL,

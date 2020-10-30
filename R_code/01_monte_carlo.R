@@ -176,6 +176,7 @@ for(i in 1:nrow(model_xwalk)){
                                     npoints         = p_npoints,
                                     weight_type     = p_weight_type,
                                     in_test_1       = r_dt$test_1,
+                                    lin_alpha       = p_lin_alpha,
                                     pctile          = p_pctile,
                                     weight_below    = p_weight_below,
                                     weight_above    = p_weight_above,
