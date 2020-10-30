@@ -91,7 +91,7 @@ if(nrow(model_xwalk) != length(unique(res_dt$run_id))) stop("The Xwalk informati
 # Renormalize everything so they have the same mean and variance
 res_dt[, mean_ww_norm := (mean_ww - mean(mean_ww))/sd(mean_ww), by = run_id]
 res_dt[, mean_standard_norm := (mean_standard - mean(mean_standard))/sd(mean_standard), by = run_id]
-res_dt[, true_ww_impact := (true_welfare - mean(true_welfare))/sd(true_welfare), by = run_id]
+res_dt[, true_welfare_norm := (true_welfare - mean(true_welfare))/sd(true_welfare), by = run_id]
 
 # now renormalize standard deviations 
 res_dt[, sd_ww_norm := sd_ww/sd(mean_ww), by = run_id]
@@ -113,7 +113,7 @@ res_dt[, ww_rank := 1:.N, run_id]
 res_dt[, ww_lc := mean_ww_norm - 1.96*sd_ww_norm]
 res_dt[, ww_uc := mean_ww_norm + 1.96*sd_ww_norm]
 
-setorder(res_dt, true_ww_impact)
+setorder(res_dt, true_welfare_norm)
 res_dt[, true_ww_rank :=1:.N, run_id]
 
 #================================#
@@ -144,6 +144,8 @@ for(i in 1:nrow(model_xwalk)){
   # make table of parameters 
   parms_tab <- melt.data.table(model_xwalk[i], measure.vars = colnames(model_xwalk))
   parms_tab <- parms_tab[!is.na(value)]
+  parms_tab <- parms_tab[variable != "run_id"]
+  parms_tab <- parms_tab[variable != "single_run"]
   
   # put parameters in grob
   parms_tbl <- tableGrob(parms_tab, rows=NULL, cols = NULL, theme = ttheme_default(base_size = 9))
@@ -155,7 +157,7 @@ for(i in 1:nrow(model_xwalk)){
 
     standard_cat_plot <- ggplot(res_sub, aes(x = true_ww_rank, y = mean_standard_norm)) +
       geom_point(size = 1.5, aes(color = "Standard VA"), alpha = 1) + 
-      geom_point(aes( y = true_ww_impact,  color = "Truth"),size = 1, alpha = .4) +
+      geom_point(aes( y = true_welfare_norm,  color = "Truth"),size = 1, alpha = .4) +
       scale_color_manual(values= c("#ffaabb", "#77AADD")) +
       geom_errorbar(aes(ymin=standard_lc, ymax=standard_uc), width= 1, color = "#ffaabb") +
       ylab("Impact") + 
@@ -185,7 +187,7 @@ for(i in 1:nrow(model_xwalk)){
 
     ww_cat_plot <- ggplot(res_sub, aes(x = true_ww_rank, y = mean_ww_norm)) +
       geom_point(aes(color = "Weighted VA"), size = 2,  alpha = 1) + 
-      geom_point(aes( y = true_ww_impact,  color = "Truth"),size = 1, alpha = .4) +
+      geom_point(aes( y = true_welfare_norm,  color = "Truth"),size = 1, alpha = .4) +
       scale_color_manual(values= c("#77AADD", "#ffaabb"),
                          guide=guide_legend(reverse=TRUE)) +
       geom_errorbar(aes(ymin=ww_lc, ymax=ww_uc), width= 1, color = "#ffaabb") +
@@ -222,8 +224,8 @@ for(i in 1:nrow(model_xwalk)){
     
     
     sum_stats[[3]] <- data.table(Statistic = "Correlation to Truth", 
-                                 Standard =  cor(res_sub$mean_standard_norm, res_sub$true_ww_rank, method  = "kendall" , use="pairwise"),
-                                 Weighted = cor(res_sub$mean_ww_norm, res_sub$true_ww_rank, method  = "kendall" , use="pairwise"))
+                                 Standard =  cor(res_sub$standard_rank, res_sub$true_ww_rank, method  = "kendall" , use="pairwise"),
+                                 Weighted = cor(res_sub$ww_rank, res_sub$true_ww_rank, method  = "kendall" , use="pairwise"))
 
     out_sum_stats <- rbindlist(sum_stats)
     
@@ -251,7 +253,7 @@ for(i in 1:nrow(model_xwalk)){
                                  layout_matrix = rbind(c(1, 1, 1, 2),
                                                        c(1, 1, 1, 2),
                                                        c(1, 1, 1, 2),
-                                                       c(3, 3, 3, 3)))
+                                                       c(3, 3, 3, 2)))
     
     # save plot  
     ggsave(filename = paste0(out_plot,"hist_run_",  run_id_i, ".png"), 
