@@ -64,6 +64,7 @@ library(ggplot2)
 library(Matrix)
 library(matrixStats)
 library(np)
+library(OneR)
 library(quantreg)
 library(readxl)
 library(tidyr)
@@ -165,7 +166,7 @@ for(i in 1:nrow(model_xwalk)){
   
   # Simulate necessary data.
   teacher_ex <- simulate_test_data(n_teacher          = 4,
-                                   n_stud_per_teacher = p_n_stud_per_teacher,
+                                   n_stud_per_teacher = 500, #p_n_stud_per_teacher,
                                    test_SEM           = p_test_SEM,
                                    teacher_va_epsilon = p_teacher_va_epsilon,
                                    impact_type        = p_impact_type,
@@ -296,10 +297,139 @@ for(i in 1:nrow(model_xwalk)){
     scale_color_manual(values = c(binned_color, np_color, standard_color, truth_color, np1_color)) +
     theme(legend.title = element_blank(),
           legend.position = 'bottom')
+  print(teacher_example)
+  
+  
+  # Get the differences with each estimation method.
+  teacher_ex[, st_diff := abs(teacher_impact - standard)]
+  teacher_ex[, bin_diff := abs(teacher_impact - binned)]
+  teacher_ex[, quant_diff := abs(teacher_impact - quantile)]
+  teacher_ex[, np_diff := abs(teacher_impact - np)]
+  teacher_ex[, np1_diff := abs(teacher_impact - np1)]
+  
+  # Make bins and get the average.
+  teacher_ex[, bins := bin(stud_ability_1, nbins=20)]
+  teacher_ex[, av_st_diff := mean(st_diff), bins]
+  teacher_ex[, av_bin_diff := mean(bin_diff), bins]
+  teacher_ex[, av_quant_diff := mean(quant_diff), bins]
+  teacher_ex[, av_np_diff := mean(np_diff), bins]
+  teacher_ex[, av_np1_diff := mean(np1_diff), bins]
+  
+  # Plot the raw differences.
+  teacher_example_diffs <- ggplot(data = teacher_ex[teacher_id == 1]) +
+    geom_point(aes(x = stud_ability_1, y = av_st_diff, color = 'Standard'), size = 2, alpha = standard_alpha) +
+    geom_point(aes(x = stud_ability_1, y = av_bin_diff, color = 'Binned'), size = 2, alpha = binned_alpha) + 
+    #geom_point(aes(x = stud_ability_1, y = av_quant_diff), size = 2, color = quantile_color, alpha = quantile_alpha) +
+    geom_point(aes(x = stud_ability_1, y = av_np_diff, color = 'NP'), size = 2, alpha = np_alpha) + 
+    geom_point(aes(x = stud_ability_1, y = av_np1_diff, color = 'Weighted Av.'), size = 2, alpha = np1_alpha) + 
+    ylab("Teacher's Impact") + 
+    xlab("Student Ability") +
+    plot_attributes + 
+    scale_color_manual(values = c(binned_color, np_color, standard_color, np1_color)) +
+    theme(legend.title = element_blank(),
+          legend.position = 'bottom')
+  print(teacher_example_diffs)
+  
+  
+  # Get the weights.
+  teacher_ex[, weight := ww_general_fun(weight_type  = 'rawlsian', #p_weight_type,
+                                        in_test_1    = stud_ability_1,
+                                        lin_alpha    = p_lin_alpha,
+                                        quant_val_l  = quantile(teacher_ex$test_1, probs = 0.1),
+                                        quant_val_h  = quantile(teacher_ex$test_1, probs = 0.9),
+                                        pctile       = NULL,
+                                        weight_below = .99, #p_weight_below,
+                                        weight_above = .01, #p_weight_above,
+                                        v_alpha      = p_v_alpha,
+                                        median_va    = median(teacher_ex$test_1),
+                                        mrpctile     = p_mrpctile, 
+                                        mrdist       = p_mrdist,
+                                        min_score    = quantile(teacher_ex$test_1, max(p_pctile - p_mrdist, 0)),
+                                        max_score    = quantile(teacher_ex$test_1, min(p_pctile + p_mrdist, 100)),
+                                        pctile_val   = quantile(teacher_ex$test_1, p_pctile))]
+  
+  # Get the weighted differences.
+  teacher_ex[, w_st_diff := weight*st_diff]
+  teacher_ex[, w_bin_diff := weight*bin_diff]
+  teacher_ex[, w_quant_diff := weight*quant_diff]
+  teacher_ex[, w_np_diff := weight*np_diff]
+  teacher_ex[, w_np1_diff := weight*np1_diff]
+  
+  # Average over bins.
+  teacher_ex[, w_st_diff := mean(w_st_diff), bins]
+  teacher_ex[, w_bin_diff := mean(w_bin_diff), bins]
+  teacher_ex[, w_quant_diff := mean(w_quant_diff), bins]
+  teacher_ex[, w_np_diff := mean(w_np_diff), bins]
+  teacher_ex[, w_np1_diff := mean(w_np1_diff), bins]
+  
+  # Plot the weighted differences.
+  teacher_example_diffsw <- ggplot(data = teacher_ex[teacher_id == 1]) +
+    geom_point(aes(x = stud_ability_1, y = w_st_diff, color = 'Standard'), size = 2, alpha = standard_alpha) +
+    geom_point(aes(x = stud_ability_1, y = w_bin_diff, color = 'Binned'), size = 2, alpha = binned_alpha) + 
+    #geom_point(aes(x = stud_ability_1, y = w_quant_diff), size = 2, color = quantile_color, alpha = quantile_alpha) +
+    geom_point(aes(x = stud_ability_1, y = w_np_diff, color = 'NP'), size = 2, alpha = np_alpha) + 
+    geom_point(aes(x = stud_ability_1, y = w_np1_diff, color = 'Weighted Av.'), size = 2, alpha = np1_alpha) + 
+    ylab("Teacher's Impact") + 
+    xlab("Student Ability") +
+    plot_attributes + 
+    scale_color_manual(values = c(binned_color, np_color, standard_color, np1_color)) +
+    theme(legend.title = element_blank(),
+          legend.position = 'bottom')
+  print(teacher_example_diffsw)
+  
+  
+  # Get the sum of the weighted differences.
+  teacher_ex[, tot_w_st_diff := sum(w_st_diff), teacher_id]
+  teacher_ex[, tot_w_bin_diff := sum(w_bin_diff), teacher_id]
+  teacher_ex[, tot_w_quant_diff := sum(w_quant_diff), teacher_id]
+  teacher_ex[, tot_w_np_diff := sum(w_np_diff), teacher_id]
+  teacher_ex[, tot_w_np1_diff := sum(w_np1_diff), teacher_id]
+  
+  # Melt the data.
+  teacher_ex_collapsed <- unique(melt(data = teacher_ex[, c('teacher_id', 'tot_w_st_diff', 
+                                                            'tot_w_bin_diff',
+                                                            'tot_w_np_diff',
+                                                            'tot_w_np1_diff')],
+                                      id.vars = c('teacher_id'),
+                                      measure_vars = c('tot_w_st_diff', 
+                                                       'tot_w_bin_diff',
+                                                       'tot_w_np_diff',
+                                                       'tot_w_np1_diff')))
+  
+  # Rename values.
+  teacher_ex_collapsed[, variable := gsub('tot_w_st_diff', 'Standard', variable)]
+  teacher_ex_collapsed[, variable := gsub('tot_w_bin_diff', 'Binned', variable)]
+  teacher_ex_collapsed[, variable := gsub('tot_w_quant_diff', 'Quantile', variable)]
+  teacher_ex_collapsed[, variable := gsub('tot_w_np_diff', 'NP', variable)]
+  teacher_ex_collapsed[, variable := gsub('tot_w_np1_diff', 'Weighted Av.', variable)]
+  
+  # Plot the sums by teacher.
+  teacher_total_estimates <- ggplot(data = teacher_ex_collapsed, 
+                                    aes(y=value, x=teacher_id, fill=variable, color=variable)) + 
+    geom_bar(position="dodge", stat="identity") + 
+    scale_color_manual(values = c(binned_color, np_color, standard_color, np1_color)) +
+    scale_fill_manual(values = c(binned_color, np_color, standard_color, np1_color))
+  print(teacher_total_estimates)
+  
 
-  # Save the figure.
+  # Save the figures.
   ggsave(filename = paste0(out_plot, "teacher_example_",  run_id, ".png"), 
          plot     = teacher_example, 
+         width    = 9, 
+         height   = 4)
+  
+  ggsave(filename = paste0(out_plot, "teacher_example_diff_",  run_id, ".png"), 
+         plot     = teacher_example_diffs, 
+         width    = 9, 
+         height   = 4)
+  
+  ggsave(filename = paste0(out_plot, "teacher_example_diffw_",  run_id, ".png"), 
+         plot     = teacher_example_diffsw, 
+         width    = 9, 
+         height   = 4)
+  
+  ggsave(filename = paste0(out_plot, "teacher_example_diffw_sum_",  run_id, ".png"), 
+         plot     = teacher_total_estimates, 
          width    = 9, 
          height   = 4)
   
