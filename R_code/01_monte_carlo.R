@@ -140,6 +140,7 @@ for(i in 1:nrow(model_xwalk)){
   p_rho                      <- model_xwalk[i, rho]                # correlation between teacher and student ability
   p_ta_sd                    <- model_xwalk[i, ta_sd]              # teacher ability standard deviation
   p_sa_sd                    <- model_xwalk[i, sa_sd]              # student ability standard deviation
+  p_center_ability_corr      <- model_xwalk[i, center_ab_corr]     # teacher ability and center correlation
   
   # Weight and estimation parameters.
   p_weight_type              <- model_xwalk[i, weight_type]        # style of social planner pareto weights
@@ -151,23 +152,24 @@ for(i in 1:nrow(model_xwalk)){
   p_v_alpha                  <- model_xwalk[i, v_alpha]            # for v weights
   p_mrpctile                 <- model_xwalk[i, mrpctile]           # for mr weights
   p_mrdist                   <- model_xwalk[i, mrdist]             # for mr weights
-  p_weighted_average          <- model_xwalk[i, weighted_average]   # whether or not to calculate a weighted average of standard and NP
+  p_weighted_average         <- model_xwalk[i, weighted_average]   # whether or not to calculate a weighted average of standard and NP
   
   
   # Simulate initial data.
-  r_dt <- simulate_test_data(n_teacher          = p_n_teacher,
-                             n_stud_per_teacher = p_n_stud_per_teacher,
-                             test_SEM           = p_test_SEM,
-                             teacher_va_epsilon = p_teacher_va_epsilon,
-                             impact_type        = p_impact_type,
-                             impact_function    = p_impact_function,
-                             max_diff           = p_max_diff,
-                             covariates         = p_covariates,
-                             peer_effects       = p_peer_effects,
-                             stud_sorting       = p_stud_sorting,
-                             rho                = p_rho,
-                             ta_sd              = p_ta_sd,
-                             sa_sd              = p_sa_sd)
+  r_dt <- simulate_test_data(n_teacher           = p_n_teacher,
+                             n_stud_per_teacher  = p_n_stud_per_teacher,
+                             test_SEM            = p_test_SEM,
+                             teacher_va_epsilon  = p_teacher_va_epsilon,
+                             impact_type         = p_impact_type,
+                             impact_function     = p_impact_function,
+                             max_diff            = p_max_diff,
+                             covariates          = p_covariates,
+                             peer_effects        = p_peer_effects,
+                             stud_sorting        = p_stud_sorting,
+                             rho                 = p_rho,
+                             ta_sd               = p_ta_sd,
+                             sa_sd               = p_sa_sd,
+                             center_ability_corr = p_center_ability_corr)
 
   
   # Get true WW impact.
@@ -191,94 +193,97 @@ for(i in 1:nrow(model_xwalk)){
   if (single_run == 1) {
 
     # Run the standard VA.
-    va_tab1 <- standard_va_stat(in_dt              = r_dt,
-                                single_run         = single_run,
-                                weight_type        = p_weight_type, # Weighting parameters
-                                method             = p_method,
-                                lin_alpha          = p_lin_alpha,
-                                pctile             = p_pctile,
-                                weight_above       = p_weight_above,
-                                weight_below       = p_weight_below,
-                                v_alpha            = p_v_alpha,
-                                mrpctile           = p_mrpctile, 
-                                mrdist             = p_mrdist,
-                                npoints            = p_npoints,
-                                n_teacher          = p_n_teacher, # Simulated data parameters
-                                n_stud_per_teacher = p_n_stud_per_teacher,
-                                test_SEM           = p_test_SEM,
-                                teacher_va_epsilon = p_teacher_va_epsilon,
-                                impact_type        = p_impact_type,
-                                impact_function    = p_impact_function,
-                                max_diff           = p_max_diff,
-                                covariates         = p_covariates,
-                                peer_effects       = p_peer_effects,
-                                stud_sorting       = p_stud_sorting,
-                                rho                = p_rho,
-                                ta_sd              = p_ta_sd,
-                                sa_sd              = p_sa_sd)
+    va_tab1 <- standard_va_stat(in_dt               = r_dt,
+                                single_run          = single_run,
+                                weight_type         = p_weight_type, # Weighting parameters
+                                method              = p_method,
+                                lin_alpha           = p_lin_alpha,
+                                pctile              = p_pctile,
+                                weight_above        = p_weight_above,
+                                weight_below        = p_weight_below,
+                                v_alpha             = p_v_alpha,
+                                mrpctile            = p_mrpctile, 
+                                mrdist              = p_mrdist,
+                                npoints             = p_npoints,
+                                n_teacher           = p_n_teacher, # Simulated data parameters
+                                n_stud_per_teacher  = p_n_stud_per_teacher,
+                                test_SEM            = p_test_SEM,
+                                teacher_va_epsilon  = p_teacher_va_epsilon,
+                                impact_type         = p_impact_type,
+                                impact_function     = p_impact_function,
+                                max_diff            = p_max_diff,
+                                covariates          = p_covariates,
+                                peer_effects        = p_peer_effects,
+                                stud_sorting        = p_stud_sorting,
+                                rho                 = p_rho,
+                                ta_sd               = p_ta_sd,
+                                sa_sd               = p_sa_sd,
+                                center_ability_corr = p_center_ability_corr)
     
     # Run the alternative VA and bootstrap standard errors.
     if (p_method == 'bin') {
 
       # Run the bootstrap.
-      boot_res <- boot(data               = r_dt,
-                       statistic          = binned_va_stat,
-                       R                  = 99,
-                       boot               = single_run,
-                       weight_type        = p_weight_type, # Weighting parameters
-                       method             = p_method,
-                       lin_alpha          = p_lin_alpha,
-                       pctile             = p_pctile,
-                       weight_above       = p_weight_above,
-                       weight_below       = p_weight_below,
-                       v_alpha            = p_v_alpha,
-                       mrpctile           = p_mrpctile, 
-                       mrdist             = p_mrdist,
-                       npoints            = p_npoints,
-                       n_teacher          = p_n_teacher, # Simulated data parameters
-                       n_stud_per_teacher = p_n_stud_per_teacher,
-                       test_SEM           = p_test_SEM,
-                       teacher_va_epsilon = p_teacher_va_epsilon,
-                       impact_type        = p_impact_type,
-                       impact_function    = p_impact_function,
-                       max_diff           = p_max_diff,
-                       covariates         = p_covariates,
-                       peer_effects       = p_peer_effects,
-                       stud_sorting       = p_stud_sorting,
-                       rho                = p_rho,
-                       ta_sd              = p_ta_sd,
-                       sa_sd              = p_sa_sd)
+      boot_res <- boot(data                = r_dt,
+                       statistic           = binned_va_stat,
+                       R                   = 99,
+                       boot                = single_run,
+                       weight_type         = p_weight_type, # Weighting parameters
+                       method              = p_method,
+                       lin_alpha           = p_lin_alpha,
+                       pctile              = p_pctile,
+                       weight_above        = p_weight_above,
+                       weight_below        = p_weight_below,
+                       v_alpha             = p_v_alpha,
+                       mrpctile            = p_mrpctile, 
+                       mrdist              = p_mrdist,
+                       npoints             = p_npoints,
+                       n_teacher           = p_n_teacher, # Simulated data parameters
+                       n_stud_per_teacher  = p_n_stud_per_teacher,
+                       test_SEM            = p_test_SEM,
+                       teacher_va_epsilon  = p_teacher_va_epsilon,
+                       impact_type         = p_impact_type,
+                       impact_function     = p_impact_function,
+                       max_diff            = p_max_diff,
+                       covariates          = p_covariates,
+                       peer_effects        = p_peer_effects,
+                       stud_sorting        = p_stud_sorting,
+                       rho                 = p_rho,
+                       ta_sd               = p_ta_sd,
+                       sa_sd               = p_sa_sd,
+                       center_ability_corr = p_center_ability_corr)
       
     } else if (p_method == 'qtle') {
       
       # Run the bootstrap.
-      boot_res <- boot(data               = r_dt,
-                       statistic          = quantile_va_stat,
-                       R                  = 99,
-                       boot               = single_run,
-                       weight_type        = p_weight_type, # Weighting parameters
-                       method             = p_method,
-                       lin_alpha          = p_lin_alpha,
-                       pctile             = p_pctile,
-                       weight_above       = p_weight_above,
-                       weight_below       = p_weight_below,
-                       v_alpha            = p_v_alpha,
-                       mrpctile           = p_mrpctile, 
-                       mrdist             = p_mrdist,
-                       npoints            = p_npoints,
-                       n_teacher          = p_n_teacher, # Simulated data parameters
-                       n_stud_per_teacher = p_n_stud_per_teacher,
-                       test_SEM           = p_test_SEM,
-                       teacher_va_epsilon = p_teacher_va_epsilon,
-                       impact_type        = p_impact_type,
-                       impact_function    = p_impact_function,
-                       max_diff           = p_max_diff,
-                       covariates         = p_covariates,
-                       peer_effects       = p_peer_effects,
-                       stud_sorting       = p_stud_sorting,
-                       rho                = p_rho,
-                       ta_sd              = p_ta_sd,
-                       sa_sd              = p_sa_sd)
+      boot_res <- boot(data                = r_dt,
+                       statistic           = quantile_va_stat,
+                       R                   = 99,
+                       boot                = single_run,
+                       weight_type         = p_weight_type, # Weighting parameters
+                       method              = p_method,
+                       lin_alpha           = p_lin_alpha,
+                       pctile              = p_pctile,
+                       weight_above        = p_weight_above,
+                       weight_below        = p_weight_below,
+                       v_alpha             = p_v_alpha,
+                       mrpctile            = p_mrpctile, 
+                       mrdist              = p_mrdist,
+                       npoints             = p_npoints,
+                       n_teacher           = p_n_teacher, # Simulated data parameters
+                       n_stud_per_teacher  = p_n_stud_per_teacher,
+                       test_SEM            = p_test_SEM,
+                       teacher_va_epsilon  = p_teacher_va_epsilon,
+                       impact_type         = p_impact_type,
+                       impact_function     = p_impact_function,
+                       max_diff            = p_max_diff,
+                       covariates          = p_covariates,
+                       peer_effects        = p_peer_effects,
+                       stud_sorting        = p_stud_sorting,
+                       rho                 = p_rho,
+                       ta_sd               = p_ta_sd,
+                       sa_sd               = p_sa_sd,
+                       center_ability_corr = p_center_ability_corr)
       
     } else if (p_method == 'semip') {
       
@@ -287,58 +292,60 @@ for(i in 1:nrow(model_xwalk)){
   } else {
     # Run a Monte Carlo with the specified parameters. 
     if (do_parallel) {
-      mc_res <- foreach(j = 1:nsims) %dopar% single_iteration_fun(in_dt              = r_dt,
-                                                                  weight_type        = p_weight_type, # Weighting parameters
-                                                                  method             = p_method,
-                                                                  lin_alpha          = p_lin_alpha,
-                                                                  pctile             = p_pctile,
-                                                                  weight_above       = p_weight_above,
-                                                                  weight_below       = p_weight_below,
-                                                                  v_alpha            = p_v_alpha,
-                                                                  mrpctile           = p_mrpctile, 
-                                                                  mrdist             = p_mrdist,
-                                                                  npoints            = p_npoints,
-                                                                  n_teacher          = p_n_teacher, # Simulated data parameters
-                                                                  n_stud_per_teacher = p_n_stud_per_teacher,
-                                                                  test_SEM           = p_test_SEM,
-                                                                  teacher_va_epsilon = p_teacher_va_epsilon,
-                                                                  impact_type        = p_impact_type,
-                                                                  impact_function    = p_impact_function,
-                                                                  max_diff           = p_max_diff,
-                                                                  covariates         = p_covariates,
-                                                                  peer_effects       = p_peer_effects,
-                                                                  stud_sorting       = p_stud_sorting,
-                                                                  rho                = p_rho,
-                                                                  ta_sd              = p_ta_sd,
-                                                                  sa_sd              = p_sa_sd,
-                                                                  weighted_average   = p_weighted_average)
+      mc_res <- foreach(j = 1:nsims) %dopar% single_iteration_fun(in_dt               = r_dt,
+                                                                  weight_type         = p_weight_type, # Weighting parameters
+                                                                  method              = p_method,
+                                                                  lin_alpha           = p_lin_alpha,
+                                                                  pctile              = p_pctile,
+                                                                  weight_above        = p_weight_above,
+                                                                  weight_below        = p_weight_below,
+                                                                  v_alpha             = p_v_alpha,
+                                                                  mrpctile            = p_mrpctile, 
+                                                                  mrdist              = p_mrdist,
+                                                                  npoints             = p_npoints,
+                                                                  n_teacher           = p_n_teacher, # Simulated data parameters
+                                                                  n_stud_per_teacher  = p_n_stud_per_teacher,
+                                                                  test_SEM            = p_test_SEM,
+                                                                  teacher_va_epsilon  = p_teacher_va_epsilon,
+                                                                  impact_type         = p_impact_type,
+                                                                  impact_function     = p_impact_function,
+                                                                  max_diff            = p_max_diff,
+                                                                  covariates          = p_covariates,
+                                                                  peer_effects        = p_peer_effects,
+                                                                  stud_sorting        = p_stud_sorting,
+                                                                  rho                 = p_rho,
+                                                                  ta_sd               = p_ta_sd,
+                                                                  sa_sd               = p_sa_sd,
+                                                                  center_ability_corr = p_center_ability_corr,
+                                                                  weighted_average    = p_weighted_average)
       
     } else {
-      mc_res <- foreach(j = 1:nsims) %do% single_iteration_fun(in_dt              = r_dt,
-                                                               weight_type        = p_weight_type, # Weighting parameters
-                                                               method             = p_method,
-                                                               lin_alpha          = p_lin_alpha,
-                                                               pctile             = p_pctile,
-                                                               weight_above       = p_weight_above,
-                                                               weight_below       = p_weight_below,
-                                                               v_alpha            = p_v_alpha,
-                                                               mrpctile           = p_mrpctile, 
-                                                               mrdist             = p_mrdist,
-                                                               npoints            = p_npoints,
-                                                               n_teacher          = p_n_teacher, # Simulated data parameters
-                                                               n_stud_per_teacher = p_n_stud_per_teacher,
-                                                               test_SEM           = p_test_SEM,
-                                                               teacher_va_epsilon = p_teacher_va_epsilon,
-                                                               impact_type        = p_impact_type,
-                                                               impact_function    = p_impact_function,
-                                                               max_diff           = p_max_diff,
-                                                               covariates         = p_covariates,
-                                                               peer_effects       = p_peer_effects,
-                                                               stud_sorting       = p_stud_sorting,
-                                                               rho                = p_rho,
-                                                               ta_sd              = p_ta_sd,
-                                                               sa_sd              = p_sa_sd,
-                                                               weighted_average   = p_weighted_average)
+      mc_res <- foreach(j = 1:nsims) %do% single_iteration_fun(in_dt               = r_dt,
+                                                               weight_type         = p_weight_type, # Weighting parameters
+                                                               method              = p_method,
+                                                               lin_alpha           = p_lin_alpha,
+                                                               pctile              = p_pctile,
+                                                               weight_above        = p_weight_above,
+                                                               weight_below        = p_weight_below,
+                                                               v_alpha             = p_v_alpha,
+                                                               mrpctile            = p_mrpctile, 
+                                                               mrdist              = p_mrdist,
+                                                               npoints             = p_npoints,
+                                                               n_teacher           = p_n_teacher, # Simulated data parameters
+                                                               n_stud_per_teacher  = p_n_stud_per_teacher,
+                                                               test_SEM            = p_test_SEM,
+                                                               teacher_va_epsilon  = p_teacher_va_epsilon,
+                                                               impact_type         = p_impact_type,
+                                                               impact_function     = p_impact_function,
+                                                               max_diff            = p_max_diff,
+                                                               covariates          = p_covariates,
+                                                               peer_effects        = p_peer_effects,
+                                                               stud_sorting        = p_stud_sorting,
+                                                               rho                 = p_rho,
+                                                               ta_sd               = p_ta_sd,
+                                                               sa_sd               = p_sa_sd,
+                                                               center_ability_corr = p_center_ability_corr,
+                                                               weighted_average    = p_weighted_average)
           
     }
   

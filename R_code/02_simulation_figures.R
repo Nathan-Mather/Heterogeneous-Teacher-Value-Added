@@ -147,6 +147,7 @@ for(i in 1:nrow(model_xwalk)){
   p_rho                      <- model_xwalk[i, rho]                # correlation between teacher and student ability
   p_ta_sd                    <- model_xwalk[i, ta_sd]              # teacher ability standard deviation
   p_sa_sd                    <- model_xwalk[i, sa_sd]              # student ability standard deviation
+  p_center_ability_corr      <- model_xwalk[i, center_ab_corr]     # teacher ability and center correlation
   
   # Weight and estimation parameters.
   p_weight_type              <- model_xwalk[i, weight_type]        # style of social planner pareto weights
@@ -165,20 +166,21 @@ for(i in 1:nrow(model_xwalk)){
   # ========================================================================= #
   
   # Simulate necessary data.
-  teacher_ex <- simulate_test_data(n_teacher          = 4,
-                                   n_stud_per_teacher = 500, #p_n_stud_per_teacher,
-                                   test_SEM           = p_test_SEM,
-                                   teacher_va_epsilon = p_teacher_va_epsilon,
-                                   impact_type        = p_impact_type,
-                                   impact_function    = p_impact_function,
-                                   max_diff           = p_max_diff,
-                                   covariates         = p_covariates,
-                                   peer_effects       = p_peer_effects,
-                                   stud_sorting       = p_stud_sorting,
-                                   rho                = p_rho,
-                                   ta_sd              = p_ta_sd,
-                                   sa_sd              = p_sa_sd)
-  
+  teacher_ex <- simulate_test_data(n_teacher           = 10,
+                                   n_stud_per_teacher  = 500, #p_n_stud_per_teacher,
+                                   test_SEM            = p_test_SEM,
+                                   teacher_va_epsilon  = p_teacher_va_epsilon,
+                                   impact_type         = p_impact_type,
+                                   impact_function     = p_impact_function,
+                                   max_diff            = p_max_diff,
+                                   covariates          = p_covariates,
+                                   peer_effects        = p_peer_effects,
+                                   stud_sorting        = p_stud_sorting,
+                                   rho                 = p_rho,
+                                   ta_sd               = p_ta_sd,
+                                   sa_sd               = p_sa_sd,
+                                   center_ability_corr = p_center_ability_corr)
+
   
   # Estimate standard value added.
   if (p_covariates == 0) {
@@ -332,14 +334,14 @@ for(i in 1:nrow(model_xwalk)){
   
   
   # Get the weights.
-  teacher_ex[, weight := ww_general_fun(weight_type  = 'rawlsian', #p_weight_type,
+  teacher_ex[, weight := ww_general_fun(weight_type  = p_weight_type,
                                         in_test_1    = stud_ability_1,
                                         lin_alpha    = p_lin_alpha,
                                         quant_val_l  = quantile(teacher_ex$test_1, probs = 0.1),
                                         quant_val_h  = quantile(teacher_ex$test_1, probs = 0.9),
                                         pctile       = NULL,
-                                        weight_below = .99, #p_weight_below,
-                                        weight_above = .01, #p_weight_above,
+                                        weight_below = p_weight_below,
+                                        weight_above = p_weight_above,
                                         v_alpha      = p_v_alpha,
                                         median_va    = median(teacher_ex$test_1),
                                         mrpctile     = p_mrpctile, 
@@ -385,6 +387,13 @@ for(i in 1:nrow(model_xwalk)){
   teacher_ex[, tot_w_np_diff := sum(w_np_diff), teacher_id]
   teacher_ex[, tot_w_np1_diff := sum(w_np1_diff), teacher_id]
   
+  teacher_ex[, tot_true := sum(weight*teacher_impact), teacher_id]
+  teacher_ex[, tot_st := sum(weight*standard), teacher_id]
+  teacher_ex[, tot_bin := sum(weight*binned), teacher_id]
+  teacher_ex[, tot_quant := sum(weight*quantile), teacher_id]
+  teacher_ex[, tot_np := sum(weight*np), teacher_id]
+  teacher_ex[, tot_np1 := sum(weight*np1), teacher_id]
+  
   # Melt the data.
   teacher_ex_collapsed <- unique(melt(data = teacher_ex[, c('teacher_id', 'tot_w_st_diff', 
                                                             'tot_w_bin_diff',
@@ -396,12 +405,29 @@ for(i in 1:nrow(model_xwalk)){
                                                        'tot_w_np_diff',
                                                        'tot_w_np1_diff')))
   
+  va_collapsed <- unique(melt(data = teacher_ex[, c('teacher_id', 'tot_true',
+                                                    'tot_st', 'tot_bin',
+                                                    'tot_quant', 'tot_np',
+                                                    'tot_np1')],
+                              id.vars = c('teacher_id'),
+                              measure_vars = c('tot_true',
+                                               'tot_st', 'tot_bin',
+                                               'tot_quant', 'tot_np',
+                                               'tot_np1')))
+  
   # Rename values.
   teacher_ex_collapsed[, variable := gsub('tot_w_st_diff', 'Standard', variable)]
   teacher_ex_collapsed[, variable := gsub('tot_w_bin_diff', 'Binned', variable)]
   teacher_ex_collapsed[, variable := gsub('tot_w_quant_diff', 'Quantile', variable)]
   teacher_ex_collapsed[, variable := gsub('tot_w_np_diff', 'NP', variable)]
   teacher_ex_collapsed[, variable := gsub('tot_w_np1_diff', 'Weighted Av.', variable)]
+  
+  teacher_ex_collapsed[, variable := gsub('tot_true', 'Truth', variable)]
+  teacher_ex_collapsed[, variable := gsub('tot_st', 'Standard', variable)]
+  teacher_ex_collapsed[, variable := gsub('tot_bin', 'Binned', variable)]
+  teacher_ex_collapsed[, variable := gsub('tot_quant', 'Quantile', variable)]
+  teacher_ex_collapsed[, variable := gsub('tot_np', 'NP', variable)]
+  teacher_ex_collapsed[, variable := gsub('tot_np1', 'Weighted Av.', variable)]
   
   # Plot the sums by teacher.
   teacher_total_estimates <- ggplot(data = teacher_ex_collapsed, 
@@ -410,6 +436,14 @@ for(i in 1:nrow(model_xwalk)){
     scale_color_manual(values = c(binned_color, np_color, standard_color, np1_color)) +
     scale_fill_manual(values = c(binned_color, np_color, standard_color, np1_color))
   print(teacher_total_estimates)
+  
+  # Plot the sums to see the rankings for teachers. reorder(repayment_interval, -loan_amount), loan_amount)
+  ranks <- ggplot(data = va_collapsed, 
+                                    aes(y=value, x=variable, fill=reorder(teacher_id, -value), color=reorder(teacher_id, -value))) + 
+    geom_bar(position="dodge", stat="identity") + 
+    scale_color_manual(values = c(binned_color, np_color, standard_color, np1_color, 'red', 'blue', 'black', 'purple', 'pink', 'brown')) +
+    scale_fill_manual(values = c(binned_color, np_color, standard_color, np1_color, 'red', 'blue', 'black', 'purple', 'pink', 'brown'))
+  print(ranks)
   
 
   # Save the figures.
@@ -433,6 +467,10 @@ for(i in 1:nrow(model_xwalk)){
          width    = 9, 
          height   = 4)
   
+  ggsave(filename = paste0(out_plot, "teacher_ranks_",  run_id, ".png"), 
+         plot     = ranks,
+         width    = 9, 
+         height   = 4)  
   
   
   # ========================================================================= #
@@ -440,19 +478,20 @@ for(i in 1:nrow(model_xwalk)){
   # ========================================================================= #
   
   # Simulate necessary data.
-  teacher_av <- simulate_test_data(n_teacher          = p_n_teacher,
-                                   n_stud_per_teacher = p_n_stud_per_teacher,
-                                   test_SEM           = p_test_SEM,
-                                   teacher_va_epsilon = p_teacher_va_epsilon,
-                                   impact_type        = p_impact_type,
-                                   impact_function    = p_impact_function,
-                                   max_diff           = p_max_diff,
-                                   covariates         = p_covariates,
-                                   peer_effects       = p_peer_effects,
-                                   stud_sorting       = p_stud_sorting,
-                                   rho                = p_rho,
-                                   ta_sd              = p_ta_sd,
-                                   sa_sd              = p_sa_sd)
+  teacher_av <- simulate_test_data(n_teacher           = p_n_teacher,
+                                   n_stud_per_teacher  = p_n_stud_per_teacher,
+                                   test_SEM            = p_test_SEM,
+                                   teacher_va_epsilon  = p_teacher_va_epsilon,
+                                   impact_type         = p_impact_type,
+                                   impact_function     = p_impact_function,
+                                   max_diff            = p_max_diff,
+                                   covariates          = p_covariates,
+                                   peer_effects        = p_peer_effects,
+                                   stud_sorting        = p_stud_sorting,
+                                   rho                 = p_rho,
+                                   ta_sd               = p_ta_sd,
+                                   sa_sd               = p_sa_sd,
+                                   center_ability_corr = p_center_ability_corr)
   
   # Generate a grid over which we can get the true welfare added.
   grid <- unlist(lapply(seq(-3, 3, length.out = p_npoints), rep,
@@ -484,7 +523,7 @@ for(i in 1:nrow(model_xwalk)){
     geom_point(aes(x = grid, y = av_impact), size = 2, color = av_color, alpha = av_alpha) +
     ylab("Average Teacher Impact") + 
     xlab("Student Ability") +
-    ylim(-0.5, 0.5) + 
+    ylim(min(-0.5, min(grid1$av_impact)), max(0.5, max(grid1$av_impact))) + 
     plot_attributes
 
   # Save the figure.

@@ -101,7 +101,8 @@
                                  stud_sorting             = 0,
                                  rho                      = 0.2,
                                  ta_sd                    = 0.1,
-                                 sa_sd                    = 1) {
+                                 sa_sd                    = 1,
+                                 center_ability_corr      = 0) {
     
     # Generate the teacher information if not provided.
     if (is.null(teacher_dt)) {
@@ -117,11 +118,15 @@
       # Assign teachers an overall ability.
       r_dt[, teacher_ability := rnorm(1, mean = 0, sd = ta_sd), teacher_id]
       
-      # Assign teachers a "center" for which students they best match. This is
-      #  uniform between -2 and 2 standard deviations from the mean of student
-      #  ability.
-      r_dt[, teacher_center := min(2, max(-2, rnorm(1, mean = 0, sd = sa_sd))), teacher_id]
-      
+      # Assign teachers a "center" for which students they best match. min(2, max(-2, teacher_ability*2)), teacher_id]
+      r_dt[, teacher_center := 
+             min(2,
+                                     max(-2,
+                                         rnorm(1,
+                                               mean = teacher_ability*5,
+                                               sd = .2))),
+               teacher_id]
+
       # Assign teachers a "max" which is the difference in impact between their
       #  best and worst matched students.
       r_dt[, teacher_max := runif(1, min = 0, max = max_diff)]
