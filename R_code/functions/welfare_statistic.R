@@ -135,6 +135,7 @@
       # for all other methods 
       }else{
         
+        #NOTE We should change this to be a grid of literally every actual student we observe ###########################
         # adjust weights for student population using estiamted parameters 
         stud_mean <- mean(in_test_1)
         stud_sd   <- sd(in_test_1)
