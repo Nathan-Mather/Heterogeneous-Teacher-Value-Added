@@ -185,7 +185,7 @@ for(i in 1:nrow(model_xwalk)){
     geom_point(aes( y = true_welfare_norm, color = "Truth"),size = 1, alpha = .4) +
     scale_color_manual(values= c("#77AADD", "#ffaabb")) +
     ylab("Impact") +
-    xlab("True Teacher Order") +
+    xlab("True Center") +
     ylim(-6,6)+
     plot_attributes +
     theme(legend.title = element_blank(),
@@ -194,9 +194,10 @@ for(i in 1:nrow(model_xwalk)){
   welfare_center_plot <- ggplot(res_sub, aes(x = teacher_center, y = mean_ww_norm)) +
     geom_point(size = 1.5, aes(color = "Welfare VA"), alpha = 1) +
     geom_point(aes( y = true_welfare_norm, color = "Truth"),size = 1, alpha = .4) +
-    scale_color_manual(values= c("#77AADD", "#ffaabb")) +
+    scale_color_manual(values= c("#77AADD", "#ffaabb"),
+    guide=guide_legend(reverse=TRUE)) +
     ylab("Impact") +
-    xlab("True Teacher Order") +
+    xlab("True Center") +
     ylim(-6,6)+
     plot_attributes +
     theme(legend.title = element_blank(),
@@ -243,11 +244,11 @@ for(i in 1:nrow(model_xwalk)){
             legend.position = c(0.2, 0.8))
   print(ww_cat_plot)
   # add parameters 
-  ww_cat_plot2 <- grid.arrange(ww_cat_plot, parms_tbl,
-                                     layout_matrix = rbind(c(1, 1, 1, 2)))
+  #ww_cat_plot2 <- grid.arrange(ww_cat_plot, parms_tbl,
+  #                                   layout_matrix = rbind(c(1, 1, 1, 2)))
   # save plot  
   ggsave(filename = paste0(out_plot,"ww_cat_run_",  run_id_i, ".png"), 
-         plot     = ww_cat_plot2, 
+         plot     = ww_cat_plot, 
          width    = 9, 
          height   = 4)
 
@@ -260,23 +261,23 @@ for(i in 1:nrow(model_xwalk)){
     # start a data.table of results 
     sum_stats <- list()
     sum_stats[[1]] <- data.table(Statistic = "Mean Squared Distance", 
-                                 Standard = mean(res_sub$standard_MSE),
-                                 Weighted = mean(res_sub$ww_MSE))
+                                 Standard = round(mean(res_sub$standard_MSE), digits=2),
+                                 Weighted = round(mean(res_sub$ww_MSE), digits=2))
     
     sum_stats[[2]] <- data.table(Statistic = "Mean Absolute Distance", 
-                                 Standard =  mean(res_sub$standard_MAE),
-                                 Weighted =  mean(res_sub$ww_MAE))
+                                 Standard =  round(mean(res_sub$standard_MAE), digits=2),
+                                 Weighted =  round(mean(res_sub$ww_MAE), digits=2))
     
     
     sum_stats[[3]] <- data.table(Statistic = "Correlation to Truth", 
-                                 Standard =  cor(res_sub$standard_rank, res_sub$true_ww_rank, method  = "kendall" , use="pairwise"),
-                                 Weighted = cor(res_sub$ww_rank, res_sub$true_ww_rank, method  = "kendall" , use="pairwise"))
+                                 Standard =  round(cor(res_sub$standard_rank, res_sub$true_ww_rank, method  = "kendall" , use="pairwise"), digits=2),
+                                 Weighted = round(cor(res_sub$ww_rank, res_sub$true_ww_rank, method  = "kendall" , use="pairwise"), digits=2))
 
     out_sum_stats <- rbindlist(sum_stats)
     
     # put sum stats in a grob
     out_sum_stats_tbl <- tableGrob(out_sum_stats, rows=NULL, theme = ttheme_default(base_size = 8))
-    
+
     # Histogram of the density and distance of rank inversions
     # set binwidth parm
     b_width <- 3

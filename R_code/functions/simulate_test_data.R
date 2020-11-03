@@ -118,18 +118,17 @@
       # Assign teachers an overall ability.
       r_dt[, teacher_ability := rnorm(1, mean = 0, sd = ta_sd), teacher_id]
       
-      # Assign teachers a "center" for which students they best match. min(2, max(-2, teacher_ability*2)), teacher_id]
-      r_dt[, teacher_center := 
-             min(2,
+      # Assign teachers a "center" for which students they best match.
+      r_dt[, teacher_center := min(2,
                                      max(-2,
                                          rnorm(1,
-                                               mean = teacher_ability*5,
-                                               sd = .2))),
+                                               mean = 0,
+                                               sd = 1))),
                teacher_id]
 
       # Assign teachers a "max" which is the difference in impact between their
       #  best and worst matched students.
-      r_dt[, teacher_max := runif(1, min = 0, max = max_diff)]
+      r_dt[, teacher_max := max_diff]
       
     } else {
       # Create the data table.
