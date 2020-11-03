@@ -182,7 +182,7 @@ for(i in 1:nrow(model_xwalk)){
   standard_center_plot <- ggplot(res_sub, aes(x = teacher_center, y = mean_standard_norm)) +
     geom_point(size = 1.5, aes(color = "Standard VA"), alpha = 1) +
     geom_point(aes( y = true_welfare_norm, color = "Truth"),size = 1, alpha = .4) +
-    scale_color_manual(values= c("#77AADD", "#ffaabb")) +
+    scale_color_manual(values= c("#ffaabb", "#77AADD")) +
     ylab("Impact") +
     xlab("True Center") +
     ylim(-6,6)+

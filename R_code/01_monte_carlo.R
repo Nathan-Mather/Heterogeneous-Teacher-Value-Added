@@ -117,7 +117,7 @@ if (do_parallel) {
 for(i in 1:nrow(model_xwalk)){
   
   # Set seed. 
-  set.seed(42)
+  set.seed(720)
 
   # Set parameters for this Monte Carlo run.
   # Run parameters.
@@ -187,6 +187,11 @@ for(i in 1:nrow(model_xwalk)){
                                     mrdist          = p_mrdist,
                                     impact_type     = p_impact_type,
                                     impact_function = p_impact_function)
+  
+  # Merge on the teacher center.
+  teacher_info <- merge(teacher_info, unique(r_dt[, c('teacher_id',
+                                                      'teacher_center')]),
+                        'teacher_id')
 
   
   # Run just a single draw if specified, otherwise run the Monte Carlo.
