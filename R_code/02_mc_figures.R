@@ -489,7 +489,7 @@ cor_tab <- res_dt[, list(standard_cor = cor(standard_rank, true_ww_rank, method 
       geom_line(aes( y = standard_cor,  color = "Standard VA"),size = 1) +
       scale_color_manual(values= c("#77AADD", "#ffaabb"),
                          guide=guide_legend(reverse=TRUE)) +
-      xlab("Teaher Ability Variance") +
+      xlab("Teacher Ability Variance") +
       ylab("Rank Correlation to Truth") +
       plot_attributes +
       theme(legend.title = element_blank(),
@@ -521,7 +521,7 @@ cor_tab <- res_dt[, list(standard_cor = cor(standard_rank, true_ww_rank, method 
       geom_line(aes( y = standard_cor,  color = "Standard VA"),size = 1) +
       scale_color_manual(values= c("#77AADD", "#ffaabb"),
                          guide=guide_legend(reverse=TRUE)) +
-      xlab("Teaher Ability Variance") +
+      xlab("Teacher Ability Variance") +
       ylab("Rank Correlation to Truth") +
       plot_attributes +
       theme(legend.title = element_blank(),
