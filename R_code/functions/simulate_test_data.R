@@ -186,7 +186,10 @@
 
     } else if (covariates == 0) {
       # Now create unobserved ability.
-      r_dt[, stud_ability_1 := rnorm(n_row_dt, mean = 0, sd = sa_sd)]
+      r_dt[, stud_ability_1 := rnorm(n_row_dt, mean = stud_sorting*
+                                       (sa_sd*rho*teacher_ability/ta_sd)
+                                       , sd = sa_sd*(1 - stud_sorting) + 
+                                       stud_sorting*sqrt(1 - rho^2))]
       
     } else {
       stop("Error covariates must be 0 or 1")
