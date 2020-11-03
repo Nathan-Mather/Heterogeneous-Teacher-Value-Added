@@ -116,6 +116,9 @@ res_dt[, ww_uc := mean_ww_norm + 1.96*sd_ww_norm]
 setorder(res_dt, true_welfare_norm)
 res_dt[, true_ww_rank :=1:.N, run_id]
 
+setorder(res_dt, teacher_center)
+res_dt[, cent :=1:.N, run_id]
+
 #================================#
 # ==== get distance measures ====
 #================================#
@@ -154,30 +157,71 @@ for(i in 1:nrow(model_xwalk)){
   # ==== standard caterpillar ====
   #===============================#
   
+  truth_cat_plot <- ggplot(res_sub, aes(x = true_ww_rank, y = true_welfare_norm)) +
+    geom_point(size = 1.5, aes(color = "Truth"), alpha = 1) + 
+    scale_color_manual(values= c("#77AADD")) +
+    ylab("Impact") + 
+    xlab("True Teacher Order") +
+    ylim(-6,6)+
+    plot_attributes + 
+    theme(legend.title = element_blank(),
+          legend.position = c(0.8, 0.8))
 
-    standard_cat_plot <- ggplot(res_sub, aes(x = true_ww_rank, y = mean_standard_norm)) +
-      geom_point(size = 1.5, aes(color = "Standard VA"), alpha = 1) + 
-      geom_point(aes( y = true_welfare_norm,  color = "Truth"),size = 1, alpha = .4) +
-      scale_color_manual(values= c("#ffaabb", "#77AADD")) +
-      geom_errorbar(aes(ymin=standard_lc, ymax=standard_uc), width= 1, color = "#ffaabb") +
-      ylab("Impact") + 
-      xlab("True Teacher Order") +
-      ylim(-6,6)+
-      plot_attributes + 
-      theme(legend.title = element_blank(),
-            legend.position = c(0.8, 0.8))
+  standard_cat_plot <- ggplot(res_sub, aes(x = true_ww_rank, y = mean_standard_norm)) +
+    geom_point(size = 1.5, aes(color = "Standard VA"), alpha = 1) + 
+    geom_point(aes( y = true_welfare_norm,  color = "Truth"),size = 1, alpha = .4) +
+    scale_color_manual(values= c("#ffaabb", "#77AADD")) +
+    geom_errorbar(aes(ymin=standard_lc, ymax=standard_uc), width= 1, color = "#ffaabb") +
+    ylab("Impact") + 
+    xlab("True Teacher Order") +
+    ylim(-6,6)+
+    plot_attributes + 
+    theme(legend.title = element_blank(),
+          legend.position = c(0.8, 0.8))
+  print(standard_cat_plot)
     
-  # add parameters 
-  standard_cat_plot2 <- grid.arrange(standard_cat_plot, parms_tbl,
-                             layout_matrix = rbind(c(1, 1, 1, 2)))
-
+  standard_center_plot <- ggplot(res_sub, aes(x = teacher_center, y = mean_standard_norm)) +
+    geom_point(size = 1.5, aes(color = "Standard VA"), alpha = 1) +
+    geom_point(aes( y = true_welfare_norm, color = "Truth"),size = 1, alpha = .4) +
+    scale_color_manual(values= c("#77AADD", "#ffaabb")) +
+    ylab("Impact") +
+    xlab("True Teacher Order") +
+    ylim(-6,6)+
+    plot_attributes +
+    theme(legend.title = element_blank(),
+          legend.position = c(0.8, 0.8))
+  
+  welfare_center_plot <- ggplot(res_sub, aes(x = teacher_center, y = mean_ww_norm)) +
+    geom_point(size = 1.5, aes(color = "Welfare VA"), alpha = 1) +
+    geom_point(aes( y = true_welfare_norm, color = "Truth"),size = 1, alpha = .4) +
+    scale_color_manual(values= c("#77AADD", "#ffaabb")) +
+    ylab("Impact") +
+    xlab("True Teacher Order") +
+    ylim(-6,6)+
+    plot_attributes +
+    theme(legend.title = element_blank(),
+          legend.position = c(0.8, 0.8))
 
   # save it 
-  ggsave(filename = paste0(out_plot,"standard_cat_run_",  run_id_i, ".png"), 
-         plot     = standard_cat_plot2, 
+  ggsave(filename = paste0(out_plot,"truth_cat_run_",  run_id_i, ".png"), 
+         plot     = truth_cat_plot, 
          width    = 9, 
          height   = 4)
   
+  ggsave(filename = paste0(out_plot,"standard_cat_run_",  run_id_i, ".png"), 
+         plot     = standard_cat_plot, 
+         width    = 9, 
+         height   = 4)
+  
+  ggsave(filename = paste0(out_plot,"standard_cent_run_",  run_id_i, ".png"), 
+         plot     = standard_center_plot, 
+         width    = 9, 
+         height   = 4)
+  
+  ggsave(filename = paste0(out_plot,"welfare_cent_run_",  run_id_i, ".png"), 
+         plot     = welfare_center_plot, 
+         width    = 9, 
+         height   = 4)  
 
   
   #=========================#
@@ -197,6 +241,7 @@ for(i in 1:nrow(model_xwalk)){
       plot_attributes +
       theme(legend.title = element_blank(),
             legend.position = c(0.2, 0.8))
+  print(ww_cat_plot)
   # add parameters 
   ww_cat_plot2 <- grid.arrange(ww_cat_plot, parms_tbl,
                                      layout_matrix = rbind(c(1, 1, 1, 2)))
@@ -246,14 +291,15 @@ for(i in 1:nrow(model_xwalk)){
       theme(legend.title = element_blank(),
             legend.position = c(0.8, 0.8),
             legend.key.size = unit(.5, "cm"))
+    print(out_histogram)
     
     
     # add parameters 
-    out_histogram2 <- grid.arrange(out_histogram, parms_tbl, out_sum_stats_tbl,
-                                 layout_matrix = rbind(c(1, 1, 1, 2),
-                                                       c(1, 1, 1, 2),
-                                                       c(1, 1, 1, 2),
-                                                       c(3, 3, 3, 2)))
+    out_histogram2 <- grid.arrange(out_histogram, out_sum_stats_tbl,
+                                 layout_matrix = rbind(c(1, 1, 1),
+                                                       c(1, 1, 1),
+                                                       c(1, 1, 1),
+                                                       c(2, 2, 2)))
     
     # save plot  
     ggsave(filename = paste0(out_plot,"hist_run_",  run_id_i, ".png"), 
