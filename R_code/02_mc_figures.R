@@ -130,10 +130,9 @@ res_dt[, ww_MSE := (ww_rank - true_ww_rank)^2]
 res_dt[, ww_MAE := abs(ww_rank - true_ww_rank)]
 
 
-#==========================#
-# ==== loop over xwalk ====
-#==========================#
-
+#==============================#
+# ==== plots for every run ====
+#==============================#
 
 for(i in 1:nrow(model_xwalk)){
   
@@ -310,3 +309,229 @@ for(i in 1:nrow(model_xwalk)){
     
 }# close for loop 
 
+
+
+
+#============================#
+# ==== stress test plots ====
+#============================#
+
+# I couldn't think of a smart way to do this so I just wrote it all out :( 
+
+# get the kendal correlations for each run 
+cor_tab <- res_dt[, list(standard_cor = cor(standard_rank, true_ww_rank, method  = "kendall" , use="pairwise"),
+                         ww_cor       =  cor(ww_rank, true_ww_rank, method  = "kendall" , use="pairwise"),
+                         mean_sd_standard  = mean(sd_standard, na.rm = TRUE),
+                         mean_sd_ww        = mean(sd_ww, na.rm= TRUE)),
+                  run_id]
+
+  #==========================#
+  # ==== max diff stress ====
+  #==========================#
+
+    #==================#
+    # ==== np_hack ====
+    #==================#
+    
+    xwalk_sub <- model_xwalk[method == "np_hack" & ta_sd == 0.1  & stud_sorting == 0 & n_stud_per_teacher == "150"]
+
+    # subset to the runs we need 
+    cor_tab_sub <- cor_tab[run_id %in% xwalk_sub$run_id]
+    
+    # merge on the thing that changes 
+    cor_tab_sub <- merge(cor_tab_sub, xwalk_sub[, c("run_id", "max_diff")], "run_id" )
+    
+    # make the plot 
+    stress_plot <- ggplot(cor_tab_sub, aes(x = max_diff, y = ww_cor)) +
+      geom_point(aes(color = "Weighted Nonparametric VA", y = ww_cor), size = 3) + 
+      geom_line(aes(color = "Weighted Nonparametric VA", y = ww_cor), size = 1) + 
+      geom_point(aes( y = standard_cor,  color = "Standard VA"),size = 3) +
+      geom_line(aes( y = standard_cor,  color = "Standard VA"),size = 1) +
+      scale_color_manual(values= c("#77AADD", "#ffaabb"),
+                         guide=guide_legend(reverse=TRUE)) +
+      xlab("Teacher Heterogeneity") +
+      ylab("Rank Correlation to Truth") +
+      plot_attributes +
+      theme(legend.title = element_blank(),
+            legend.position = "bottom")
+    print(stress_plot)
+    
+    ggsave(filename = paste0(out_plot,"stress_np_max_diff", ".png"), 
+           plot     = stress_plot, 
+           width    = 9, 
+           height   = 5)
+    
+
+    #==============#
+    # ==== bin ====
+    #==============#
+    
+    
+    xwalk_sub <- model_xwalk[method == "bin" & ta_sd == 0.1  & stud_sorting == 0 & n_stud_per_teacher == "150"]
+    
+    # subset to the runs we need 
+    cor_tab_sub <- cor_tab[run_id %in% xwalk_sub$run_id]
+    
+    # merge on the thing that changes 
+    cor_tab_sub <- merge(cor_tab_sub, xwalk_sub[, c("run_id", "max_diff")], "run_id" )
+    
+    # make the plot 
+    stress_plot <- ggplot(cor_tab_sub, aes(x = max_diff, y = ww_cor)) +
+      geom_point(aes(color = "Weighted Binned VA", y = ww_cor), size = 3) + 
+      geom_line(aes(color = "Weighted Binned VA", y = ww_cor), size = 1) + 
+      geom_point(aes( y = standard_cor,  color = "Standard VA"),size = 3) +
+      geom_line(aes( y = standard_cor,  color = "Standard VA"),size = 1) +
+      scale_color_manual(values= c("#77AADD", "#ffaabb"),
+                         guide=guide_legend(reverse=TRUE)) +
+      xlab("Teacher Heterogeneity") +
+      ylab("Rank Correlation to Truth") +
+      plot_attributes +
+      theme(legend.title = element_blank(),
+            legend.position = "bottom")
+    print(stress_plot)
+    
+    ggsave(filename = paste0(out_plot,"stress_bin_max_diff", ".png"), 
+           plot     = stress_plot, 
+           width    = 9, 
+           height   = 5)
+    
+
+  #=========================#
+  # ==== student stress ====
+  #=========================#
+    #==================#
+    # ==== np_hack ====
+    #==================#
+    
+    xwalk_sub <- model_xwalk[method == "np_hack" & ta_sd == 0.1 & max_diff ==1  & stud_sorting == 0]
+    
+    # subset to the runs we need 
+    cor_tab_sub <- cor_tab[run_id %in% xwalk_sub$run_id]
+    
+    # merge on the thing that changes 
+    cor_tab_sub <- merge(cor_tab_sub, xwalk_sub[, c("run_id", "n_stud_per_teacher")], "run_id" )
+    
+    # make the plot 
+    stress_plot <- ggplot(cor_tab_sub, aes(x = n_stud_per_teacher, y = mean_sd_ww)) +
+      geom_point(aes(color = "Weighted Nonparametric VA", y = mean_sd_ww), size = 3) + 
+      geom_line(aes(color = "Weighted Nonparametric VA", y = mean_sd_ww), size = 1) + 
+      geom_point(aes( y = mean_sd_standard,  color = "Standard VA"),size = 3) +
+      geom_line(aes( y = mean_sd_standard,  color = "Standard VA"),size = 1) +
+      scale_color_manual(values= c("#77AADD", "#ffaabb"),
+                         guide=guide_legend(reverse=TRUE)) +
+      xlab("Number of Students") +
+      ylab("Mean Standard Deviation") +
+      plot_attributes +
+      theme(legend.title = element_blank(),
+            legend.position = "bottom")
+    print(stress_plot)
+    
+    ggsave(filename = paste0(out_plot,"stress_np_n_stud", ".png"), 
+           plot     = stress_plot, 
+           width    = 9, 
+           height   = 5)
+    
+    
+    #==================#
+    # ==== bin ====
+    #==================#
+    
+    xwalk_sub <- model_xwalk[method == "bin" & ta_sd == 0.1 & max_diff ==1  & stud_sorting == 0]
+    
+    # subset to the runs we need 
+    cor_tab_sub <- cor_tab[run_id %in% xwalk_sub$run_id]
+    
+    # merge on the thing that changes 
+    cor_tab_sub <- merge(cor_tab_sub, xwalk_sub[, c("run_id", "n_stud_per_teacher")], "run_id" )
+    
+    # make the plot 
+    stress_plot <- ggplot(cor_tab_sub, aes(x = n_stud_per_teacher, y = mean_sd_ww)) +
+      geom_point(aes(color = "Weighted Binned VA", y = mean_sd_ww), size = 3) + 
+      geom_line(aes(color = "Weighted Binned VA", y = mean_sd_ww), size = 1) + 
+      geom_point(aes( y = mean_sd_standard,  color = "Standard VA"),size = 3) +
+      geom_line(aes( y = mean_sd_standard,  color = "Standard VA"),size = 1) +
+      scale_color_manual(values= c("#77AADD", "#ffaabb"),
+                         guide=guide_legend(reverse=TRUE)) +
+      xlab("Number of Students") +
+      ylab("Mean Standard Deviation") +
+      plot_attributes +
+      theme(legend.title = element_blank(),
+            legend.position = "bottom")
+    print(stress_plot)
+    
+    ggsave(filename = paste0(out_plot,"stress_bin_n_stud", ".png"), 
+           plot     = stress_plot, 
+           width    = 9, 
+           height   = 5)
+    
+
+  #=================================#
+  # ==== Teacher ability stress ====
+  #=================================#
+
+    #==================#
+    # ==== np_hack ====
+    #==================#
+
+    xwalk_sub <- model_xwalk[method == "np_hack" & stud_sorting == 0 & n_stud_per_teacher == 150 & max_diff ==1]
+  
+    # subset to the runs we need 
+    cor_tab_sub <- cor_tab[run_id %in% xwalk_sub$run_id]
+  
+    # merge on the thing that changes 
+    cor_tab_sub <- merge(cor_tab_sub, xwalk_sub[, c("run_id", "ta_sd")], "run_id" )
+    
+    # make the plot 
+    stress_plot <- ggplot(cor_tab_sub, aes(x = ta_sd, y = ww_cor)) +
+      geom_point(aes(color = "Weighted Nonparametric VA", y = ww_cor), size = 3) + 
+      geom_line(aes(color = "Weighted Nonparametric VA", y = ww_cor), size = 1) + 
+      geom_point(aes( y = standard_cor,  color = "Standard VA"),size = 3) +
+      geom_line(aes( y = standard_cor,  color = "Standard VA"),size = 1) +
+      scale_color_manual(values= c("#77AADD", "#ffaabb"),
+                         guide=guide_legend(reverse=TRUE)) +
+      xlab("Teaher Ability Variance") +
+      ylab("Rank Correlation to Truth") +
+      plot_attributes +
+      theme(legend.title = element_blank(),
+            legend.position = "bottom")
+    print(stress_plot)
+    
+    ggsave(filename = paste0(out_plot,"stress_np_ta_sd", ".png"), 
+           plot     = stress_plot, 
+           width    = 9, 
+           height   = 5)
+    
+    #===============#
+    # ==== bins ====
+    #===============#
+
+    xwalk_sub <- model_xwalk[method == "bin" & stud_sorting == 0 & n_stud_per_teacher == 150 & max_diff ==1]
+    
+    # subset to the runs we need 
+    cor_tab_sub <- cor_tab[run_id %in% xwalk_sub$run_id]
+    
+    # merge on the thing that changes 
+    cor_tab_sub <- merge(cor_tab_sub, xwalk_sub[, c("run_id", "ta_sd")], "run_id" )
+    
+    # make the plot 
+    stress_plot <- ggplot(cor_tab_sub, aes(x = ta_sd, y = ww_cor)) +
+      geom_point(aes(color = "Weighted Binned VA", y = ww_cor), size = 3) + 
+      geom_line(aes(color = "Weighted Binned VA", y = ww_cor), size = 1) + 
+      geom_point(aes( y = standard_cor,  color = "Standard VA"),size = 3) +
+      geom_line(aes( y = standard_cor,  color = "Standard VA"),size = 1) +
+      scale_color_manual(values= c("#77AADD", "#ffaabb"),
+                         guide=guide_legend(reverse=TRUE)) +
+      xlab("Teaher Ability Variance") +
+      ylab("Rank Correlation to Truth") +
+      plot_attributes +
+      theme(legend.title = element_blank(),
+            legend.position = "bottom")
+    print(stress_plot)
+    
+    ggsave(filename = paste0(out_plot,"stress_bin_ta_sd", ".png"), 
+           plot     = stress_plot, 
+           width    = 9, 
+           height   = 5)
+    
+
+  
