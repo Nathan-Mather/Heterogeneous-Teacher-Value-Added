@@ -11,6 +11,9 @@ options(scipen = 999)
 # Clean console history.
 cat("\f")
 
+# Define a notin function.
+`%notin%` <- Negate(`%in%`)
+
 # Parallel options.
 do_parallel <- TRUE
 ncores <- 20
@@ -370,10 +373,29 @@ for(i in 1:nrow(model_xwalk)){
   # Get the mean estimates for each teacher. The by groups are all descriptive
   #  variables.
   mean_tab <- mc_res[, list(mean_standard = mean(standard_welfare),
-                            sd_standard   = sd(standard_welfare),
-                            mean_ww       = mean(alternative_welfare),
-                            sd_ww         = sd(alternative_welfare)),
-                            by            = teacher_id]
+                            sd_standard   = sd(standard_welfare)), teacher_id]
+  
+  if (p_method %like% 'bin') {
+    mean_tab <- merge(mean_tab,
+                      mc_res[, list(mean_bin = mean(binned_welfare),
+                                    sd_bin   = sd(binned_welfare)), teacher_id],
+                      'teacher_id')
+  }
+  
+  if (p_method %like% 'np') {
+    mean_tab <- merge(mean_tab,
+                      mc_res[, list(mean_np = mean(np_welfare),
+                                    sd_np   = sd(np_welfare)), teacher_id],
+                      'teacher_id')
+  }
+  
+  if (p_method %like% 'quantile') {
+    mean_tab <- merge(mean_tab,
+                      mc_res[, list(mean_quantile = mean(quantile_welfare),
+                                    sd_quantile   = sd(quantile_welfare)),
+                             teacher_id],
+                      'teacher_id')
+  }
   
   # Merge on teacher info.
   mean_tab <- merge(mean_tab, teacher_info, "teacher_id")
@@ -383,8 +405,24 @@ for(i in 1:nrow(model_xwalk)){
   mean_tab[, nsims := nsims]
   mean_tab[, date_time := date_time]
   
-  # Write to the file.
+  # Ensure the output file has all columns and is setup correctly.
   print(paste0('Finished with simulation ', i))
+  
+  for (name in c('teacher_id',	'mean_standard',	'sd_standard',	'mean_bin',
+                 'sd_bin',	'mean_quantile', 'sd_quantile', 'mean_np',
+                 'sd_np',	'true_welfare',	'teacher_center',	'run_id',
+                 'nsims',	'date_time')) {
+    if (name %notin% colnames(mean_tab)) {
+      mean_tab[, .GlobalEnv$name := numeric()]
+    }
+  }
+  
+  mean_tab <- mean_tab[, c('teacher_id',	'mean_standard',	'sd_standard',
+                           'mean_bin', 'sd_bin','mean_np', 'sd_np',
+                           'mean_quantile', 'sd_quantile', 'true_welfare',
+                           'teacher_center',	'run_id', 'nsims',	'date_time')]
+
+  # Write to the file.
   write.table(mean_tab,
               paste0(out_data, 'results.csv'), 
               sep = ",",

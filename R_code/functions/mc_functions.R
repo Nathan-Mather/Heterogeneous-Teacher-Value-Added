@@ -491,7 +491,7 @@
 
     
     # Check method option.
-    if (method=="bin") {
+    if (method %like% 'bin') {
       
       # Run the binned VA.
       output <- binned_va_stat(in_dt              = in_dt,
@@ -519,18 +519,32 @@
                                ta_sd              = ta_sd,
                                sa_sd              = sa_sd)
       
+      # Merge on the standard VA.
+      va_tab1 <- merge(va_tab1,
+                       setnames(output,
+                                old=c('alternative_welfare'),
+                                new=c('binned_welfare')),
+                       'teacher_id')
+      
     }
     
     
-  if (method=="semip") {
+  if (method %like% 'semip') {
     # put implementation here. Call output or rename that object everywhere 
     # not really a good name anyway 
     
     output <- semip_va(in_data = in_dt)
+    
+    # Merge on the standard VA.
+    va_tab1 <- merge(va_tab1,
+                     setnames(output,
+                              old=c('semip_welfare'),
+                              new=c('binned_welfare')),
+                     'teacher_id')
   }
   
   
-  if (method=="np_hack") {
+  if (method %like% 'np') {
 
     # Run the NP VA.
     output <- np_hack_va_stat(in_dt              = in_dt,
@@ -558,46 +572,54 @@
                               ta_sd              = ta_sd,
                               sa_sd              = sa_sd,
                               weighted_average   = weighted_average)
-
+    
+    # Merge on the standard VA.
+    va_tab1 <- merge(va_tab1,
+                     setnames(output,
+                              old=c('alternative_welfare'),
+                              new=c('np_welfare')),
+                     'teacher_id')
   }  
   
     
-    if (method=="qtle") {
-      
-      # Run the quantile VA.
-      output <- quantile_va_stat(in_dt              = in_dt,
-                                 weight_type        = weight_type,
-                                 method             = method, 
-                                 lin_alpha          = lin_alpha,
-                                 pctile             = pctile,
-                                 weight_below       = weight_below,
-                                 weight_above       = weight_above,
-                                 v_alpha            = v_alpha,
-                                 mrpctile           = mrpctile, 
-                                 mrdist             = mrdist,
-                                 npoints            = npoints,
-                                 n_teacher          = n_teacher,
-                                 n_stud_per_teacher = n_stud_per_teacher,
-                                 test_SEM           = test_SEM,
-                                 teacher_va_epsilon = teacher_va_epsilon,
-                                 impact_type        = impact_type,
-                                 impact_function    = impact_function,
-                                 max_diff           = max_diff,
-                                 covariates         = covariates,
-                                 peer_effects       = peer_effects,
-                                 stud_sorting       = stud_sorting,
-                                 rho                = rho,
-                                 ta_sd              = ta_sd,
-                                 sa_sd              = sa_sd)
-      
-    }
+  if (method %like% 'quantile') {
     
+    # Run the quantile VA.
+    output <- quantile_va_stat(in_dt              = in_dt,
+                               weight_type        = weight_type,
+                               method             = method, 
+                               lin_alpha          = lin_alpha,
+                               pctile             = pctile,
+                               weight_below       = weight_below,
+                               weight_above       = weight_above,
+                               v_alpha            = v_alpha,
+                               mrpctile           = mrpctile, 
+                               mrdist             = mrdist,
+                               npoints            = npoints,
+                               n_teacher          = n_teacher,
+                               n_stud_per_teacher = n_stud_per_teacher,
+                               test_SEM           = test_SEM,
+                               teacher_va_epsilon = teacher_va_epsilon,
+                               impact_type        = impact_type,
+                               impact_function    = impact_function,
+                               max_diff           = max_diff,
+                               covariates         = covariates,
+                               peer_effects       = peer_effects,
+                               stud_sorting       = stud_sorting,
+                               rho                = rho,
+                               ta_sd              = ta_sd,
+                               sa_sd              = sa_sd)
     
-    # Merge on the standard VA
-    va_tab2 <- merge(va_tab1, output, "teacher_id")
-    
-    
-    # Return the estimates.
-    return(va_tab2)
-    
-  } # End function.
+    # Merge on the standard VA.
+    va_tab1 <- merge(va_tab1,
+                     setnames(output,
+                              old=c('alternative_welfare'),
+                              new=c('quantile_welfare')),
+                     'teacher_id')
+  }
+  
+  
+  # Return the estimates.
+  return(va_tab1)
+  
+} # End function.
