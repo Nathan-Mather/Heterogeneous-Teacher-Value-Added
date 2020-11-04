@@ -67,6 +67,14 @@ if (my_wd %like% "Nmath_000") {
 model_xwalk <- data.table(read_excel(paste0(base_path,
                   "Heterogeneous-Teacher-Value-Added/R_code/model_xwalk.xlsx")))
 
+# Load past crosswalk to get run number.
+if (file.exists(paste0(out_data,'xwalk.csv'))) {
+  old_xwalk <- data.table(read.csv(file=paste0(out_data,'xwalk.csv')))
+  run_id <- max(old_xwalk$run_id) + 1
+} else {
+  run_id <- 1
+}
+
 # Load our functions now that we have a file path.
 func_path <- "Heterogeneous-Teacher-Value-Added/R_code/functions/"
 source(paste0(base_path, func_path, "mc_functions.R"))
@@ -117,11 +125,10 @@ if (do_parallel) {
 for(i in 1:nrow(model_xwalk)){
   
   # Set seed. 
-  set.seed(720)
+  set.seed(42)
 
   # Set parameters for this Monte Carlo run.
   # Run parameters.
-  run_id                     <- model_xwalk[i, run_id]             # keep track of what run it is 
   nsims                      <- model_xwalk[i, nsims]              # how many simulations to do
   single_run                 <- model_xwalk[i, single_run]         # whether or not to run just one draw and calculate bootstrap SE's
   p_npoints                  <- model_xwalk[i, npoints]            # number of grid points over which to calculate welfare added
@@ -154,6 +161,8 @@ for(i in 1:nrow(model_xwalk)){
   p_mrdist                   <- model_xwalk[i, mrdist]             # for mr weights
   p_weighted_average         <- model_xwalk[i, weighted_average]   # whether or not to calculate a weighted average of standard and NP
   
+  # Add in the run id.
+  model_xwalk[i, run_id := .GlobalEnv$run_id]
   
   # Simulate initial data.
   r_dt <- simulate_test_data(n_teacher           = p_n_teacher,
@@ -366,22 +375,28 @@ for(i in 1:nrow(model_xwalk)){
                             sd_ww         = sd(alternative_welfare)),
                             by            = teacher_id]
   
-  # Add some more indicators.
-  mean_tab[, run_id := run_id]
-  mean_tab[, nsims := nsims]
-  
   # Merge on teacher info.
   mean_tab <- merge(mean_tab, teacher_info, "teacher_id")
   
+  # Add some more indicators.
+  mean_tab[, run_id := run_id]
+  mean_tab[, nsims := nsims]
+  mean_tab[, date_time := date_time]
+  
   # Write to the file.
   print(paste0('Finished with simulation ', i))
-  write.table(mean_tab, paste0(out_data, '/', "mc_results_", date_time, ".csv"), 
-              sep = ",", col.names = !file.exists(paste0(out_data, '/',
-                                                         "mc_results_",
-                                                         date_time, ".csv")), 
-              append = T, row.names = FALSE)
+  write.table(mean_tab,
+              paste0(out_data, 'results.csv'), 
+              sep = ",",
+              col.names = !file.exists(paste0(out_data, 'results.csv')), 
+              append = T,
+              row.names = FALSE)
 
   } # Close the single run else clause.
+  
+  # Increment the run id.
+  run_id <- run_id + 1
+  
 } # Close Monte Carlo loop.
 
 
@@ -398,4 +413,9 @@ if(do_parallel){
 # =========================================================================== #
 
 # Save a copy of the most recent xwalk so there are no mixups.
-write.csv(model_xwalk, paste0(out_data, '/', "mc_xwalk_", date_time,".csv" ), row.names = FALSE)
+write.table(model_xwalk,
+            paste0(out_data, 'xwalk.csv'),
+            sep = ",",
+            col.names = !file.exists(paste0(out_data, 'xwalk.csv')), 
+            append = T,
+            row.names = FALSE)

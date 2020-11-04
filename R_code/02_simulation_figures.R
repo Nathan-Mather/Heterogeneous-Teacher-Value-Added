@@ -2,7 +2,7 @@
 # ============================ Simulation Figures =========================== #
 # =========================================================================== #
 # - Purpose of code:
-#  - Make a few figures for simulation primitives and assumptions.
+#  - Make a few figures for the simulation primitives and assumptions.
 
 # Clear data.
 rm(list = ls(pos = ".GlobalEnv"), pos = ".GlobalEnv")
@@ -73,6 +73,7 @@ library(tidyr)
 #  (NOTE TO MIKE, add something unique to your base working directory to detect
 #   when it is your computer)
 my_wd <- getwd()
+
 if(my_wd %like% "Nmath_000"){
   # base directory 
   base_path <- "c:/Users/Nmath_000/Documents/Research/"
@@ -291,11 +292,6 @@ for(i in 1:nrow(model_xwalk)){
   # Put together the example teacher plot.
   teacher_example_just_truth <- ggplot(data = teacher_ex[teacher_id == 1]) +
     geom_point(aes(x = stud_ability_1, y = teacher_impact, color = 'Truth'), size = 2, alpha = truth_alpha) +
-    #geom_point(aes(x = stud_ability_1, y = standard, color = 'Standard'), size = 2, alpha = standard_alpha) +
-    #geom_point(aes(x = stud_ability_1, y = binned, color = 'Binned'), size = 2, alpha = binned_alpha) + 
-    #geom_point(aes(x = stud_ability_1, y = quantile), size = 2, color = quantile_color, alpha = quantile_alpha) +
-    #geom_point(aes(x = stud_ability_1, y = np, color = 'NP'), size = 2, alpha = np_alpha) + 
-    #geom_point(aes(x = stud_ability_1, y = np1, color = 'Weighted Av.'), size = 2, alpha = np1_alpha) + 
     ylab("Teacher's Impact") + 
     xlab("Student Ability") +
     ylim(ymin, ymax) +
@@ -307,10 +303,6 @@ for(i in 1:nrow(model_xwalk)){
   teacher_example_truth_standard <- ggplot(data = teacher_ex[teacher_id == 1]) +
     geom_point(aes(x = stud_ability_1, y = teacher_impact, color = 'Truth'), size = 2, alpha = truth_alpha) +
     geom_point(aes(x = stud_ability_1, y = standard, color = 'Standard'), size = 2, alpha = standard_alpha) +
-    #geom_point(aes(x = stud_ability_1, y = binned, color = 'Binned'), size = 2, alpha = binned_alpha) + 
-    #geom_point(aes(x = stud_ability_1, y = quantile), size = 2, color = quantile_color, alpha = quantile_alpha) +
-    #geom_point(aes(x = stud_ability_1, y = np, color = 'NP'), size = 2, alpha = np_alpha) + 
-    #geom_point(aes(x = stud_ability_1, y = np1, color = 'Weighted Av.'), size = 2, alpha = np1_alpha) + 
     ylab("Teacher's Impact") + 
     xlab("Student Ability") +
     ylim(ymin, ymax) +
@@ -323,9 +315,6 @@ for(i in 1:nrow(model_xwalk)){
     geom_point(aes(x = stud_ability_1, y = teacher_impact, color = 'Truth'), size = 2, alpha = truth_alpha) +
     geom_point(aes(x = stud_ability_1, y = standard, color = 'Standard'), size = 2, alpha = standard_alpha) +
     geom_point(aes(x = stud_ability_1, y = binned, color = 'Binned'), size = 2, alpha = binned_alpha) + 
-    #geom_point(aes(x = stud_ability_1, y = quantile), size = 2, color = quantile_color, alpha = quantile_alpha) +
-    #geom_point(aes(x = stud_ability_1, y = np, color = 'NP'), size = 2, alpha = np_alpha) + 
-    #geom_point(aes(x = stud_ability_1, y = np1, color = 'Weighted Av.'), size = 2, alpha = np1_alpha) + 
     ylab("Teacher's Impact") + 
     xlab("Student Ability") +
     ylim(ymin, ymax) +
@@ -337,10 +326,7 @@ for(i in 1:nrow(model_xwalk)){
   teacher_example_truth_np <- ggplot(data = teacher_ex[teacher_id == 1]) +
     geom_point(aes(x = stud_ability_1, y = teacher_impact, color = 'Truth'), size = 2, alpha = truth_alpha) +
     geom_point(aes(x = stud_ability_1, y = standard, color = 'Standard'), size = 2, alpha = standard_alpha) +
-    #geom_point(aes(x = stud_ability_1, y = binned, color = 'Binned'), size = 2, alpha = binned_alpha) + 
-    #geom_point(aes(x = stud_ability_1, y = quantile), size = 2, color = quantile_color, alpha = quantile_alpha) +
     geom_point(aes(x = stud_ability_1, y = np, color = 'NP'), size = 2, alpha = np_alpha) + 
-    #geom_point(aes(x = stud_ability_1, y = np1, color = 'Weighted Av.'), size = 2, alpha = np1_alpha) + 
     ylab("Teacher's Impact") + 
     xlab("Student Ability") +
     ylim(ymin, ymax) +

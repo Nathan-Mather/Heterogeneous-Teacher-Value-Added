@@ -159,8 +159,8 @@
                                 in_test_1       = in_dt$test_1,
                                 lin_alpha       = lin_alpha,
                                 pctile          = pctile,
-                                weight_below    = weight_above,
-                                weight_above    = weight_below,
+                                weight_below    = weight_below,
+                                weight_above    = weight_above,
                                 v_alpha         = v_alpha,
                                 mrpctile        = mrpctile, 
                                 mrdist          = mrdist)
@@ -244,8 +244,8 @@
                                 in_test_1       = in_dt$test_1,
                                 lin_alpha       = lin_alpha,
                                 pctile          = pctile,
-                                weight_below    = weight_above,
-                                weight_above    = weight_below,
+                                weight_below    = weight_below,
+                                weight_above    = weight_above,
                                 v_alpha         = v_alpha,
                                 mrpctile        = mrpctile, 
                                 mrdist          = mrdist)
@@ -339,11 +339,13 @@
                                 in_test_1       = in_dt$test_1,
                                 lin_alpha       = lin_alpha,
                                 pctile          = pctile,
-                                weight_below    = weight_above,
-                                weight_above    = weight_below,
+                                weight_below    = weight_below,
+                                weight_above    = weight_above,
                                 v_alpha         = v_alpha,
                                 mrpctile        = mrpctile, 
                                 mrdist          = mrdist)
+    
+    print(output)
 
     
     # Return the full data if in the MC or just the estimates for the bootstrap.

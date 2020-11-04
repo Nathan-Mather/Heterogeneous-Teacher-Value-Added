@@ -1,30 +1,38 @@
+# =========================================================================== #
+# ========================== Monte Carlo Figures ============================ #
+# =========================================================================== #
+# - Purpose of code:
+#  - Make a few figures for the Monte Carlo results.
 
-
-#=====================#
-# ==== MC figures ====
-#=====================#
-
+# Clear data.
 rm(list = ls(pos = ".GlobalEnv"), pos = ".GlobalEnv")
-# no scientific notation 
+
+# No scientific notation. 
 options(scipen = 999)
-# clean console history 
+
+# Clean console history.
 cat("\f")
 
-#==================================#
-# ==== File paths and packages ====
-#==================================#
-
-# set seeds 
+# Set seed. 
 set.seed(42)
 
-# load packages 
+
+
+
+# =========================================================================== #
+# ========================= File paths and packages ========================= #
+# =========================================================================== #
+
+# Load packages. 
 library(data.table)
 library(ggplot2)
 library(gridExtra)
 
-
-# check users. (NOTE TO MIKE, add something unique to your base working directory to detect when it is your computer)
+# Check users to set directory.
+#  (NOTE TO MIKE, add something unique to your base working directory to detect
+#   when it is your computer)
 my_wd <- getwd()
+
 if(my_wd %like% "Nmath_000"){
   # base directory 
   base_path <- "c:/Users/Nmath_000/Documents/Research/"
@@ -46,11 +54,7 @@ if(my_wd %like% "Nmath_000"){
   out_plot <- "/home/tanner/Documents/Research/HeterogenousTeacherVA/Output/Figures/"
 }
 
-
-#=========================#
-# ==== set plot style ====
-#=========================#
-
+# Set plot attributes.
 plot_attributes <- theme_classic() + 
   theme(text = element_text(size= 20),
         plot.title = element_text(vjust=0, hjust = 0.5, colour = "black",face = "bold", size =25),
@@ -58,71 +62,73 @@ plot_attributes <- theme_classic() +
         legend.title = element_text(size=10))
 
 
-#====================#
-# ==== load data ====
-#====================#
 
-# get the most recent data 
-files <- list.files(in_data)
-res_files <- grep("mc_results_",files, value = TRUE)
-res_files <- sort(res_files,decreasing = TRUE)
 
-# load most recent data 
-res_dt <- fread(paste0(in_data, res_files[[1]]))
+# =========================================================================== #
+# ========================= Load results and xwalk ========================== #
+# =========================================================================== #
 
-# load the most recent xwalk corresponding to that data 
-xwalk_files <- grep("mc_xwalk_",files, value = TRUE)
-xwalk_files <- sort(xwalk_files,decreasing = TRUE)
+# Load the results.
+res_dt <- fread(paste0(in_data, 'results.csv'))
 
-# load most recent xwalk 
-model_xwalk <- fread(paste0(in_data, xwalk_files[[1]]))
+# Load the xwalk.
+model_xwalk <- fread(paste0(in_data, 'xwalk.csv'))
 
-# check that the xwalk and data match 
-date_1 <- gsub("mc_xwalk_", "", xwalk_files[[1]])
-date_2 <- gsub("mc_results_", "",  res_files[[1]])
-if(date_1 != date_2) warning("xwalk date and data date don't match. Make sure they actually go together so you dont mislabel graphs")
 
-if(nrow(model_xwalk) != length(unique(res_dt$run_id))) stop("The Xwalk information does not match up to the data you loaded in")
+
   
-#===============================#
-# ==== normalize everything ====
-#===============================#
+# =========================================================================== #
+# ========================== Normalize everything =========================== #
+# =========================================================================== #
 
-# Renormalize everything so they have the same mean and variance
+# Renormalize everything so they have the same mean and variance.
 res_dt[, mean_ww_norm := (mean_ww - mean(mean_ww))/sd(mean_ww), by = run_id]
 res_dt[, mean_standard_norm := (mean_standard - mean(mean_standard))/sd(mean_standard), by = run_id]
 res_dt[, true_welfare_norm := (true_welfare - mean(true_welfare))/sd(true_welfare), by = run_id]
 
-# now renormalize standard deviations 
+# Now renormalize standard deviations.
 res_dt[, sd_ww_norm := sd_ww/sd(mean_ww), by = run_id]
 res_dt[, sd_standard_norm := sd_standard/sd(mean_standard), by = run_id]
 
 
 
-#====================#
-# ==== get ranks ====
-#====================#
 
+# =========================================================================== #
+# =============================== Get ranks ================================= #
+# =========================================================================== #
+
+# Sort standard, get the ranks.
 setorder(res_dt, mean_standard_norm)
 res_dt[, standard_rank := 1:.N, run_id]
+
+# Get confidence interval for the standard.
 res_dt[, standard_lc := mean_standard_norm - 1.96*sd_standard_norm]
 res_dt[, standard_uc := mean_standard_norm + 1.96*sd_standard_norm]
 
+# Sort ww, get the ranks.
 setorder(res_dt, mean_ww_norm)
 res_dt[, ww_rank := 1:.N, run_id]
+
+# Get confidence interval for the ww estimate.
 res_dt[, ww_lc := mean_ww_norm - 1.96*sd_ww_norm]
 res_dt[, ww_uc := mean_ww_norm + 1.96*sd_ww_norm]
 
+# Sort truth, get the ranks.
 setorder(res_dt, true_welfare_norm)
 res_dt[, true_ww_rank :=1:.N, run_id]
 
+# Sort teacher center, get the ranks.
 setorder(res_dt, teacher_center)
 res_dt[, cent :=1:.N, run_id]
 
-#================================#
-# ==== get distance measures ====
-#================================#
-# Calculate the mean squared distance from the rank of the truth
+
+
+
+# =========================================================================== #
+# ========================== Get distance measures ========================== #
+# =========================================================================== #
+
+# Calculate the mean squared distance from the rank of the truth.
 res_dt[, standard_MSE := (standard_rank - true_ww_rank)^2]
 res_dt[, standard_MAE := abs(standard_rank - true_ww_rank)]
 
@@ -130,32 +136,36 @@ res_dt[, ww_MSE := (ww_rank - true_ww_rank)^2]
 res_dt[, ww_MAE := abs(ww_rank - true_ww_rank)]
 
 
-#==============================#
-# ==== plots for every run ====
-#==============================#
 
+
+# =========================================================================== #
+# =========================== Plots for every run =========================== #
+# =========================================================================== #
+
+# Loop over rows in the xwalk.
 for(i in 1:nrow(model_xwalk)){
   
-  # grab run_id 
+  # Grab run_id. 
   run_id_i <- model_xwalk[i, run_id]
   
   # subset data to this mc run 
   res_sub <- res_dt[run_id == run_id_i]
   
-  # get table of run info 
-  # make table of parameters 
+  # Get table of run parameters.
   parms_tab <- melt.data.table(model_xwalk[i], measure.vars = colnames(model_xwalk))
   parms_tab <- parms_tab[!is.na(value)]
   parms_tab <- parms_tab[variable != "run_id"]
   parms_tab <- parms_tab[variable != "single_run"]
   
-  # put parameters in grob
+  # Put parameters in grob.
   parms_tbl <- tableGrob(parms_tab, rows=NULL, cols = NULL, theme = ttheme_default(base_size = 9))
 
-  #===============================#
-  # ==== standard caterpillar ====
-  #===============================#
   
+  # ========================================================================= #
+  # ============================ Caterpillar plots ========================== #
+  # ========================================================================= #
+  
+  # Just the truth.
   truth_cat_plot <- ggplot(res_sub, aes(x = true_ww_rank, y = true_welfare_norm)) +
     geom_point(size = 1.5, aes(color = "Truth"), alpha = 1) + 
     scale_color_manual(values= c("#77AADD")) +
@@ -166,6 +176,7 @@ for(i in 1:nrow(model_xwalk)){
     theme(legend.title = element_blank(),
           legend.position = c(0.8, 0.8))
 
+  # Standard caterpillar plot.
   standard_cat_plot <- ggplot(res_sub, aes(x = true_ww_rank, y = mean_standard_norm)) +
     geom_point(size = 1.5, aes(color = "Standard VA"), alpha = 1) + 
     geom_point(aes( y = true_welfare_norm,  color = "Truth"),size = 1, alpha = .4) +
@@ -177,8 +188,24 @@ for(i in 1:nrow(model_xwalk)){
     plot_attributes + 
     theme(legend.title = element_blank(),
           legend.position = c(0.8, 0.8))
-  print(standard_cat_plot)
+
+  # Save the plots.
+  ggsave(filename = paste0(out_plot,"truth_cat_run_",  run_id_i, ".png"), 
+         plot     = truth_cat_plot, 
+         width    = 9, 
+         height   = 4)
+  
+  ggsave(filename = paste0(out_plot,"standard_cat_run_",  run_id_i, ".png"), 
+         plot     = standard_cat_plot, 
+         width    = 9, 
+         height   = 4)
     
+  
+  # ========================================================================= #
+  # ========================= Teacher Center Figures ======================== #
+  # ========================================================================= #
+  
+  # Standard teacher center.
   standard_center_plot <- ggplot(res_sub, aes(x = teacher_center, y = mean_standard_norm)) +
     geom_point(size = 1.5, aes(color = "Standard VA"), alpha = 1) +
     geom_point(aes( y = true_welfare_norm, color = "Truth"),size = 1, alpha = .4) +
@@ -190,6 +217,7 @@ for(i in 1:nrow(model_xwalk)){
     theme(legend.title = element_blank(),
           legend.position = c(0.8, 0.8))
   
+  # Alternative teacher center.
   welfare_center_plot <- ggplot(res_sub, aes(x = teacher_center, y = mean_ww_norm)) +
     geom_point(size = 1.5, aes(color = "Welfare VA"), alpha = 1) +
     geom_point(aes( y = true_welfare_norm, color = "Truth"),size = 1, alpha = .4) +
@@ -202,17 +230,8 @@ for(i in 1:nrow(model_xwalk)){
     theme(legend.title = element_blank(),
           legend.position = c(0.8, 0.8))
 
-  # save it 
-  ggsave(filename = paste0(out_plot,"truth_cat_run_",  run_id_i, ".png"), 
-         plot     = truth_cat_plot, 
-         width    = 9, 
-         height   = 4)
   
-  ggsave(filename = paste0(out_plot,"standard_cat_run_",  run_id_i, ".png"), 
-         plot     = standard_cat_plot, 
-         width    = 9, 
-         height   = 4)
-  
+  # Save the figures.
   ggsave(filename = paste0(out_plot,"standard_cent_run_",  run_id_i, ".png"), 
          plot     = standard_center_plot, 
          width    = 9, 
@@ -224,101 +243,96 @@ for(i in 1:nrow(model_xwalk)){
          height   = 4)  
 
   
-  #=========================#
-  # ==== ww caterpillar ====
-  #=========================#
   
+  # ========================================================================= #
+  # ========================= Alternative Caterpillar ======================= #
+  # ========================================================================= #
+  
+  # Alternative caterpillar plot.
+  ww_cat_plot <- ggplot(res_sub, aes(x = true_ww_rank, y = mean_ww_norm)) +
+    geom_point(aes(color = "Weighted VA"), size = 2,  alpha = 1) + 
+    geom_point(aes( y = true_welfare_norm,  color = "Truth"),size = 1, alpha = .4) +
+    scale_color_manual(values= c("#77AADD", "#ffaabb"),
+                       guide=guide_legend(reverse=TRUE)) +
+    geom_errorbar(aes(ymin=ww_lc, ymax=ww_uc), width= 1, color = "#ffaabb") +
+    ylab("Impact") + 
+    xlab("True Teacher Order") +
+    ylim(-6,6)+
+    plot_attributes +
+    theme(legend.title = element_blank(),
+          legend.position = c(0.2, 0.8))
 
-    ww_cat_plot <- ggplot(res_sub, aes(x = true_ww_rank, y = mean_ww_norm)) +
-      geom_point(aes(color = "Weighted VA"), size = 2,  alpha = 1) + 
-      geom_point(aes( y = true_welfare_norm,  color = "Truth"),size = 1, alpha = .4) +
-      scale_color_manual(values= c("#77AADD", "#ffaabb"),
-                         guide=guide_legend(reverse=TRUE)) +
-      geom_errorbar(aes(ymin=ww_lc, ymax=ww_uc), width= 1, color = "#ffaabb") +
-      ylab("Impact") + 
-      xlab("True Teacher Order") +
-      ylim(-6,6)+
-      plot_attributes +
-      theme(legend.title = element_blank(),
-            legend.position = c(0.2, 0.8))
-  print(ww_cat_plot)
-  # add parameters 
-  #ww_cat_plot2 <- grid.arrange(ww_cat_plot, parms_tbl,
-  #                                   layout_matrix = rbind(c(1, 1, 1, 2)))
-  # save plot  
+  # Save the plot. 
   ggsave(filename = paste0(out_plot,"ww_cat_run_",  run_id_i, ".png"), 
          plot     = ww_cat_plot, 
          width    = 9, 
          height   = 4)
 
 
-  #======================================#
-  # ==== histogram and summary stats ====
-  #======================================#
+  # ========================================================================= #
+  # ======================= Histogram and Summary Stats ===================== #
+  # ========================================================================= #
   
+  # Start a data.table of results.
+  sum_stats <- list()
+  sum_stats[[1]] <- data.table(Statistic = "Mean Squared Distance", 
+                               Standard = round(mean(res_sub$standard_MSE), digits=2),
+                               Weighted = round(mean(res_sub$ww_MSE), digits=2))
+  
+  sum_stats[[2]] <- data.table(Statistic = "Mean Absolute Distance", 
+                               Standard =  round(mean(res_sub$standard_MAE), digits=2),
+                               Weighted =  round(mean(res_sub$ww_MAE), digits=2))
+  
+  
+  sum_stats[[3]] <- data.table(Statistic = "Correlation to Truth", 
+                               Standard =  round(cor(res_sub$standard_rank, res_sub$true_ww_rank, method  = "kendall" , use="pairwise"), digits=2),
+                               Weighted = round(cor(res_sub$ww_rank, res_sub$true_ww_rank, method  = "kendall" , use="pairwise"), digits=2))
 
-    # start a data.table of results 
-    sum_stats <- list()
-    sum_stats[[1]] <- data.table(Statistic = "Mean Squared Distance", 
-                                 Standard = round(mean(res_sub$standard_MSE), digits=2),
-                                 Weighted = round(mean(res_sub$ww_MSE), digits=2))
-    
-    sum_stats[[2]] <- data.table(Statistic = "Mean Absolute Distance", 
-                                 Standard =  round(mean(res_sub$standard_MAE), digits=2),
-                                 Weighted =  round(mean(res_sub$ww_MAE), digits=2))
-    
-    
-    sum_stats[[3]] <- data.table(Statistic = "Correlation to Truth", 
-                                 Standard =  round(cor(res_sub$standard_rank, res_sub$true_ww_rank, method  = "kendall" , use="pairwise"), digits=2),
-                                 Weighted = round(cor(res_sub$ww_rank, res_sub$true_ww_rank, method  = "kendall" , use="pairwise"), digits=2))
+  out_sum_stats <- rbindlist(sum_stats)
+  
+  # Put sum stats in a grob.
+  out_sum_stats_tbl <- tableGrob(out_sum_stats, rows=NULL, theme = ttheme_default(base_size = 8))
 
-    out_sum_stats <- rbindlist(sum_stats)
-    
-    # put sum stats in a grob
-    out_sum_stats_tbl <- tableGrob(out_sum_stats, rows=NULL, theme = ttheme_default(base_size = 8))
+  # Set bin width parameter.
+  b_width <- 3
+  
+  # Make the histogram.
+  out_histogram <- ggplot(res_sub) + 
+    geom_histogram( aes(standard_MAE, fill = "Standard"), alpha = .4, colour="black", binwidth = b_width) +
+    geom_histogram( aes(ww_MAE, fill = "Weighted"), alpha = .4, colour="black", binwidth = b_width) +
+    ylab("Number of Teachers") +
+    xlab("Difference in Rank From Truth")+
+    scale_fill_manual(values= c("#77AADD", "#EE8866")) +
+    plot_attributes + 
+    theme(legend.title = element_blank(),
+          legend.position = c(0.8, 0.8),
+          legend.key.size = unit(.5, "cm"))
 
-    # Histogram of the density and distance of rank inversions
-    # set binwidth parm
-    b_width <- 3
+  # Add parameters.
+  out_histogram2 <- grid.arrange(out_histogram, out_sum_stats_tbl,
+                               layout_matrix = rbind(c(1, 1, 1),
+                                                     c(1, 1, 1),
+                                                     c(1, 1, 1),
+                                                     c(2, 2, 2)))
+  
+  # Save the plot.
+  ggsave(filename = paste0(out_plot,"hist_run_",  run_id_i, ".png"), 
+         plot     = out_histogram2, 
+         width    = 9, 
+         height   = 5)
     
-    out_histogram <- ggplot(res_sub) + 
-      geom_histogram( aes(standard_MAE, fill = "Standard"), alpha = .4, colour="black", binwidth = b_width) +
-      geom_histogram( aes(ww_MAE, fill = "Weighted"), alpha = .4, colour="black", binwidth = b_width) +
-      ylab("Number of Teachers") +
-      xlab("Difference in Rank From Truth")+
-      scale_fill_manual(values= c("#77AADD", "#EE8866")) +
-      plot_attributes + 
-      theme(legend.title = element_blank(),
-            legend.position = c(0.8, 0.8),
-            legend.key.size = unit(.5, "cm"))
-    print(out_histogram)
-    
-    
-    # add parameters 
-    out_histogram2 <- grid.arrange(out_histogram, out_sum_stats_tbl,
-                                 layout_matrix = rbind(c(1, 1, 1),
-                                                       c(1, 1, 1),
-                                                       c(1, 1, 1),
-                                                       c(2, 2, 2)))
-    
-    # save plot  
-    ggsave(filename = paste0(out_plot,"hist_run_",  run_id_i, ".png"), 
-           plot     = out_histogram2, 
-           width    = 9, 
-           height   = 5)
-    
-}# close for loop 
+}# Close for loop.
 
 
 
 
-#============================#
-# ==== stress test plots ====
-#============================#
+# =========================================================================== #
+# ============================ Stress test plots ============================ #
+# =========================================================================== #
 
-# I couldn't think of a smart way to do this so I just wrote it all out :( 
+# We will want to revisit this later.
 
-# get the kendal correlations for each run 
+# Get the kendall correlations for each run.
 cor_tab <- res_dt[, list(standard_cor = cor(standard_rank, true_ww_rank, method  = "kendall" , use="pairwise"),
                          ww_cor       =  cor(ww_rank, true_ww_rank, method  = "kendall" , use="pairwise"),
                          mean_sd_standard  = mean(sd_standard, na.rm = TRUE),
