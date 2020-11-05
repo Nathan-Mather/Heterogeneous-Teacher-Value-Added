@@ -106,13 +106,8 @@ source(paste0(base_path, func_path, "teacher_impact.R"))
 source(paste0(base_path, func_path, "weighting_functions.R"))
 source(paste0(base_path, func_path, "welfare_statistic.R"))
 
-# Sort the runs to get the most recent.
-files <- list.files(in_data)
-xwalk_files <- grep("mc_xwalk_", files, value=TRUE)
-xwalk_files <- sort(xwalk_files, decreasing=TRUE)
-
-# Load most recent xwalk.
-model_xwalk <- fread(paste0(in_data, xwalk_files[[1]]))
+# Load the xwalk.
+model_xwalk <- fread(paste0(in_data, 'xwalk.csv'))
 
 
 
