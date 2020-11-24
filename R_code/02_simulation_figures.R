@@ -109,6 +109,17 @@ source(paste0(base_path, func_path, "welfare_statistic.R"))
 # Load the xwalk.
 model_xwalk <- fread(paste0(in_data, 'xwalk.csv'))
 
+# Figure out which figures already exist.
+figs <- list.files(path=out_plot)
+figs <- tail(figs[figs %like% 'weight_example_'], n=1)
+
+if (length(figs) == 0) {
+  last_num <- 0
+} else {
+  last_num <- as.numeric(gsub('^.*([0-9]+).*$', '\\1', figs))
+}
+
+
 
 
 
@@ -136,6 +147,7 @@ for(i in 1:nrow(model_xwalk)){
   p_teacher_va_epsilon       <- model_xwalk[i, teacher_va_epsilon] # SD of noise on teacher impact 
   p_impact_type              <- model_xwalk[i, impact_type]        # one of 'MLRN', 'MLR', 'MNoR', 'MNo', 'No'
   p_impact_function          <- model_xwalk[i, impact_function]    # which teacher impact function to use, and integer
+  p_min_diff                 <- model_xwalk[i, min_diff]           # minimum impact difference between best and worst matched students
   p_max_diff                 <- model_xwalk[i, max_diff]           # maximum impact difference between best and worst matched students
   p_covariates               <- model_xwalk[i, covariates]         # whether or not to include covariates
   p_peer_effects             <- model_xwalk[i, peer_effects]       # whether or not to include peer effects
@@ -143,7 +155,7 @@ for(i in 1:nrow(model_xwalk)){
   p_rho                      <- model_xwalk[i, rho]                # correlation between teacher and student ability
   p_ta_sd                    <- model_xwalk[i, ta_sd]              # teacher ability standard deviation
   p_sa_sd                    <- model_xwalk[i, sa_sd]              # student ability standard deviation
-  p_center_ability_corr      <- model_xwalk[i, center_ab_corr]     # teacher ability and center correlation
+  p_tc_sd                    <- model_xwalk[i, tc_sd]              # teacher center standard deviation
   
   # Weight and estimation parameters.
   p_weight_type              <- model_xwalk[i, weight_type]        # style of social planner pareto weights
@@ -155,6 +167,10 @@ for(i in 1:nrow(model_xwalk)){
   p_v_alpha                  <- model_xwalk[i, v_alpha]            # For v weights
   p_mrpctile                 <- model_xwalk[i, mrpctile]           # For mr weights
   p_mrdist                   <- model_xwalk[i, mrdist]             # for mr weights
+  
+  if ((as.numeric(run_id) <= last_num) | (as.numeric(single_run) == 1)) {
+    next
+  }
   
   
   # ========================================================================= #
@@ -168,6 +184,7 @@ for(i in 1:nrow(model_xwalk)){
                                    teacher_va_epsilon  = p_teacher_va_epsilon,
                                    impact_type         = p_impact_type,
                                    impact_function     = p_impact_function,
+                                   min_diff            = p_min_diff,
                                    max_diff            = p_max_diff,
                                    covariates          = p_covariates,
                                    peer_effects        = p_peer_effects,
@@ -175,7 +192,7 @@ for(i in 1:nrow(model_xwalk)){
                                    rho                 = p_rho,
                                    ta_sd               = p_ta_sd,
                                    sa_sd               = p_sa_sd,
-                                   center_ability_corr = p_center_ability_corr)
+                                   tc_sd               = p_tc_sd)
 
   
   # Estimate standard value added.
@@ -286,19 +303,18 @@ for(i in 1:nrow(model_xwalk)){
   
   # Put together the example teacher plot.
   teacher_example_just_truth <- ggplot(data = teacher_ex[teacher_id == 1]) +
-    geom_point(aes(x = stud_ability_1, y = teacher_impact, color = 'Truth'), size = 2, alpha = truth_alpha) +
-    ylab("Teacher's Impact") + 
+    geom_point(aes(x = stud_ability_1, y = teacher_impact, color = 'True Teacher Impact'), size = 2, alpha = truth_alpha) +
+    ylab("Teacher Impact") + 
     xlab("Student Ability") +
     ylim(ymin, ymax) +
     plot_attributes + 
     scale_color_manual(values = c(truth_color)) +
-    theme(legend.title = element_blank(),
-          legend.position = 'bottom')
+    theme(legend.position = "none")
   
   teacher_example_truth_standard <- ggplot(data = teacher_ex[teacher_id == 1]) +
-    geom_point(aes(x = stud_ability_1, y = teacher_impact, color = 'Truth'), size = 2, alpha = truth_alpha) +
+    geom_point(aes(x = stud_ability_1, y = teacher_impact, color = 'True Teacher Impact'), size = 2, alpha = truth_alpha) +
     geom_point(aes(x = stud_ability_1, y = standard, color = 'Standard'), size = 2, alpha = standard_alpha) +
-    ylab("Teacher's Impact") + 
+    ylab("Teacher Impact") + 
     xlab("Student Ability") +
     ylim(ymin, ymax) +
     plot_attributes + 
@@ -307,10 +323,10 @@ for(i in 1:nrow(model_xwalk)){
           legend.position = 'bottom')
 
   teacher_example_truth_bin <- ggplot(data = teacher_ex[teacher_id == 1]) +
-    geom_point(aes(x = stud_ability_1, y = teacher_impact, color = 'Truth'), size = 2, alpha = truth_alpha) +
+    geom_point(aes(x = stud_ability_1, y = teacher_impact, color = 'True Teacher Impact'), size = 2, alpha = truth_alpha) +
     geom_point(aes(x = stud_ability_1, y = standard, color = 'Standard'), size = 2, alpha = standard_alpha) +
     geom_point(aes(x = stud_ability_1, y = binned, color = 'Binned'), size = 2, alpha = binned_alpha) + 
-    ylab("Teacher's Impact") + 
+    ylab("Teacher Impact") + 
     xlab("Student Ability") +
     ylim(ymin, ymax) +
     plot_attributes + 
@@ -319,10 +335,10 @@ for(i in 1:nrow(model_xwalk)){
           legend.position = 'bottom')
 
   teacher_example_truth_np <- ggplot(data = teacher_ex[teacher_id == 1]) +
-    geom_point(aes(x = stud_ability_1, y = teacher_impact, color = 'Truth'), size = 2, alpha = truth_alpha) +
+    geom_point(aes(x = stud_ability_1, y = teacher_impact, color = 'True Teacher Impact'), size = 2, alpha = truth_alpha) +
     geom_point(aes(x = stud_ability_1, y = standard, color = 'Standard'), size = 2, alpha = standard_alpha) +
     geom_point(aes(x = stud_ability_1, y = np, color = 'NP'), size = 2, alpha = np_alpha) + 
-    ylab("Teacher's Impact") + 
+    ylab("Teacher Impact") + 
     xlab("Student Ability") +
     ylim(ymin, ymax) +
     plot_attributes + 
@@ -331,13 +347,13 @@ for(i in 1:nrow(model_xwalk)){
           legend.position = 'bottom')
 
   teacher_example <- ggplot(data = teacher_ex[teacher_id == 1]) +
-    geom_point(aes(x = stud_ability_1, y = teacher_impact, color = 'Truth'), size = 2, alpha = truth_alpha) +
+    geom_point(aes(x = stud_ability_1, y = teacher_impact, color = 'True Teacher Impact'), size = 2, alpha = truth_alpha) +
     geom_point(aes(x = stud_ability_1, y = standard, color = 'Standard'), size = 2, alpha = standard_alpha) +
     geom_point(aes(x = stud_ability_1, y = binned, color = 'Binned'), size = 2, alpha = binned_alpha) + 
     #geom_point(aes(x = stud_ability_1, y = quantile), size = 2, color = quantile_color, alpha = quantile_alpha) +
     geom_point(aes(x = stud_ability_1, y = np, color = 'NP'), size = 2, alpha = np_alpha) + 
     #geom_point(aes(x = stud_ability_1, y = np1, color = 'Weighted Av.'), size = 2, alpha = np1_alpha) + 
-    ylab("Teacher's Impact") + 
+    ylab("Teacher Impact") + 
     xlab("Student Ability") +
     ylim(ymin, ymax) +
     plot_attributes + 
@@ -368,7 +384,7 @@ for(i in 1:nrow(model_xwalk)){
     #geom_point(aes(x = stud_ability_1, y = av_quant_diff), size = 2, color = quantile_color, alpha = quantile_alpha) +
     geom_point(aes(x = stud_ability_1, y = av_np_diff, color = 'NP'), size = 2, alpha = np_alpha) + 
     geom_point(aes(x = stud_ability_1, y = av_np1_diff, color = 'Weighted Av.'), size = 2, alpha = np1_alpha) + 
-    ylab("Teacher's Impact") + 
+    ylab("Teacher Impact") + 
     xlab("Student Ability") +
     plot_attributes + 
     scale_color_manual(values = c(binned_color, np_color, standard_color, np1_color)) +
@@ -416,7 +432,7 @@ for(i in 1:nrow(model_xwalk)){
     #geom_point(aes(x = stud_ability_1, y = w_quant_diff), size = 2, color = quantile_color, alpha = quantile_alpha) +
     geom_point(aes(x = stud_ability_1, y = w_np_diff, color = 'NP'), size = 2, alpha = np_alpha) + 
     geom_point(aes(x = stud_ability_1, y = w_np1_diff, color = 'Weighted Av.'), size = 2, alpha = np1_alpha) + 
-    ylab("Teacher's Impact") + 
+    ylab("Teacher Impact") + 
     xlab("Student Ability") +
     plot_attributes + 
     scale_color_manual(values = c(binned_color, np_color, standard_color, np1_color)) +
@@ -546,6 +562,7 @@ for(i in 1:nrow(model_xwalk)){
                                    teacher_va_epsilon  = p_teacher_va_epsilon,
                                    impact_type         = p_impact_type,
                                    impact_function     = p_impact_function,
+                                   min_diff            = p_min_diff,
                                    max_diff            = p_max_diff,
                                    covariates          = p_covariates,
                                    peer_effects        = p_peer_effects,
@@ -553,7 +570,7 @@ for(i in 1:nrow(model_xwalk)){
                                    rho                 = p_rho,
                                    ta_sd               = p_ta_sd,
                                    sa_sd               = p_sa_sd,
-                                   center_ability_corr = p_center_ability_corr)
+                                   tc_sd               = p_tc_sd)
   
   # Generate a grid over which we can get the true welfare added.
   grid <- unlist(lapply(seq(-3, 3, length.out = p_npoints), rep,

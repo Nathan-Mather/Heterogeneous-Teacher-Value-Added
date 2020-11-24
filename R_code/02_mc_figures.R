@@ -77,9 +77,20 @@ res_dt <- fread(paste0(in_data, 'results.csv'))
 # Load the xwalk.
 model_xwalk <- fread(paste0(in_data, 'xwalk.csv'))
 
+# Figure out which figures already exist.
+figs <- list.files(path=out_plot)
+figs <- tail(figs[figs %like% 'truth_cat_run_'], n=1)
+
+if (length(figs) == 0) {
+  last_num <- 0
+} else {
+  last_num <- as.numeric(gsub('^.*([0-9]+).*$', '\\1', figs))
+}
 
 
-  
+
+
+
 # =========================================================================== #
 # ========================== Normalize everything =========================== #
 # =========================================================================== #
@@ -87,6 +98,7 @@ model_xwalk <- fread(paste0(in_data, 'xwalk.csv'))
 # Renormalize truth and standard so they have the same mean and variance.
 res_dt[, mean_standard_norm := (mean_standard - mean(mean_standard))/sd(mean_standard), by = run_id]
 res_dt[, true_welfare_norm := (true_welfare - mean(true_welfare))/sd(true_welfare), by = run_id]
+res_dt[, true_standard_norm := (true_standard - mean(true_standard))/sd(true_standard), by = run_id]
 
 # Renormalize the standard deviations.
 res_dt[, sd_standard_norm := sd_standard/sd(mean_standard), by = run_id]
@@ -177,10 +189,15 @@ res_dt[, quantile_MAE := abs(quantile_rank - true_ww_rank)]
 
 # Loop over rows in the xwalk.
 for (i in 1:nrow(model_xwalk)) {
-  
+
   # Grab run_id. 
   run_id_i <- model_xwalk[i, run_id]
+  single_run_i <- model_xwalk[i, single_run]
   
+  if ((as.numeric(run_id_i) <= last_num) | (as.numeric(single_run_i) == 1)) {
+    next
+  }
+
   # subset data to this mc run 
   res_sub <- res_dt[run_id == run_id_i]
   
@@ -200,10 +217,10 @@ for (i in 1:nrow(model_xwalk)) {
   
   # Just the truth.
   truth_cat_plot <- ggplot(res_sub, aes(x = true_ww_rank, y = true_welfare_norm)) +
-    geom_point(size = 1.5, aes(color = "Truth"), alpha = 1) + 
+    geom_point(size = 1.5, aes(color = "Welfare-Weighted VA"), alpha = 1) + 
     scale_color_manual(values= c("#77AADD")) +
-    ylab("Impact") + 
-    xlab("True Teacher Order") +
+    ylab("Teacher Impact") + 
+    xlab("Teacher Impact Rank Order (Low to High)") +
     ylim(-6,6)+
     plot_attributes + 
     theme(legend.title = element_blank(),
@@ -211,24 +228,45 @@ for (i in 1:nrow(model_xwalk)) {
   
   # Standard caterpillar plot.
   standard_cat_plot <- ggplot(res_sub, aes(x = true_ww_rank, y = mean_standard_norm)) +
-    geom_point(size = 1.5, aes(color = "Standard VA"), alpha = 1) + 
-    geom_point(aes( y = true_welfare_norm,  color = "Truth"),size = 1, alpha = .4) +
+    geom_point(size = 1.5, aes(color = "Standard VA Estimate"), alpha = 1) + 
+    geom_point(aes( y = true_welfare_norm,  color = "Welfare-Weighted VA"),size = 1, alpha = .4) +
     scale_color_manual(values= c("#ffaabb", "#77AADD")) +
     geom_errorbar(aes(ymin=standard_lc, ymax=standard_uc), width= 1, color = "#ffaabb") +
-    ylab("Impact") + 
-    xlab("True Teacher Order") +
+    ylab("Teacher Impact") + 
+    xlab("Teacher Impact Rank Order (Low to High)") +
     ylim(-6,6)+
     plot_attributes + 
     theme(legend.title = element_blank(),
           legend.position = c(0.8, 0.8))
   
   # Standard teacher center.
-  standard_center_plot <- ggplot(res_sub, aes(x = teacher_center, y = mean_standard_norm)) +
-    geom_point(size = 1.5, aes(color = "Standard VA"), alpha = 1) +
-    geom_point(aes( y = true_welfare_norm, color = "Truth"),size = 1, alpha = .4) +
+  standard_est_center_plot <- ggplot(res_sub, aes(x = teacher_center, y = mean_standard_norm)) +
+    geom_point(size = 1.5, aes(color = "Standard VA Estimate"), alpha = 1) +
+    geom_point(aes( y = true_welfare_norm, color = "Welfare-Weighted VA"),size = 1, alpha = .4) +
     scale_color_manual(values= c("#ffaabb", "#77AADD")) +
-    ylab("Impact") +
-    xlab("True Center") +
+    ylab("Teacher Impact") +
+    xlab("Optimal Student Ability Match") +
+    ylim(-6,6)+
+    plot_attributes +
+    theme(legend.title = element_blank(),
+          legend.position = c(0.8, 0.8))
+  
+  standard_center_plot <- ggplot(res_sub, aes(x = teacher_center, y = true_standard_norm)) +
+    geom_point(size = 1.5, aes(color = "Standard VA"), alpha = 1) +
+    geom_point(aes( y = true_welfare_norm, color = "Welfare-Weighted VA"),size = 1, alpha = .4) +
+    scale_color_manual(values= c("#ffaabb", "#77AADD")) +
+    ylab("Teacher Impact") +
+    xlab("Optimal Student Ability Match") +
+    ylim(-6,6)+
+    plot_attributes +
+    theme(legend.title = element_blank(),
+          legend.position = c(0.8, 0.8))
+  
+  standard_center_plot1 <- ggplot(res_sub, aes(x = teacher_center, y = true_standard_norm)) +
+    geom_point(size = 1.5, aes(color = "Standard VA"), alpha = 1) +
+    scale_color_manual(values= c("#ffaabb", "#77AADD")) +
+    ylab("Teacher Impact") +
+    xlab("Optimal Student Ability Match") +
     ylim(-6,6)+
     plot_attributes +
     theme(legend.title = element_blank(),
@@ -245,12 +283,22 @@ for (i in 1:nrow(model_xwalk)) {
          width    = 9, 
          height   = 4)
   
+  ggsave(filename = paste0(out_plot, "standard_est_cent_run_",  run_id_i, ".png"), 
+         plot     = standard_est_center_plot, 
+         width    = 9, 
+         height   = 4)
+  
   ggsave(filename = paste0(out_plot, "standard_cent_run_",  run_id_i, ".png"), 
          plot     = standard_center_plot, 
          width    = 9, 
          height   = 4)
   
-  
+  ggsave(filename = paste0(out_plot, "standard_cent_run_just_stand_",  run_id_i, ".png"),
+         plot     = standard_center_plot1, 
+         width    = 9, 
+         height   = 4)
+
+
   # ========================================================================= #
   # ============================ Loop over methods ========================== #
   # ========================================================================= #
@@ -279,12 +327,12 @@ for (i in 1:nrow(model_xwalk)) {
     
     # Alternative teacher center.
     welfare_center_plot <- ggplot(res_sub, aes(x = teacher_center, y = mean_ww_norm)) +
-      geom_point(size = 1.5, aes(color = "Welfare VA"), alpha = 1) +
-      geom_point(aes( y = true_welfare_norm, color = "Truth"),size = 1, alpha = .4) +
-      scale_color_manual(values= c("#77AADD", "#ffaabb"),
+      geom_point(size = 1.5, aes(color = "Alternative VA Estimate"), alpha = 1) +
+      geom_point(aes( y = true_welfare_norm, color = "Welfare-Weighted VA"),size = 1, alpha = .4) +
+      scale_color_manual(values= c("#ffaabb", "#77AADD"),
       guide=guide_legend(reverse=TRUE)) +
-      ylab("Impact") +
-      xlab("True Center") +
+      ylab("Teacher Impact") +
+      xlab("Optimal Student Ability Match") +
       ylim(-6,6)+
       plot_attributes +
       theme(legend.title = element_blank(),
@@ -304,13 +352,13 @@ for (i in 1:nrow(model_xwalk)) {
     
     # Alternative caterpillar plot.
     ww_cat_plot <- ggplot(res_sub, aes(x = true_ww_rank, y = mean_ww_norm)) +
-      geom_point(aes(color = "Weighted VA"), size = 2,  alpha = 1) + 
-      geom_point(aes( y = true_welfare_norm,  color = "Truth"),size = 1, alpha = .4) +
-      scale_color_manual(values= c("#77AADD", "#ffaabb"),
+      geom_point(aes(color = "Alternative VA Estimate"), size = 2,  alpha = 1) + 
+      geom_point(aes( y = true_welfare_norm,  color = "Welfare-Weighted VA"),size = 1, alpha = .4) +
+      scale_color_manual(values= c("#ffaabb", "#77AADD"),
                          guide=guide_legend(reverse=TRUE)) +
       geom_errorbar(aes(ymin=ww_lc, ymax=ww_uc), width= 1, color = "#ffaabb") +
-      ylab("Impact") + 
-      xlab("True Teacher Order") +
+      ylab("Teacher Impact") + 
+      xlab("Teacher Impact Rank Order (Low to High)") +
       ylim(-6,6)+
       plot_attributes +
       theme(legend.title = element_blank(),
@@ -329,19 +377,20 @@ for (i in 1:nrow(model_xwalk)) {
     
     # Start a data.table of results.
     sum_stats <- list()
-    sum_stats[[1]] <- data.table(Statistic = "Mean Squared Distance", 
-                                 Standard = round(mean(res_sub$standard_MSE), digits=2),
-                                 Weighted = round(mean(res_sub$ww_MSE), digits=2))
+    # sum_stats[[1]] <- data.table(Statistic = "Mean Squared Distance", 
+    #                              Standard = round(mean(res_sub$standard_MSE), digits=2),
+    #                              Weighted = round(mean(res_sub$ww_MSE), digits=2))
     
-    sum_stats[[2]] <- data.table(Statistic = "Mean Absolute Distance", 
+    sum_stats[[1]] <- data.table(Statistic = "Correlation to Welfare-Weighted VA Rank", 
+                                 Standard =  round(cor(res_sub$standard_rank, res_sub$true_ww_rank, method="kendall" , use="pairwise"), digits=2),
+                                 Weighted = round(cor(res_sub$ww_rank, res_sub$true_ww_rank, method="kendall" , use="pairwise"), digits=2))
+    
+    sum_stats[[2]] <- data.table(Statistic = "Mean Absolute Rank Inversion", 
                                  Standard =  round(mean(res_sub$standard_MAE), digits=2),
                                  Weighted =  round(mean(res_sub$ww_MAE), digits=2))
     
     
-    sum_stats[[3]] <- data.table(Statistic = "Correlation to Truth", 
-                                 Standard =  round(cor(res_sub$standard_rank, res_sub$true_ww_rank, method  = "kendall" , use="pairwise"), digits=2),
-                                 Weighted = round(cor(res_sub$ww_rank, res_sub$true_ww_rank, method  = "kendall" , use="pairwise"), digits=2))
-  
+
     out_sum_stats <- rbindlist(sum_stats)
     
     # Put sum stats in a grob.
@@ -352,10 +401,10 @@ for (i in 1:nrow(model_xwalk)) {
     
     # Make the histogram.
     out_histogram <- ggplot(res_sub) + 
-      geom_histogram( aes(standard_MAE, fill = "Standard"), alpha = .4, colour="black", binwidth = b_width) +
-      geom_histogram( aes(ww_MAE, fill = "Weighted"), alpha = .4, colour="black", binwidth = b_width) +
+      geom_histogram( aes(standard_MAE, fill = "Standard VA Estimate"), alpha = .4, colour="black", binwidth = b_width) +
+      geom_histogram( aes(ww_MAE, fill = "Alternative VA Estimate"), alpha = .4, colour="black", binwidth = b_width) +
       ylab("Number of Teachers") +
-      xlab("Difference in Rank From Truth")+
+      xlab("Difference in Rank From Welfare-Weighted VA")+
       scale_fill_manual(values= c("#77AADD", "#EE8866")) +
       plot_attributes + 
       theme(legend.title = element_blank(),

@@ -45,13 +45,15 @@
                                teacher_va_epsilon = NULL,
                                impact_type        = NULL,
                                impact_function    = NULL,
+                               min_diff           = NULL,
                                max_diff           = NULL,
                                covariates         = NULL,
                                peer_effects       = NULL,
                                stud_sorting       = NULL,
                                rho                = NULL,
                                ta_sd              = NULL,
-                               sa_sd              = NULL) {
+                               sa_sd              = NULL,
+                               tc_sd              = NULL) {
     
     # Run the standard VA.
     if (covariates == 0) {
@@ -121,13 +123,15 @@
                              teacher_va_epsilon = NULL,
                              impact_type        = NULL,
                              impact_function    = NULL,
+                             min_diff           = NULL,
                              max_diff           = NULL,
                              covariates         = NULL,
                              peer_effects       = NULL,
                              stud_sorting       = NULL,
                              rho                = NULL,
                              ta_sd              = NULL,
-                             sa_sd              = NULL) {
+                             sa_sd              = NULL,
+                             tc_sd              = NULL) {
     
     # Allow the bootstrap to pick the sample if needed.
     if (!is.null(boot)) {
@@ -214,13 +218,15 @@
                                teacher_va_epsilon = NULL,
                                impact_type        = NULL,
                                impact_function    = NULL,
+                               min_diff           = NULL,
                                max_diff           = NULL,
                                covariates         = NULL,
                                peer_effects       = NULL,
                                stud_sorting       = NULL,
                                rho                = NULL,
                                ta_sd              = NULL,
-                               sa_sd              = NULL) {
+                               sa_sd              = NULL,
+                               tc_sd              = NULL) {
       
     # Allow the bootstrap to pick the sample if needed.
     if (!is.null(boot)) {
@@ -307,6 +313,7 @@
                               teacher_va_epsilon = NULL,
                               impact_type        = NULL,
                               impact_function    = NULL,
+                              min_diff           = NULL,
                               max_diff           = NULL,
                               covariates         = NULL,
                               peer_effects       = NULL,
@@ -314,6 +321,7 @@
                               rho                = NULL,
                               ta_sd              = NULL,
                               sa_sd              = NULL,
+                              tc_sd              = NULL,
                               weighted_average   = NULL) {
     
     # Allow the bootstrap to pick the sample if needed.
@@ -428,6 +436,7 @@
                                    teacher_va_epsilon  = NULL,
                                    impact_type         = NULL,
                                    impact_function     = NULL,
+                                   min_diff            = NULL,
                                    max_diff            = NULL,
                                    covariates          = NULL,
                                    peer_effects        = NULL,
@@ -435,7 +444,7 @@
                                    rho                 = NULL,
                                    ta_sd               = NULL,
                                    sa_sd               = NULL,
-                                   center_ability_corr = NULL,
+                                   tc_sd               = NULL,
                                    weighted_average    = NULL) {
     
     # I need this for it to work on windows clusters since libraries are not
@@ -449,6 +458,7 @@
                                 teacher_va_epsilon  = teacher_va_epsilon,
                                 impact_type         = impact_type,
                                 impact_function     = impact_function,
+                                min_diff            = min_diff,
                                 max_diff            = max_diff,
                                 teacher_dt          = in_dt[, c("teacher_id",
                                                                 "teacher_ability",
@@ -460,7 +470,7 @@
                                 rho                 = rho,
                                 ta_sd               = ta_sd,
                                 sa_sd               = sa_sd,
-                                center_ability_corr = center_ability_corr)
+                                tc_sd               = tc_sd)
 
     
     # Run the standard VA.
@@ -481,13 +491,15 @@
                                 teacher_va_epsilon = teacher_va_epsilon,
                                 impact_type        = impact_type,
                                 impact_function    = impact_function,
+                                min_diff           = min_diff,
                                 max_diff           = max_diff,
                                 covariates         = covariates,
                                 peer_effects       = peer_effects,
                                 stud_sorting       = stud_sorting,
                                 rho                = rho,
                                 ta_sd              = ta_sd,
-                                sa_sd              = sa_sd)
+                                sa_sd              = sa_sd,
+                                tc_sd              = tc_sd)
 
     
     # Check method option.
@@ -511,13 +523,15 @@
                                teacher_va_epsilon = teacher_va_epsilon,
                                impact_type        = impact_type,
                                impact_function    = impact_function,
+                               min_diff           = min_diff,
                                max_diff           = max_diff,
                                covariates         = covariates,
                                peer_effects       = peer_effects,
                                stud_sorting       = stud_sorting,
                                rho                = rho,
                                ta_sd              = ta_sd,
-                               sa_sd              = sa_sd)
+                               sa_sd              = sa_sd,
+                               tc_sd              = tc_sd)
       
       # Merge on the standard VA.
       va_tab1 <- merge(va_tab1,
@@ -564,6 +578,7 @@
                               teacher_va_epsilon = teacher_va_epsilon,
                               impact_type        = impact_type,
                               impact_function    = impact_function,
+                              min_diff           = min_diff,
                               max_diff           = max_diff,
                               covariates         = covariates,
                               peer_effects       = peer_effects,
@@ -571,6 +586,7 @@
                               rho                = rho,
                               ta_sd              = ta_sd,
                               sa_sd              = sa_sd,
+                              tc_sd              = tc_sd,
                               weighted_average   = weighted_average)
     
     # Merge on the standard VA.
@@ -602,13 +618,15 @@
                                teacher_va_epsilon = teacher_va_epsilon,
                                impact_type        = impact_type,
                                impact_function    = impact_function,
+                               min_diff           = min_diff,
                                max_diff           = max_diff,
                                covariates         = covariates,
                                peer_effects       = peer_effects,
                                stud_sorting       = stud_sorting,
                                rho                = rho,
                                ta_sd              = ta_sd,
-                               sa_sd              = sa_sd)
+                               sa_sd              = sa_sd,
+                               tc_sd              = tc_sd)
     
     # Merge on the standard VA.
     va_tab1 <- merge(va_tab1,
