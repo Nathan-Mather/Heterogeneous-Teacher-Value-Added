@@ -31,6 +31,8 @@
   #'Monotone, Non-linear, Not Rank Similar).
   #'@param impact_function Which function from the specified type we want for
   #'the true teacher impact.
+  #'@param min_diff This sets the minimum teacher impact difference between the
+  #'best and worst matched students for that teacher.
   #'@param max_diff This sets the maximum teacher impact difference between the
   #'best and worst matched students for that teacher.
   #'@param teacher_dt This is null if no data table of teachers is supplied, but
@@ -49,8 +51,9 @@
   #'@param peer_effects 1 to include peer effects, 0 otherwise.
   #'@param stud_sorting 1 to include student sorting, 0 otherwise.
   #'@param rho Correlation between teacher and student ability.
-  #'@param sa_sd Standard deviation of student ability.
   #'@param ta_sd Standard deviation of teacher ability.
+  #'@param sa_sd Standard deviation of student ability.
+  #'@param tc_sd Standard deviation of teacher center.
   #'@details 
   #'@examples 
 
@@ -65,6 +68,7 @@
   # teacher_va_epsilon       = 0.1
   # impact_type              = "MLRN"
   # impact_function          = 1
+  # min_diff                 = 0
   # max_diff                 = 0.1
   # teacher_dt               = NULL
   # teacher_id               = "teacher_id"
@@ -77,6 +81,7 @@
   # rho                      = 0.2
   # ta_sd                    = 0.1
   # sa_sd                    = 1
+  # tc_sd                    = 1
 
 
   # ========================================================================= #
@@ -90,6 +95,7 @@
                                  teacher_va_epsilon       = 0.1,
                                  impact_type              = "MLRN",
                                  impact_function          = 1,
+                                 min_diff                 = 0,
                                  max_diff                 = 0.1,
                                  teacher_dt               = NULL,
                                  teacher_id               = "teacher_id",
@@ -102,7 +108,7 @@
                                  rho                      = 0.2,
                                  ta_sd                    = 0.1,
                                  sa_sd                    = 1,
-                                 center_ability_corr      = 0) {
+                                 tc_sd                    = 1) {
     
     # Generate the teacher information if not provided.
     if (is.null(teacher_dt)) {
@@ -123,12 +129,12 @@
                                      max(-2,
                                          rnorm(1,
                                                mean = 0,
-                                               sd = 1))),
+                                               sd = tc_sd))),
                teacher_id]
 
       # Assign teachers a "max" which is the difference in impact between their
       #  best and worst matched students.
-      r_dt[, teacher_max := max_diff]
+      r_dt[, teacher_max := runif(1, min=min_diff, max=max_diff), teacher_id]
       
     } else {
       # Create the data table.
@@ -148,7 +154,7 @@
       # add students 
       r_dt[, stud_id := .I]
     }
-    
+    if (ta_sd == 0) {ta_sd = 0.1}
     
     # Ensure that we have a correct 1 or 0 for student sorting and a value for
     #  rho.
