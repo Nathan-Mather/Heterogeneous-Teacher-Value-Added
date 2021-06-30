@@ -19,6 +19,8 @@
 # need to figure out how to correlate teacher ability within simulate_teacher_ability
 # will need to add a teacher center to simulate_teacher_ability
 
+# dependency for this 
+
 
 # ========================================================================= #
 # ========================= Roxygen documentation ========================= #
@@ -33,6 +35,13 @@
 # load in needed inputs 
 teacher_student_xwalk <- fread("C:/Users/Nmath_000/Documents/Research/Value added local/simulation_inputs/teacher_student_xwalk_fake.csv")
 
+# load packages and functions for test runs 
+base_path <- "c:/Users/Nmath_000/Documents/Research/"
+func_path <- "Heterogeneous-Teacher-Value-Added/R_code/functions/"
+source(paste0(base_path, func_path, "teacher_impact.R"))
+library(data.table)
+
+
 # create a simple version for visualizing steps 
 teacher_student_xwalk <- teacher_student_xwalk[ school_id <= 2]
 teacher_student_xwalk <- teacher_student_xwalk[, n_studs := 2]
@@ -40,8 +49,13 @@ teacher_student_xwalk <- teacher_student_xwalk[, n_studs := 2]
 
 n_cohorts                  = 3
 pretest_coef            = .9
-
-
+tc_sd                    = 1
+min_diff                 = 0
+max_diff                 = 0.1
+impact_type              = "MLRN"
+impact_function          = 1
+# from wooldridge 
+sa_sd                    = 1
 
 # teacher_student_xwalk    = teacher_student_xwalk
 # test_SEM                 = 0.07
@@ -58,13 +72,13 @@ pretest_coef            = .9
 # peer_effects             = 0
 # stud_sorting             = 0
 # rho                      = 0.2
-# ta_sd                    = 0.1
-# sa_sd                    = 1
+
 
 
 
 # debug parms for simulate_teacher_ability
-sd_teacher_effect       = .6
+# from wooldridge .6 
+ta_sd                   = .6
 school_cor              = 0
 
 
@@ -75,11 +89,27 @@ school_cor              = 0
 
 # function to add teacher ability 
 simulate_teacher_ability <- function(teacher_student_xwalk   = NULL,
-                                     sd_teacher_effect       = .6,
-                                     school_cor              = 0){
+                                     ta_sd                   = .6,
+                                     school_cor              = 0,
+                                     tc_sd                   = 1,
+                                     min_diff                = 0,
+                                     max_diff                = 0.1){
   
   # need to figure out how to add in school correlation 
-  teacher_student_xwalk[, teacher_ability := rnorm(.N, mean = 0, sd = sd_teacher_effect)]
+  teacher_student_xwalk[, teacher_ability := rnorm(.N, mean = 0, sd = ta_sd)]
+  
+  
+  # Assign teachers a "center" for which students they best match.
+  teacher_student_xwalk[, teacher_center := min(2,
+                               max(-2,
+                                   rnorm(1,
+                                         mean = 0,
+                                         sd = tc_sd))),
+       teacher_id]
+  
+  # Assign teachers a "max" which is the difference in impact between their
+  #  best and worst matched students.
+  teacher_student_xwalk[, teacher_max := runif(1, min=min_diff, max=max_diff), teacher_id]
   
   # return 
   return(teacher_student_xwalk[])
@@ -96,28 +126,17 @@ teacher_student_xwalk <- simulate_teacher_ability(teacher_student_xwalk)
 simulate_sdusd_data <- function(teacher_student_xwalk   = NULL,
                                 n_cohorts               = 3,
                                 pretest_coef            = .9,
+                                sa_sd                    = 1,
                                # test_SEM                 = 0.07,
-                               # teacher_va_epsilon       = 0.1,
-                               # impact_type              = "MLRN",
-                               # impact_function          = 1,
-                               # max_diff                 = 0.1,
+                               impact_type              = "MLRN",
+                               impact_function          = 1
                                # covariates               = 0,
                                # peer_effects             = 0,
                                # stud_sorting             = 0,
                                # rho                      = 0.2,
-                               # ta_sd                    = 0.1,
-                               # sa_sd                    = 1,
-                               # center_ability_corr      = 0,
-                               # teacher_dt               = NULL,
-                               # teacher_id               = "teacher_id",
-                               # teacher_ability          = "teacher_ability",
-                               # teacher_center           = "teacher_center",
-                               # teacher_max              = "teacher_max",
+                               # center_ability_corr      = 0
                                ) {
   
-  # Generate the teacher information if not provided.
-  if (is.null(teacher_dt)) {
-    
  
     # create a list for all cohort years of data to combine at the end 
     # note, should predetermine length of this list 
@@ -130,7 +149,7 @@ simulate_sdusd_data <- function(teacher_student_xwalk   = NULL,
     n_gades <- teacher_student_xwalk[, length(unique(grade))]
     
     # get teacher school xwalk 
-    teacher_school_xwalk <- teacher_student_xwalk[, c("school_id", "teacher_id", "teacher_ability")]
+    teacher_school_xwalk <- teacher_student_xwalk[, c("school_id", "teacher_id", "teacher_ability",  "teacher_center", "teacher_max")]
     
     # get school count xwalk 
     school_xwalk <- teacher_student_xwalk[grade == min_gade, .(n_studs_school = sum(n_studs)), school_id ]
@@ -153,30 +172,40 @@ simulate_sdusd_data <- function(teacher_student_xwalk   = NULL,
       r_dt[, school_id := sample(school_list, replace = FALSE)]
       r_dt[, teacher_id := NA]
       r_dt[, teacher_ability := NA]
+      r_dt[, teacher_center := NA]
+      r_dt[, teacher_max := NA]
+      r_dt[, teacher_impact := NA]
+      r_dt[, test_1 := NA]
       
       # give students their pretests 
       #note, will need to add possiblity of correlated effects here 
       #note will need to add measurment error here. 
-      r_dt[, test := rnorm(.N, mean = 0, sd = 1)]
+      r_dt[, test_2 := rnorm(.N, mean = 0, sd = sa_sd)]
       
-      # give students their time invariant effect like in wooldridt 
+      # give students their time invariant effect like in wooldridge
       r_dt[, stud_fe := rnorm(.N, mean = 0, sd = .6)]
+      
+      # good place to give them invariant covariates as well
       
       # save this cohort year 
       index <- (k-1)*(n_gades + 1) + 1
       r_dt_list[[index]] <- copy(r_dt)
       
-      # now create each year's teacher assignments 
+      # now create all the years with teacher assignments 
       for(i in 1:n_gades){
         
-        # Now remove teachers, teacher ability, add a year and grade 
+        # Now remove teachers, teacher ability, pre test, add a year and grade 
         r_dt[, teacher_id := NULL]
         r_dt[, teacher_ability := NULL]
+        r_dt[, teacher_center := NULL]
+        r_dt[, teacher_max := NULL]
+        r_dt[, teacher_impact := NULL]
+        r_dt[, test_1 := NULL]
         r_dt[, grade := grade + 1]
         r_dt[, year := year + 1]
 
-        # rename test 
-        setnames(r_dt, "test", "test_old")
+        # rename post_Test to pre-test 
+        setnames(r_dt, "test_2", "test_1")
         
         # get a list of teachers 
         teacher_list <- teacher_student_xwalk[grade == min_gade+i-1, .(teacher_id = rep(teacher_id, n_studs)), school_id]
@@ -201,12 +230,21 @@ simulate_sdusd_data <- function(teacher_student_xwalk   = NULL,
         # merge on teacher ability 
         r_dt <- merge(r_dt, teacher_school_xwalk, c("school_id", "teacher_id"))
         
+        # Get true teacher impact on students without noise.
+        r_dt[, teacher_impact :=
+               teacher_impact(teacher_ability  = r_dt$teacher_ability,
+                              teacher_center   = r_dt$teacher_center,
+                              teacher_max      = r_dt$teacher_max,
+                              stud_ability_1   = r_dt$test_1,
+                              type             = impact_type,
+                              func_num         = impact_function)]
+        
+        #note add covariates and peer effects here as well 
+        
         # make new test via wooldridge with no measurment error
-        r_dt[, test := pretest_coef*test_old + teacher_ability + stud_fe + rnorm(.N, mean = 0, sd = 1)]
+        r_dt[, test_2 := pretest_coef*test_1 + teacher_impact + stud_fe + rnorm(.N, mean = 0, sd = 1)]
         
-        # drop old test 
-        r_dt[, test_old := NULL]
-        
+  
         # save this year cohort 
         r_dt_list[[index + i]] <- copy(r_dt)
         
@@ -218,7 +256,6 @@ simulate_sdusd_data <- function(teacher_student_xwalk   = NULL,
     # now bind together whole list of student teacher assignments 
     r_dt <- rbindlist(r_dt_list, use.names = TRUE)
     
-  } # close data generation 
     
 
   # Return the simulated data.

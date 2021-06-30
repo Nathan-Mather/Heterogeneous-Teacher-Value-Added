@@ -16,6 +16,14 @@ functions used in main analysis
 
 
 
+#####################
+# SDUSD simulatioms #
+#####################
+
+Updates to simulations to match SDUSD data 
+
+
+
 #############
 # main code #
 #############

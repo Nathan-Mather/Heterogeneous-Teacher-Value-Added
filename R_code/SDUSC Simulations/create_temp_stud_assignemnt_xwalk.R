@@ -7,7 +7,7 @@ library(data.table)
 base_path <- "C:/Users/Nmath_000/Documents/Research/Value added local/simulation_inputs/"
 
 # make a fake class/school size xwalk 
-school_id <- c(school_id = 1:25)
+school_id <- c(school_id = 1:240)
 
 teacher_id <- c(school_id = 1:9)
 
@@ -23,7 +23,7 @@ teacher_student_xwalk[teacher_id > 6, grade := 5]
 
 
 # asign studs 
-teacher_student_xwalk[, n_studs := 30]
+teacher_student_xwalk[, n_studs := 25]
 
 
 # create a unique teacher id 
