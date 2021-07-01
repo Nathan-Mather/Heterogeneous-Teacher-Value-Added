@@ -231,40 +231,13 @@ for(i in 1:nrow(model_xwalk)){
 
     # Run the standard VA.
     va_tab1 <- standard_va_stat(in_dt               = r_dt,
-                                single_run          = single_run,
-                                weight_type         = p_weight_type, # Weighting parameters
-                                method              = p_method,
-                                lin_alpha           = p_lin_alpha,
-                                pctile              = p_pctile,
-                                weight_above        = p_weight_above,
-                                weight_below        = p_weight_below,
-                                v_alpha             = p_v_alpha,
-                                mrpctile            = p_mrpctile,
-                                mrdist              = p_mrdist,
-                                npoints             = p_npoints,
-                                n_teacher           = p_n_teacher, # Simulated data parameters
-                                n_stud_per_teacher  = p_n_stud_per_teacher,
-                                test_SEM            = p_test_SEM,
-                                teacher_va_epsilon  = p_teacher_va_epsilon,
-                                impact_type         = p_impact_type,
-                                impact_function     = p_impact_function,
-                                min_diff            = p_min_diff,
-                                max_diff            = p_max_diff,
-                                covariates          = p_covariates,
-                                peer_effects        = p_peer_effects,
-                                stud_sorting        = p_stud_sorting,
-                                rho                 = p_rho,
-                                ta_sd               = p_ta_sd,
-                                sa_sd               = p_sa_sd,
-                                tc_sd               = p_tc_sd)
+                                single_run          = single_run)
 
     # Run the alternative VA and bootstrap standard errors.
     if (p_method %like% 'bin') {
 
       # Run the bootstrap.
       binned <- binned_va_stat(in_dt               = r_dt,
-                               weight_type         = p_weight_type, # Weighting parameters
-                               method              = p_method,
                                lin_alpha           = p_lin_alpha,
                                pctile              = p_pctile,
                                weight_above        = p_weight_above,
@@ -273,21 +246,7 @@ for(i in 1:nrow(model_xwalk)){
                                mrpctile            = p_mrpctile,
                                mrdist              = p_mrdist,
                                npoints             = p_npoints,
-                               n_teacher           = p_n_teacher, # Simulated data parameters
-                               n_stud_per_teacher  = p_n_stud_per_teacher,
-                               test_SEM            = p_test_SEM,
-                               teacher_va_epsilon  = p_teacher_va_epsilon,
-                               impact_type         = p_impact_type,
-                               impact_function     = p_impact_function,
-                               min_diff            = p_min_diff,
-                               max_diff            = p_max_diff,
-                               covariates          = p_covariates,
-                               peer_effects        = p_peer_effects,
-                               stud_sorting        = p_stud_sorting,
-                               rho                 = p_rho,
-                               ta_sd               = p_ta_sd,
-                               sa_sd               = p_sa_sd,
-                               tc_sd               = p_tc_sd)
+                               covariates          = p_covariates)
 
     } 
     
@@ -296,7 +255,6 @@ for(i in 1:nrow(model_xwalk)){
       # Run the bootstrap.
       quantile <- quantile_va_stat(in_dt               = r_dt,
                                    weight_type         = p_weight_type, # Weighting parameters
-                                   method              = p_method,
                                    lin_alpha           = p_lin_alpha,
                                    pctile              = p_pctile,
                                    weight_above        = p_weight_above,
@@ -305,21 +263,7 @@ for(i in 1:nrow(model_xwalk)){
                                    mrpctile            = p_mrpctile,
                                    mrdist              = p_mrdist,
                                    npoints             = p_npoints,
-                                   n_teacher           = p_n_teacher, # Simulated data parameters
-                                   n_stud_per_teacher  = p_n_stud_per_teacher,
-                                   test_SEM            = p_test_SEM,
-                                   teacher_va_epsilon  = p_teacher_va_epsilon,
-                                   impact_type         = p_impact_type,
-                                   impact_function     = p_impact_function,
-                                   min_diff            = p_min_diff,
-                                   max_diff            = p_max_diff,
-                                   covariates          = p_covariates,
-                                   peer_effects        = p_peer_effects,
-                                   stud_sorting        = p_stud_sorting,
-                                   rho                 = p_rho,
-                                   ta_sd               = p_ta_sd,
-                                   sa_sd               = p_sa_sd,
-                                   tc_sd               = p_tc_sd)
+                                   covariates          = p_covariates)
 
     } 
     
@@ -328,7 +272,6 @@ for(i in 1:nrow(model_xwalk)){
       # Run the bootstrap.
       np <- np_hack_va_stat(in_dt               = r_dt,
                             weight_type         = p_weight_type, # Weighting parameters
-                            method              = p_method,
                             lin_alpha           = p_lin_alpha,
                             pctile              = p_pctile,
                             weight_above        = p_weight_above,
@@ -337,21 +280,7 @@ for(i in 1:nrow(model_xwalk)){
                             mrpctile            = p_mrpctile,
                             mrdist              = p_mrdist,
                             npoints             = p_npoints,
-                            n_teacher           = p_n_teacher, # Simulated data parameters
-                            n_stud_per_teacher  = p_n_stud_per_teacher,
-                            test_SEM            = p_test_SEM,
-                            teacher_va_epsilon  = p_teacher_va_epsilon,
-                            impact_type         = p_impact_type,
-                            impact_function     = p_impact_function,
-                            min_diff            = p_min_diff,
-                            max_diff            = p_max_diff,
                             covariates          = p_covariates,
-                            peer_effects        = p_peer_effects,
-                            stud_sorting        = p_stud_sorting,
-                            rho                 = p_rho,
-                            ta_sd               = p_ta_sd,
-                            sa_sd               = p_sa_sd,
-                            tc_sd               = p_tc_sd,
                             weighted_average    = p_weighted_average)
     }
     
