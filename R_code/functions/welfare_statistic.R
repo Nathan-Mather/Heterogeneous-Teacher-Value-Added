@@ -212,7 +212,7 @@
       } else if (type == 'bin') {
         
         # Get the numeric range for each category.
-        output <- as.data.table(output)
+        output <- copy(as.data.table(output))
         output[, range_low := as.numeric(sub('\\(', '', sapply(strsplit(category, ','), '[', 1)))]
         output[, range_high := as.numeric(sub('\\]', '', sapply(strsplit(category, ','), '[', 2)))]
 
