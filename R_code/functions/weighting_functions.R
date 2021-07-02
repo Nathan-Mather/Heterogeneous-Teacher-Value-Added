@@ -273,12 +273,13 @@
                              quant_val_l  = NULL,
                              quant_val_h  = NULL,
                              pctile       = NULL,
+                             pctile_val   = NULL,
                              weight_below = 1.0001,
                              weight_above = 0.0001,
-                             pctile_val   = NULL,
                              v_alpha      = NULL,
                              median_val   = NULL,
                              mrpctile     = NULL, 
+                             mrpctile_val   = NULL,
                              mrdist       = NULL,
                              min_score    = NULL,
                              max_score    = NULL) {
@@ -315,7 +316,7 @@
       mr_weight_fun(pctile     = mrpctile,
                     dist       = mrdist,
                     in_test_1  = in_test_1,
-                    pctile_val = pctile_val,
+                    pctile_val = mrpctile_val,
                     min_score  = min_score,
                     max_score  = max_score)
       

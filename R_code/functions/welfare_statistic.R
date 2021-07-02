@@ -91,57 +91,84 @@
                                 impact_function = NULL){
     
     
-    # =============================================================== #
-    # ======================= Get weighted grid ==================== #
-    # ============================================================= #
+    #======================#
+    # ==== Get weights ====
+    #======================#
+    # if we want the true stat we need to use laten parms and nothing from inputed test data 
+    if (type == 'true') {
+      
+      # print out a message about the assumptions here 
+      print("The Assumption here is the true student poplation is nomral(0,1)")
       
       # Generate a grid over which we can get the true welfare added.
-      grid <- unlist(lapply(seq(-3, 3, length.out = npoints), rep,
+      grid <- unlist(lapply(rnorm(n = npoints), rep,
                             times =length(unique(in_dt$teacher_id))))
-      
-      
+        
       # Attach teacher ids.
       welfare <- unique(in_dt[, c('teacher_id', 'teacher_ability',
                                   'teacher_center', 'teacher_max')])
       welfare <- do.call('rbind', replicate(npoints, welfare, simplify=FALSE))
-      welfare[, grid := grid]
+      
+      welfare[, stud_ability_1 := grid]
       
       
       # Get the weights for each place in the grid.
       welfare[, weight := ww_general_fun(weight_type  = weight_type,
                                          in_test_1    = grid,
                                          lin_alpha    = lin_alpha,
-                                         quant_val_l  = quantile(in_dt$test_1, probs = 0.1),
-                                         quant_val_h  = quantile(in_dt$test_1, probs = 0.9),
-                                         pctile       = NULL,
+                                         quant_val_l  = qnorm(.1),
+                                         quant_val_h  = qnorm(.9),
+                                         pctile       = NULL, # entering known value instead 
+                                         pctile_val   = qnorm(pctile),
                                          weight_below = weight_below,
                                          weight_above = weight_above,
                                          v_alpha      = v_alpha,
-                                         median_va    = median(in_dt$test_1),
-                                         mrpctile     = mrpctile, 
+                                         median_va    = 0,
+                                         mrpctile     = NULL, # entering known vlaue instead 
+                                         mrpctile_val   = qnorm(mrpctile),
                                          mrdist       = mrdist,
-                                         min_score    = quantile(in_dt$test_1, max(pctile - mrdist, 0)),
-                                         max_score    = quantile(in_dt$test_1, min(pctile + mrdist, 100)),
-                                         pctile_val   = quantile(in_dt$test_1, pctile))]
+                                         min_score    = qnorm(max(mrpctile - mrdist, 0)),
+                                         max_score    = qnorm(min(mrpctile + mrdist, 100)))]
       
       
       
-      # Correct grid weights based on student population
-      if (type == 'true') {
+    }else{
         
-        # adjust weights for student population using true parameters 
-        welfare[, weight := weight*dnorm(grid)]
+        # Generate a random sample of test data 
+        grid <- sample(in_dt$test_1, size = npoints)
         
-      # for all other methods 
-      }else{
+        # Attach teacher ids.
+        welfare <- unique(in_dt[, c('teacher_id', 'teacher_ability',
+                                    'teacher_center', 'teacher_max')])
         
-        #NOTE We should change this to be a grid of literally every actual student we observe ###########################
-        # adjust weights for student population using estiamted parameters 
-        stud_mean <- mean(in_test_1)
-        stud_sd   <- sd(in_test_1)
-        welfare[, weight := weight*dnorm(grid,
-                                         mean = stud_mean,
-                                         sd = stud_sd)]
+        
+        n_teacher <- nrow(welfare)
+        
+        welfare <- do.call('rbind', replicate(length(grid), welfare, simplify=FALSE))
+
+        # sort this by teacher so I can add on a replicated grid 
+        setorder(welfare, teacher_id)
+        
+        # add student test grid 
+        welfare[, test_1 := rep(grid, times = n_teacher) ]
+        
+        welfare[, weight := ww_general_fun(weight_type  = weight_type,
+                                           in_test_1    = welfare$test_1,
+                                           lin_alpha    = lin_alpha,
+                                           quant_val_l  = quantile(welfare$test_1, probs = 0.1),
+                                           quant_val_h  = quantile(welfare$test_1, probs = 0.9),
+                                           pctile       = NULL,
+                                           weight_below = weight_below,
+                                           weight_above = weight_above,
+                                           v_alpha      = v_alpha,
+                                           median_va    = median(welfare$test_1),
+                                           mrpctile     = mrpctile, 
+                                           mrdist       = mrdist,
+                                           min_score    = quantile(welfare$test_1, max(pctile - mrdist, 0)),
+                                           max_score    = quantile(welfare$test_1, min(pctile + mrdist, 100)),
+                                           pctile_val   = quantile(welfare$test_1, pctile))]
+        
+        
       }
       
       # Renormalize the weights. so each teacher's weight sums to 1
@@ -161,8 +188,10 @@
         welfare[, true_impact := teacher_impact(teacher_ability  = teacher_ability,
                                                 teacher_center   = teacher_center,
                                                 teacher_max      = teacher_max,
-                                                stud_ability_1   = in_dt$stud_ability_1,
-                                                other_data       = grid,
+                                                stud_ability_1   = NULL, # don't need this because I know true mean and SD 
+                                                studmean         = 0,
+                                                studsd           = 1,
+                                                other_data       = stud_ability_1,
                                                 type             = impact_type,
                                                 func_num         = impact_function)]
         
@@ -183,16 +212,34 @@
         output[range_low == temp1, range_low := -100]
         output[range_high == temp2, range_high := 100]
         
-        # Calculate the estimated teacher impact.
-        welfare[, estimate := mapply((function(x, y) output[output$teacher_id == x & 
-                                                              output$range_low < y &
-                                                              output$range_high >= y, estimate]), teacher_id, grid)]
-
+        # make cateogry xwalk 
+        cat_xwalk <- unique(output[, c("range_low", "range_high")])
+        cat_xwalk[, bin := .I]
+        
+        # loop through bin xwalk and fill out welfare data bins 
+        #note more code, but faster than the way we had it before 
+        for(i in 1:nrow(cat_xwalk)){
+          
+          low_i <- cat_xwalk[i, range_low]
+          high_i <- cat_xwalk[i, range_high]
+          bin_num_i <- cat_xwalk[i, bin]
+          
+          welfare[test_1 > low_i  &
+                    test_1 <=  high_i, bin := bin_num_i ]
+          
+          
+        }
+        
+        # now merge on estimates 
+        output <- merge(output,cat_xwalk, c("range_low", "range_high"))
+        output <- output[, c("teacher_id", "bin", "estimate")]
+        welfare <- merge(welfare, output, c("teacher_id", "bin"))
+        
         # Calculate and return the estimated welfare.
-        welfare[, estimate := as.numeric(estimate)]
-        welfare[, alternative_welfare := sum(estimate*weight), by='teacher_id']
+        # welfare[, estimate := as.numeric(estimate)]
+        alt_welfare <- welfare[, .(alternative_welfare = sum(estimate*weight)), by='teacher_id']
 
-        return(unique(welfare[, c('teacher_id', 'alternative_welfare')]))
+        return(alt_welfare[])
         
         
       } else if (type == 'quant') {
@@ -271,11 +318,9 @@
           welfare[, fit := as.matrix(output$results[, 1:npoints,],ncol(1))]
           
           # Approximate integration over weights
-          welfare[, alternative_welfare := sum(weight*(fit)), teacher_id]
+          ww_np_hack_va <- welfare[, list(alternative_welfare = sum(weight*(fit))), teacher_id]
 
           # Grab unique values for each teacher
-          ww_np_hack_va <- unique(welfare[, c('teacher_id', 'alternative_welfare')])
-          
           # Standardize to mean zero var one
           #ww_np_hack_va[, alternative_welfare := (WA_temp-mean(WA_temp))/sd(WA_temp)]
           
