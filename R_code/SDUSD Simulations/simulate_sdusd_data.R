@@ -121,6 +121,9 @@ school_cor              = 0
     #  best and worst matched students.
     teacher_student_xwalk[, teacher_max := runif(1, min=min_diff, max=max_diff), teacher_id]
     
+    # make sure teacher id is character 
+    teacher_student_xwalk[, teacher_id := as.character(teacher_id)]
+    
     # return 
     return(teacher_student_xwalk[])
   }
@@ -298,3 +301,5 @@ simulate_sdusd_data <- function(teacher_ability_xwalk   = NULL,
   return(r_dt[])
   
 } # End function. 
+
+

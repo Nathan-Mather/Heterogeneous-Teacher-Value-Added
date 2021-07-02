@@ -134,8 +134,19 @@
       
     }else{
         
-        # Generate a random sample of test data 
-        grid <- sample(in_dt$test_1, size = npoints)
+        # check that sampe is bigger than n points 
+        if(length(in_test_1) < npoints ){
+          
+          warning("full sample smaller than npoints, Setting npoints to full sample size")
+          grid <- in_test_1
+        }else{
+          
+          # Generate a random sample of test data 
+          grid <- sample(in_test_1, size = npoints)
+          
+        }
+      
+
         
         # Attach teacher ids.
         welfare <- unique(in_dt[, c('teacher_id', 'teacher_ability',
@@ -244,7 +255,7 @@
         
       } else if (type == 'quant') {
         
-        in_test_1 <- in_dt$test_1
+        in_test_1 <- in_test_1
         in_coefs <- output
         
         # current dependencies 
@@ -260,18 +271,18 @@
         tau_xwalk[, weight := ww_general_fun(weight_type  = weight_type,
                                            in_test_1    = tau_val,
                                            lin_alpha    = lin_alpha,
-                                           quant_val_l  = quantile(in_dt$test_1, probs = 0.1),
-                                           quant_val_h  = quantile(in_dt$test_1, probs = 0.9),
+                                           quant_val_l  = quantile(in_test_1, probs = 0.1),
+                                           quant_val_h  = quantile(in_test_1, probs = 0.9),
                                            pctile       = NULL,
                                            weight_below = weight_below,
                                            weight_above = weight_above,
                                            v_alpha      = v_alpha,
-                                           median_va    = median(in_dt$test_1),
+                                           median_va    = median(in_test_1),
                                            mrpctile     = mrpctile, 
                                            mrdist       = mrdist,
-                                           min_score    = quantile(in_dt$test_1, max(pctile - mrdist, 0)),
-                                           max_score    = quantile(in_dt$test_1, min(pctile + mrdist, 100)),
-                                           pctile_val   = quantile(in_dt$test_1, pctile))]
+                                           min_score    = quantile(in_test_1, max(pctile - mrdist, 0)),
+                                           max_score    = quantile(in_test_1, min(pctile + mrdist, 100)),
+                                           pctile_val   = quantile(in_test_1, pctile))]
         
         
         # adjust weights for student population using estiamted parameters 

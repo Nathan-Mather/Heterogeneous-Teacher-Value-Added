@@ -92,7 +92,8 @@ binned_va_stat <- function(in_dt              = NULL,
                            mrpctile           = NULL, 
                            mrdist             = NULL,
                            npoints            = NULL,
-                           covariates         = NULL) {
+                           covariates         = NULL,
+                           num_cats           = NULL) {
   
   # Allow the bootstrap to pick the sample if needed.
   if (!is.null(boot)) {
@@ -101,13 +102,15 @@ binned_va_stat <- function(in_dt              = NULL,
   
   # Estimate the binned VA.
   if (covariates == 0) {
-    output <- binned_va(in_data = in_dt)
+    output <- binned_va(in_data  = in_dt,
+                        num_cats = num_cats)
   } else {
     output <- binned_va(in_data = in_dt,
                         reg_formula = paste0('test_2 ~ test_1',
                                              ' + teacher_id:categories',
                                              ' + school_av_test + stud_sex + ',
-                                             'stud_frpl + stud_att - 1'))
+                                             'stud_frpl + stud_att - 1'),
+                        num_cats = num_cats)
   }
   
   # Fill in missing estimates with 0 (so that we end up with teacher_ability).
@@ -348,62 +351,49 @@ np_hack_va_stat <- function(in_dt              = NULL,
 # ========================================================================= #
 
 # Start of the function.
-single_iteration_fun <- function(in_dt               = NULL,
-                                 weight_type         = NULL,
-                                 method              = NULL, 
-                                 lin_alpha           = NULL,
-                                 pctile              = NULL,
-                                 weight_below        = NULL,
-                                 weight_above        = NULL,
-                                 v_alpha             = NULL,
-                                 mrpctile            = NULL, 
-                                 mrdist              = NULL,
-                                 npoints             = NULL,
-                                 n_teacher           = NULL,
-                                 n_stud_per_teacher  = NULL,
-                                 test_SEM            = NULL,
-                                 teacher_va_epsilon  = NULL,
-                                 impact_type         = NULL,
-                                 impact_function     = NULL,
-                                 min_diff            = NULL,
-                                 max_diff            = NULL,
-                                 covariates          = NULL,
-                                 peer_effects        = NULL,
-                                 stud_sorting        = NULL,
-                                 rho                 = NULL,
-                                 ta_sd               = NULL,
-                                 sa_sd               = NULL,
-                                 tc_sd               = NULL,
-                                 weighted_average    = NULL) {
+single_iteration_SDUSD_fun <- function(teacher_ability_xwalk   = NULL,
+                                       n_cohorts               = NULL,
+                                       pretest_coef            = NULL,
+                                       weight_type             = NULL,
+                                       method                  = NULL,
+                                       num_cats                = NULL,
+                                       lin_alpha               = NULL,
+                                       pctile                  = NULL,
+                                       weight_below            = NULL,
+                                       weight_above            = NULL,
+                                       v_alpha                 = NULL,
+                                       mrpctile                = NULL, 
+                                       mrdist                  = NULL,
+                                       npoints                 = NULL,
+                                       test_SEM                = NULL,
+                                       impact_type             = NULL,
+                                       impact_function         = NULL,
+                                       covariates              = NULL,
+                                       peer_effects            = NULL,
+                                       stud_sorting            = NULL,
+                                       rho                     = NULL,
+                                       weighted_average        = NULL) {
   
   # I need this for it to work on windows clusters since libraries are not
   #  loaded on every cluster.
   require(data.table)
   
-  # Resample the student data.
-  in_dt <- simulate_test_data(n_teacher           = n_teacher,
-                              n_stud_per_teacher  = n_stud_per_teacher,
-                              test_SEM            = test_SEM,
-                              teacher_va_epsilon  = teacher_va_epsilon,
-                              impact_type         = impact_type,
-                              impact_function     = impact_function,
-                              min_diff            = min_diff,
-                              max_diff            = max_diff,
-                              teacher_dt          = in_dt[, c("teacher_id",
-                                                              "teacher_ability",
-                                                              "teacher_center",
-                                                              "teacher_max")],
-                              covariates          = covariates,
-                              peer_effects        = peer_effects,
-                              stud_sorting        = stud_sorting,
-                              rho                 = rho,
-                              ta_sd               = ta_sd,
-                              sa_sd               = sa_sd,
-                              tc_sd               = tc_sd)
+  # generate student data 
+  r_student_dt <- simulate_sdusd_data(teacher_ability_xwalk   = teacher_ability_xwalk,
+                                      n_cohorts               = n_cohorts,
+                                      pretest_coef            = pretest_coef,
+                                      impact_type             = impact_type,
+                                      impact_function         = impact_function
+                                      # test_SEM                 = 0.07,
+                                      # covariates               = 0,
+                                      # peer_effects             = 0,
+                                      # stud_sorting             = 0,
+                                      # rho                      = 0.2
+                                              )
   
   
   # Run the standard VA.
-  va_tab1 <- standard_va_stat(in_dt              = in_dt,
+  va_tab1 <- standard_va_stat(in_dt              = r_student_dt,
                               covariates         = covariates)
   
   
@@ -411,7 +401,7 @@ single_iteration_fun <- function(in_dt               = NULL,
   if (method %like% 'bin') {
     
     # Run the binned VA.
-    output <- binned_va_stat(in_dt              = in_dt,
+    output <- binned_va_stat(in_dt              = r_student_dt,
                              weight_type        = weight_type,
                              lin_alpha          = lin_alpha,
                              pctile             = pctile,
@@ -421,7 +411,8 @@ single_iteration_fun <- function(in_dt               = NULL,
                              mrpctile           = mrpctile, 
                              mrdist             = mrdist,
                              npoints            = npoints,
-                             covariates         = covariates)
+                             covariates         = covariates,
+                             num_cats           = num_cats)
     
     # Merge on the standard VA.
     va_tab1 <- merge(va_tab1,
@@ -437,7 +428,7 @@ single_iteration_fun <- function(in_dt               = NULL,
     # put implementation here. Call output or rename that object everywhere 
     # not really a good name anyway 
     
-    output <- semip_va(in_data = in_dt)
+    output <- semip_va(in_data = r_student_dt)
     
     # Merge on the standard VA.
     va_tab1 <- merge(va_tab1,
@@ -451,7 +442,7 @@ single_iteration_fun <- function(in_dt               = NULL,
   if (method %like% 'np') {
     
     # Run the NP VA.
-    output <- np_hack_va_stat(in_dt              = in_dt,
+    output <- np_hack_va_stat(in_dt              = r_student_dt,
                               weight_type        = weight_type,
                               lin_alpha          = lin_alpha,
                               pctile             = pctile,
@@ -476,7 +467,7 @@ single_iteration_fun <- function(in_dt               = NULL,
   if (method %like% 'quantile') {
     
     # Run the quantile VA.
-    output <- quantile_va_stat(in_dt              = in_dt,
+    output <- quantile_va_stat(in_dt              = r_student_dt,
                                weight_type        = weight_type,
                                lin_alpha          = lin_alpha,
                                pctile             = pctile,

@@ -69,6 +69,9 @@
     coefs[, category := gsub(paste0(in_teacher_id, "[0-9]+|:categories"), "",
                               term)]
     
+    # remove cutpoint from input data 
+    in_data[, categories := NULL]
+    
     # Return just the estimates.
     coefs <- coefs[term %like% in_teacher_id, c("teacher_id", "category",
                                                   "estimate")]
