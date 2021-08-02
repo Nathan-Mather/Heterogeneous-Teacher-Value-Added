@@ -104,9 +104,11 @@
       grid <- unlist(lapply(rnorm(n = npoints), rep,
                             times =length(unique(in_dt$teacher_id))))
         
-      # Attach teacher ids.
+      # Attach teacher ids, start by getting unique teahers
       welfare <- unique(in_dt[, c('teacher_id', 'teacher_ability',
                                   'teacher_center', 'teacher_max')])
+      
+      # replicate each teacher npoints number of times so each can get a grid
       welfare <- do.call('rbind', replicate(npoints, welfare, simplify=FALSE))
       
       welfare[, stud_ability_1 := grid]
@@ -131,7 +133,7 @@
                                          max_score    = qnorm(min(mrpctile + mrdist, 100)))]
       
       
-      
+    # if not looking for the truth 
     }else{
         
         # check that sampe is bigger than n points 

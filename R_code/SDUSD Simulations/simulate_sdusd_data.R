@@ -26,53 +26,53 @@
 # ============================ debug parameters =========================== #
 # ========================================================================= #
 
-# load in needed inputs 
-teacher_student_xwalk <- fread("C:/Users/Nmath_000/Documents/Research/Value added local/simulation_inputs/teacher_student_xwalk_fake.csv")
-
-# load packages and functions for test runs 
-base_path <- "c:/Users/Nmath_000/Documents/Research/"
-func_path <- "Heterogeneous-Teacher-Value-Added/R_code/functions/"
-source(paste0(base_path, func_path, "teacher_impact.R"))
-library(data.table)
-
-
-# create a simple version for visualizing steps 
-teacher_student_xwalk <- teacher_student_xwalk[ school_id <= 2]
-teacher_student_xwalk <- teacher_student_xwalk[, n_studs := 2]
-
-
-n_cohorts                  = 3
-pretest_coef            = .9
-tc_sd                    = 1
-min_diff                 = 0
-max_diff                 = 0.1
-impact_type              = "MLRN"
-impact_function          = 1
-# from wooldridge 
-# debug parms for simulate_teacher_ability
-# from wooldridge .6 
-ta_sd                   = .6
-school_cor              = 0
-
-
-# # not using these yet 
+# # load in needed inputs 
+# teacher_student_xwalk <- fread("C:/Users/Nmath_000/Documents/Research/Value added local/simulation_inputs/teacher_student_xwalk_fake.csv")
 # 
-# # teacher_student_xwalk    = teacher_student_xwalk
-# # test_SEM                 = 0.07
-# # teacher_va_epsilon       = 0.1
-# # impact_type              = "MLRN"
-# # impact_function          = 1
-# # max_diff                 = 0.1
-# # teacher_dt               = NULL
-# # teacher_id               = "teacher_id"
-# # teacher_ability          = "teacher_ability"
-# # teacher_center           = "teacher_center"
-# # teacher_max              = "teacher_max"
-# # covariates               = 0
-# # peer_effects             = 0
-# # stud_sorting             = 0
-# # rho                      = 0.2
-
+# # load packages and functions for test runs 
+# base_path <- "c:/Users/Nmath_000/Documents/Research/"
+# func_path <- "Heterogeneous-Teacher-Value-Added/R_code/functions/"
+# source(paste0(base_path, func_path, "teacher_impact.R"))
+# library(data.table)
+# 
+# 
+# # create a simple version for visualizing steps 
+# teacher_student_xwalk <- teacher_student_xwalk[ school_id <= 2]
+# teacher_student_xwalk <- teacher_student_xwalk[, n_studs := 2]
+# 
+# 
+# n_cohorts                  = 3
+# pretest_coef            = .9
+# tc_sd                    = 1
+# min_diff                 = 0
+# max_diff                 = 0.1
+# impact_type              = "MLRN"
+# impact_function          = 1
+# # from wooldridge 
+# # debug parms for simulate_teacher_ability
+# # from wooldridge .6 
+# ta_sd                   = .6
+# school_cor              = 0
+# 
+# 
+# # # not using these yet 
+# # 
+# # # teacher_student_xwalk    = teacher_student_xwalk
+# # # test_SEM                 = 0.07
+# # # teacher_va_epsilon       = 0.1
+# # # impact_type              = "MLRN"
+# # # impact_function          = 1
+# # # max_diff                 = 0.1
+# # # teacher_dt               = NULL
+# # # teacher_id               = "teacher_id"
+# # # teacher_ability          = "teacher_ability"
+# # # teacher_center           = "teacher_center"
+# # # teacher_max              = "teacher_max"
+# # # covariates               = 0
+# # # peer_effects             = 0
+# # # stud_sorting             = 0
+# # # rho                      = 0.2
+# 
 
 
 #==================================================#

@@ -71,8 +71,8 @@ if (my_wd %like% "Nmath_000") {
 model_xwalk <- data.table(read_excel(paste0(base_path,
                                             "Heterogeneous-Teacher-Value-Added/R_code/model_xwalk_SDUSD.xlsx")))
 
-# load teacher student xwalk
-teacher_student_xwalk <- fread(paste0(base_path, "/Heterogeneous-Teacher-Value-Added/R_code/teacher_student_xwalk_fake.csv"))
+# load teacher student xwalk 
+teacher_student_xwalk <- fread("c:/Users/Nmath_000/Documents/Research/Value added local/simulation_inputs/teacher_student_xwalk_realish.csv")
 
 # Load past crosswalk to get run number.
 if (file.exists(paste0(out_data,'xwalk.csv'))) {
@@ -92,6 +92,8 @@ source(paste0(base_path, func_path, "simulate_test_data.R"))
 source(paste0(base_path, func_path, "teacher_impact.R"))
 source(paste0(base_path, func_path, "weighting_functions.R"))
 source(paste0(base_path, func_path, "welfare_statistic.R"))
+source(paste0(base_path, "Heterogeneous-Teacher-Value-Added/R_code/SDUSD Simulations/simulate_sdusd_data.R"))
+
 
 # Get a time stamp.
 date_time <- gsub("-", "_", Sys.time())
@@ -122,7 +124,31 @@ if (do_parallel) {
 }
 
 
+#=====================================#
+# ==== edit teacher student xwalk ====
+#=====================================#
 
+
+# 
+# # temp Add grade untill tanner gets me actual grades #####################################REMOVE##############################################
+# school_list <- teacher_student_xwalk[, .N, school_id]
+# setorder(school_list, N)
+# school_list <- school_list[N > 3]
+# 
+# teacher_student_xwalk <- teacher_student_xwalk[ school_id %in% school_list$school_id]
+# 
+# teacher_student_xwalk[, grade := rep(c(3:5), ceiling(.N/3))[1:.N], school_id]
+# ###########################################################################################################################################
+# 
+# # get total students per teacher 
+# tot_studs <- teacher_student_xwalk[, .(n_studs = sum(class_size)), teacher_id]
+# 
+# # teachers with enough students to keep 
+# teachers_keep <- tot_studs[n_studs >= 50,  teacher_id]
+# 
+# # subset xwalk 
+# teacher_student_xwalk <- teacher_student_xwalk[teacher_id %in% teachers_keep]
+# 
 
 # =========================================================================== #
 # ============================= Run Monte Carlo ============================= #

@@ -41,10 +41,10 @@ if(my_wd %like% "Nmath_000"){
   base_path <- "c:/Users/Nmath_000/Documents/Research/"
   
   # path for data to save
-  in_data <- "c:/Users/Nmath_000/Documents/data/Value Added/mc_data/"
+  in_data <- "C:/Users/Nmath_000/Documents/Research/Value added local/results/"
   
   # path for plots
-  out_plot <- "c:/Users/Nmath_000/Documents/data/Value Added/mc_plots/"
+  out_plot <- "C:/Users/Nmath_000/Documents/Research/Value added local/results/figures/"
   
 }else{
   # base directory 
@@ -75,7 +75,7 @@ plot_attributes <- theme_classic() +
 res_dt <- fread(paste0(in_data, 'results.csv'))
 
 # Load the xwalk.
-model_xwalk <- fread(paste0(in_data, 'xwalk.csv'))
+model_xwalk <- data.table(readxl::read_excel(paste0(base_path, 'Heterogeneous-Teacher-Value-Added/R_code/model_xwalk_SDUSD.xlsx')))
 
 # Figure out which figures already exist.
 figs <- list.files(path=out_plot)
@@ -191,11 +191,11 @@ res_dt[, quantile_MAE := abs(quantile_rank - true_ww_rank)]
 for (i in 1:nrow(model_xwalk)) {
 
   # Grab run_id. 
-  run_id_i <- model_xwalk[i, run_id]
-  single_run_i <- model_xwalk[i, single_run]
-  
+  run_id_i <- i
+  # single_run_i <- model_xwalk[i, single_run]
+  # 
   if ((as.numeric(run_id_i) <= last_num) | (as.numeric(single_run_i) == 1)) {
-    next
+    next()
   }
 
   # subset data to this mc run 
