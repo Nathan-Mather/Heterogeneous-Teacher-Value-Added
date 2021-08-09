@@ -20,7 +20,6 @@ ncores <- 20
 
 
 
-
 # =========================================================================== #
 # ========================= File paths and packages ========================= #
 # =========================================================================== #
@@ -69,7 +68,10 @@ if (my_wd %like% "Nmath_000") {
 
 # Load model_xwalk.
 model_xwalk <- data.table(read_excel(paste0(base_path,
-                  "Heterogeneous-Teacher-Value-Added/R_code/model_xwalk.xlsx")))
+                                            "Heterogeneous-Teacher-Value-Added/R_code/model_xwalk_SDUSD.xlsx")))
+
+# load teacher student xwalk 
+teacher_student_xwalk <- fread(paste0(base_path, "Value added local/simulation_inputs/teacher_student_xwalk_realish.csv"))
 
 # Load past crosswalk to get run number.
 if (file.exists(paste0(out_data,'xwalk.csv'))) {
@@ -89,6 +91,8 @@ source(paste0(base_path, func_path, "simulate_test_data.R"))
 source(paste0(base_path, func_path, "teacher_impact.R"))
 source(paste0(base_path, func_path, "weighting_functions.R"))
 source(paste0(base_path, func_path, "welfare_statistic.R"))
+source(paste0(base_path, func_path, "simulate_sdusd_data.R"))
+
 
 # Get a time stamp.
 date_time <- gsub("-", "_", Sys.time())
@@ -106,11 +110,11 @@ date_time <- gsub(" ", "__", date_time)
 if (my_wd %like% "Nmath_000") {
   myCluster <- makeCluster(4, # number of cores to use
                            type = "PSOCK") # type of cluster
-                                           # (Must be "PSOCK" on Windows)
+  # (Must be "PSOCK" on Windows)
 } else {
   myCluster <- makeCluster(ncores, # number of cores to use
                            type = "FORK") # type of cluster
-                                          # (Must be "PSOCK" on Windows)
+  # (Must be "PSOCK" on Windows)
 }
 
 if (do_parallel) {
@@ -119,7 +123,31 @@ if (do_parallel) {
 }
 
 
+#=====================================#
+# ==== edit teacher student xwalk ====
+#=====================================#
 
+
+# 
+# # temp Add grade untill tanner gets me actual grades #####################################REMOVE##############################################
+# school_list <- teacher_student_xwalk[, .N, school_id]
+# setorder(school_list, N)
+# school_list <- school_list[N > 3]
+# 
+# teacher_student_xwalk <- teacher_student_xwalk[ school_id %in% school_list$school_id]
+# 
+# teacher_student_xwalk[, grade := rep(c(3:5), ceiling(.N/3))[1:.N], school_id]
+# ###########################################################################################################################################
+# 
+# # get total students per teacher 
+# tot_studs <- teacher_student_xwalk[, .(n_studs = sum(class_size)), teacher_id]
+# 
+# # teachers with enough students to keep 
+# teachers_keep <- tot_studs[n_studs >= 50,  teacher_id]
+# 
+# # subset xwalk 
+# teacher_student_xwalk <- teacher_student_xwalk[teacher_id %in% teachers_keep]
+# 
 
 # =========================================================================== #
 # ============================= Run Monte Carlo ============================= #
@@ -127,21 +155,21 @@ if (do_parallel) {
 
 # Loop over xwalk to run this.
 for(i in 1:nrow(model_xwalk)){
-
+  
+  #====================#
+  # ==== get parms ====
+  #====================#
+  
   # Set seed.
   set.seed(42)
-
+  
   # Set parameters for this Monte Carlo run.
   # Run parameters.
   nsims                      <- model_xwalk[i, nsims]              # how many simulations to do
-  single_run                 <- model_xwalk[i, single_run]         # whether or not to run just one draw and calculate bootstrap SE's
   p_npoints                  <- model_xwalk[i, npoints]            # number of grid points over which to calculate welfare added
-
+  
   # Simulated data parameters.
-  p_n_teacher                <- model_xwalk[i, n_teacher]          # number of teachers
-  p_n_stud_per_teacher       <- model_xwalk[i, n_stud_per_teacher] # students per teacher
   p_test_SEM                 <- model_xwalk[i, test_SEM]           # SEM of test
-  p_teacher_va_epsilon       <- model_xwalk[i, teacher_va_epsilon] # SD of noise on teacher impact
   p_impact_type              <- model_xwalk[i, impact_type]        # one of 'MLRN', 'MLR', 'MNoR', 'MNo', 'No'
   p_impact_function          <- model_xwalk[i, impact_function]    # which teacher impact function to use, and integer
   p_min_diff                 <- model_xwalk[i, min_diff]           # minimum impact difference between best and worst matched students
@@ -151,9 +179,10 @@ for(i in 1:nrow(model_xwalk)){
   p_stud_sorting             <- model_xwalk[i, stud_sorting]       # whether or not to include student sorting
   p_rho                      <- model_xwalk[i, rho]                # correlation between teacher and student ability
   p_ta_sd                    <- model_xwalk[i, ta_sd]              # teacher ability standard deviation
-  p_sa_sd                    <- model_xwalk[i, sa_sd]              # student ability standard deviation
   p_tc_sd                    <- model_xwalk[i, tc_sd]              # teacher center standard deviation
-
+  p_n_cohorts                <- model_xwalk[i, n_cohorts]          # number of cohorts per teacher 
+  p_pretest_coef             <- model_xwalk[i, pretest_coef]       #coefficent on student pretest/ability 
+  
   # Weight and estimation parameters.
   p_weight_type              <- model_xwalk[i, weight_type]        # style of social planner pareto weights
   p_method                   <- model_xwalk[i, method]             # method of estimation used
@@ -165,34 +194,37 @@ for(i in 1:nrow(model_xwalk)){
   p_mrpctile                 <- model_xwalk[i, mrpctile]           # for mr weights
   p_mrdist                   <- model_xwalk[i, mrdist]             # for mr weights
   p_weighted_average         <- model_xwalk[i, weighted_average]   # whether or not to calculate a weighted average of standard and NP
-
+  p_num_cats                 <- model_xwalk[i, num_cats]          # number of bins for binned estimator 
+  
+  
+  
   # Add in the run id.
   model_xwalk[i, run_id := .GlobalEnv$run_id]
-
-  # Simulate initial data.
-  r_dt <- simulate_test_data(n_teacher           = p_n_teacher,
-                             n_stud_per_teacher  = p_n_stud_per_teacher,
-                             test_SEM            = p_test_SEM,
-                             teacher_va_epsilon  = p_teacher_va_epsilon,
-                             impact_type         = p_impact_type,
-                             impact_function     = p_impact_function,
-                             min_diff            = p_min_diff,
-                             max_diff            = p_max_diff,
-                             covariates          = p_covariates,
-                             peer_effects        = p_peer_effects,
-                             stud_sorting        = p_stud_sorting,
-                             rho                 = p_rho,
-                             ta_sd               = p_ta_sd,
-                             sa_sd               = p_sa_sd,
-                             tc_sd               = p_tc_sd)
-
-
+  
+  
+  #============================#
+  # ==== simulate teachers ====
+  #============================#
+  
+  # Simulate teacher data #note: loacted in funcitons/simulate_sdusd_data 
+  teacher_ability_xwalk <- simulate_teacher_ability(teacher_student_xwalk = teacher_student_xwalk,
+                                                    ta_sd                   = p_ta_sd,
+                                                    school_cor              = 0,
+                                                    tc_sd                   = p_tc_sd,
+                                                    min_diff                = p_min_diff,
+                                                    max_diff                = p_max_diff)
+  
+  
+  #====================#
+  # ==== get truth ====
+  #====================#
+  
   # Get true WW impact.
-  teacher_info <- welfare_statistic(in_dt           = r_dt,
+  teacher_info <- welfare_statistic(in_dt           = teacher_ability_xwalk,
                                     type            = 'true',
                                     npoints         = p_npoints,
                                     weight_type     = p_weight_type,
-                                    in_test_1       = r_dt$test_1,
+                                    in_test_1       = NULL,
                                     lin_alpha       = p_lin_alpha,
                                     pctile          = p_pctile,
                                     weight_below    = p_weight_below,
@@ -202,12 +234,12 @@ for(i in 1:nrow(model_xwalk)){
                                     mrdist          = p_mrdist,
                                     impact_type     = p_impact_type,
                                     impact_function = p_impact_function)
-
-  standard_info <- welfare_statistic(in_dt           = r_dt,
+  
+  standard_info <- welfare_statistic(in_dt           = teacher_ability_xwalk,
                                      type            = 'true',
                                      npoints         = p_npoints,
                                      weight_type     = 'equal',
-                                     in_test_1       = r_dt$test_1,
+                                     in_test_1       = NULL,
                                      lin_alpha       = p_lin_alpha,
                                      pctile          = p_pctile,
                                      weight_below    = p_weight_below,
@@ -217,161 +249,75 @@ for(i in 1:nrow(model_xwalk)){
                                      mrdist          = p_mrdist,
                                      impact_type     = p_impact_type,
                                      impact_function = p_impact_function)
-
+  
   setnames(standard_info, old=c('true_welfare'), new=c('true_standard'))
-
+  
   # Merge on the teacher center.
-  teacher_info <- merge(teacher_info, unique(r_dt[, c('teacher_id',
-                                                      'teacher_center')]),
+  teacher_info <- merge(teacher_info, unique(teacher_ability_xwalk[, c('teacher_id',
+                                                                       'teacher_center')]),
                         'teacher_id')
-
-
-  # Run just a single draw if specified, otherwise run the Monte Carlo.
-  if (single_run == 1) {
-
-    # Run the standard VA.
-    va_tab1 <- standard_va_stat(in_dt               = r_dt,
-                                single_run          = single_run)
-
-    # Run the alternative VA and bootstrap standard errors.
-    if (p_method %like% 'bin') {
-
-      # Run the bootstrap.
-      binned <- binned_va_stat(in_dt               = r_dt,
-                               lin_alpha           = p_lin_alpha,
-                               pctile              = p_pctile,
-                               weight_above        = p_weight_above,
-                               weight_below        = p_weight_below,
-                               v_alpha             = p_v_alpha,
-                               mrpctile            = p_mrpctile,
-                               mrdist              = p_mrdist,
-                               npoints             = p_npoints,
-                               covariates          = p_covariates)
-
-    } 
+  
+  
+  #==========================#
+  # ==== Run simulations ====
+  #==========================#
+  
+  
+  
+  # Run a Monte Carlo with the specified parameters. 
+  if (do_parallel) {
+    mc_res <- foreach(j = 1:nsims) %dopar%  single_iteration_fun( teacher_ability_xwalk   = teacher_ability_xwalk,
+                                                                        n_cohorts               = p_n_cohorts,
+                                                                        pretest_coef            = p_pretest_coef,
+                                                                        weight_type             = p_weight_type,
+                                                                        method                  = p_method,
+                                                                        num_cats                = p_num_cats,
+                                                                        lin_alpha               = p_lin_alpha,
+                                                                        pctile                  = p_pctile,
+                                                                        weight_below            = p_weight_below,
+                                                                        weight_above            = p_weight_above,
+                                                                        v_alpha                 = p_v_alpha,
+                                                                        mrpctile                = p_mrpctile, 
+                                                                        mrdist                  = p_mrdist,
+                                                                        npoints                 = p_npoints,
+                                                                        test_SEM                = p_test_SEM,
+                                                                        impact_type             = p_impact_type,
+                                                                        impact_function         = p_impact_function,
+                                                                        covariates              = p_covariates,
+                                                                        peer_effects            = p_peer_effects,
+                                                                        stud_sorting            = p_stud_sorting,
+                                                                        rho                     = p_rho,
+                                                                        weighted_average        = p_weighted_average)
     
-    if (p_method %like% 'quantile') {
-      
-      # Run the bootstrap.
-      quantile <- quantile_va_stat(in_dt               = r_dt,
-                                   weight_type         = p_weight_type, # Weighting parameters
-                                   lin_alpha           = p_lin_alpha,
-                                   pctile              = p_pctile,
-                                   weight_above        = p_weight_above,
-                                   weight_below        = p_weight_below,
-                                   v_alpha             = p_v_alpha,
-                                   mrpctile            = p_mrpctile,
-                                   mrdist              = p_mrdist,
-                                   npoints             = p_npoints,
-                                   covariates          = p_covariates)
-
-    } 
-    
-    if (p_method %like% 'np') {
-      
-      # Run the bootstrap.
-      np <- np_hack_va_stat(in_dt               = r_dt,
-                            weight_type         = p_weight_type, # Weighting parameters
-                            lin_alpha           = p_lin_alpha,
-                            pctile              = p_pctile,
-                            weight_above        = p_weight_above,
-                            weight_below        = p_weight_below,
-                            v_alpha             = p_v_alpha,
-                            mrpctile            = p_mrpctile,
-                            mrdist              = p_mrdist,
-                            npoints             = p_npoints,
-                            covariates          = p_covariates,
-                            weighted_average    = p_weighted_average)
-    }
-    
-    # Add in quantile later, for now just use these.
-    st_bin <- round(Kendall(va_tab1$mean_standard,
-                            binned$alternative_welfare)$tau, digits=2)
-    st_np <- round(Kendall(va_tab1$mean_standard,
-                           np$alternative_welfare)$tau, digits=2)
-    bin_np <- round(Kendall(binned$alternative_welfare,
-                            np$alternative_welfare)$tau, digits=2)
-    
-    # Save as a data table.
-    dt <- data.table(run_id = .GlobalEnv$run_id,
-                     st_bin = .GlobalEnv$st_bin,
-                     st_np  = .GlobalEnv$st_np,
-                     bin_np = .GlobalEnv$bin_np)
-    
-    # Write to the file.
-    write.table(dt,
-                paste0(out_data, 'single_results.csv'),
-                sep = ",",
-                col.names = !file.exists(paste0(out_data,
-                                                'single_results.csv')), 
-                append = T,
-                row.names = FALSE)
-    
-    next
     
   } else {
-    # Run a Monte Carlo with the specified parameters. 
-    if (do_parallel) {
-      mc_res <- foreach(j = 1:nsims) %dopar% single_iteration_fun(in_dt               = r_dt,
-                                                                  weight_type         = p_weight_type, # Weighting parameters
-                                                                  method              = p_method,
-                                                                  lin_alpha           = p_lin_alpha,
-                                                                  pctile              = p_pctile,
-                                                                  weight_above        = p_weight_above,
-                                                                  weight_below        = p_weight_below,
-                                                                  v_alpha             = p_v_alpha,
-                                                                  mrpctile            = p_mrpctile, 
-                                                                  mrdist              = p_mrdist,
-                                                                  npoints             = p_npoints,
-                                                                  n_teacher           = p_n_teacher, # Simulated data parameters
-                                                                  n_stud_per_teacher  = p_n_stud_per_teacher,
-                                                                  test_SEM            = p_test_SEM,
-                                                                  teacher_va_epsilon  = p_teacher_va_epsilon,
-                                                                  impact_type         = p_impact_type,
-                                                                  impact_function     = p_impact_function,
-                                                                  min_diff            = p_min_diff,
-                                                                  max_diff            = p_max_diff,
-                                                                  covariates          = p_covariates,
-                                                                  peer_effects        = p_peer_effects,
-                                                                  stud_sorting        = p_stud_sorting,
-                                                                  rho                 = p_rho,
-                                                                  ta_sd               = p_ta_sd,
-                                                                  sa_sd               = p_sa_sd,
-                                                                  tc_sd               = p_tc_sd,
-                                                                  weighted_average    = p_weighted_average)
-      
-    } else {
-      mc_res <- foreach(j = 1:nsims) %do% single_iteration_fun(in_dt               = r_dt,
-                                                               weight_type         = p_weight_type, # Weighting parameters
-                                                               method              = p_method,
-                                                               lin_alpha           = p_lin_alpha,
-                                                               pctile              = p_pctile,
-                                                               weight_above        = p_weight_above,
-                                                               weight_below        = p_weight_below,
-                                                               v_alpha             = p_v_alpha,
-                                                               mrpctile            = p_mrpctile, 
-                                                               mrdist              = p_mrdist,
-                                                               npoints             = p_npoints,
-                                                               n_teacher           = p_n_teacher, # Simulated data parameters
-                                                               n_stud_per_teacher  = p_n_stud_per_teacher,
-                                                               test_SEM            = p_test_SEM,
-                                                               teacher_va_epsilon  = p_teacher_va_epsilon,
-                                                               impact_type         = p_impact_type,
-                                                               impact_function     = p_impact_function,
-                                                               min_diff            = p_min_diff,
-                                                               max_diff            = p_max_diff,
-                                                               covariates          = p_covariates,
-                                                               peer_effects        = p_peer_effects,
-                                                               stud_sorting        = p_stud_sorting,
-                                                               rho                 = p_rho,
-                                                               ta_sd               = p_ta_sd,
-                                                               sa_sd               = p_sa_sd,
-                                                               tc_sd               = p_tc_sd,
-                                                               weighted_average    = p_weighted_average)
-          
-    }
-  
+    mc_res <- foreach(j = 1:nsims) %do%  single_iteration_fun( teacher_ability_xwalk   = teacher_ability_xwalk,
+                                                                     n_cohorts               = p_n_cohorts,
+                                                                     pretest_coef            = p_pretest_coef,
+                                                                     weight_type             = p_weight_type,
+                                                                     method                  = p_method,
+                                                                     num_cats                = p_num_cats,
+                                                                     lin_alpha               = p_lin_alpha,
+                                                                     pctile                  = p_pctile,
+                                                                     weight_below            = p_weight_below,
+                                                                     weight_above            = p_weight_above,
+                                                                     v_alpha                 = p_v_alpha,
+                                                                     mrpctile                = p_mrpctile, 
+                                                                     mrdist                  = p_mrdist,
+                                                                     npoints                 = p_npoints,
+                                                                     test_SEM                = p_test_SEM,
+                                                                     impact_type             = p_impact_type,
+                                                                     impact_function         = p_impact_function,
+                                                                     covariates              = p_covariates,
+                                                                     peer_effects            = p_peer_effects,
+                                                                     stud_sorting            = p_stud_sorting,
+                                                                     rho                     = p_rho,
+                                                                     weighted_average        = p_weighted_average)
     
+    
+  }
+  
+  
   # Stack the results for this run.
   mc_res <- rbindlist(mc_res)
   
@@ -428,7 +374,7 @@ for(i in 1:nrow(model_xwalk)){
                            'mean_quantile', 'sd_quantile', 'true_welfare',
                            'true_standard', 'teacher_center',	'run_id', 'nsims',
                            'date_time')]
-
+  
   # Write to the file.
   write.table(mean_tab,
               paste0(out_data, 'results.csv'), 
@@ -436,8 +382,6 @@ for(i in 1:nrow(model_xwalk)){
               col.names = !file.exists(paste0(out_data, 'results.csv')), 
               append = T,
               row.names = FALSE)
-
-  } # Close the single run else clause.
   
   # Increment the run id.
   run_id <- run_id + 1
@@ -464,3 +408,9 @@ write.table(model_xwalk,
             col.names = !file.exists(paste0(out_data, 'xwalk.csv')), 
             append = T,
             row.names = FALSE)
+
+
+#====================================#
+# ==== save teaher ability xwalk ====
+#====================================#
+

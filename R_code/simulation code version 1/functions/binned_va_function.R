@@ -44,7 +44,8 @@
                         in_pre_test   = "test_1",
                         in_post_test  = "test_2",
                         num_cats      = 5,
-                        reg_formula   = "test_2 ~ test_1 - 1 | teacher_id^categories") {
+                        reg_formula   = paste0("test_2 ~ test_1",
+                                               "+ teacher_id:categories - 1")) {
     
     # Check that in_data is a data.table.
     if(!any(class(in_data) == "data.table")){
@@ -59,27 +60,21 @@
     in_data[, categories := as.factor(cut(in_data[[in_pre_test]], cutpoints))]
     
     # Run the regression. 
-    # set se to standard so its faster. NOt using them anyway 
-    feols_out <- fixest::feols(as.formula(reg_formula),
-                               data = in_data,
-                               se = "standard",
-                               combine.quick = FALSE)
+    output <- lm(reg_formula, data = in_data)
     
-    fixedEffects = fixest::fixef(feols_out)
-    
-    # clean results 
-    coefs <- data.table(id = names(fixedEffects[[1]]), estimate = fixedEffects[[1]] )
-    
-    # splitting up the id variable and then assigning it to seperate columns 
-   id_split <- coefs[, strsplit(id, "_")]
-   coefs[, teacher_id  := sapply(id_split, function(x) x[1])]
-   coefs[, category  := sapply(id_split, function(x) x[2])]
-   coefs[, id := NULL]
-    
+    # Clean results. 
+    coefs <- data.table(broom::tidy(output))
+    coefs[, teacher_id := gsub(paste0(in_teacher_id, "|:categories.*"), "",
+                                term)]
+    coefs[, category := gsub(paste0(in_teacher_id, "[0-9]+|:categories"), "",
+                              term)]
     
     # remove cutpoint from input data 
     in_data[, categories := NULL]
     
+    # Return just the estimates.
+    coefs <- coefs[term %like% in_teacher_id, c("teacher_id", "category",
+                                                  "estimate")]
     return(coefs)
     
   } # End function.

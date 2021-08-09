@@ -79,7 +79,7 @@ if(my_wd %like% "Nmath_000"){
   base_path <- "c:/Users/Nmath_000/Documents/Research/"
   
   # path for data to save
-  in_data <- "c:/Users/Nmath_000/Documents/Research/Heterogeneous-Teacher-Value-Added/R_code/"
+  in_data <- "c:/Users/Nmath_000/Documents/data/Value Added/mc_data/"
   
   # path for plots
   out_plot <- "c:/Users/Nmath_000/Documents/data/Value Added/mc_plots/"
@@ -105,14 +105,9 @@ source(paste0(base_path, func_path, "simulate_test_data.R"))
 source(paste0(base_path, func_path, "teacher_impact.R"))
 source(paste0(base_path, func_path, "weighting_functions.R"))
 source(paste0(base_path, func_path, "welfare_statistic.R"))
-source(paste0(base_path, "Heterogeneous-Teacher-Value-Added/R_code/SDUSD Simulations/simulate_sdusd_data.R"))
 
 # Load the xwalk.
-model_xwalk <- data.table(read_excel(paste0(in_data, 'model_xwalk_SDUSD.xlsx')))
-
-# load teacher student xwalk 
-teacher_student_xwalk <- fread("c:/Users/Nmath_000/Documents/Research/Value added local/simulation_inputs/teacher_student_xwalk_realish.csv")
-
+model_xwalk <- fread(paste0(in_data, 'xwalk.csv'))
 
 # Figure out which figures already exist.
 figs <- list.files(path=out_plot)
@@ -140,16 +135,16 @@ for(i in 1:nrow(model_xwalk)){
   
   # Set parameters for this Monte Carlo run.
   # Run parameters.
-  run_id                     <- i           # keep track of what run it is 
+  run_id                     <- model_xwalk[i, run_id]             # keep track of what run it is 
   nsims                      <- model_xwalk[i, nsims]              # how many simulations to do
-  # single_run                 <- model_xwalk[i, single_run]         # whether or not to run just one draw and calculate bootstrap SE's
+  single_run                 <- model_xwalk[i, single_run]         # whether or not to run just one draw and calculate bootstrap SE's
   p_npoints                  <- model_xwalk[i, npoints]            # number of grid points over which to calculate welfare added
   
   # Simulated data parameters.
-  # p_n_teacher                <- model_xwalk[i, n_teacher]          # number of teachers 
-  # p_n_stud_per_teacher       <- model_xwalk[i, n_stud_per_teacher] # students per teacher
+  p_n_teacher                <- model_xwalk[i, n_teacher]          # number of teachers 
+  p_n_stud_per_teacher       <- model_xwalk[i, n_stud_per_teacher] # students per teacher
   p_test_SEM                 <- model_xwalk[i, test_SEM]           # SEM of test
-  # p_teacher_va_epsilon       <- model_xwalk[i, teacher_va_epsilon] # SD of noise on teacher impact 
+  p_teacher_va_epsilon       <- model_xwalk[i, teacher_va_epsilon] # SD of noise on teacher impact 
   p_impact_type              <- model_xwalk[i, impact_type]        # one of 'MLRN', 'MLR', 'MNoR', 'MNo', 'No'
   p_impact_function          <- model_xwalk[i, impact_function]    # which teacher impact function to use, and integer
   p_min_diff                 <- model_xwalk[i, min_diff]           # minimum impact difference between best and worst matched students
@@ -159,12 +154,8 @@ for(i in 1:nrow(model_xwalk)){
   p_stud_sorting             <- model_xwalk[i, stud_sorting]       # whether or not to include student sorting
   p_rho                      <- model_xwalk[i, rho]                # correlation between teacher and student ability
   p_ta_sd                    <- model_xwalk[i, ta_sd]              # teacher ability standard deviation
-  # p_sa_sd                    <- model_xwalk[i, sa_sd]              # student ability standard deviation
+  p_sa_sd                    <- model_xwalk[i, sa_sd]              # student ability standard deviation
   p_tc_sd                    <- model_xwalk[i, tc_sd]              # teacher center standard deviation
-  p_n_cohorts                <- model_xwalk[i, n_cohorts]          # number of cohorts per teacher 
-  p_impact_type              <- model_xwalk[i, impact_type]        # one of 'MLRN', 'MLR', 'MNoR', 'MNo', 'No'
-  p_impact_function          <- model_xwalk[i, impact_function]    # which teacher impact function to use, and integer
-  p_pretest_coef             <- model_xwalk[i, pretest_coef]       #coefficent on student pretest/ability 
   
   # Weight and estimation parameters.
   p_weight_type              <- model_xwalk[i, weight_type]        # style of social planner pareto weights
@@ -186,34 +177,30 @@ for(i in 1:nrow(model_xwalk)){
   # ========================= Example Teacher Figure ======================== #
   # ========================================================================= #
   
-  # Simulate teacher data 
-  teacher_ability_xwalk <- simulate_teacher_ability(teacher_student_xwalk,
-                                                    ta_sd                   = p_ta_sd,
-                                                    school_cor              = 0,
-                                                    tc_sd                   = p_tc_sd,
-                                                    min_diff                = p_min_diff,
-                                                    max_diff                = p_max_diff)
-  
   # Simulate necessary data.
-  # generate student data 
-  r_student_dt <- simulate_sdusd_data(teacher_ability_xwalk   = teacher_ability_xwalk,
-                                      n_cohorts               = p_n_cohorts,
-                                      pretest_coef            = p_pretest_coef,
-                                      impact_type             = p_impact_type,
-                                      impact_function         = p_impact_function
-                                      # test_SEM                 = 0.07,
-                                      # covariates               = 0,
-                                      # peer_effects             = 0,
-                                      # stud_sorting             = 0,
-                                      # rho                      = 0.2
-  )
+  teacher_ex <- simulate_test_data(n_teacher           = 10,
+                                   n_stud_per_teacher  = p_n_stud_per_teacher,
+                                   test_SEM            = p_test_SEM,
+                                   teacher_va_epsilon  = p_teacher_va_epsilon,
+                                   impact_type         = p_impact_type,
+                                   impact_function     = p_impact_function,
+                                   min_diff            = p_min_diff,
+                                   max_diff            = p_max_diff,
+                                   covariates          = p_covariates,
+                                   peer_effects        = p_peer_effects,
+                                   stud_sorting        = p_stud_sorting,
+                                   rho                 = p_rho,
+                                   ta_sd               = p_ta_sd,
+                                   sa_sd               = p_sa_sd,
+                                   tc_sd               = p_tc_sd)
+
   
   # Estimate standard value added.
   if (p_covariates == 0) {
-    va_out1 <- lm(test_2 ~ test_1 + teacher_id - 1, data = r_student_dt)
+    va_out1 <- lm(test_2 ~ test_1 + teacher_id - 1, data = teacher_ex)
   } else {
     va_out1 <- lm(test_2 ~ test_1 + teacher_id + school_av_test + stud_sex +
-                    stud_frpl + stud_att - 1, data = r_student_dt)
+                    stud_frpl + stud_att - 1, data = teacher_ex)
   }
   
   # Clean results.

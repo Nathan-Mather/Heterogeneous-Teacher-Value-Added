@@ -184,13 +184,13 @@ simulate_sdusd_data <- function(teacher_ability_xwalk   = NULL,
     # get school count xwalk 
     school_xwalk <- teacher_ability_xwalk[grade == min_gade, .(n_studs_school = sum(n_studs)), school_id ]
   
+    # generate a cohort of students 
+    n_studs <- teacher_ability_xwalk[grade == min_gade, sum(n_studs)]
   
   # loop over cohorts 
     for(k in 1:n_cohorts){
     # set up the first pretest for students 
-      
-      # generate a cohort of students 
-      n_studs <- teacher_ability_xwalk[grade == min_gade, sum(n_studs)]
+    
       
       # generate students, give them a base grade and starting year. This is pretest year without teachers 
       r_dt <- data.table(stud_id = 1:n_studs)

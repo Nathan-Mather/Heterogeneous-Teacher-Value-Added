@@ -92,7 +92,8 @@ binned_va_stat <- function(in_dt              = NULL,
                            mrpctile           = NULL, 
                            mrdist             = NULL,
                            npoints            = NULL,
-                           covariates         = NULL) {
+                           covariates         = NULL,
+                           num_cats           = NULL) {
   
   # Allow the bootstrap to pick the sample if needed.
   if (!is.null(boot)) {
@@ -101,13 +102,15 @@ binned_va_stat <- function(in_dt              = NULL,
   
   # Estimate the binned VA.
   if (covariates == 0) {
-    output <- binned_va(in_data = in_dt)
+    output <- binned_va(in_data  = in_dt,
+                        num_cats = num_cats)
   } else {
     output <- binned_va(in_data = in_dt,
                         reg_formula = paste0('test_2 ~ test_1',
                                              ' + teacher_id:categories',
                                              ' + school_av_test + stud_sex + ',
-                                             'stud_frpl + stud_att - 1'))
+                                             'stud_frpl + stud_att - 1'),
+                        num_cats = num_cats)
   }
   
   # Fill in missing estimates with 0 (so that we end up with teacher_ability).
@@ -295,8 +298,6 @@ np_hack_va_stat <- function(in_dt              = NULL,
   }
   
 } # End function.
-
-
 
 
 # =========================================================================== #

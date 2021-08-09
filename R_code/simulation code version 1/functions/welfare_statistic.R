@@ -114,7 +114,7 @@
       welfare[, stud_ability_1 := grid]
       
       
-      # Get the weights for each place in the grid. #note in functions/weighting_funcitons
+      # Get the weights for each place in the grid.
       welfare[, weight := ww_general_fun(weight_type  = weight_type,
                                          in_test_1    = grid,
                                          lin_alpha    = lin_alpha,

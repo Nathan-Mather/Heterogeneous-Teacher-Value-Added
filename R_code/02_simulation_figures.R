@@ -15,15 +15,15 @@ cat("\f")
 
 # Set plot attributes.
 plot_attributes <- theme_classic() + 
-                   theme(text = element_text(size= 20),
-                   plot.title = element_text(vjust=0,
-                                             hjust = 0.5,
-                                             colour = "black",
-                                             face = "bold",
-                                             size =25),
-                   plot.subtitle = element_text(color = "black",
-                                                hjust = 0.5,
-                                                size =25))
+  theme(text = element_text(size= 20),
+        plot.title = element_text(vjust=0,
+                                  hjust = 0.5,
+                                  colour = "black",
+                                  face = "bold",
+                                  size =25),
+        plot.subtitle = element_text(color = "black",
+                                     hjust = 0.5,
+                                     size =25))
 
 # Set various graph options.
 truth_color <- '#000000'
@@ -79,7 +79,7 @@ if(my_wd %like% "Nmath_000"){
   base_path <- "c:/Users/Nmath_000/Documents/Research/"
   
   # path for data to save
-  in_data <- "c:/Users/Nmath_000/Documents/data/Value Added/mc_data/"
+  in_data <- "c:/Users/Nmath_000/Documents/Research/Heterogeneous-Teacher-Value-Added/R_code/"
   
   # path for plots
   out_plot <- "c:/Users/Nmath_000/Documents/data/Value Added/mc_plots/"
@@ -105,9 +105,14 @@ source(paste0(base_path, func_path, "simulate_test_data.R"))
 source(paste0(base_path, func_path, "teacher_impact.R"))
 source(paste0(base_path, func_path, "weighting_functions.R"))
 source(paste0(base_path, func_path, "welfare_statistic.R"))
+source(paste0(base_path, "Heterogeneous-Teacher-Value-Added/R_code/SDUSD Simulations/simulate_sdusd_data.R"))
 
 # Load the xwalk.
-model_xwalk <- fread(paste0(in_data, 'xwalk.csv'))
+model_xwalk <- data.table(read_excel(paste0(in_data, 'model_xwalk_SDUSD.xlsx')))
+
+# load teacher student xwalk 
+teacher_student_xwalk <- fread("c:/Users/Nmath_000/Documents/Research/Value added local/simulation_inputs/teacher_student_xwalk_realish.csv")
+
 
 # Figure out which figures already exist.
 figs <- list.files(path=out_plot)
@@ -135,16 +140,16 @@ for(i in 1:nrow(model_xwalk)){
   
   # Set parameters for this Monte Carlo run.
   # Run parameters.
-  run_id                     <- model_xwalk[i, run_id]             # keep track of what run it is 
+  run_id                     <- i           # keep track of what run it is 
   nsims                      <- model_xwalk[i, nsims]              # how many simulations to do
-  single_run                 <- model_xwalk[i, single_run]         # whether or not to run just one draw and calculate bootstrap SE's
+  # single_run                 <- model_xwalk[i, single_run]         # whether or not to run just one draw and calculate bootstrap SE's
   p_npoints                  <- model_xwalk[i, npoints]            # number of grid points over which to calculate welfare added
   
   # Simulated data parameters.
-  p_n_teacher                <- model_xwalk[i, n_teacher]          # number of teachers 
-  p_n_stud_per_teacher       <- model_xwalk[i, n_stud_per_teacher] # students per teacher
+  # p_n_teacher                <- model_xwalk[i, n_teacher]          # number of teachers 
+  # p_n_stud_per_teacher       <- model_xwalk[i, n_stud_per_teacher] # students per teacher
   p_test_SEM                 <- model_xwalk[i, test_SEM]           # SEM of test
-  p_teacher_va_epsilon       <- model_xwalk[i, teacher_va_epsilon] # SD of noise on teacher impact 
+  # p_teacher_va_epsilon       <- model_xwalk[i, teacher_va_epsilon] # SD of noise on teacher impact 
   p_impact_type              <- model_xwalk[i, impact_type]        # one of 'MLRN', 'MLR', 'MNoR', 'MNo', 'No'
   p_impact_function          <- model_xwalk[i, impact_function]    # which teacher impact function to use, and integer
   p_min_diff                 <- model_xwalk[i, min_diff]           # minimum impact difference between best and worst matched students
@@ -154,8 +159,12 @@ for(i in 1:nrow(model_xwalk)){
   p_stud_sorting             <- model_xwalk[i, stud_sorting]       # whether or not to include student sorting
   p_rho                      <- model_xwalk[i, rho]                # correlation between teacher and student ability
   p_ta_sd                    <- model_xwalk[i, ta_sd]              # teacher ability standard deviation
-  p_sa_sd                    <- model_xwalk[i, sa_sd]              # student ability standard deviation
+  # p_sa_sd                    <- model_xwalk[i, sa_sd]              # student ability standard deviation
   p_tc_sd                    <- model_xwalk[i, tc_sd]              # teacher center standard deviation
+  p_n_cohorts                <- model_xwalk[i, n_cohorts]          # number of cohorts per teacher 
+  p_impact_type              <- model_xwalk[i, impact_type]        # one of 'MLRN', 'MLR', 'MNoR', 'MNo', 'No'
+  p_impact_function          <- model_xwalk[i, impact_function]    # which teacher impact function to use, and integer
+  p_pretest_coef             <- model_xwalk[i, pretest_coef]       #coefficent on student pretest/ability 
   
   # Weight and estimation parameters.
   p_weight_type              <- model_xwalk[i, weight_type]        # style of social planner pareto weights
@@ -177,30 +186,34 @@ for(i in 1:nrow(model_xwalk)){
   # ========================= Example Teacher Figure ======================== #
   # ========================================================================= #
   
+  # Simulate teacher data 
+  teacher_ability_xwalk <- simulate_teacher_ability(teacher_student_xwalk,
+                                                    ta_sd                   = p_ta_sd,
+                                                    school_cor              = 0,
+                                                    tc_sd                   = p_tc_sd,
+                                                    min_diff                = p_min_diff,
+                                                    max_diff                = p_max_diff)
+  
   # Simulate necessary data.
-  teacher_ex <- simulate_test_data(n_teacher           = 10,
-                                   n_stud_per_teacher  = p_n_stud_per_teacher,
-                                   test_SEM            = p_test_SEM,
-                                   teacher_va_epsilon  = p_teacher_va_epsilon,
-                                   impact_type         = p_impact_type,
-                                   impact_function     = p_impact_function,
-                                   min_diff            = p_min_diff,
-                                   max_diff            = p_max_diff,
-                                   covariates          = p_covariates,
-                                   peer_effects        = p_peer_effects,
-                                   stud_sorting        = p_stud_sorting,
-                                   rho                 = p_rho,
-                                   ta_sd               = p_ta_sd,
-                                   sa_sd               = p_sa_sd,
-                                   tc_sd               = p_tc_sd)
-
+  # generate student data 
+  r_student_dt <- simulate_sdusd_data(teacher_ability_xwalk   = teacher_ability_xwalk,
+                                      n_cohorts               = p_n_cohorts,
+                                      pretest_coef            = p_pretest_coef,
+                                      impact_type             = p_impact_type,
+                                      impact_function         = p_impact_function
+                                      # test_SEM                 = 0.07,
+                                      # covariates               = 0,
+                                      # peer_effects             = 0,
+                                      # stud_sorting             = 0,
+                                      # rho                      = 0.2
+  )
   
   # Estimate standard value added.
   if (p_covariates == 0) {
-    va_out1 <- lm(test_2 ~ test_1 + teacher_id - 1, data = teacher_ex)
+    va_out1 <- lm(test_2 ~ test_1 + teacher_id - 1, data = r_student_dt)
   } else {
     va_out1 <- lm(test_2 ~ test_1 + teacher_id + school_av_test + stud_sex +
-                    stud_frpl + stud_att - 1, data = teacher_ex)
+                    stud_frpl + stud_att - 1, data = r_student_dt)
   }
   
   # Clean results.
@@ -242,8 +255,8 @@ for(i in 1:nrow(model_xwalk)){
   
   # Calculate the estimated teacher impact.
   teacher_ex[, binned := mapply((function(x, y) output[output$teacher_id == x & 
-                                                        output$range_low < y &
-                                                        output$range_high >= y, estimate]), teacher_id, test_1)]
+                                                         output$range_low < y &
+                                                         output$range_high >= y, estimate]), teacher_id, test_1)]
   
   
   # Run quantile regression and get estimates for a grid of tau values.
@@ -266,7 +279,7 @@ for(i in 1:nrow(model_xwalk)){
   teacher_ex[, pct_val := mapply((function(xo)  vals[which.min(abs(vals - xo))]), pct_val)]
   
   teacher_ex[, quantile := mapply((function(x,y)  qtile_res[teacher_id == x &
-                                                            abs(tau - y) < .02, qtile_est]), teacher_id, pct_val)]
+                                                              abs(tau - y) < .02, qtile_est]), teacher_id, pct_val)]
   
   
   # Run the NP regression.
@@ -294,8 +307,8 @@ for(i in 1:nrow(model_xwalk)){
   
   # Get the coefficients and subtract off the pre-test score.
   teacher_ex[, np1 := mapply((function(x,y)  as.matrix(np_res$results[, 1:p_npoints],
-                                                      ncol(1))[x, which.min(abs(np_res$points - y))]),
-                            teacher_id, test_1)]
+                                                       ncol(1))[x, which.min(abs(np_res$points - y))]),
+                             teacher_id, test_1)]
   
   # Get the ymin and ymax for consistency across the teacher example plots.
   ymin <- min(teacher_ex[, c('teacher_impact', 'standard', 'binned', 'np')])
@@ -321,7 +334,7 @@ for(i in 1:nrow(model_xwalk)){
     scale_color_manual(values = c(standard_color, truth_color)) +
     theme(legend.title = element_blank(),
           legend.position = 'bottom')
-
+  
   teacher_example_truth_bin <- ggplot(data = teacher_ex[teacher_id == 1]) +
     geom_point(aes(x = stud_ability_1, y = teacher_impact, color = 'True Teacher Impact'), size = 2, alpha = truth_alpha) +
     geom_point(aes(x = stud_ability_1, y = standard, color = 'Standard'), size = 2, alpha = standard_alpha) +
@@ -333,7 +346,7 @@ for(i in 1:nrow(model_xwalk)){
     scale_color_manual(values = c(binned_color, standard_color, truth_color)) +
     theme(legend.title = element_blank(),
           legend.position = 'bottom')
-
+  
   teacher_example_truth_np <- ggplot(data = teacher_ex[teacher_id == 1]) +
     geom_point(aes(x = stud_ability_1, y = teacher_impact, color = 'True Teacher Impact'), size = 2, alpha = truth_alpha) +
     geom_point(aes(x = stud_ability_1, y = standard, color = 'Standard'), size = 2, alpha = standard_alpha) +
@@ -345,7 +358,7 @@ for(i in 1:nrow(model_xwalk)){
     scale_color_manual(values = c(np_color, standard_color, truth_color)) +
     theme(legend.title = element_blank(),
           legend.position = 'bottom')
-
+  
   teacher_example <- ggplot(data = teacher_ex[teacher_id == 1]) +
     geom_point(aes(x = stud_ability_1, y = teacher_impact, color = 'True Teacher Impact'), size = 2, alpha = truth_alpha) +
     geom_point(aes(x = stud_ability_1, y = standard, color = 'Standard'), size = 2, alpha = standard_alpha) +
@@ -360,7 +373,7 @@ for(i in 1:nrow(model_xwalk)){
     scale_color_manual(values = c(binned_color, np_color, standard_color, truth_color)) +
     theme(legend.title = element_blank(),
           legend.position = 'bottom')
-
+  
   
   # Get the differences with each estimation method.
   teacher_ex[, st_diff := (teacher_impact - standard)]
@@ -390,7 +403,7 @@ for(i in 1:nrow(model_xwalk)){
     scale_color_manual(values = c(binned_color, np_color, standard_color, np1_color)) +
     theme(legend.title = element_blank(),
           legend.position = 'bottom')
-
+  
   
   # Get the weights.
   teacher_ex[, weight := ww_general_fun(weight_type  = p_weight_type,
@@ -438,7 +451,7 @@ for(i in 1:nrow(model_xwalk)){
     scale_color_manual(values = c(binned_color, np_color, standard_color, np1_color)) +
     theme(legend.title = element_blank(),
           legend.position = 'bottom')
-
+  
   
   # Get the sum of the weighted differences.
   teacher_ex[, tot_w_st_diff := sum(w_st_diff), teacher_id]
@@ -495,15 +508,15 @@ for(i in 1:nrow(model_xwalk)){
     geom_bar(position="dodge", stat="identity") + 
     scale_color_manual(values = c(binned_color, np_color, standard_color, np1_color)) +
     scale_fill_manual(values = c(binned_color, np_color, standard_color, np1_color))
-
+  
   # Plot the sums to see the rankings for teachers. reorder(repayment_interval, -loan_amount), loan_amount)
   ranks <- ggplot(data = va_collapsed, 
-                                    aes(y=value, x=variable, fill=reorder(teacher_id, -value), color=reorder(teacher_id, -value))) + 
+                  aes(y=value, x=variable, fill=reorder(teacher_id, -value), color=reorder(teacher_id, -value))) + 
     geom_bar(position="dodge", stat="identity") + 
     scale_color_manual(values = c(binned_color, np_color, standard_color, np1_color, 'red', 'blue', 'black', 'purple', 'pink', 'brown')) +
     scale_fill_manual(values = c(binned_color, np_color, standard_color, np1_color, 'red', 'blue', 'black', 'purple', 'pink', 'brown'))
-
-
+  
+  
   # Save the figures.
   ggsave(filename = paste0(out_plot, "teacher_example_just_truth_",  run_id, ".png"), 
          plot     = teacher_example_just_truth, 
@@ -578,18 +591,18 @@ for(i in 1:nrow(model_xwalk)){
   
   # Attach teacher ids.
   teacher_av <- unique(teacher_av[, c('teacher_id', 'teacher_ability',
-                              'teacher_center', 'teacher_max')])
+                                      'teacher_center', 'teacher_max')])
   teacher_av <- do.call('rbind', replicate(p_npoints, teacher_av, simplify=FALSE))
   teacher_av[, grid := grid]
   
   # Get the teacher impact over that grid.
   teacher_av[, teacher_impact :=
-             teacher_impact(teacher_ability  = teacher_av$teacher_ability,
-                            teacher_center   = teacher_av$teacher_center,
-                            teacher_max      = teacher_av$teacher_max,
-                            stud_ability_1   = teacher_av$grid,
-                            type             = p_impact_type,
-                            func_num         = 1)] #p_impact_function)]
+               teacher_impact(teacher_ability  = teacher_av$teacher_ability,
+                              teacher_center   = teacher_av$teacher_center,
+                              teacher_max      = teacher_av$teacher_max,
+                              stud_ability_1   = teacher_av$grid,
+                              type             = p_impact_type,
+                              func_num         = 1)] #p_impact_function)]
   
   # Get the average true impact per teacher across a grid.
   teacher_av[, av_impact := mean(teacher_impact), grid]
@@ -604,7 +617,7 @@ for(i in 1:nrow(model_xwalk)){
     xlab("Student Ability") +
     ylim(min(-0.5, min(grid1$av_impact)), max(0.5, max(grid1$av_impact))) + 
     plot_attributes
-
+  
   # Save the figure.
   ggsave(filename = paste0(out_plot, "average_teacher_example_",  run_id, ".png"), 
          plot     = teacher_average, 
@@ -637,7 +650,7 @@ for(i in 1:nrow(model_xwalk)){
                                        min_score    = quantile(teacher_av$grid, max(p_pctile - p_mrdist, 0)),
                                        max_score    = quantile(teacher_av$grid, min(p_pctile + p_mrdist, 100)),
                                        pctile_val   = quantile(teacher_av$grid, p_pctile))]
-
+  
   # Put together the example teacher plot.
   weight_example <- ggplot(data = weight_ex) +
     geom_point(aes(x = grid, y = weight*100000), size = 2, color = av_color, alpha = av_alpha) +
@@ -645,7 +658,7 @@ for(i in 1:nrow(model_xwalk)){
     xlab("Ex Ante Expected Performance") +
     ylim(0,4.5) + 
     plot_attributes
-
+  
   # Save the figure.
   ggsave(filename = paste0(out_plot, "weight_example_",  run_id, ".png"), 
          plot     = weight_example, 
