@@ -187,9 +187,11 @@ res_dt[, quantile_MAE := abs(quantile_rank - true_ww_rank)]
 # =========================== Plots for every run =========================== #
 # =========================================================================== #
 
+last_num <- 0
+single_run_i <- 0
 # Loop over rows in the xwalk.
 for (i in 1:nrow(model_xwalk)) {
-
+print(i)
   # Grab run_id. 
   run_id_i <- i
   # single_run_i <- model_xwalk[i, single_run]
@@ -228,10 +230,10 @@ for (i in 1:nrow(model_xwalk)) {
   
   # Standard caterpillar plot.
   standard_cat_plot <- ggplot(res_sub, aes(x = true_ww_rank, y = mean_standard_norm)) +
-    geom_point(size = 1.5, aes(color = "Standard VA Estimate"), alpha = 1) + 
-    geom_point(aes( y = true_welfare_norm,  color = "Welfare-Weighted VA"),size = 1, alpha = .4) +
+    geom_point(size = .85, aes(color = "Standard VA Estimate"), alpha = .8) + 
+    geom_point(aes( y = true_welfare_norm,  color = "Welfare-Weighted VA"),size = .85, alpha = 1) +
     scale_color_manual(values= c("#ffaabb", "#77AADD")) +
-    geom_errorbar(aes(ymin=standard_lc, ymax=standard_uc), width= 1, color = "#ffaabb") +
+    geom_errorbar(aes(ymin=standard_lc, ymax=standard_uc), width= 1, color = "#ffaabb", alpha = .3) +
     ylab("Teacher Impact") + 
     xlab("Teacher Impact Rank Order (Low to High)") +
     ylim(-6,6)+
@@ -251,6 +253,7 @@ for (i in 1:nrow(model_xwalk)) {
     theme(legend.title = element_blank(),
           legend.position = c(0.8, 0.8))
   
+  # the point of this is to see any correlation of teacher center and overall techer ability 
   standard_center_plot <- ggplot(res_sub, aes(x = teacher_center, y = true_standard_norm)) +
     geom_point(size = 1.5, aes(color = "Standard VA"), alpha = 1) +
     geom_point(aes( y = true_welfare_norm, color = "Welfare-Weighted VA"),size = 1, alpha = .4) +
@@ -262,15 +265,15 @@ for (i in 1:nrow(model_xwalk)) {
     theme(legend.title = element_blank(),
           legend.position = c(0.8, 0.8))
   
-  standard_center_plot1 <- ggplot(res_sub, aes(x = teacher_center, y = true_standard_norm)) +
-    geom_point(size = 1.5, aes(color = "Standard VA"), alpha = 1) +
-    scale_color_manual(values= c("#ffaabb", "#77AADD")) +
-    ylab("Teacher Impact") +
-    xlab("Optimal Student Ability Match") +
-    ylim(-6,6)+
-    plot_attributes +
-    theme(legend.title = element_blank(),
-          legend.position = c(0.8, 0.8))
+  # standard_center_plot1 <- ggplot(res_sub, aes(x = teacher_center, y = true_standard_norm)) +
+  #   geom_point(size = 1.5, aes(color = "Standard VA"), alpha = 1) +
+  #   scale_color_manual(values= c("#ffaabb", "#77AADD")) +
+  #   ylab("Teacher Impact") +
+  #   xlab("Optimal Student Ability Match") +
+  #   ylim(-6,6)+
+  #   plot_attributes +
+  #   theme(legend.title = element_blank(),
+  #         legend.position = c(0.8, 0.8))
   
   # Save the plots.
   ggsave(filename = paste0(out_plot, "truth_cat_run_",  run_id_i, ".png"), 
@@ -293,10 +296,10 @@ for (i in 1:nrow(model_xwalk)) {
          width    = 9, 
          height   = 4)
   
-  ggsave(filename = paste0(out_plot, "standard_cent_run_just_stand_",  run_id_i, ".png"),
-         plot     = standard_center_plot1, 
-         width    = 9, 
-         height   = 4)
+  # ggsave(filename = paste0(out_plot, "standard_cent_run_just_stand_",  run_id_i, ".png"),
+  #        plot     = standard_center_plot1, 
+  #        width    = 9, 
+  #        height   = 4)
 
 
   # ========================================================================= #
@@ -352,11 +355,11 @@ for (i in 1:nrow(model_xwalk)) {
     
     # Alternative caterpillar plot.
     ww_cat_plot <- ggplot(res_sub, aes(x = true_ww_rank, y = mean_ww_norm)) +
-      geom_point(aes(color = "Alternative VA Estimate"), size = 2,  alpha = 1) + 
-      geom_point(aes( y = true_welfare_norm,  color = "Welfare-Weighted VA"),size = 1, alpha = .4) +
+      geom_point(aes(color = "Alternative VA Estimate"), size = .85,  alpha = 1) + 
+      geom_point(aes( y = true_welfare_norm,  color = "Welfare-Weighted VA"),size = .85, alpha = .4) +
       scale_color_manual(values= c("#ffaabb", "#77AADD"),
                          guide=guide_legend(reverse=TRUE)) +
-      geom_errorbar(aes(ymin=ww_lc, ymax=ww_uc), width= 1, color = "#ffaabb") +
+      geom_errorbar(aes(ymin=ww_lc, ymax=ww_uc), width= 1, color = "#ffaabb", alpha = .1) +
       ylab("Teacher Impact") + 
       xlab("Teacher Impact Rank Order (Low to High)") +
       ylim(-6,6)+
@@ -397,7 +400,7 @@ for (i in 1:nrow(model_xwalk)) {
     out_sum_stats_tbl <- tableGrob(out_sum_stats, rows=NULL, theme = ttheme_default(base_size = 8))
   
     # Set bin width parameter.
-    b_width <- 3
+    b_width <- 20
     
     # Make the histogram.
     out_histogram <- ggplot(res_sub) + 
@@ -653,3 +656,4 @@ cor_tab <- res_dt[, list(standard_cor = cor(standard_rank, true_ww_rank, method 
     
 
 }
+

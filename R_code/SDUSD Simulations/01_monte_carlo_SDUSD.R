@@ -410,3 +410,9 @@ write.table(model_xwalk,
             col.names = !file.exists(paste0(out_data, 'xwalk.csv')), 
             append = T,
             row.names = FALSE)
+
+
+#====================================#
+# ==== save teaher ability xwalk ====
+#====================================#
+
