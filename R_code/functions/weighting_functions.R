@@ -39,7 +39,7 @@
     }
   
     # Calculate the weight, capping outside of quantile values.
-    weight <- alpha - (min(max(in_test_1, quant_val_l), quant_val_h) - quant_val_l)*
+    weight <- alpha - (pmin(pmax(in_test_1, quant_val_l), quant_val_h) - quant_val_l)*
                 (1/(quant_val_h - quant_val_l))*(alpha - 1)
                 
     

@@ -48,7 +48,10 @@ if (my_wd %like% "Nmath_000") {
   base_path <- "c:/Users/Nmath_000/Documents/Research/"
   
   # Path for data to save.
-  out_data <- "c:/Users/Nmath_000/Documents/data/Value Added/mc_data/"
+  out_data <- "C:/Users/Nmath_000/Documents/Research/Value_added_local/results/"
+  
+  # path to save qc 
+  out_qc <- paste0(out_data, "/qc/")
   
 }  else if (my_wd %like% "ricksmi") {
   # Base directory. 
@@ -70,16 +73,14 @@ if (my_wd %like% "Nmath_000") {
 model_xwalk <- data.table(read_excel(paste0(base_path,
                                             "Heterogeneous-Teacher-Value-Added/R_code/model_xwalk_SDUSD.xlsx")))
 
-# load teacher student xwalk 
-teacher_student_xwalk <- fread(paste0(base_path, "Value added local/simulation_inputs/teacher_student_xwalk_realish.csv"))
 
-# Load past crosswalk to get run number.
-if (file.exists(paste0(out_data,'xwalk.csv'))) {
-  old_xwalk <- data.table(read.csv(file=paste0(out_data,'xwalk.csv')))
-  run_id <- max(old_xwalk$run_id) + 1
-} else {
-  run_id <- 1
+# create int directory if it idoesnt exist already 
+if(!file.exists(paste0(out_data, "/int_results"))){
+  dir.create(paste0(out_data, "/int_results"))
 }
+
+
+
 
 # Load our functions now that we have a file path.
 func_path <- "Heterogeneous-Teacher-Value-Added/R_code/functions/"
@@ -92,6 +93,7 @@ source(paste0(base_path, func_path, "teacher_impact.R"))
 source(paste0(base_path, func_path, "weighting_functions.R"))
 source(paste0(base_path, func_path, "welfare_statistic.R"))
 source(paste0(base_path, func_path, "simulate_sdusd_data.R"))
+source(paste0(base_path, func_path, "quality_control_functions.R"))
 
 
 # Get a time stamp.
@@ -122,32 +124,69 @@ if (do_parallel) {
   registerDoRNG()
 }
 
-
 #=====================================#
-# ==== edit teacher student xwalk ====
+# ==== check for existing results ====
 #=====================================#
 
+if (file.exists(paste0(out_data,'xwalk.csv'))) {
+  
+  old_xwalk <- fread( paste0(out_data, 'xwalk.csv'))
+  setnames(old_xwalk, "done_flag", "done_flag_old")
+  
+  # subset to only done runs
+  old_xwalk <- old_xwalk[done_flag_old == 1]
+  
+  # mark old and new xwalks 
+  model_xwalk[, flag_new := 1]
+  old_xwalk[, flag_old := 1]
+  
+  old_xwalk[, impact_function := as.character(impact_function)]
+  
+  # merge old and new
+  merged_cols <- setdiff(colnames(model_xwalk), c("done_flag", "flag_new"))
+  model_xwalk <- merge(model_xwalk, old_xwalk,merged_cols, all = TRUE)
+  
+  # check for completed runs we don't need to duplicate 
+  model_xwalk[done_flag_old == 1, done_flag := 1]
+  model_xwalk[, done_flag_old := NULL, ]
+  
+  
+  # check for runs we no longer want and should remorve 
+  to_remove <- model_xwalk[flag_old == 1 & is.na(flag_new), run_id]
+  
+  # remove runs that are no longer in xwalk 
+  for(k in to_remove){
+    
+    # remove results 
+    unlink(paste0(out_data, "/int_results/results_", k, ".csv"))
+    
+    # remove qc 
+    unlink(paste0(out_data, "/qc/run_", k ),
+           recursive = TRUE)
+  }
+  
+  # Now subset to only the ones from the new xwalk 
+  model_xwalk <- model_xwalk[flag_new == 1]
+  
+  # get rid of extra variables I created 
+  model_xwalk[,c("flag_new", "flag_old") := NULL]
+  
 
-# 
-# # temp Add grade untill tanner gets me actual grades #####################################REMOVE##############################################
-# school_list <- teacher_student_xwalk[, .N, school_id]
-# setorder(school_list, N)
-# school_list <- school_list[N > 3]
-# 
-# teacher_student_xwalk <- teacher_student_xwalk[ school_id %in% school_list$school_id]
-# 
-# teacher_student_xwalk[, grade := rep(c(3:5), ceiling(.N/3))[1:.N], school_id]
-# ###########################################################################################################################################
-# 
-# # get total students per teacher 
-# tot_studs <- teacher_student_xwalk[, .(n_studs = sum(class_size)), teacher_id]
-# 
-# # teachers with enough students to keep 
-# teachers_keep <- tot_studs[n_studs >= 50,  teacher_id]
-# 
-# # subset xwalk 
-# teacher_student_xwalk <- teacher_student_xwalk[teacher_id %in% teachers_keep]
-# 
+  # get list of run id's to use 
+  run_id_list <- 1:nrow(model_xwalk)
+  run_id_list <- setdiff(run_id_list, model_xwalk$run_id)
+  
+  # initialize run id counter 
+  run_id_counter <- 1
+  
+  
+} else {
+  run_id_list <- 1:nrow(model_xwalk)
+  run_id_counter <- 1
+}
+colnames(model_xwalk)
+# set model xwalk order 
+setorder(model_xwalk, "teacher_student_xwalk", "impact_type", "impact_function", "weight_type" ,"max_diff")
 
 # =========================================================================== #
 # ============================= Run Monte Carlo ============================= #
@@ -155,6 +194,19 @@ if (do_parallel) {
 
 # Loop over xwalk to run this.
 for(i in 1:nrow(model_xwalk)){
+  
+  # see if it has been run already 
+  done_flag <- model_xwalk[i, done_flag]  
+  
+  if(done_flag == 1){
+    next()
+  }
+  
+  # get run id. There is a list of unused ID's and a a counter
+  # for which ID we are on (does not correspond to I because of skipped rows)
+  run_id_i <- run_id_list[[run_id_counter]]
+  run_id_counter <- run_id_counter + 1
+  
   
   #====================#
   # ==== get parms ====
@@ -165,8 +217,11 @@ for(i in 1:nrow(model_xwalk)){
   
   # Set parameters for this Monte Carlo run.
   # Run parameters.
+  qc_flag                    <- model_xwalk[i, qc_flag]            # should we create quality control output? (runs slower)
   nsims                      <- model_xwalk[i, nsims]              # how many simulations to do
+  ts_xwalk_name              <- model_xwalk[i, teacher_student_xwalk]  # which teacher stuent xwalk file to use 
   p_npoints                  <- model_xwalk[i, npoints]            # number of grid points over which to calculate welfare added
+  
   
   # Simulated data parameters.
   p_test_SEM                 <- model_xwalk[i, test_SEM]           # SEM of test
@@ -199,8 +254,12 @@ for(i in 1:nrow(model_xwalk)){
   
   
   # Add in the run id.
-  model_xwalk[i, run_id := .GlobalEnv$run_id]
+  model_xwalk[i, run_id := run_id_i]
   
+  
+
+  # load teacher student xwalk 
+  teacher_student_xwalk <- fread(paste0(base_path, "Heterogeneous-Teacher-Value-Added/R_code/", ts_xwalk_name, ".csv"))
   
   #============================#
   # ==== simulate teachers ====
@@ -214,7 +273,14 @@ for(i in 1:nrow(model_xwalk)){
                                                     min_diff                = p_min_diff,
                                                     max_diff                = p_max_diff)
   
-  
+    #=================#
+    # ==== run qc ====
+    #=================#
+    if(qc_flag == 1){
+      teacher_xwalk_qc(in_teacher_ability_xwalk = teacher_ability_xwalk,
+                       run_id                   = run_id_i,
+                       out_path                 =out_qc)
+    }
   #====================#
   # ==== get truth ====
   #====================#
@@ -233,7 +299,10 @@ for(i in 1:nrow(model_xwalk)){
                                     mrpctile        = p_mrpctile,
                                     mrdist          = p_mrdist,
                                     impact_type     = p_impact_type,
-                                    impact_function = p_impact_function)
+                                    impact_function = p_impact_function,
+                                    qc_flag         = qc_flag,
+                                    out_qc_path     = out_qc,
+                                    run_id_qc       = run_id_i)
   
   standard_info <- welfare_statistic(in_dt           = teacher_ability_xwalk,
                                      type            = 'true',
@@ -248,8 +317,10 @@ for(i in 1:nrow(model_xwalk)){
                                      mrpctile        = p_mrpctile,
                                      mrdist          = p_mrdist,
                                      impact_type     = p_impact_type,
-                                     impact_function = p_impact_function)
+                                     impact_function = p_impact_function,
+                                     qc_flag         = 0)
   
+
   setnames(standard_info, old=c('true_welfare'), new=c('true_standard'))
   
   # Merge on the teacher center.
@@ -288,8 +359,7 @@ for(i in 1:nrow(model_xwalk)){
                                                                         stud_sorting            = p_stud_sorting,
                                                                         rho                     = p_rho,
                                                                         weighted_average        = p_weighted_average)
-    
-    
+
   } else {
     mc_res <- foreach(j = 1:nsims) %do%  single_iteration_fun( teacher_ability_xwalk   = teacher_ability_xwalk,
                                                                      n_cohorts               = p_n_cohorts,
@@ -313,7 +383,6 @@ for(i in 1:nrow(model_xwalk)){
                                                                      stud_sorting            = p_stud_sorting,
                                                                      rho                     = p_rho,
                                                                      weighted_average        = p_weighted_average)
-    
     
   }
   
@@ -353,7 +422,7 @@ for(i in 1:nrow(model_xwalk)){
   mean_tab <- merge(mean_tab, standard_info, "teacher_id")
   
   # Add some more indicators.
-  mean_tab[, run_id := run_id]
+  mean_tab[, run_id := run_id_i]
   mean_tab[, nsims := nsims]
   mean_tab[, date_time := date_time]
   
@@ -376,15 +445,21 @@ for(i in 1:nrow(model_xwalk)){
                            'date_time')]
   
   # Write to the file.
-  write.table(mean_tab,
-              paste0(out_data, 'results.csv'), 
-              sep = ",",
-              col.names = !file.exists(paste0(out_data, 'results.csv')), 
-              append = T,
-              row.names = FALSE)
+  write.csv(mean_tab, 
+       file = paste0(out_data, "int_results/", "results_", run_id_i, ".csv"),
+       row.names = FALSE)
   
-  # Increment the run id.
-  run_id <- run_id + 1
+  
+  # mark this row as done 
+  model_xwalk[i, done_flag :=1]
+  
+  
+  # Save a copy of the most recent xwalk so there are no mixups.
+  write.csv(model_xwalk,
+            paste0(out_data, '/xwalk.csv'),
+            row.names = FALSE)
+  
+ 
   
 } # Close Monte Carlo loop.
 
@@ -395,6 +470,20 @@ if(do_parallel){
 }
 
 
+#========================#
+# ==== stack results ====
+#========================#
+
+# load in results, stack them, save as one 
+file_paths <- list.files(paste0(out_data, "int_results"),
+                         full.names = TRUE)
+
+results <- rbindlist(lapply(file_paths, fread))
+
+# save results 
+write.csv(results,
+          paste0(out_data, 
+                 "results.csv"))
 
 
 # =========================================================================== #
@@ -402,15 +491,9 @@ if(do_parallel){
 # =========================================================================== #
 
 # Save a copy of the most recent xwalk so there are no mixups.
-write.table(model_xwalk,
-            paste0(out_data, 'xwalk.csv'),
-            sep = ",",
-            col.names = !file.exists(paste0(out_data, 'xwalk.csv')), 
-            append = T,
-            row.names = FALSE)
+write.csv(model_xwalk,
+          paste0(out_data, '/xwalk.csv'),
+          row.names = FALSE)
 
 
-#====================================#
-# ==== save teaher ability xwalk ====
-#====================================#
 

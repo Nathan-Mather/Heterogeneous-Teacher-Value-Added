@@ -11,7 +11,7 @@
   
   #'@param teacher_ability Vector of teacher abilities.
   #'@param teacher_center Vector of teacher center values.
-  #'@param teacher_max Vector of teacher max values.
+  #'@param teacher_max Vector of teacher max values. the difference in impact between their best and worst matched students.
   #'@param stud_ability_1 Vector of all student abilities.
   #'@param studmean Optional (we need either this and studsd or stud_ability_1)
   #'parameter giving the mean of student ability from our population.

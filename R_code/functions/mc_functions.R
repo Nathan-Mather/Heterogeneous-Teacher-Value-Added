@@ -115,7 +115,8 @@ binned_va_stat <- function(in_dt              = NULL,
                            mrdist             = NULL,
                            npoints            = NULL,
                            covariates         = NULL,
-                           num_cats           = NULL) {
+                           num_cats           = NULL,
+                           qc_flag            = 0) {
   
   # Allow the bootstrap to pick the sample if needed.
   if (!is.null(boot)) {
@@ -153,7 +154,8 @@ binned_va_stat <- function(in_dt              = NULL,
                               weight_above    = weight_above,
                               v_alpha         = v_alpha,
                               mrpctile        = mrpctile, 
-                              mrdist          = mrdist)
+                              mrdist          = mrdist,
+                              qc_flag         = qc_flag)
   
   # Return the full data if in the MC or just the estimates for the bootstrap.
   if (is.null(boot)) {

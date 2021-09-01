@@ -31,6 +31,7 @@
   #'Monotone, Non-linear, Not Rank Similar).
   #'@param impact_function Which function from the specified type we want for
   #'the true teacher impact.
+  #'@param qc_flag Should we run qc? 
   #'@details 
   #'@examples 
   
@@ -88,7 +89,10 @@
                                 mrpctile        = NULL, 
                                 mrdist          = NULL,
                                 impact_type     = NULL,
-                                impact_function = NULL){
+                                impact_function = NULL,
+                                qc_flag         = 0,
+                                out_qc_path     = NULL,
+                                run_id_qc       = NULL){
     
     
     #======================#
@@ -208,8 +212,99 @@
                                                 type             = impact_type,
                                                 func_num         = impact_function)]
         
+        # do some qc if its flagged  
+        if(qc_flag == 1){
+          
+          # create folder to save these in 
+          full_out_path <- paste0(out_qc_path, "/run_", run_id_qc, "/truth_qc/")
+          dir.create(paste0(full_out_path, "/interactive_data/"),
+                     recursive = TRUE)
+          
+          # make plot attributes 
+          plot_attributes <- theme_classic() + 
+            theme(text = element_text(size= 20),
+                  plot.title = element_text(vjust=0, hjust = 0.5, colour = "black",face = "bold", size =25),
+                  plot.subtitle = element_text(color = "black",hjust = 0.5, size =25),
+                  legend.title = element_text(size=20),
+                  legend.position="right")
+          
+          
+          
+          # pick 5 random teachers and graph their imapct 
+          rand_teachers <- sample(in_dt[, unique(teacher_id)], 5)
+          
+          
+          # loop over random selection of teachers 
+          for(t_j in rand_teachers){
+            
+            # subset welfare to this teacher 
+            welfare_sub <- welfare[teacher_id == t_j]
+            
+            fig_j <- ggplot(welfare_sub, aes(x = stud_ability_1, y = true_impact)) + 
+              geom_point(size = 1) + 
+              ggtitle(paste0("Teacher ", t_j," True Impact Distribution")) + 
+              plot_attributes
+            
+            # Save the plots.
+            ggsave(filename =paste0(full_out_path, "Teacher ", t_j," True Impact run ", run_id_qc, ".png"), 
+                   plot     = fig_j, 
+                   width    = 9, 
+                   height   = 4)
+            
+            # save them as rdata 
+            
+            save( fig_j,
+                 file = paste0(full_out_path,"/interactive_data/", "Teacher ", t_j," True Impact run ", run_id_qc, ".Rdata"))
+            
+            
+          }
+          
+          # make average teacher impact figure 
+          ave_impact <- welfare[, list(mean_impact = mean(true_impact)), stud_ability_1]
+          
+          ave_impact_plot <- ggplot(ave_impact, aes(x = stud_ability_1, y = mean_impact)) + 
+            geom_point(size = 1) + 
+            ggtitle(paste0("Average Teacher True Impact")) + 
+            plot_attributes
+          
+          # Save the plots.
+          ggsave(filename =paste0(full_out_path, "Average Teacher True Impact run ", run_id_qc, ".png"), 
+                 plot     = ave_impact_plot, 
+                 width    = 9, 
+                 height   = 4)
+          
+          # save rdata version for shiny app 
+          save( ave_impact_plot,
+                file = paste0(full_out_path,"/interactive_data/", "Average Teacher True Impact run ", run_id_qc, ".Rdata"))
+          
+          
+          weight_dt <- unique(welfare[, c("stud_ability_1", "weight")])
+          
+          # make a weight figure 
+          weight_figure <- ggplot(weight_dt, aes(x = stud_ability_1, y = weight)) + 
+            geom_point(size = 1) + 
+            ggtitle(paste0("Weight Distribution")) + 
+            plot_attributes
+          
+          ggsave(filename =paste0(full_out_path, "Weigh_Distribution_run ", run_id_qc, ".png"), 
+                 plot     = weight_figure, 
+                 width    = 9, 
+                 height   = 4)
+          
+          # save rdata version for shiny app 
+          save( weight_figure,
+                file = paste0(full_out_path,"/interactive_data/", "Weigh_Distribution_run ", run_id_qc, ".Rdata"))
+          
+        
+          return( welfare[, list(true_welfare = sum(true_impact*weight)), by='teacher_id'])
+          
+          # if no qc, just return data 
+        }else{
+        
         # Calculate and return the true welfare.
         return( welfare[, list(true_welfare = sum(true_impact*weight)), by='teacher_id'])
+          
+        }
         
       } else if (type == 'bin') {
         
@@ -252,8 +347,16 @@
         # welfare[, estimate := as.numeric(estimate)]
         alt_welfare <- welfare[, .(alternative_welfare = sum(estimate*weight)), by='teacher_id']
 
-        return(alt_welfare[])
-        
+        if(qc_flag == 0){
+          
+          return(alt_welfare[])
+        }else{
+          
+          return(list(welfare_est = alt_welfare,
+                      full_est    = output,
+                      bin_xwalk   = cat_xwalk))
+        }
+
         
       } else if (type == 'quant') {
         

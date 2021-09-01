@@ -41,10 +41,10 @@ if(my_wd %like% "Nmath_000"){
   base_path <- "c:/Users/Nmath_000/Documents/Research/"
   
   # path for data to save
-  in_data <- "C:/Users/Nmath_000/Documents/Research/Value added local/results/"
+  in_data <- "C:/Users/Nmath_000/Documents/Research/Value_added_local/results/"
   
   # path for plots
-  out_plot <- "C:/Users/Nmath_000/Documents/Research/Value added local/results/figures/"
+  out_plot <- "C:/Users/Nmath_000/Documents/Research/Value_added_local/results/figures/"
   
 }else{
   # base directory 
@@ -74,18 +74,19 @@ plot_attributes <- theme_classic() +
 # Load the results.
 res_dt <- fread(paste0(in_data, 'results.csv'))
 
-# Load the xwalk.
-model_xwalk <- data.table(readxl::read_excel(paste0(base_path, 'Heterogeneous-Teacher-Value-Added/R_code/model_xwalk_SDUSD.xlsx')))
+# Load model_xwalk.
+model_xwalk <- fread(paste0(in_data,
+                            "/xwalk.csv"))
 
-# Figure out which figures already exist.
-figs <- list.files(path=out_plot)
-figs <- tail(figs[figs %like% 'truth_cat_run_'], n=1)
-
-if (length(figs) == 0) {
-  last_num <- 0
-} else {
-  last_num <- as.numeric(gsub('^.*([0-9]+).*$', '\\1', figs))
-}
+# # Figure out which figures already exist.
+# figs <- list.files(path=out_plot)
+# figs <- tail(figs[figs %like% 'truth_cat_run_'], n=1)
+# 
+# if (length(figs) == 0) {
+#   last_num <- 0
+# } else {
+#   last_num <- as.numeric(gsub('^.*([0-9]+).*$', '\\1', figs))
+# }
 
 
 
@@ -189,11 +190,12 @@ res_dt[, quantile_MAE := abs(quantile_rank - true_ww_rank)]
 
 last_num <- 0
 single_run_i <- 0
+
 # Loop over rows in the xwalk.
 for (i in 1:nrow(model_xwalk)) {
 print(i)
   # Grab run_id. 
-  run_id_i <- i
+  run_id_i <- model_xwalk[i, run_id]
   # single_run_i <- model_xwalk[i, single_run]
   # 
   if ((as.numeric(run_id_i) <= last_num) | (as.numeric(single_run_i) == 1)) {
@@ -218,15 +220,15 @@ print(i)
   # ========================================================================= #
   
   # Just the truth.
-  truth_cat_plot <- ggplot(res_sub, aes(x = true_ww_rank, y = true_welfare_norm)) +
-    geom_point(size = 1.5, aes(color = "Welfare-Weighted VA"), alpha = 1) + 
-    scale_color_manual(values= c("#77AADD")) +
-    ylab("Teacher Impact") + 
-    xlab("Teacher Impact Rank Order (Low to High)") +
-    ylim(-6,6)+
-    plot_attributes + 
-    theme(legend.title = element_blank(),
-          legend.position = c(0.8, 0.8))
+  # truth_cat_plot <- ggplot(res_sub, aes(x = true_ww_rank, y = true_welfare_norm)) +
+  #   geom_point(size = 1.5, aes(color = "Welfare-Weighted VA"), alpha = 1) + 
+  #   scale_color_manual(values= c("#77AADD")) +
+  #   ylab("Teacher Impact") + 
+  #   xlab("Teacher Impact Rank Order (Low to High)") +
+  #   ylim(-6,6)+
+  #   plot_attributes + 
+  #   theme(legend.title = element_blank(),
+  #         legend.position = c(0.8, 0.8))
   
   # Standard caterpillar plot.
   standard_cat_plot <- ggplot(res_sub, aes(x = true_ww_rank, y = mean_standard_norm)) +
@@ -241,29 +243,29 @@ print(i)
     theme(legend.title = element_blank(),
           legend.position = c(0.8, 0.8))
   
-  # Standard teacher center.
-  standard_est_center_plot <- ggplot(res_sub, aes(x = teacher_center, y = mean_standard_norm)) +
-    geom_point(size = 1.5, aes(color = "Standard VA Estimate"), alpha = 1) +
-    geom_point(aes( y = true_welfare_norm, color = "Welfare-Weighted VA"),size = 1, alpha = .4) +
-    scale_color_manual(values= c("#ffaabb", "#77AADD")) +
-    ylab("Teacher Impact") +
-    xlab("Optimal Student Ability Match") +
-    ylim(-6,6)+
-    plot_attributes +
-    theme(legend.title = element_blank(),
-          legend.position = c(0.8, 0.8))
-  
-  # the point of this is to see any correlation of teacher center and overall techer ability 
-  standard_center_plot <- ggplot(res_sub, aes(x = teacher_center, y = true_standard_norm)) +
-    geom_point(size = 1.5, aes(color = "Standard VA"), alpha = 1) +
-    geom_point(aes( y = true_welfare_norm, color = "Welfare-Weighted VA"),size = 1, alpha = .4) +
-    scale_color_manual(values= c("#ffaabb", "#77AADD")) +
-    ylab("Teacher Impact") +
-    xlab("Optimal Student Ability Match") +
-    ylim(-6,6)+
-    plot_attributes +
-    theme(legend.title = element_blank(),
-          legend.position = c(0.8, 0.8))
+  # # Standard teacher center.
+  # standard_est_center_plot <- ggplot(res_sub, aes(x = teacher_center, y = mean_standard_norm)) +
+  #   geom_point(size = 1.5, aes(color = "Standard VA Estimate"), alpha = 1) +
+  #   geom_point(aes( y = true_welfare_norm, color = "Welfare-Weighted VA"),size = 1, alpha = .4) +
+  #   scale_color_manual(values= c("#ffaabb", "#77AADD")) +
+  #   ylab("Teacher Impact") +
+  #   xlab("Optimal Student Ability Match") +
+  #   ylim(-6,6)+
+  #   plot_attributes +
+  #   theme(legend.title = element_blank(),
+  #         legend.position = c(0.8, 0.8))
+  # 
+  # # the point of this is to see any correlation of teacher center and overall techer ability 
+  # standard_center_plot <- ggplot(res_sub, aes(x = teacher_center, y = true_standard_norm)) +
+  #   geom_point(size = 1.5, aes(color = "Standard VA"), alpha = 1) +
+  #   geom_point(aes( y = true_welfare_norm, color = "Welfare-Weighted VA"),size = 1, alpha = .4) +
+  #   scale_color_manual(values= c("#ffaabb", "#77AADD")) +
+  #   ylab("Teacher Impact") +
+  #   xlab("Optimal Student Ability Match") +
+  #   ylim(-6,6)+
+  #   plot_attributes +
+  #   theme(legend.title = element_blank(),
+  #         legend.position = c(0.8, 0.8))
   
   # standard_center_plot1 <- ggplot(res_sub, aes(x = teacher_center, y = true_standard_norm)) +
   #   geom_point(size = 1.5, aes(color = "Standard VA"), alpha = 1) +
@@ -276,31 +278,45 @@ print(i)
   #         legend.position = c(0.8, 0.8))
   
   # Save the plots.
-  ggsave(filename = paste0(out_plot, "truth_cat_run_",  run_id_i, ".png"), 
-         plot     = truth_cat_plot, 
-         width    = 9, 
-         height   = 4)
+  # ggsave(filename = paste0(out_plot, "truth_cat_run_",  run_id_i, ".png"), 
+  #        plot     = truth_cat_plot, 
+  #        width    = 9, 
+  #        height   = 4)
   
   ggsave(filename = paste0(out_plot, "standard_cat_run_",  run_id_i, ".png"), 
          plot     = standard_cat_plot, 
          width    = 9, 
          height   = 4)
   
-  ggsave(filename = paste0(out_plot, "standard_est_cent_run_",  run_id_i, ".png"), 
-         plot     = standard_est_center_plot, 
-         width    = 9, 
-         height   = 4)
+  # ggsave(filename = paste0(out_plot, "standard_est_cent_run_",  run_id_i, ".png"), 
+  #        plot     = standard_est_center_plot, 
+  #        width    = 9, 
+  #        height   = 4)
   
-  ggsave(filename = paste0(out_plot, "standard_cent_run_",  run_id_i, ".png"), 
-         plot     = standard_center_plot, 
-         width    = 9, 
-         height   = 4)
+  # ggsave(filename = paste0(out_plot, "standard_cent_run_",  run_id_i, ".png"), 
+  #        plot     = standard_center_plot, 
+  #        width    = 9, 
+  #        height   = 4)
   
   # ggsave(filename = paste0(out_plot, "standard_cent_run_just_stand_",  run_id_i, ".png"),
   #        plot     = standard_center_plot1, 
   #        width    = 9, 
   #        height   = 4)
 
+  dir.create(paste0(out_plot, "interactive_data/"))
+  
+  # # save rdata versions 
+  # save(truth_cat_plot,
+  #      file = paste0(out_plot, "interactive_data/", "truth_cat_run_",  run_id_i, ".Rdata"))
+  # 
+  save(standard_cat_plot,
+       file = paste0(out_plot, "interactive_data/", "standard_cat_run_",  run_id_i, ".Rdata"))
+  # 
+  # save(standard_est_center_plot,
+  #      file = paste0(out_plot, "interactive_data/", "standard_est_cent_run_",  run_id_i, ".Rdata"))
+  # 
+  # save(standard_center_plot,
+  #      file = paste0(out_plot, "interactive_data/", "standard_cent_run_",  run_id_i, ".Rdata"))
 
   # ========================================================================= #
   # ============================ Loop over methods ========================== #
@@ -328,27 +344,30 @@ print(i)
     # ========================= Teacher Center Figures ======================== #
     # ========================================================================= #
     
-    # Alternative teacher center.
-    welfare_center_plot <- ggplot(res_sub, aes(x = teacher_center, y = mean_ww_norm)) +
-      geom_point(size = 1.5, aes(color = "Alternative VA Estimate"), alpha = 1) +
-      geom_point(aes( y = true_welfare_norm, color = "Welfare-Weighted VA"),size = 1, alpha = .4) +
-      scale_color_manual(values= c("#ffaabb", "#77AADD"),
-      guide=guide_legend(reverse=TRUE)) +
-      ylab("Teacher Impact") +
-      xlab("Optimal Student Ability Match") +
-      ylim(-6,6)+
-      plot_attributes +
-      theme(legend.title = element_blank(),
-            legend.position = c(0.8, 0.8))
+    # # Alternative teacher center.
+    # welfare_center_plot <- ggplot(res_sub, aes(x = teacher_center, y = mean_ww_norm)) +
+    #   geom_point(size = 1.5, aes(color = "Alternative VA Estimate"), alpha = 1) +
+    #   geom_point(aes( y = true_welfare_norm, color = "Welfare-Weighted VA"),size = 1, alpha = .4) +
+    #   scale_color_manual(values= c("#ffaabb", "#77AADD"),
+    #   guide=guide_legend(reverse=TRUE)) +
+    #   ylab("Teacher Impact") +
+    #   xlab("Optimal Student Ability Match") +
+    #   ylim(-6,6)+
+    #   plot_attributes +
+    #   theme(legend.title = element_blank(),
+    #         legend.position = c(0.8, 0.8))
 
-
-    # Save the figures.
-    ggsave(filename = paste0(out_plot, method, "_welfare_cent_run_",  run_id_i, ".png"), 
-           plot     = welfare_center_plot, 
-           width    = 9, 
-           height   = 4)  
-  
-    
+# 
+#     # Save the figures.
+#     ggsave(filename = paste0(out_plot, method, "_welfare_cent_run_",  run_id_i, ".png"), 
+#            plot     = welfare_center_plot, 
+#            width    = 9, 
+#            height   = 4)  
+#   
+#     # save rdata version for shiny app 
+#     save(welfare_center_plot,
+#          file = paste0(out_plot,  "interactive_data/", method, "_welfare_cent_run_",  run_id_i, ".Rdata"))
+#     
     # ========================================================================= #
     # ========================= Alternative Caterpillar ======================= #
     # ========================================================================= #
@@ -373,7 +392,10 @@ print(i)
            width    = 9, 
            height   = 4)
   
-  
+    # save rdata version for shiny app 
+    save(ww_cat_plot,
+         file = paste0(out_plot,  "interactive_data/", method, "_ww_cat_run_",  run_id_i, ".Rdata"))
+    
     # ========================================================================= #
     # ======================= Histogram and Summary Stats ===================== #
     # ========================================================================= #
@@ -427,233 +449,11 @@ print(i)
            width    = 9, 
            height   = 5)
     
+    save(out_histogram2,
+         file = paste0(out_plot,  "interactive_data/",  method, "_hist_run_",  run_id_i, ".Rdata"))
+    
+    
   } # Close inner for loop.
 } # Close outer for loop.
 
-
-
-if (FALSE) {
-# =========================================================================== #
-# ============================ Stress test plots ============================ #
-# =========================================================================== #
-
-# We will want to revisit this later.
-
-# Get the kendall correlations for each run.
-cor_tab <- res_dt[, list(standard_cor = cor(standard_rank, true_ww_rank, method  = "kendall" , use="pairwise"),
-                         ww_cor       =  cor(ww_rank, true_ww_rank, method  = "kendall" , use="pairwise"),
-                         mean_sd_standard  = mean(sd_standard, na.rm = TRUE),
-                         mean_sd_ww        = mean(sd_ww, na.rm= TRUE)),
-                  run_id]
-
-  #==========================#
-  # ==== max diff stress ====
-  #==========================#
-
-    #==================#
-    # ==== np_hack ====
-    #==================#
-    
-    xwalk_sub <- model_xwalk[method == "np_hack" & ta_sd == 0.1  & stud_sorting == 0 & n_stud_per_teacher == "150"]
-
-    # subset to the runs we need 
-    cor_tab_sub <- cor_tab[run_id %in% xwalk_sub$run_id]
-    
-    # merge on the thing that changes 
-    cor_tab_sub <- merge(cor_tab_sub, xwalk_sub[, c("run_id", "max_diff")], "run_id" )
-    
-    # make the plot 
-    stress_plot <- ggplot(cor_tab_sub, aes(x = max_diff, y = ww_cor)) +
-      geom_point(aes(color = "Weighted Nonparametric VA", y = ww_cor), size = 3) + 
-      geom_line(aes(color = "Weighted Nonparametric VA", y = ww_cor), size = 1) + 
-      geom_point(aes( y = standard_cor,  color = "Standard VA"),size = 3) +
-      geom_line(aes( y = standard_cor,  color = "Standard VA"),size = 1) +
-      scale_color_manual(values= c("#77AADD", "#ffaabb"),
-                         guide=guide_legend(reverse=TRUE)) +
-      xlab("Teacher Heterogeneity") +
-      ylab("Rank Correlation to Truth") +
-      plot_attributes +
-      theme(legend.title = element_blank(),
-            legend.position = "bottom")
-    print(stress_plot)
-    
-    ggsave(filename = paste0(out_plot,"stress_np_max_diff", ".png"), 
-           plot     = stress_plot, 
-           width    = 9, 
-           height   = 5)
-    
-
-    #==============#
-    # ==== bin ====
-    #==============#
-    
-    
-    xwalk_sub <- model_xwalk[method == "bin" & ta_sd == 0.1  & stud_sorting == 0 & n_stud_per_teacher == "150"]
-    
-    # subset to the runs we need 
-    cor_tab_sub <- cor_tab[run_id %in% xwalk_sub$run_id]
-    
-    # merge on the thing that changes 
-    cor_tab_sub <- merge(cor_tab_sub, xwalk_sub[, c("run_id", "max_diff")], "run_id" )
-    
-    # make the plot 
-    stress_plot <- ggplot(cor_tab_sub, aes(x = max_diff, y = ww_cor)) +
-      geom_point(aes(color = "Weighted Binned VA", y = ww_cor), size = 3) + 
-      geom_line(aes(color = "Weighted Binned VA", y = ww_cor), size = 1) + 
-      geom_point(aes( y = standard_cor,  color = "Standard VA"),size = 3) +
-      geom_line(aes( y = standard_cor,  color = "Standard VA"),size = 1) +
-      scale_color_manual(values= c("#77AADD", "#ffaabb"),
-                         guide=guide_legend(reverse=TRUE)) +
-      xlab("Teacher Heterogeneity") +
-      ylab("Rank Correlation to Truth") +
-      plot_attributes +
-      theme(legend.title = element_blank(),
-            legend.position = "bottom")
-    print(stress_plot)
-    
-    ggsave(filename = paste0(out_plot,"stress_bin_max_diff", ".png"), 
-           plot     = stress_plot, 
-           width    = 9, 
-           height   = 5)
-    
-
-  #=========================#
-  # ==== student stress ====
-  #=========================#
-    #==================#
-    # ==== np_hack ====
-    #==================#
-    
-    xwalk_sub <- model_xwalk[method == "np_hack" & ta_sd == 0.1 & max_diff ==1  & stud_sorting == 0]
-    
-    # subset to the runs we need 
-    cor_tab_sub <- cor_tab[run_id %in% xwalk_sub$run_id]
-    
-    # merge on the thing that changes 
-    cor_tab_sub <- merge(cor_tab_sub, xwalk_sub[, c("run_id", "n_stud_per_teacher")], "run_id" )
-    
-    # make the plot 
-    stress_plot <- ggplot(cor_tab_sub, aes(x = n_stud_per_teacher, y = mean_sd_ww)) +
-      geom_point(aes(color = "Weighted Nonparametric VA", y = mean_sd_ww), size = 3) + 
-      geom_line(aes(color = "Weighted Nonparametric VA", y = mean_sd_ww), size = 1) + 
-      geom_point(aes( y = mean_sd_standard,  color = "Standard VA"),size = 3) +
-      geom_line(aes( y = mean_sd_standard,  color = "Standard VA"),size = 1) +
-      scale_color_manual(values= c("#77AADD", "#ffaabb"),
-                         guide=guide_legend(reverse=TRUE)) +
-      xlab("Number of Students") +
-      ylab("Mean Standard Deviation") +
-      plot_attributes +
-      theme(legend.title = element_blank(),
-            legend.position = "bottom")
-    print(stress_plot)
-    
-    ggsave(filename = paste0(out_plot,"stress_np_n_stud", ".png"), 
-           plot     = stress_plot, 
-           width    = 9, 
-           height   = 5)
-    
-    
-    #==================#
-    # ==== bin ====
-    #==================#
-    
-    xwalk_sub <- model_xwalk[method == "bin" & ta_sd == 0.1 & max_diff ==1  & stud_sorting == 0]
-    
-    # subset to the runs we need 
-    cor_tab_sub <- cor_tab[run_id %in% xwalk_sub$run_id]
-    
-    # merge on the thing that changes 
-    cor_tab_sub <- merge(cor_tab_sub, xwalk_sub[, c("run_id", "n_stud_per_teacher")], "run_id" )
-    
-    # make the plot 
-    stress_plot <- ggplot(cor_tab_sub, aes(x = n_stud_per_teacher, y = mean_sd_ww)) +
-      geom_point(aes(color = "Weighted Binned VA", y = mean_sd_ww), size = 3) + 
-      geom_line(aes(color = "Weighted Binned VA", y = mean_sd_ww), size = 1) + 
-      geom_point(aes( y = mean_sd_standard,  color = "Standard VA"),size = 3) +
-      geom_line(aes( y = mean_sd_standard,  color = "Standard VA"),size = 1) +
-      scale_color_manual(values= c("#77AADD", "#ffaabb"),
-                         guide=guide_legend(reverse=TRUE)) +
-      xlab("Number of Students") +
-      ylab("Mean Standard Deviation") +
-      plot_attributes +
-      theme(legend.title = element_blank(),
-            legend.position = "bottom")
-    print(stress_plot)
-    
-    ggsave(filename = paste0(out_plot,"stress_bin_n_stud", ".png"), 
-           plot     = stress_plot, 
-           width    = 9, 
-           height   = 5)
-    
-
-  #=================================#
-  # ==== Teacher ability stress ====
-  #=================================#
-
-    #==================#
-    # ==== np_hack ====
-    #==================#
-
-    xwalk_sub <- model_xwalk[method == "np_hack" & stud_sorting == 0 & n_stud_per_teacher == 150 & max_diff ==1]
-  
-    # subset to the runs we need 
-    cor_tab_sub <- cor_tab[run_id %in% xwalk_sub$run_id]
-  
-    # merge on the thing that changes 
-    cor_tab_sub <- merge(cor_tab_sub, xwalk_sub[, c("run_id", "ta_sd")], "run_id" )
-    
-    # make the plot 
-    stress_plot <- ggplot(cor_tab_sub, aes(x = ta_sd, y = ww_cor)) +
-      geom_point(aes(color = "Weighted Nonparametric VA", y = ww_cor), size = 3) + 
-      geom_line(aes(color = "Weighted Nonparametric VA", y = ww_cor), size = 1) + 
-      geom_point(aes( y = standard_cor,  color = "Standard VA"),size = 3) +
-      geom_line(aes( y = standard_cor,  color = "Standard VA"),size = 1) +
-      scale_color_manual(values= c("#77AADD", "#ffaabb"),
-                         guide=guide_legend(reverse=TRUE)) +
-      xlab("Teacher Ability Variance") +
-      ylab("Rank Correlation to Truth") +
-      plot_attributes +
-      theme(legend.title = element_blank(),
-            legend.position = "bottom")
-    print(stress_plot)
-    
-    ggsave(filename = paste0(out_plot,"stress_np_ta_sd", ".png"), 
-           plot     = stress_plot, 
-           width    = 9, 
-           height   = 5)
-    
-    #===============#
-    # ==== bins ====
-    #===============#
-
-    xwalk_sub <- model_xwalk[method == "bin" & stud_sorting == 0 & n_stud_per_teacher == 150 & max_diff ==1]
-    
-    # subset to the runs we need 
-    cor_tab_sub <- cor_tab[run_id %in% xwalk_sub$run_id]
-    
-    # merge on the thing that changes 
-    cor_tab_sub <- merge(cor_tab_sub, xwalk_sub[, c("run_id", "ta_sd")], "run_id" )
-    
-    # make the plot 
-    stress_plot <- ggplot(cor_tab_sub, aes(x = ta_sd, y = ww_cor)) +
-      geom_point(aes(color = "Weighted Binned VA", y = ww_cor), size = 3) + 
-      geom_line(aes(color = "Weighted Binned VA", y = ww_cor), size = 1) + 
-      geom_point(aes( y = standard_cor,  color = "Standard VA"),size = 3) +
-      geom_line(aes( y = standard_cor,  color = "Standard VA"),size = 1) +
-      scale_color_manual(values= c("#77AADD", "#ffaabb"),
-                         guide=guide_legend(reverse=TRUE)) +
-      xlab("Teacher Ability Variance") +
-      ylab("Rank Correlation to Truth") +
-      plot_attributes +
-      theme(legend.title = element_blank(),
-            legend.position = "bottom")
-    print(stress_plot)
-    
-    ggsave(filename = paste0(out_plot,"stress_bin_ta_sd", ".png"), 
-           plot     = stress_plot, 
-           width    = 9, 
-           height   = 5)
-    
-
-}
 
