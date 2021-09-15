@@ -279,6 +279,11 @@ for(i in 1:nrow(model_xwalk)){
                                       # rho                      = 0.2
   )
   
+  
+  # get within vs between teacher variation 
+  
+  
+  
   # Estimate standard value added.
   va_stand <- standard_va_stat(in_dt              = r_student_dt,
                               covariates         = p_covariates,
