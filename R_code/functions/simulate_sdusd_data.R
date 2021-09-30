@@ -154,8 +154,8 @@ simulate_sdusd_data <- function(teacher_ability_xwalk   = NULL,
                                 n_cohorts               = 3,
                                 pretest_coef            = .9,
                                impact_type              = "MLRN",
-                               impact_function          = 1
-                               # test_SEM                 = 0.07,
+                               impact_function          = 1,
+                               test_SEM                 = 0
                                # covariates               = 0,
                                # peer_effects             = 0,
                                # stud_sorting             = 0,
@@ -208,8 +208,8 @@ simulate_sdusd_data <- function(teacher_ability_xwalk   = NULL,
       #note will need to add measurment error here. 
       r_dt[, stud_ability_1 := rnorm(.N, mean = 0, sd = 1)]
       
-      # no measurement error 
-      r_dt[, test_1 := stud_ability_1]
+      # Make a test to potentially introduce measurement error 
+      r_dt[, test_1 := rnorm(nrow(r_dt), mean = stud_ability_1, sd = test_SEM) ]
       
       # give students their time invariant effect like in wooldridge
       r_dt[, stud_fe := rnorm(.N, mean = 0, sd = .6)]
@@ -280,8 +280,8 @@ simulate_sdusd_data <- function(teacher_ability_xwalk   = NULL,
         # make new student ability via wooldridge with no measurment error
         r_dt[, stud_ability_2 := pretest_coef*stud_ability_1 + teacher_impact + stud_fe + rnorm(.N, mean = 0, sd = 1)]
         
-        # make test with no error 
-        r_dt[, test_2 := stud_ability_2]
+        # make test with option of error if non zero test_SEM
+        r_dt[, test_2 := rnorm(nrow(r_dt), mean = stud_ability_2, sd = test_SEM) ]
         
   
         # save this year cohort 

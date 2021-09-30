@@ -77,6 +77,8 @@ plot(my_dt$s_ability1, my_dt$resids2)
 
 binnedplot(my_dt$s_ability1 ,my_dt$resids2)
 
+# plot residuals over pretest 
+binnedplot(my_dt$s_test1 ,my_dt$resids2)
 
 
 

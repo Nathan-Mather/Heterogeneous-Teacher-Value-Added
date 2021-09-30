@@ -8,7 +8,8 @@ base_path <- "C:/Users/Nmath_000/Documents/Research/Heterogeneous-Teacher-Value-
 
 
 # load in real data to get something cose 
-real_data <- fread(paste0("C:/Users/Nmath_000/Documents/Research/Value added local/simulation_inputs/SimulationAnalysis.csv"))
+real_data <- fread(paste0("C:/Users/Nmath_000/Documents/Research/Value_added_local/simulation_inputs/SimulationAnalysis.csv"))
+
 
 #==============================#
 # ==== make a temp realish data ====
@@ -55,7 +56,7 @@ write.csv(realish_data, paste0(base_path, "teacher_student_xwalk_realish.csv"), 
 #=============================#
 
 # generate school ids 
-school_id <- c(school_id = 1:25)
+school_id <- c(school_id = 1:10)
 
 # make teacher id's per school 
 teacher_id <- c(school_id = 1:9)
@@ -79,6 +80,11 @@ teacher_student_xwalk[, n_studs := 30]
 teacher_student_xwalk[, teacher_id := paste0(school_id, teacher_id)]
 
 
+#########
+# save #
+########
+
+# subset this to have  simple small sample 
 
 # save this out for practice until I get real thing from tanner 
 write.csv(teacher_student_xwalk, paste0(base_path, "teacher_student_xwalk_fake.csv"), row.names = FALSE)
