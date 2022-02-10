@@ -1,0 +1,91 @@
+\documentclass[letterpaper,12pt]{article}
+
+% Import packages from .sty file.
+%\usepackage{imports}
+
+% Mike's things because he couldn't figure out how to get the preamble working otherwise
+\usepackage[utf8]{inputenc}
+\usepackage{geometry,ulem,graphicx,caption,color,setspace,dsfont,amssymb}
+\usepackage[comma]{natbib}
+\usepackage{subcaption} 
+\usepackage[short]{optidef}
+\usepackage{hhline}
+\usepackage[capposition=top]{floatrow}
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{adjustbox}
+\usepackage{tikz}
+\usepackage{pdflscape}
+\usetikzlibrary{calc,patterns,positioning}
+\usepackage{environ}
+\usepackage{soul}
+
+\bibliographystyle{ecta}
+
+\usepackage{titlesec}
+\titleformat{\section}
+  {\normalfont\normalsize\bfseries}{\thesection.}{1em}{}
+
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries}{\thesubsection}{1em}{}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Proposal for Tanner idea4/Mike idea1
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% Set up the title.
+\title{From Value Added to Welfare Added: A Social Planner Approach to Education Policy and Statistics}
+\author{
+Tanner S Eastmond\thanks{Department of Economics, University of California, San Diego. Email: teastmon@ucsd.edu}, Nathan Mather\thanks{Department of Economics, University of Michigan. Email: njmather@umich.edu }, Michael Ricks\thanks{Department of Economics, University of Michigan. Email: ricksmi@umich.edu}} 
+\date{\vspace{-8ex}}
+
+\begin{document}
+%\maketitle
+\begin{center}
+\noindent \textbf{Beyond Value Added: Measuring How Teacher Effects Vary Along the Achievement Distribution}
+
+Tanner S Eastmond\footnote{Department of Economics, University of California, San Diego}, Nathan Mather\footnote{\label{1}Department of Economics, University of Michigan}, Michael Ricks\footnotemark[\ref{1}]
+\end{center}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%% Motivation and Proposal. %%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Overview}
+\vspace{-12pt}
+Value added measures (VAM) are intended to evaluate how much each teacher contributes to their students' learning.  We propose new VAM which identify whether and how much teachers' impacts vary amongst students of different prior achievement levels (e.g. low- versus high-achieving). We request data from the San Diego Unified School district to apply these methods, characterize how this information could improve long-term student outcomes, and investigate/improve the implementation of various policy goals.
+
+%This project will develop new value added measures (VAM) that capture differences in gains imparted to students at different achievement levels and will implement these tools to quantify teacher effects and measure how the affect student achievement and long-term outcomes, especially focusing on lower achieving students.
+
+
+\section{Proposal}
+\vspace{-12pt}
+Research has found that VAM do capture some underlying information about teacher performance \citep{chetty2014measuring2,pope2017multidimensional}, but also that they are missing important details, such as the match quality of individual student-teacher pairs \citep{dee2005teacher}. VAM cannot capture differences in a teachers effects on different students because they are, in essence, a simple average, and as such cannot identify important quantities for policy and practice such as which teachers are most effective at helping at-risk and low-achieving students.
+
+This project proposes extensions to the VAM framework that would allow us to measure how teachers' contributions vary for students of differing prior achievement levels. To do this we will adapt a set of existing statistical tools to our particular setting. Next, we will show that these methods correctly identify which teachers are especially effective at teaching students of varying prior achievement in simulations. 
+
+%To do this we will adapt the semiparametric index model estimator \citep{ichimura1993semiparametric} to estimate the effect of each teacher for students of each expected test score level.
+
+Having access to the San Diego Unified School District data would then allow us to explore questions relevant to evaluating the progress of particular goals and policies for the district/state and improving outcomes for low-achieving students without individually identifying any teachers, students, or schools. These data would be housed at UCSD and only available onsite, so the collaborators from the University of Michigan would not have access. We will focus on VAM for mathematics and English Language arts in grades 2-8, ideally running our analysis both with the older CST scores and the newer California state test scores.
+
+Questions that we could answer include: what information do our estimates add above traditional VAM about how teachers affect students' long-term outcomes? How much does a student benefit from being assigned to a teacher who is particularly suited to teaching students at their level? Is there trade-off between assigning students to classes with teachers who tend to teach all students well vs teachers who excel at teaching certain types of students? How could schools better utilize the talents of the teachers they already have? How much could simple, small adjustments to student-teacher assignments impact on overall student performance and long-term outcomes?
+
+%In addition to answering these main questions we would also be interested in some of the following.
+%\begin{enumerate}
+%    \item If we can better identify teachers who are exceptional at furthering the district's goals for student learning, can we leverage that information to find out what they are doing well and possibly help other teachers to do similarly?
+%    \item What do differences between traditional VAM and these adapted VAM tell us about the risks of explicitly using mean test score gains to evaluate teachers? For example, if we just use average achievement gains to evaluate policy goals or teacher performance are we incorrectly identifying teachers who are doing well/poorly?
+%\end{enumerate}
+
+In answering these questions, we hope to be able to better understand whether and how much students of various prior achievement levels differentially benefit from interacting with particular teachers. This, in turn, allows several potentially beneficial avenues for improving student outcomes within the district. For example, our analysis could better inform formal or informal student tracking programs, allowing students to be assigned to teachers where they will be most benefited. It could also possibly be leveraged to help align district and teacher incentives in pushing forward with district goals for the students. Along these lines, it could also potentially identify teachers who are especially effective at helping certain groups of students. This could subsequently guide qualitative work that would inform the best practices for reaching at risk students or furthering district goals.
+
+
+\bibliography{citations}
+    
+
+\end{document}
