@@ -1,0 +1,98 @@
+\documentclass[letterpaper,12pt]{article}
+
+% Import packages from .sty file.
+%\usepackage{imports}
+
+% Mike's things because he couldn't figure out how to get the preamble working otherwise
+\usepackage[utf8]{inputenc}
+\usepackage{geometry,ulem,graphicx,caption,color,setspace,dsfont,amssymb}
+\usepackage[comma]{natbib}
+\usepackage{subcaption} 
+\usepackage[short]{optidef}
+\usepackage{hhline}
+\usepackage[capposition=top]{floatrow}
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{adjustbox}
+\usepackage{tikz}
+\usepackage{pdflscape}
+\usetikzlibrary{calc,patterns,positioning}
+\usepackage{environ}
+\usepackage{soul}
+
+\bibliographystyle{ecta}
+
+\usepackage{titlesec}
+\titleformat{\section}
+  {\normalfont\normalsize\bfseries}{\thesection.}{1em}{}
+
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries}{\thesubsection}{1em}{}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Title %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{From Value Added to Welfare Added: A Social Planner Approach to Education Policy and Statistics}
+\author{
+Tanner S Eastmond\thanks{Department of Economics, University of California, San Diego. Email: teastmon@ucsd.edu}, Nathan Mather\thanks{Department of Economics, University of Michigan. Email: njmather@umich.edu }, Michael Ricks\thanks{Department of Economics, University of Michigan. Email: ricksmi@umich.edu}} 
+\date{\vspace{-8ex}}
+
+\begin{document}
+\begin{center}
+\noindent \textbf{Beyond Value Added: Measuring How Teacher Effects Vary Along the Achievement Distribution}
+
+Tanner S Eastmond\footnote{Department of Economics, University of California, San Diego}, Nathan Mather\footnote{\label{1}Department of Economics, University of Michigan}, Michael Ricks\footnotemark[\ref{1}]
+\end{center}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% Advisor %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\noindent My faculty advisor is Gordon Dahl.
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% Project %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Project Description}
+
+Education policies seeking to promote teacher accountability typically have specific distributional goals for students. For example, some focus on minority groups, low-achieving students, or other at-risk populations. Furthermore, these policies often use value added measures (VAM) to evaluate and compare teachers in order to better promote various policy goals. Though VAM seem to perform well in the face of possible biases and capture real information about the long-term effects that teachers have on students \citep{chetty2014measuring1, chetty2014measuring2}, there seems to be a philosophical disconnect between these distributional goals and tradition VAM. This disconnect comes because VAM are mean oriented statistics and are thus completely utilitarian. In this project we seek to bridge this disconnect by proposing a set of more flexible measures that allow for heterogeneity in teacher value added across the achievement distribution.
+
+In particular, we will use standard value added including bins for prior achievement, quantile regression, and a semiparametric index model to estimate the value added for each teacher. We will run monte carlo simulations to compare each of these estimators to standard value added. We will evaluate each by how well they recover the true, welfare weighted ranking of teachers (i.e. which teachers contribute the greatest value added weighted by the policy maker's explicit welfare weights) and by how well each performs in a single sample. These simulations will also allow us to understand whether these more flexible measures are feasible given the data constraints in real-world settings.
+
+We are also working to acquire administrative student-teacher linked data, with which we will be able to explore questions such as "what gains might we expect if teachers and students were better matches?" or "what are the costs in terms of the states policy goals for using standard VAM as opposed to our more flexible measures?"
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%% Contribution %%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Contribution}
+
+Our research relates particularly to three main strands in the literature. First, a number of studies show that teachers respond to policy and other external incentives \cite{jacob2003rotten, neal2010left, pope2019effect}. Prior work has shown that bright-line policies can induce very strong responses from teachers. For example, \cite{jacob2003rotten} find that some teachers in Chicago responded to very well-defined policies by actually cheating to inflate their students scores. Another study, \cite{neal2010left} examine the sharp proficiency cutoffs in the No Child Left Behind act (NCLB) and find that teachers focused largely on students near the proficiency threshold, even to the neglecting of students at the bottom and top of the achievement distributions. This study is particularly pertinent for us because the stated policy goal of `No Child Left Behind' was ultimately completely at odds with the actual evaluation of teachers that happened.
+
+Second, VAM both are reasonably estimated and capture something real. Some of the most influential studies in this area are \cite{chetty2014measuring1} and \cite{chetty2014measuring2}. The first of these examines some prominent criticisms of VAM and finds that, once prior test score is controlled for, VA estimates of the causal impact of teachers on students exhibit little bias. The second is an important follow up to the first, which goes further and shows that not only are these VAM reasonable estimates of the causal impact of teachers on students, but they actually capture information about the long-term impacts of teachers on students. They show that having a teacher with high value added leads to higher likelihood of attending college, higher future salaries, and lower chance of having children as a teenager.
+
+Third, there is some heterogeneity that VAM do not catch. The most prominent strand of this literature is that which shows that having a teacher with similar characteristics as the student (in particular race and gender) significantly improves student outcomes \citep{dee2005teacher, ehrenberg1995teachers}. There are several studies which consider heterogeneity across the student achievement distribution as well \citep{lockwood2009, condie2014teacher}.
+
+We contribute to these different strands in the literature in two main ways. First, we will show that because of the heterogeneity that VAM do not catch, some policy evaluations miss both on understanding how well the objectives are actually being achieved and on identifying the teachers who are doing well or struggling to carry out those objectives. Second, our simulations will allow us to better understand whether traditional VAM do not do reasonable when there is appreciable heterogeneity and whether our measures improve on these standard measures.
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%% References %%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bibliography{citations}
+
+\end{document}

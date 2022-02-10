@@ -27,12 +27,7 @@
 
 % First remove the navigation symbols from the bottom of all slides 
 \setbeamertemplate{navigation symbols}{} 
-% Make a new prettier page number
-\addtobeamertemplate{navigation symbols}{}{%
-    \usebeamerfont{footline}%
-    \hspace{5em}%
-    {\color{black!50}{\small\insertframenumber/\inserttotalframenumber}}%
-}
+
 % Remove the colored line at the bottom
 \setbeamertemplate{footline}{}
 
@@ -89,7 +84,8 @@
 
 % Make Section Header Frames
 \AtBeginSection[]{
-  \begin{frame}
+  \setbeamertemplate{navigation symbols}{}
+  \begin{frame}[noframenumbering]
   \vfill
   \centering
   \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
@@ -97,18 +93,16 @@
   \end{beamercolorbox}
   \vfill
   \end{frame}
+
+% Make a new prettier page number
+\addtobeamertemplate{navigation symbols}{}{%
+    \usebeamerfont{footline}%
+    \hspace{5em}%
+    {\color{black!50}{\small\insertframenumber/\inserttotalframenumber}}%
+}
+  
 }
 
-\AtBeginSubsection[]{
-  \begin{frame}
-  \vfill
-  \centering
-  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
-    \usebeamerfont{title}\insertsectionhead: \\ \insertsubsectionhead\par%
-  \end{beamercolorbox}
-  \vfill
-  \end{frame}
-}
 
 
 
@@ -135,9 +129,16 @@
 
 \begin{document}
 
-\begin{frame}
+\begin{frame}[noframenumbering]
 \titlepage 
 \end{frame}
+
+% Make a new prettier page number
+\addtobeamertemplate{navigation symbols}{}{%
+    \usebeamerfont{footline}%
+    \hspace{5em}%
+    {\color{black!50}{\small\insertframenumber/\inserttotalframenumber}}%
+}
 
 %------------------------------------------------
 % What is Value added 
@@ -147,7 +148,7 @@
     \item Value added measures (VAM) identify the most and least effective teachers
     \item We know teachers respond to incentives
     \begin{itemize}
-        \item {\color{gray}{\citep{jacob2003rotten,neal2010left,pope2017multidimensional}}}
+        \item {\color{gray}{\citep{jacob2003rotten,neal2010left,pope2019effect}}}
     \end{itemize}
     \item We know VAM capture something real
     \begin{itemize}
@@ -168,16 +169,16 @@
 \begin{wideitemize}
 
     \item Disconnect between VAM and education policy such as No Child Left Behind
-    \begin{itemize}
+    \begin{wideitemize}
         \item VAM are mean-oriented statistics: a teachers average impact on students' scores
         \item Carries \textbf{implicit normative} welfare weights 
-    \end{itemize}
+    \end{wideitemize}
     
     \item  We propose a set of more flexible heterogeneous VAM 
-    \begin{itemize}
+    \begin{wideitemize}
         \item Assess teachers' heterogeneous impacts
         \item  Weight effects according to an \textbf{explicit normative} policy goal or welfare criterion
-    \end{itemize}
+    \end{wideitemize}
 
 
 \end{wideitemize}
@@ -350,7 +351,7 @@
 
     \item We propose three methods that (not only deal with but) capitalize on this
     \begin{enumerate}
-        \item WLS regression with weights defined by the Exogenous policy preference
+        \item WLS regression with weights defined by the (exogenous) policy preference
         \item Quantile regression evaluated at the relevant percentile
         \item Kernel regression of effect of each teacher over achievement distribution
     \end{enumerate}
@@ -641,17 +642,15 @@
 \vfill
 
 \begin{figure}
-    % Caterpillar Graph?
-    \only<1>{
-    \includegraphics[width=.45\textwidth]{slides/Figures/ww_rawlsian_caterpillar30.pdf}\hfill
-    \includegraphics[width=.45\textwidth]{slides/Figures/ww_rawlsian_caterpillar60.pdf}}
-    %\includegraphics[width=.3\textwidth]{slides/Figures/Histrogram_rawlsian_Students_60.png}\h
-    %\\
-    \only<2>{
-    \includegraphics[width=.45\textwidth]{slides/Figures/ww_rawlsian_caterpillar100.pdf}\hfill
-    \includegraphics[width=.45\textwidth]{slides/Figures/ww_rawlsian_caterpillar200.pdf}}
-    %\includegraphics[width=.3\textwidth]{slides/Figures/Histrogram_rawlsian_Students_200.png}\hfill
+    \includegraphics[width=.3\textwidth,height=.35\textheight]{slides/Figures/st_rawlsian_Students_30_caterpillar.png}\hfill
+    \includegraphics[width=.3\textwidth,height=.35\textheight]{slides/Figures/st_rawlsian_Students_100_caterpillar.png}\hfill
+    \includegraphics[width=.3\textwidth,height=.35\textheight]{slides/Figures/st_rawlsian_Students_200_caterpillar.png}\hfill
+    \\ \vspace{1em}
+    \includegraphics[width=.3\textwidth,height=.35\textheight]{slides/Figures/ww_rawlsian_Students_30_caterpillar.png}\hfill
+    \includegraphics[width=.3\textwidth,height=.35\textheight]{slides/Figures/ww_rawlsian_Students_100_caterpillar.png}\hfill
+    \includegraphics[width=.3\textwidth,height=.35\textheight]{slides/Figures/ww_rawlsian_Students_200_caterpillar.png}\hfill
 \end{figure}
+
 \vfill
 \end{frame}
 
@@ -691,8 +690,9 @@
 
 %------------------------------------------------
 
+\setbeamertemplate{navigation symbols}{}
 
-\begin{frame}[c]
+\begin{frame}[c,noframenumbering]
 \centering
 \Huge{\centerline{To Be Continued...}}
 \normalsize njmather{\fontfamily{qag}\selectfont @}umich.edu \hspace{2em}
@@ -702,7 +702,7 @@ ricksmi{\fontfamily{qag}\selectfont @}umich.edu \hspace{2em} \normalsize teastmo
 %------------------------------------------------
 
 
-\begin{frame}
+\begin{frame}[noframenumbering]
 \frametitle{References}
 \tiny
 \bibliography{citations}
@@ -713,14 +713,13 @@ ricksmi{\fontfamily{qag}\selectfont @}umich.edu \hspace{2em} \normalsize teastmo
 %----------------------------------------------------------------------------------------
 
 \appendix
-\setbeamertemplate{navigation symbols}{}
 
 
 %----------------------------------------------------------------------------------------
 %----------------------------------------------------------------------------------------
 
 
-\begin{frame}[label=methods]{Other Methods: Overview}
+\begin{frame}[label=methods]{Methods: Overview}
 
 \begin{wideitemize}
 
@@ -747,11 +746,11 @@ ricksmi{\fontfamily{qag}\selectfont @}umich.edu \hspace{2em} \normalsize teastmo
 %----------------------------------
 % Method two: Quantile Regression
 %--------------------------------------
-\begin{frame}{Other Methods: Conditional Quantile Regression}
+\begin{frame}{Methods: Conditional Quantile Regression}
 
 \begin{wideitemize}
 
-    \item Conditional quantile regressions recover the ... \citep{}
+    \item Conditional quantile regressions recover the effect on the $p$th quantile
     
     \item Simpler estimation procedure
     \begin{enumerate}
@@ -763,7 +762,7 @@ ricksmi{\fontfamily{qag}\selectfont @}umich.edu \hspace{2em} \normalsize teastmo
 
     \item Intuitive analogue to VAM methods that residualize out $X_i$ and run VAM on residuals
     
-    \item Now the effect of $X_i$ is also being evaluated at the $p$th quantile (not the mean)...
+    \item Now the effect of $X_i$ is also being evaluated at the $p$th (conditional) quantile ...
     
 
 \end{wideitemize}
@@ -773,7 +772,7 @@ ricksmi{\fontfamily{qag}\selectfont @}umich.edu \hspace{2em} \normalsize teastmo
 % Method Three: Kernel Regression
 %------------------------------------
 
-\begin{frame}{Other Methods: Semiparametric Index Model}
+\begin{frame}{Methods: Semiparametric Index Model}
 
 \begin{wideitemize}
 
@@ -781,14 +780,19 @@ ricksmi{\fontfamily{qag}\selectfont @}umich.edu \hspace{2em} \normalsize teastmo
     
     \item  Nonparametrically identify teacher $j$'s effects over the achievement distribution
     \begin{itemize}
-        \item Estimate $y_i = g_j(\beta X_i) +e_i$ using (or adapting?) Ichimura's method \citep{ichimura1993semiparametric}
+        \item Estimate $y_i = \sum _j D_j g_j(\beta X_i) +e_i$  by adapting Ichimura's method \citep{ichimura1993semiparametric}
         \item Integrate over the effects using desired welfare weights
     \end{itemize}
     
     \item Intuitive analogue: predict $\hat{y_i}$ then estimate $\mathbb{E}[y_i|\hat{y_i},j=j']$ for each teacher $j'$
 
-    \item This will probably only work if we pool over years
-    \item Bandwidth selection...? 
+    \item Questions/Issues:
+    \begin{itemize}
+         \item Are there results to estimating subgroup effects?
+         \item This will probably only be powered if we pool over years
+         \item How do we think about bandwidth selection? 
+    \end{itemize}
+
     %(Also a place to talk about measuring scores in pctle vs $\sigma$?)
 
 \end{wideitemize}
@@ -800,5 +804,20 @@ ricksmi{\fontfamily{qag}\selectfont @}umich.edu \hspace{2em} \normalsize teastmo
 \end{flushleft}
 \end{frame}
 
+\begin{frame}{Methods: Lowbel 2015}
+
+\begin{wideitemize}
+\item Let $W_i = (X_i,D_i)$, then 
+
+\begin{align*}
+    Y_i &= \sum_k g_k (w_{ki} u_{ki}) +u_{0i} = \sum _j D_{j(i)} g_j(\beta X_i) +u_{0i} \\
+        & \iff g_k = 0 \forall k\leq |X_i| \text{ and } g_k(D_{ki} u_{ki}) = D_{j(i)} g_j(\beta X_i) \forall k>|X_i| 
+\end{align*}
+
+\item This will be true if $g_j(0)=0$, $u_{ki}=\beta X_i$, and $u_{ki}\neq 0$, but even if that is possible, I don't think $\beta X$ will ever be uncorrelated with all $D_j$?
+\end{wideitemize}
+
+
+\end{frame}
 \end{document}
 

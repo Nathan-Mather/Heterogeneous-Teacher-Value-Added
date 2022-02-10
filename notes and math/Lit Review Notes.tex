@@ -1,0 +1,160 @@
+\documentclass[letterpaper,12pt]{article}
+
+% Import packages from .sty file.
+%\usepackage{imports}
+
+% Mike's things because he couldn't figure out how to get the preamble working otherwise
+\usepackage[utf8]{inputenc}
+\usepackage{geometry,ulem,graphicx,caption,color,setspace,dsfont,amssymb}
+\usepackage{natbib}
+\usepackage{subcaption} 
+\usepackage[short]{optidef}
+\usepackage{hhline}
+\usepackage[capposition=top]{floatrow}
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{adjustbox}
+\usepackage{tikz}
+\usepackage{pdflscape}
+\usetikzlibrary{calc,patterns,positioning}
+\usepackage{environ}
+
+
+
+
+
+% commands for use to put comments into text 
+
+\newcommand\cmnt[2]{\;
+{\textcolor{red}{[{\em #1 --- #2}] \;}
+}}
+
+\newcommand\Nate[1]{\cmnt{#1}{Nate}}
+\newcommand\Mike[1]{\cmnt{#1}{Mike}}
+\newcommand\Tanner[1]{\cmnt{#1}{Tanner}}
+\newcommand\rmk[1]{\;\textcolor{red}{{\em #1}\;}}
+\newcommand\Natenote[1]{\footnote{\cmnt{#1}{Nate}}}
+\newcommand\Mikenote[1]{\footnote{\cmnt{#1}{Mike}}}
+\newcommand\Tannernote[1]{\footnote{\cmnt{#1}{Tanner}}}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+ 
+\usepackage{natbib}
+\bibliographystyle{apa}
+
+\setcitestyle{round}
+\setcitestyle{semicolon}
+\setcitestyle{yysep={;}}
+
+\usepackage{titlesec}
+\titleformat{\section}
+  {\normalfont\normalsize\bfseries}{\thesection.}{1em}{}
+
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries}{\thesubsection}{1em}{}
+\title{Notes For Lit Review}
+  
+  
+\begin{document}
+
+% Set up the title.
+
+\maketitle
+\noindent authors: Julian Betts\footnote{University of California, San Diego}, Tanner Eastmond$^1$, Nathan Mather\footnote{University of Michigan}, and Michael Ricks$^2$
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%% heterogeneity in VAM %%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{heterogeneity in VAM}
+
+This section is for papers specifically about heterogeneity in teacher performance. 
+
+
+    %%%%%%%%%%%%%%% Delgado2020 %%%%%%%%%%%%%%%
+    \subsection{Heterogenous Teacher Effects, Comparative Advantage, andMatch Quality: Evidence from Chicago Public Schools}
+    
+    These are notes on \cite{Delgado2020}
+
+        \subsubsection{Nate Notes}
+        This is definitely a paper we should cite. I think this also provides a stepping stone from the general matching literature into a broader teacher heterogeneity and value added literature. We are bringing this idea into the student achievement space so we are broadening the idea of measuring heterogeneity to continuous and non-binary variables. However, we are also adding on the idea of re-aggregating these measures using welfare weights. That makes less sense in his setting since you probably want to weight say, boys and girls, the same. 
+        
+        I think his measure of teacher comparative advantage is a good way to talk and think about a heterogeneous advantage. He lays out the specific measure in Section 2.2. I haven't digested this well enough to say if that's exactly what we want to use, but it seems like a good starting point. 
+        
+        I like that he mentions upfront that he is not advocating for segregating classrooms. I think it's probably good for us to say something similar. It's somewhat more feasible in our case since tracking programs exist, but still not really practical and more importantly so outside the scope of what we observe that I don't think it's really academically meaningfull to think to hard about. Extreme shuffling of students is gonna have tons of peen effects so its not at all clear what would happen regardless of our results. Although, a simulation might still be interesting as like a hypothetical upper bound or something. If we do that I think we want to make it especially clear it is not a serious proposal. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%% General VAM %%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{General VAM}
+
+Section for papers about general value added practices. General notes about the section can go here while notes for a specific paper can go in that paper's subsection. 
+
+Nate: I definitly don't think we should be included student fixed effects because then you are identifying teachers effects based on students who share teachers.
+
+Nate: Should we be doing measurement error correction? If we can get full SEMs for the test then I would say yes, if we can only get like a single reliability measure, it sounds like maybe not according to koedel. But, I actually disagree with them now because attenuation bias leads to a specific type of inequality where teachers with lower performing students are systematically under valued. 
+
+    
+    %%%%%%%%%%%%%%% Value-added modeling: A review %%%%%%%%%%%%%%%
+    \subsection{Value-added modeling: A review}
+        
+        Notes on \cite{Koedel2015}
+        \subsubsection{Nate Notes}
+        I think I finally understand the two step and one step estimation. One Step derives the coefficients for the controls without teacher fixed effects and so some of the effects from teachers may be attributed to controls in the two step estimator. I'm still not seeing how this leads to the conclusions they state though, that two step is better for maximizing teacher effort (pg 182)? But, I think for our purposes one step seems better.
+         
+         I have a few thoughts on the Kane and Staiger experiment. First, If teacher Value Added changes after random assignment, this might be a sign of teacher heterogeneity. The teachers may actually be performing differently with a random assignment because they may be worse at teaching average students. The fact that they don't really find this could either be because teacher heterogeneity is not common, or class composition did not shift significantly in regions where teacher ability differs.  
+         
+         The second point is that the evidence here seems to suggest school fixed effects and not student fixed effects are best. 
+         
+         I guess I disagree generally with their assertion that real non-persistent teacher quality is uninteresting or unimportant. 
+    
+        They make the point on page 186 that even with school fixed effect, all teachers can be effectively ranked if enough teachers switch schools. Something worth checking because it seems like kind of a shakey link to me. 
+        
+        I certainly agree with their take that student fixed effects are not a good idea. I think I am warming up to their point that school fixed effects are also not a good idea. 
+    
+        %%%%%%%%%%%%%%% {Can VAM Be Trusted? %%%%%%%%%%%%%%%
+    \subsection{Can Value-Added Measures of Teacher Performance Be Trusted?}
+    
+    Section for notes on \cite{Woolrdige2014}
+    
+    \subsubsection{Nate notes}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%% Methods%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Methods}
+A section for references used to come up with out own methods. Things like kernel estimation for example. 
+
+\subsection{}
+
+section for notes on \cite{Lockwood2014}
+
+I think what we want to go with is the MOM section "errors in variables". The idea is that all elements of the cross procuct matrix are consistent other than the diagonal elements corresponding to the variance of the observed scores. These are too large because they reflect variability in both actual latent test ability and in measurement error from the test. So we need to subtract $n(1-r_p)V(\hat{\theta}_p)$ from the diagonal to get a consistent estimator. n is observations, $r_p$ is reliability of the tests P given by $V(\theta_p)/V(\hat{\theta_P})$
+
+
+"To create simulated student scores with nonrandom assignment to teachers, we let $\theta_{ij} = \Bar{\theta}_i - .2 Z_{ij} X 1 + U_{ij}$. The $U_{ij}$ are independent mean zero multivariate
+ normal vectors with variance chosen, so that approximately 45\% of the variance in observed prior test scores was within teachers, matching the actual data. " - pg 33 There are some other good details here about matching correlations between studies and variances between and within teachers. 
+ 
+ 
+ summary: 
+They outline the method that I think seems best on page 28, the "MOM" method. They are correcting the diagonal of the XX' that corresponds to the variance of the pretest. That variance it too high, because some of it is measurement error.
+
+A key point is that this requires a measure of reliability for the test that tells us what fraction of the test's variance is variance in testing ability rather than noise.
+
+Reliability is often reported for a test, but the reliability is actually dependent on the sample of students because tests are more or less reliable if you are in the middle of the distribution or at an extreme. If I have a lot of low or high achieving students, my reliability might be lower than the one the test reports since the testing center's sample of students is different than ours. Given that fact, it is best to rederive the reliability using conditional standard errors of measurement (CSEMS) and your own sample.
+
+One thing Mike helped me realized about this though is it is just correcting for a different sample. It is not actually weighting scores that are more or less reliable any differently. We are just rederiving a new reliability measure for the test that is probably more accurate and then using the MOM method from above. W
+
+They advocate for doing this with a "nonparametric maximum likelihood estimator", which I think seems good, but have not figured out how exactly to implement yet. Essentially, I think this is a nonparametric estimation and then an integral.
+
+There are potentially more detailed accounts of this method in a book they reference, but I have not gotten around to renting that from the library yet.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%% References %%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliography{citations}
+    
+\end{document}

@@ -1,0 +1,201 @@
+\documentclass[letterpaper,12pt]{article}
+
+% Import packages from .sty file.
+\usepackage{imports}
+
+
+% Set up the title.
+\title{From Value Added to Welfare Added: A Social Planner Approach to Education Policy and Statistics.}
+\author{Julian Betts\thanks{Department of Economics, University of California, San Diego}, Tanner S Eastmond$^*$,  Nathan Mather\thanks{Department of Economics, University of Michigan}, Michael Ricks$^\dagger$}
+\date{\vspace{-8ex}}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+\maketitle
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{abstract}
+    A major goal of Value Added Measures (VAM) is to evaluate and compare teachers. These measures both perform relatively well in identifying better teachers and capture relevant information about the long-term effects teachers have on students. Despite this and the increasing reliance on VAM to measure teacher performance, there seems to be a philosophical disconnect between traditional (completely utilitarian) VAM and (much more egalitarian) education policy such as No Child Left Behind. We propose a set of more flexible estimators to capture the heterogeneity of teacher value added across the student achievement distribution. We first work to show that these estimators perform well in simulation, namely that they better identify the ‘welfare weighted’ ranking of teachers than traditional measures. We then estimate that heterogeneity in teacher value added along the student achievement distribution and show in a series of counterfactual policy simulations that policymakers can improve student outcomes and further their policy objectives by leveraging this information.
+\end{abstract}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+
+Over the past two decades teacher value added measures (VAM) have become increasingly common methods for evaluations of relative teacher performance. These measures are motivated by the fact that comparing teachers based on average student achievement in their classes would result in unfair assessments of teachers who are assigned to teach lower achieving classes, and whose students---often through little or no fault of their own--tend to have lower test scores. Intuitively value added measures compare teachers not on the level of student achievement in their class, but on the gains their students experience (thus the value ``added'').
+
+While test score gains are certainly not the only mark of an effective teacher, research has demonstrated that teachers with high value added scores have long-term impacts on their students' graduation rates and earnings \citep{chetty2014measuring2}. Furthermore, research has shown that teachers with high test-score value added tend to have higher value added on student attendance and on reducing student suspensions and retention \citep{pope2017multidimensional}.\footnote{This positive association is not perfect and there are many teachers with high non-testing value added who have lower test-score value added.} 
+
+Traditional value added measures focus on the average impact on students in a teacher's class; however, research has also made it clear that not all students experience the same gains under the same teacher. For example, the ``teacher-match effect'' reveals that students who are assigned effective same-gender or same-race teachers experience greater test score gains in the present and future than those who do not \citep{dee2005teacher,delhommer2019highschool}. We also hear anecdotally that teaching higher- or lower-achieving students often requires that teachers utilize and employ very different skills to keep students engaged and energized about learning. These types of differences are lost to value added measures because they average across all of a teacher's students in a given year. Throughout our paper we also refer to heterogeneity in teacher value added across the student achievement distribution as variation in teacher ``match quality'' for brevity.
+
+We use data from San Diego Unified School District (SDUSD) to shed light on how teacher value added varies along the achievement distribution. We do so first by evaluating a set of alternative estimators for teacher value added that allow for heterogeneity across the student achievement distribution in various econometric simulations. These simulations explore the feasibility and reliability of the estimators under various empirical circumstances and compare this to traditional value added estimates. Additionally, we use these simulations to develop an empirical test to evaluate how important teacher match quality in achievement is in the real-world data.
+
+We next take these alternative estimators to the linked teacher-student data from SDUSD to estimate teacher value added across the achievement distribution and to run our empirical test. Lastly, we use these estimates to run a set of counterfactual policy simulations where we consider various possible policies to take advantage of the information gained by allowing flexibility in teacher match quality.
+
+Our work in this study fits closely with several previous papers. First, \citet{lockwood2009} explore whether the effect of teachers on students is heterogeneous along the achievement distribution. They find significant, though modest heterogeneity in teachers' effects on students with different prior achievement. The author's results are, however, quite sensitive to a variety of specifications. The second paper that fits closely with our current work is \citet{condie2014teacher}. The authors in this study examine the assumption for value added estimates that effects are homogeneous across different students. Their results suggest that this assumption is likely to be wrong, and they show in various simulations that assigning teachers to students they are comparatively better at teaching could improve student test scores.
+
+We contribute to these studies and the other literature in several ways. First, we provide several practical options for estimating heterogeneity in teacher effects and describe under what conditions they work well relative to standard value added estimates. Second, we link these heterogeneous estimates to policy objectives and show that using this information allows policy makers to further their goals much more effectively, e.g. helping to target a particular sub-population. Lastly, we speak to the relative importance of overall teacher ability and teacher/student match quality in raising student test scores.
+
+% Our contribution:
+% - Lockwood \& McCaffrey - Stability, ease of understanding and use, much larger sample of students, don't have to deal with multiple teachers per student problem.
+% - Condie - empirical test, say when estimators feasible usable
+% - Pooling over years?
+
+We find that ....
+
+The remainder of the paper is as follows: Section \ref{sec: Data} discusses the SDUSD data in depth, after which Section \ref{sec: Analysis} details our various analyses. Section \ref{sec: Results} gives our primary results, Section \ref{sec: Robust} explains our robustness checks on those results, and Section \ref{sec: Conclusion} concludes.
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Data}\label{sec: Data}
+
+The primary data for our project are teacher-student linked data from the San Diego Unified School District (SDUSD) covering the 2001-2002 through 2017-2018 school years. These data include around 424,926 unique students and 7,509 unique teachers across 153 schools. These data include rich information on student outcomes including test scores, attendance, and high school performance. They also include teacher characteristics such as gender, age, teaching credentials, and teaching experience.
+
+Before fall 2013, students in grades 2-11 were required to take the California Standards Tests (CST), which a series of tests intended to reflect the state's curriculum in each subject. In our analysis we focus on elementary students taking the CST in English and mathematics for whom we have at least two years of test data, or those in grades 3-5 between 2001 and 2013, for whom we can identify a unique teacher. This leaves us with an analysis sample of 114,794 unique students, 5,390 unique teachers, and 343,735 student-year observations. On average we observe students in our sample for 3 years and teachers for 7 years. We assume that all students assigned to the same teacher in a year are in the same class, and this implies that classes in our sample had 25 students on average.
+
+After fall 2013 these tests were replaced with the California Assessment of Student Performance and Progress (CAASPP) Program. (Fill in)
+
+Additionally, we use the National Student Clearinghouse Data for information on long-term student outcomes. These data include information on post-secondary outcomes for the students in our sample. Specifically they include whether a student attended a 2 or 4 year university in the 4 years following high school graduation, how many years were attended in that span, what degree, if any, was earned, and what the field of study was.
+
+Table XX gives the descriptive statistics for our sample....
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Analysis}\label{sec: Analysis}
+
+The analysis for our paper has three major components, described in detail below. The first is a set of econometric simulations intended to evaluate the reliability and feasibility of several alternatives estimators for teacher value added that allow for heterogeneity along the student achievement distribution. The second major component is the empirical analysis using the SDUSD data to implement the methods explored in the econometric simulations. The last component of our analysis is a set of counterfactual policy simulations to speak to the practical consequences of ignoring/using the added information coming from the heterogeneity in teacher value added estimates.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Econometric Simulations}
+
+In these simulations we compare traditional value added estimates, as given by equation XX, with three different estimators that allow for heterogeneity in teacher value added along the student achievement distribution: traditional estimates including indicator variables for prior achievement bins, kernel regression, and quantile regression. To achieve this, we generate student-teacher linked data that is calibrated to the SDUSD data and prior research. Table XX details the various parameters and moments of the data that we match to these sources. 
+
+We then ask how well our alternative estimators perform relative to the traditional estimates under a variety of different assumptions and welfare policies. In particular, these assumptions include varying levels of match quality differences and overall ability differences between teachers, sorting of students into classrooms, and peer effects. The welfare policies we consider are where the policy maker targets all student improvement equally, targets students under a certain threshold, or targets students in a particular part of the distribution. For brevity we refer to these policy environments respectively `utilitarian', `rawlsian', and `selected group'. Our ultimate metric of success for various estimators is how well they uncover the `true' ranking of teachers. We define the `true' ranking of teachers to be the actual ranking of which teachers best push forward the given policy goals, or alternatively which teachers are most proficient at increasing welfare-weighted test scores. We consider both how well the estimators uncover the ranking in a Monte Carlo setting (if they are consistent for the truth) and how well they perform in a single shot (how high the variance is) to evaluate their performance.
+
+Finally we use these simulations to develop an empirical test for the importance of heterogeneity in teacher value added along the achievement distribution. As the test relies on the results of the simulation, we discuss it further there. Intuitively it hinges on the idea that if overall teacher ability matters much more than match quality, traditional value added estimates and our alternative estimates produce very similar rankings of teachers, whereas if the opposite is true and match quality is more important, there will be significant differences between the traditional estimates and alternatives, but the rankings derived from the alternative estimates will be similar.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Estimation}
+
+We then take our traditional and alternative estimators to the data. In particular, our estimating equation for the traditional value added is given by the following:
+
+    \begin{equation}
+        y_{it} = \beta_1 y_{i,t-1} + \gamma_{j(i)} + \delta X_{it} + \varepsilon_{it}
+    \end{equation}
+    
+\noindent where $y_{it}$ is current year test score in English language or Mathematics, $y_{i,t-1}$ is the lagged test score in the same subject, $\gamma_{j(i)}$ are teacher fixed-effects (which give our value added estimates), and $X_{it}$ is a vector of controls including lagged test score in the other subject, lagged classroom average test scores in both subjects, lagged school average test scores in both subjects, whether the student was ever an English learner, whether the student was ever in special education, student gender, student race, grade fixed-effects, and year fixed-effects. Standard errors are clustered at the school level.
+
+Our specification for the above and below median bins estimate is the following:
+
+    \begin{equation}
+        y_{it} = \beta_1 y_{i,t-1} + \beta_2 \mathbbm{1}\{\text{bin(i) = high}\}
+        + \sum_{k=low, high}\sum_{i}\beta_k \gamma_{j(i)} \mathbbm{1}\{\text{bin(i) = k}\} + \delta X_{it} + \varepsilon_{it}
+    \end{equation} 
+    
+\noindent where all is as in equation 1 except now we include an indicator for whether student i has a lagged test score above median that we also interact with the teacher fixed-effects.
+    
+This has two separate part. First, we get estimates for the teacher value added along the achievement distribution. Once we have these estimates, we can aggregate them into a `welfare added' measure for each teacher. We do this for each of our three welfare policies outlines in the above section. This gives us a ranking of teachers under the traditional value added estimates (which is the same across policy environments) and three separate rankings for each of our alternative estimates. In all of our estimation, we pool all students for a teacher across years. We do this because (justification).
+
+These rankings then allow us to run our empirical test and make a statement about how important heterogeneity in teacher value added across the achievement distribution appears to be in the SDUSD data. 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Counterfactual Policy Simulations}
+
+The last element of our study is a set of simulations exploring alternative teacher/student assignment policies. These simulations take the teacher value added estimates from the SDUSD data and the calibrated parameters from the econometric simulations to examine possible gains from shuffling students and teachers. We explore primarily moving students within a school across teachers, but we also think about possible teacher re-assignment policies within the district.
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Results}\label{sec: Results}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Econometric Simulations}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Estimation}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Counterfactual Policy Simulations}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Robustness Checks}\label{sec: Robust}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Conclusion}\label{sec: Conclusion}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bibliography{citations}
+
+
+
+\end{document}

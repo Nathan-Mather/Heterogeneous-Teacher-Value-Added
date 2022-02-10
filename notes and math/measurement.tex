@@ -1,0 +1,133 @@
+
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry,ulem,graphicx,caption,color,setspace,dsfont,physics,commath}
+\usepackage{amsmath,amssymb}
+\usepackage[comma]{natbib}
+\usepackage{subcaption} 
+\usepackage[short]{optidef}
+\usepackage{hhline}
+\usepackage[capposition=top]{floatrow}
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{adjustbox}
+\usepackage{tikz}
+\usepackage{pdflscape}
+\usetikzlibrary{calc,patterns,positioning}
+\usepackage{environ}
+
+\usepackage[amsthm]{ntheorem}
+\theoremstyle{definition}
+\newtheorem{assumption}{Assumption}
+
+\theoremstyle{definition}
+\newtheorem{auxa}{Aux. Assumption v}
+
+
+
+\title{Measuring Outcomes}
+
+\begin{document}
+
+%\maketitle
+
+
+\section{Production and Externalities}
+\subsection{Simplest Model Ever}
+
+Let $y_{i,g,t}$ be a magical measure of academic performance for student $i$ in grade $g$ in year $t$. This measure is mean zero and accurately captures the information we want and is somehow comparable across grades and over time. Assume the following data generating process:
+
+\[
+y_{i,g,t}  = a_{i,g,t} + \epsilon_{i,g,t}
+\]
+\noindent where $a_{i,g,t}$ is a student's testing ability when they were tested and $\epsilon_{i,g,t}$ is an idiosyncratic, mean zero error that is mean independent of $a_{i,g,t}$.
+
+Further assume that $a_{i,g,t}$ grows from year to year through teacher value added $V_{j(i,t)}$\footnote{My intuition is that this could be expanded so that $a_{i,g,t}$ can allow develop from home investment etc., but the only way to stop weird things from happening would be assuming that the investments don't respond to previous teacher value added... which might be an interesting thing to look at if we ever could.} and that teacher assignment is random. This results in the following. 
+\begin{align*}
+    a_{i,g,t} &= a_{i,g-1,t-1} + V_{j(i,t)} \\
+              &= a_{i,0,t-g} + \sum_{s=t-g}^t  V_{j(i,s)} 
+\end{align*}
+
+Let $\hat{\beta}_g$ be the estimates of a regression of $y_{i,g,t}$ on $y_{i,g-1,t-1}$ with no constant. Consider the following estimator of $V_{j,t}$
+\begin{align*}
+\hat{V}_{j,t} &= \frac{1}{n_{j,t}}\sum_{i \in \mathcal{C}_{j,t}} y_{i,g,t} - \hat{\beta}_g y_{i,g-1,t-1} \\
+              &= \frac{1}{n_{j,t}}\sum_{i \in \mathcal{C}_{j,t}} \left [ a_{i,0,t-g} + \sum_{s=t-g}^t  V_{j(i,s)} + \epsilon_{i,g,t} - \hat{\beta}_g  \left ( a_{i,0,t-g} + \sum_{s=t-g}^{t-1}  V_{j(i,s)} + \epsilon_{i,g-1,t-1}   \right )   \right ] \\
+              &= \frac{1}{n_{j,t}}\sum_{i \in \mathcal{C}_{j,t}} \left [ V_{j(i,t)}  + \epsilon_{i,g,t} + \left (1 - \hat{\beta}_g  \right) \left ( a_{i,0,t-g} + \sum_{s=t-g}^{t-1}  V_{j(i,s)}    \right ) - \hat{\beta} \epsilon_{i,g-1,t-1} \right ] \\
+              &= V_{j,t} + \frac{1}{n_{j,t}}\sum_{i \in \mathcal{C}_{j,t}}  \left [ \epsilon_{i,g,t} - \epsilon_{i,g-1,t-1} +  \left (1 - \hat{\beta}_g  \right) \left ( a_{i,0,t-g} + \sum_{s=t-g}^{t-1}  V_{j(i,s)}  + \epsilon_{i,g-1,t-1}  \right )  \right ] \\ 
+              &= V_{j,t} + \frac{1}{n_{j,t}}\sum_{i \in \mathcal{C}_{j,t}}  \left [\Delta \epsilon_{i} +  \left (1 - \hat{\beta}_g  \right) y_{i,g-1,t-1} \right ] 
+\end{align*}
+
+ As the number of students increases (holding class sizes constant) we have\footnote{Here is the derivation if I got it right. 
+\begin{align*}
+    \hat{\beta}_g &=(y_{t-1}'y_{t-1})^{-1}y_{t-1}'y_t \\
+                &=(y_{t-1}'y_{t-1})^{-1}y_{t-1}' \left (y_{t-1} - \epsilon_{t-1} + V + \epsilon_t \right ) \\
+                &= 1 + \frac{\sum y_{t-1}V}{\sum y_{t-1}^2} + \frac{\sum y_{t-1} \epsilon_t}{\sum y_{t-1}^2}- \frac{\sum y_{t-1} \epsilon_{t-1}}{\sum y_{t-1}^2}\\
+                & \to_p 1  + \frac{\mathbb{E}[y_{t-1}V]}{\mathbb{E}[y_{t-1}^2]} + \frac{\mathbb{E}[y_{t-1} \epsilon_t]}{\mathbb{E}[y_{t-1}^2]} - \frac{\mathbb{E}[y_{t-1} \epsilon_{t-1}]}{\mathbb{E}[y_{t-1}^2]}\\
+                & = 1   - \frac{\mathbb{E}[a_{t-1} \epsilon_{t-1}]}{\sigma^2_{y_{t-1}}} - \frac{\mathbb{E}[\epsilon_{t-1}^2]}{\sigma^2_{y_{t-1}}} \\
+                & = 1   - \frac{\sigma^2_{\epsilon_{t-1}}}{\sigma^2_{y_{t-1}}} \\
+\end{align*}
+\noindent where the convergence happens as the number of students in grade $g$ goes to infinity and recalling that $y_{t-1}$ is independent of $\epsilon$  by assumption and $V$ by random assignment 
+ 
+ } $\hat{\beta}_g \to 1   - \frac{\sigma^2_{\epsilon_{g-1}}}{\sigma^2_{y_{g-1}}}$ which means that 
+
+\[
+\hat{V}_{j,t} \to_p V_{j,t}  +  \frac{1}{n_{j,t}}\sum_{i \in \mathcal{C}_{j,t}}  \left [\epsilon_{i,t} - \epsilon_{i,t-1} + \frac{\sigma^2_{\epsilon_{g-1}}}{\sigma^2_{y_{g-1}}}   y_{i,g-1,t-1} \right ] 
+\]
+\noindent This estimator is unbiased because $\epsilon$ and $y$ are mean zero:
+\begin{align*}
+\mathbb{E}[\hat{V}_{j,t}] &= V_{j,t} +  \frac{1}{n_{j,t}}\mathbb{E} \left [ \sum_{i \in \mathcal{C}_{j,t}} \epsilon_{i,t} - \epsilon_{i,t-1} + \frac{\sigma^2_{\epsilon_{g-1}}}{\sigma^2_{y_{g-1}}}   y_{i,g-1,t-1} \right ] \\
+                        & = V_{j,t} + 1 \cdot \left [ \mathbb{E}[\epsilon_{i,t}]   - \mathbb{E}[\epsilon_{i,t-1} ] + \frac{\sigma^2_{\epsilon_{g-1}}}{\sigma^2_{y_{g-1}}}\mathbb{E}[ y_{i,g-1,t-1}]  \right ] \\
+& = V_{j,t} \\
+\end{align*}
+We can also examine the variance of this estimator:
+\begin{align*}
+ Var[\hat{V}_{j,t}] &= 0 + \frac{1}{n_{j,t}^2} Var \left [ \sum_{i \in \mathcal{C}_{j,t}}  \epsilon_{i,t} - \epsilon_{i,t-1} + \frac{\sigma^2_{\epsilon_{g-1}}}{\sigma^2_{y_{g-1}}}   y_{i,g-1,t-1} \right ] \\
+            &= \frac{1}{n_{j,t}^2}  \Bigg ( Var \left [ \sum_{i \in \mathcal{C}_{j,t}}  \epsilon_{i,t}\right ]  - Var \left [\sum_{i \in \mathcal{C}_{j,t}}  \epsilon_{i,t-1}\right ] + Var \left [ \sum_{i \in \mathcal{C}_{j,t}} \frac{\sigma^2_{\epsilon_{g-1}}}{\sigma^2_{y_{g-1}}}   y_{i,g-1,t-1} \right ] \\
+            &- 2Cov(\sum_{i \in \mathcal{C}_{j,t}} \epsilon_t, \sum_{i \in \mathcal{C}_{j,t}} \epsilon_{t-1}) + 2Cov(\sum_{i \in \mathcal{C}_{j,t}} \epsilon_t, \sum_{i \in \mathcal{C}_{j,t}} \frac{\sigma^2_{\epsilon_{g-1}}}{\sigma^2_{y_{g-1}}}   y_{i,g-1,t-1})\\ 
+            &- 2Cov(\sum_{i \in \mathcal{C}_{j,t}} \epsilon_{t-1}, \sum_{i \in \mathcal{C}_{j,t}} \frac{\sigma^2_{\epsilon_{g-1}}}{\sigma^2_{y_{g-1}}}   y_{i,g-1,t-1}) \Bigg ) \\
+            &= \frac{n_{j,t}\sigma_{\epsilon_t}+\sum_{i \neq i' \in \mathcal{C}_{j,t}^2} Cov(\epsilon_{i,t},\epsilon_{i',t})}{n^2_{j,t}} -  \frac{n_{j,t}\sigma_{\epsilon_{t-1}}+\sum_{i \neq i' \in \mathcal{C}_{j,t}^2} Cov(\epsilon_{i,t-1},\epsilon_{i',t-1})}{n^2_{j,t}}  \\
+            &+\frac{1}{n^2_{j,t}} \left(\frac{\sigma^2_{\epsilon_{g-1}}}{\sigma^2_{y_{g-1}}} \right) ^2 \left ( \sigma^2_{y_{g-1}} + Cov( y_{i,g-1,t-1}, y_{i',g-1,t-1})\right ) - \frac{2}{n_{j,t}} \sum_{i,i' \in \mathcal{C}_{j,t}^2} Cov(\epsilon_{i,t}, \epsilon_{i',t-1})\\ &+\frac{2}{n_{j,t}}\frac{\sigma^2_{\epsilon_{g-1}}}{\sigma^2_{y_{g-1}}} \sum_{i,i' \in \mathcal{C}_{j,t}^2}Cov( \epsilon_{i,t},  y_{i',g-1,t-1}) -\frac{2}{n_{j,t}}\frac{\sigma^2_{\epsilon_{g-1}}}{\sigma^2_{y_{g-1}}} \sum_{i,i' \in \mathcal{C}_{j,t}^2}Cov( \epsilon_{i,t-1},  y_{i',g-1,t-1})\\ 
+\end{align*}
+\noindent which we note is unbiased because 
+
+
+Alternatively as the number of students increases holding the number of teachers constant we have the argument for consistency.
+
+\begin{align*}
+\hat{V}_{j,t} & \to_p V_{j,t} + \mathbb{E}  \left [ \epsilon_{i,t} - \epsilon_{i,t-1} + \frac{\sigma^2_{\epsilon_{g-1}}}{\sigma^2_{y_{g-1}}}   y_{i,g-1,t-1} \right ] \\
+             & =  V_{j,t} + \mathbb{E}   [ \epsilon_{i,t}] - \mathbb{E}   [ \epsilon_{i,t-1}] + \frac{\sigma^2_{\epsilon_{g-1}}}{\sigma^2_{y_{g-1}}} \mathbb{E}   [   y_{i,g-1,t-1} ] \\
+             & =  V_{j,t}
+\end{align*}
+
+Clearly the pooling over years decreases the variance of this estimator of $V$.
+
+\subsection{Add Teacher Heterogeneity Over Time}
+Given that our estimator for teacher value added is only consistent as the number of students increases within each teacher, it doesn't make sense to estimate this parameter separately year by year unless teacher ability is evolving over time. This seems to be a common assumption in the VA literature. Let's say it is AR(1)?
+\[
+V_{j,t}  = \rho V_{j,t-1} + \nu_{j,t}
+\]
+
+Now researchers are going to face a trade off. If they pool over years, the reduce the variability of the estimator that comes from small samples, but introduce variability from the year to year changes. T
+
+\begin{align*}
+\hat{V}^{year}_{j,t} &= \frac{1}{n_{j,t}}\sum_{i \in \mathcal{C}_{j,t}} y_{i,g,t} - \hat{\beta}_g y_{i,g-1,t-1} \\
+             &=V_{j,t} + \frac{1}{n_{j,t}}\sum_{i \in \mathcal{C}_{j,t}}  \left [\Delta \epsilon_{i} +  \left (1 - \hat{\beta}_g  \right) y_{i,g-1,t-1} \right ] \\
+             &\to_p V_{j,t} + \frac{1}{n_{j,t}}\sum_{i \in \mathcal{C}_{j,t}}  \left [ \epsilon_{i,t} - \epsilon_{i,t-1} + \frac{\sigma^2_{\epsilon_{g-1}}}{\sigma^2_{y_{g-1}}}   y_{i,g-1,t-1} \right ] \\
+\\
+\hat{V}^{pool}_{j} &= \frac{1}{n_{j}}\sum_{i \in \cup_t \mathcal{C}_{j,t}} y_{i,g,t} - \hat{\beta}_g y_{i,g-1,t-1} \\
+              &=\sum_t \frac{n_{j,t}}{n_j} V_{j,t} + \frac{1}{n_{j}}\sum_{i \in \mathcal{C}_{j,t}}  \left [\Delta \epsilon_{i} +  \left (1 - \hat{\beta}_g  \right) y_{i,g-1,t-1} \right ] \\
+              &\to_p \mathbb{E}[V_{j,t}] + \mathbb{E}  \left [ \epsilon_{i,t} - \epsilon_{i,t-1} + \frac{\sigma^2_{\epsilon_{g-1}}}{\sigma^2_{y_{g-1}}}   y_{i,g-1,t-1} \right ] \\
+             & =  V_{j,t} + \mathbb{E}   [ \epsilon_{i,t}] - \mathbb{E}   [ \epsilon_{i,t-1}] + \frac{\sigma^2_{\epsilon_{g-1}}}{\sigma^2_{y_{g-1}}} \mathbb{E}   [   y_{i,g-1,t-1} ] \\
+             & =  V_{j,t}
+\end{align*}
+
+
+
+\subsection{Instead Add Teacher-Match Heterogeneity}
+
+\subsection{With Both}
+
+\subsection{Add Measurement}
+
+
+ 
+\end{document}
