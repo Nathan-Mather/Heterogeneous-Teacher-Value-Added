@@ -80,4 +80,33 @@ Now, however, we also need a weight matrix $W$. For the second regression we get
 $$\beta_{W} = (R_1' W R_1)^{-1}R_1' W Y $$
 
 
+
+Imagine the true model is something like the following:
+
+    \begin{align*}
+        score_{it} = \alpha + \sum_j \beta_{j(i)}D_{j(i)t} + \delta score_{i,t-1} + \sum_j \gamma_{j(i)} D_{j(i)t} * score_{i, t-1} + \varepsilon_{it}
+    \end{align*}
+    
+\noindent This is not exactly what we have coded up, but we could easily amend this with splines (for example) to make it congruent with what we have and I think this will help us think through the math.
+
+Then our weighted teacher value added is given by the following:
+
+    \begin{align*}
+        VA_j = \frac{1}{n_j} \sum_i (\beta_{j(i)}D_{j(i)t} + \gamma_{j(i)} D_{j(i)t}  * score_{i, t-1})W_i
+    \end{align*}
+    
+\noindent I think in this case if $W_i = I_n$ our value added converges to $\beta_j + \gamma_j \mathbb{E}[score_{it} | D_j = 1]$. What happens if we just estimate the following (with OLS or WLS)?
+
+    \begin{align*}
+        score_{it} = \alpha + \sum_j \beta^*_{j(i)}D_{j(i)t} + \delta^* score_{i,t-1} + \nu_{it}
+    \end{align*}
+    
+Then our weighted teacher value added is:
+
+    \begin{align*}
+        VA_j = \beta^*_j = \beta_j + \delta_j(\mathbb{E}[score_{it} | D_j = 1] - \mathbb{E}[score_{it} | D_j = 0])
+    \end{align*}
+    
+\noindent once we consider the OVB.
+
 \end{document}

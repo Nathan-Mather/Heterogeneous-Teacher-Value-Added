@@ -1,0 +1,274 @@
+\documentclass[letterpaper,12pt]{article}
+
+% Import packages from .sty file.
+\usepackage{imports}
+
+
+% Set up the title.
+\title{From Value Added to Welfare Added: A Social Planner Approach to Education Policy and Statistics.}
+\author{Tanner S Eastmond\thanks{Department of Economics, University of California, San Diego} \and Nathan Mather\thanks{Department of Economics University of Michigan} \and Michael Ricks$^\dagger$ \and Julian Betts$^*$}
+\date{\vspace{-8ex}}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+\maketitle
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{abstract}
+    A major goal of Value Added Measures (VAM) is to evaluate and compare teachers. These measures both perform relatively well in identifying better teachers and capture relevant information about the long-term effects teachers have on students. Despite this and the increasing reliance on traditional mean VAM to measure teacher performance, there seems to be a philosophical disconnect between this and education policy with distributional goals, such as No Child Left Behind. We propose a simple welfare framework allowing policymakers to differentially weight students and a set of more flexible VAM to capture heterogeneity in teacher value added. We show that our flexible VAM perform well in simulations then show in data from San Diego Unified School District (SDUSD) that there is appreciable heterogeneity in teacher value added and that this heterogeneity translates to real-world outcomes for students. Lastly we show that, despite the allure as seemingly `utilitarian' estimates, using traditional mean VAM to evaluate teachers implies an undesirable set of student weights and suggest low cost policies to improve student outcomes without infusing more resources into the schools.
+\end{abstract}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+
+Over the past two decades teacher value added measures (VAM) have become increasingly common methods for evaluations of relative teacher performance. These measures are motivated by the fact that comparing teachers based on average student achievement in their classes would result in unfair assessments of teachers who are assigned to teach lower achieving classes, and whose students---often through little or no fault of their own--tend to have lower test scores. Intuitively value added measures compare teachers not on the level of student achievement in their class, but on the gains their students experience (thus the value ``added'').
+
+While test score gains are certainly not the only mark of an effective teacher, research has demonstrated that teachers with high value added scores have long-term impacts on their students' graduation rates and earnings \citep{chetty2014measuring2}. Furthermore, research has shown that teachers with high test-score value added tend to have higher value added on student attendance and on reducing student suspensions and retention \citep{pope2017multidimensional}.\footnote{This positive association is not perfect and there are many teachers with high non-testing value added who have lower test-score value added.} 
+
+Traditional value added measures focus on the average impact on students in a teacher's class; however, research has also made it clear that not all students experience the same gains under the same teacher. For example, the ``teacher-match effect'' reveals that students who are assigned effective same-gender or same-race teachers experience greater test score gains in the present and future than those who do not \citep{dee2005teacher,delhommer2019highschool}. Furthermore, teachers on the ground in classrooms suggest that teaching higher- or lower-achieving students often requires that they utilize and employ very different skills to keep students engaged and energized about learning. These types of differences are lost to value added measures because they average across all of a teacher's students in a given year. Throughout our paper we also refer to heterogeneity in teacher value added across the student achievement distribution as variation in teacher ``horizontal value added'' for brevity.
+
+We use data from San Diego Unified School District (SDUSD) to shed light on how teacher value added varies along the achievement distribution. We do so first by evaluating a set of alternative estimators for teacher value added that allow for heterogeneity across the student achievement distribution in various econometric simulations. These simulations explore the feasibility and reliability of the estimators under various empirical circumstances and compare this to traditional value added estimates. We find that \textcolor{red}{FILL IN, FIX THIS PARAGRAPH}
+
+We then take these estimators to linked student-teacher data from San Diego Unified School District (SDUSD) spanning the 2001-2002 through 2012-2013 school years. We find evidence of differential effectiveness along the achievement distribution both within and across teachers. In particular, we find evidence that value added is different for above and below median students in 31.7\% of teachers with English language (ELA) and 73.5\% with mathematics. Furthermore, we show that this heterogeneity matters for long-term student outcomes. A below median student in a class where the teacher has 1 standard deviation higher value added in ELA for below median students is 1.8 percentage points (1 pp for math) more likely to graduate from high school. However, teachers with high below median value added for do not move the needle on outcomes such as enrolling in a 4 year college or graduating with a Bachelor's degree within 6 years of high school. Teachers with higher above median value added drive these latter outcomes. An above median student is 2.1 pp more likely to enroll in a 4 year college and 1.5 pp more likely to earn a Bachelor's degree for each standard deviation higher above median math value added (the numbers are 2.8 and 0.6 for ELA, though the latter is not statistically significant).
+
+With this estimated heterogeneity in hand, we turn to the educational policy that often has goals for specific student sub-populations. Traditional mean VAM seem to have the intuitive appeal of treating students equally (a `utilitarian' weighting). However, we show that these measures induce an unintuitive weighting over students that is actually regressive. This is at odds with the goals of most education policy, which tends to focus on underrepresented or struggling students. With our welfare framework we allow the policymaker to explicitly choose the weighting over students, which allows us to correctly identify which teachers are moving forward the policy agenda and goals. This can then translate into various actionable conclusions, including, among other things, teacher/student reassignment across classrooms, incentive schemes, or identifying teachers for training purposes.
+
+Our work in this study fits closely with several previous papers. First, \citet{lockwood2009} explore whether the effect of teachers on students is heterogeneous along the achievement distribution. They find significant, though modest heterogeneity in teachers' effects on students with different prior achievement. The author's results are, however, quite sensitive to the specification. The second paper that fits closely with our current work is \citet{condie2014teacher}. The authors in this study examine the assumption for value added estimates that effects are homogeneous across different students. Their results suggest that this assumption is likely to be wrong, and they show in various simulations that assigning teachers to students they are comparatively better at teaching could improve student test scores.
+
+We contribute to these studies and the other literature in several ways. First, we provide several practical options for estimating heterogeneity in teacher effects and describe under what conditions they work well relative to standard value added estimates. Second, we show that these measures are strong predictors for real-world outcomes, and that teachers with different value added along the achievement distribution differentially impact these real-world outcomes. Last, we show that traditional mean VAM induce an unexpected welfare weighting across students and allow policy makers to make the weighting explicit in order to improve the ranking of teachers under any given policy agenda and goals.
+
+Our paper continues in Section \ref{sec: Data} by discussing the SDUSD and the data. We then build our welfare framework for VAM and show in simulations that our more flexible VAM perform well under a variety of circumstances, after which we take them to the SDUSD data. We then discuss our empirical results, followed by a discussion of the welfare weighting induced by traditional mean VAM. We end by proposing several practical uses for our measures. \textcolor{red}{FILL IN SECTIONS ONCE FINISHED}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Background and Data}\label{sec: Data}
+
+\textcolor{red}{FILL IN}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Are Traditional Value Added Measures Regressive?}\label{sec: Analysis}
+
+\subsection{A Theoretical Model of ``Welfare Added''}
+
+\begin{figure}
+    \centering
+    %\includegraphics{}
+    \caption{Welfare Implications of Horizontal And Vertical Value Added}
+    \label{fig:my_label}
+\end{figure}
+
+\subsection{Value Added Breaks In the Presence of Heterogeneity}
+
+% Okay I'm imagining this section showing the S-shape and it's robustness as a descriptive exercise. Are VA regressive? Show which econometric fixes do and don't change that (student controls, school fixed effects, cubic in score, restrict to teachers with uniform draws of students, thinking about auto correlation, SEM, shrinkage...?) and then see which papers account for each (or professional groups--it would be cool to show that EA is utilitarian even when Raj Chetty isn't)
+
+% The point needs to come out of the connection between the ATE and VAM: (If this is because of sorting the VAM mean nothing anyay).
+
+\begin{figure}
+    \centering
+    %\includegraphics{}
+    \caption{Look at this Funky S-Shaped Graph}
+    \label{fig:my_label}
+\end{figure}
+
+
+\begin{table}[]
+    \centering
+    %\input
+    \caption{Welfare Implications of Value Added Are Overlooked in the Literature}
+    \label{tab:my_label}
+\end{table}
+   
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Heterogeneity}\label{sec: Results}
+
+\subsection{We Propose Consistent Measures of Teacher Heterogeneity}
+
+% Simulation things here? or in prevous section? Maybe one rank-loss figure or a table showing a sufficient statistic for performance over an array of specifications.
+
+% Text with other main take aways, stengths, limitations
+
+\subsection{Vertical Heterogeneity: Measuring Average Differences Among Teachers}
+
+% Introduce main VAM model, specifications, etc. 
+
+
+\begin{figure}
+    \centering
+    %\includegraphics{}
+    \caption{Teachers Vary Substantially in their Value Added}
+    \label{fig:my_label}
+\end{figure}
+
+% I think we want to do standard deviations by grade.... Although standardizing by grade complicates issues in that I'm not sure how to test for differences. 
+
+\subsection{Horizontal Heterogeneity: Documenting Within-Teacher Differences over Achievement}
+
+% Introduce main binned WA model, specifications, etc. 
+
+
+\begin{figure}
+    \centering
+    %\includegraphics{}
+    \caption{We Reject Horizontal Homogeneity for 60\% of Teachers}
+    \label{fig:my_label}
+\end{figure}
+
+\begin{figure}
+    \centering
+    %\includegraphics{}
+    \caption{High-Achieving and Lower-Achieving Value Added Are Only Weekly Correlated}
+    \label{fig:my_label}
+\end{figure}
+
+% If this is true, this suggests something about the degree to which vertical and horizontal differences matter
+
+
+\subsection{Extending Validity / Robustness Checks}
+
+% Robustness stuff
+\begin{table}[]
+    \centering
+    %\import
+    \caption{Binned Estimates are Robust and Externally Valid Under Most Specifications}
+    \label{tab:my_label}
+\end{table}
+
+% This table could include some of the following: 
+% - not sorting
+% - stable across class draws?
+% - reflected in quasi experiments
+% - robust to... school fixed effects, student fixed effects, impute -1 or 1 \sigma for missing, etc.
+% - captures signal not sampling variation
+% - how much is mediated by match
+% -etc.
+   
+% Would another validity measure be to show that attendance or other social binned-value-added measures are much more strongly correlated than the achievement ones?
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{The Implications of ``Welfare Added''}
+
+\subsection{Traditional Measures are In Fact Regressive}
+
+
+\begin{figure}
+    \centering
+    %\includegraphics{}
+    \caption{Implied Welfare Weights Are Regressive}
+    \label{fig:my_label}
+\end{figure}
+
+% We could plot the implied weights (and also the implied weights if VAM includes more fewer controls... will that matter?)
+
+
+% We could have a second panel that shows the scatter or WA (with what weights?) over VA or do that seperately
+
+% scatter or local polinomal of VA-WA over the distribution of % taught below median for different welfare weights?
+
+
+
+\subsection{Welfare Added Captures Impacts on Long-Term Gains}
+
+
+% Robustness stuff
+\begin{table}[]
+    \centering
+    \input{"tables/Long Term Outcomes ELA"}
+    \caption{Binned Estimates are Robust and Externally Valid Under Most Specifications}
+    \label{tab:my_label}
+\end{table}
+
+\begin{table}[]
+    \centering
+    \input{"tables/Long Term Outcomes Math"}
+    \caption{Binned Estimates are Robust and Externally Valid Under Most Specifications}
+    \label{tab:my_label}
+\end{table}
+
+\begin{table}[]
+    \centering
+    \input{"tables/Within Teacher Test ELA"}
+    \caption{Binned Estimates are Robust and Externally Valid Under Most Specifications}
+    \label{tab:my_label}
+\end{table}
+
+\begin{table}[]
+    \centering
+    \input{"tables/Within Teacher Test Math"}
+    \caption{Binned Estimates are Robust and Externally Valid Under Most Specifications}
+    \label{tab:my_label}
+\end{table}
+
+% Imagining 5 rows VA lowVA*low lowVA*high highVA*low highVA*low and 3-4 sets of two columns for suspensions, gradhs, enrcol (gradcol?)... I think all these regressions should have school fixed effects, shrinkage, and corrected standard errors for estimated regressors.
+   
+   
+   
+% Does this mean that relative to a baseline students are actually HURT by having a teacher who generates value for the other type of student?
+
+
+
+\subsection{Counterfactual Policy Simulations Using Welfare Added Imply Enormous Gains}
+
+% I think the point should be gains OVER and above a baseline of VA. (the whole point is the match
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Extensions to More Flexible Heterogeneity}
+
+% Teaser section about using the nonparametric kernel regression.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Conclusion}\label{sec: Conclusion}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bibliography{citations}
+
+
+\appendix
+\section{}
+
+\end{document}

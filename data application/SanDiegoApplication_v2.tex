@@ -1,0 +1,208 @@
+\documentclass[letterpaper,12pt]{article}
+
+% Import packages from .sty file.
+%\usepackage{imports}
+
+% Mike's things because he couldn't figure out how to get the preamble working otherwise
+\usepackage[utf8]{inputenc}
+\usepackage{geometry,ulem,graphicx,caption,color,setsp ace,dsfont,amssymb}
+\usepackage[comma]{natbib}
+\usepackage{subcaption} 
+\usepackage[short]{optidef}
+\usepackage{hhline}
+\usepackage[capposition=top]{floatrow}
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{adjustbox}
+\usepackage{tikz}
+\usepackage{pdflscape}
+\usetikzlibrary{calc,patterns,positioning}
+\usepackage{environ}
+\usepackage{soul}
+
+\bibliographystyle{ecta}
+
+\usepackage{titlesec}
+\titleformat{\section}
+  {\normalfont\normalsize\bfseries}{\thesection.}{1em}{}
+
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries}{\thesubsection}{1em}{}
+  
+  
+\begin{document}
+
+\noindent Proposing authors: Julian Betts\footnote{University of California, San Diego}, Tanner Eastmond$^1$, Nathan Mather\footnote{University of Michigan}, and Michael Ricks$^2$
+
+
+
+
+
+\section{Title of the Study}
+From Value Added to Welfare Added: A Social Planner Approach to Education Policy and Statistics.
+
+
+
+
+
+\section{Statement of the educational problem and its theoretical base}
+The problem we are addressing is how to assess teachers using student test scores. Assessing relative teacher performance is an important but difficult task. No single assessment can capture the many facets of an effective teacher nor gauge all of the long and short term impacts teachers have on their students; however, test scores are a common and practical way to assess one particular dimension of teacher effectiveness. While test scores provide a seemingly objective metric for our assessment tool kit, there are important issues with using test scores that have not been clearly addressed or accounted for.
+
+Specifically, existing measures of teacher performance, for example value added measures, rank teachers based on the average impact a teacher has on their class of students. For value added measures this means a teacher benefits as much from helping their highest scoring student improve an additional point as they do from helping their lowest scoring student improve an additional point. This might be useful, but it does not always fit with the specific policy goals educators and administrators have in mind when using such assessments. Relying on a teacher's average impact also means administrators cannot differentiate between teachers who disproportionately help high or low achieving students.
+
+We plan to provide a test score based teacher assessment that allows administrators to differentially weight the impact of teachers on students of varying achievement levels. This weighting is completely flexible and can be custom fit to specific goals or normative values. For example, if we believe students benefit from reaching a certain threshold of achievement, we can weight a teacher’s impact on students below that threshold more than students already above it. This assessment now reflects our belief that students below the threshold benefit more from improved scores, but also does not ignore a teacher's efforts on higher achieving students. 
+
+
+
+
+
+\section{Review of related literature or analysis of previous research important to proposed study}
+Over the past two decades teacher value added measures (VAM) have become increasingly common methods for evaluations of relative teacher performance. These measures are motivated by the fact that comparing teachers based on average student achievement in their classes would result in unfair assessments of teachers who are assigned to teach lower achieving classes, and whose students---often through little or no fault of their own--tend to have lower test scores. Intuitively value added measures compare teachers not on the level of student achievement in their class, but on the gains their students experience (thus the value ``added'').
+
+While test score gains are certainly not the only mark of an effective teacher, research has demonstrated that teachers with high value added scores have long-term impacts on their students' graduation rates and earnings \citep{chetty2014measuring2}. Furthermore, research has shown that teachers with high test-score value added tend to have higher value added on student attendance and on reducing student suspensions and retention \citep{pope2017multidimensional}.\footnote{This positive association is not perfect and there are many teachers with high non-testing value added who have lower test-score value added.} 
+
+There is also a precedent for doing value added research in the San Diego Unified School District. In \citet{koedel2010value} and \citet{koedel2011does}, researchers explored the nature of student assignment to teachers and test score ceilings and how they affect traditional value added measures.
+
+Traditional value added measures focus on the average impact on students in a teacher's class; however, research has also made it clear that not all students experience the same gains under the same teacher. For example, the ``teacher-match effect'' reveals that students who are assigned effective same-gender or same-race teachers experience greater test score gains in the present and future than those who do not \citep{dee2005teacher,delhommer2019highschool}. We also hear anecdotally that teaching higher- or lower-achieving students often requires that teachers utilize and employ very different skills to keep students engaged and energized about learning. These types of differences are lost to value added measures because they average across all of a teacher's students in a given year.
+
+We propose using the San Diego Unified data to shed light on how teacher value added varies between higher- and lower-achieving students. We innovate beyond \citet{lockwood2007sensitivity} with new methods and conceptual clarity about the importance of exploring a teacher's impact on students across multiple years (not just for all of a teacher's students in a given year).
+
+
+
+
+
+\section{Significance of the problem and the study to the educational services provided San Diego Unified School District students or to other aspects of the district’s operations}
+SDUSD has long sought to provide an optimal learning environment for all of its students. The teacher running a classroom is arguably the most important part of that environment. This study, if approved, offers to test the possibility that a given teacher is more effective at increasing the rate of learning for some students than for others. If the study finds no evidence of this, then this in itself would be useful information.  If instead the study found that teachers varied in their effectiveness by the type of student, it would hold important implications for how the district allocates teachers across schools, and also how it assigns students to teachers within schools. In theory, such findings could lead to better learning outcomes for all students. 
+
+
+
+
+
+\section{Objectives of the study, hypotheses to be tested, or research questions to be investigated}
+Our study is focused on the hypotheses that teachers have a differential impact on students of varying characteristics (in particular, prior achievement), and that estimating these impacts so as to identify those differences rather than relying on mean-oriented statistics, such as traditional value added measures, provides valuable information to schools and districts. The primary objectives for our study are then to (1) develop a set of statistical tools and methods to reliably estimate teachers' differential impacts on students and to quantify how important this heterogeneity is in real classrooms and schools, (2) understand and quantify possible gains from improving match quality between students and teachers (e.g. distinguishing teachers particularly skilled at teaching low-achieving students and potentially pairing them together), and (3) help policymakers within the district to improve outcomes for target sub-populations of students by identifying teachers who are especially benefiting those students for training or other purposes.
+
+Contingent on the success of our primary objectives, one secondary objective of our study is to explore the mechanisms for the variation in teacher effectiveness along the student achievement distribution. In particular, we would work to understand which qualifications and characteristics of teachers help to explain the patterns of teacher effectiveness among particular groups of students.
+
+
+
+
+
+\section{Assumptions and limitations}
+The main assumption in the underlying statistical analysis is that the analysis does not suffer from omitted variable bias. This type of bias would arise if, for instance, the models omitted an important determinant of learning which itself was correlated with the way in which students are assigned to teachers. The most obvious form of omitted variable bias would be that failure to control for student's past academic trajectories could lead us to assign a student's learning in the given year to the student's teacher. To combat this problem, we adopt a value-added approach in which we account for the student's test scores in the prior grade. This has been shown to greatly reduce this type of bias.  
+
+A second assumption that the analysis implicitly makes is that the assignment of teachers to students is ``exogenous.'' Put differently, the analysis assumes that there is no omitted variable or decision rule which creates a correlation between the student's own academic outcome and identity of the teacher to whom the student was assigned. For example, if teacher X at a given school, through seniority or level of education, habitually taught the most advanced students in grade 5, through a policy set at the school, it is possible that we could misconstrue rapid learning for that group of students to the teacher, when much of this rapid gain derived from the students' own background and academic trajectory.  Again, controlling for factors such as the student's past academic achievement can greatly reduce this concern.
+
+
+
+
+
+\section{Definition of important terms}
+
+\noindent \textbf{Value Added Measure} - A common method for teacher assessment that measures a teacher's impact on their students by comparing the students' actual test scores to the test scores we would have expected to see given the students' previous scores and characteristics. This essentially compares student growth rather than achievement. In particular, a teacher's Value Added is the average difference between actual and expected growth for the students that they teach.
+
+\noindent \textbf{Welfare} - A phrase borrowed from economics and public finance. This refers to the normative benefit an individual receives from something. For example, the benefit of an increase in a student's testing ability. 
+
+\noindent \textbf{Welfare Weighted Value Added} - Our new metric for assessing teachers that weights student growth differentially by achievement level according to a given policy goal.
+
+
+
+
+
+\section{Procedures of the project}
+This project will involve the analysis of administrative data. See research design and methods of analysis for details. 
+
+
+
+\subsection{Starting date, duration, and expected date of final report}
+The start date will be as soon as the district approves the project, but ideally we would start no later than the end of February. We intend to share preliminary results with the district sometime in 2021, but intend to have the final report published sometime in 2022 or 2023 to account for publication and review lags.
+
+
+
+\subsection{Student population, number and characteristics (e.g., grades, gender)}
+We intend to focus on the entire population of students who enroll in grades 2-5 in any year between 2001-02 through 2012-13 academic school years. We choose these years in order to have access to CST test score data during their elementary school years. We also request access to records for this sample of students in 2013-14 through 2018-19 school years. During these years many of the students will be in  middle school and high school. This would allow us to study later academic outcomes including test scores, course-taking, grades and high school graduation as functions of which teachers they studied with. Similarly we request access to National Student Clearinghouse data on postsecondary outcomes.
+
+
+
+\subsection{School(s) and classes—or departments—in which data are to be collected}
+Data will not be collected directly at schools; they will be collected from administrative data to which Professor Betts already has access.
+
+
+
+\subsection{Method and criteria for study sample selection}
+The sample will consist of the entire sample of students enrolled in the elementary schools in any year between 2001-02 and 2012-13. In addition, we request data from all following years for those students as available, including test scores, grades, course-taking and graduation data. The latter allows us to follow students into middle and high schools. We estimate that there were 245,469 students enrolled in kindergarten through grade 5 in at least one of these years. Our actual sample size for analysis will likely be smaller as we will not be able to use data for students who lack at least two consecutive years of CST test score data and who lack a link to their homeroom teacher. 
+
+
+
+\subsection{Time required of students, teachers, and others for treatment or instructional procedures, if applicable, and/or data collection}
+Not applicable, with the possible exception of clarifying questions from Professor Betts and Andrew Zau to Ron Rode regarding teacher data.
+
+
+
+\subsection{Designation and definition of variables, as appropriate}
+Our primary outcome measures will include both short run outcomes, including test scores and grade promotion/retention, and longer run outcomes, including high school completion, high school GPA, and college attendance/completion.
+
+
+
+\subsection{Data to be collected, data collection plan and schedules}
+Data will include student academic and test score records in addition to information on who their elementary school teachers were. We also request basic data on teacher qualifications and demographics, as well as high school graduation and college enrollment data for the students. The majority of these data are already available at SanDERA.
+
+
+
+\subsection{Instruments to be used. Include a near-final copy of each, including an interview protocol if interviews are to be used}
+Not applicable.
+
+
+
+\subsection{Means by which principals and teachers are informed of the research project and their willingness to host/participate in the study is sought. If by letter, submit a draft}
+Not applicable.
+
+
+
+\subsection{Means by which parents will be informed of research project, or parental written permission, if required, will
+be sought for students’ participation in the study. If by letter, submit a draft which the principal or other district
+manager could use. The letter to parents must come from one of these officials, not the researcher}
+Not applicable.
+
+
+
+\subsection{General procedure (what will be done by the investigator, teacher, pupils, others)}
+We will place no time demands on teachers, pupils, or district staff. Investigators and research staff will organize and analyze the data.
+
+
+
+\section{Research design}
+The first part of our research design, for which a considerable amount of work has already been done, is to develop the statistical methodology for estimating our welfare weighted value added model and testing its performance relative to standard value added measures. We have already developed a method for estimation and have begun running simulations to test its performance. 
+
+These simulations allow us to identify the circumstances under which our welfare weighted value added is effective and useful compared to a standard value added approach. For example, we can test how much teacher heterogeneity would need to be present for our measure to outperform the standard value added approach. These simulations are useful because in this controlled environment we know the true impact a teacher has on a student (because we created the data). This gives us a way to assess the accuracy and usefulness of both metrics. The biggest drawback to this approach is that the data is simulated and so the findings may not be robust to the idiosyncrasies of the real world. 
+
+This issue can be mitigated, however, by incorporating information from the SDUSD data to calibrate the parameters in our simulation. For example, to simulate data from a class of students we need to choose how variable test scores are within a given class. Without any point of reference, it can be difficult to know what a reasonable number to use is. The SDUSD data, however, can provide us with that reference point and ensure that the variation in student scores within a classroom in our simulated data is comparable to the actual data in the district.
+
+The second part of our research design is calculating both traditional value added and welfare weighted value added for teachers in the San Diego Unified School District. These estimates will be used to address multiple research questions. First, are teachers better at teaching students at a specific part of the achievement distribution? For example, are teachers better at teaching high achieving students?   Second, does this effect vary from teacher to teacher? For example are some teachers best at teaching high achieving students while others are best at teaching low achieving students or is there a more consistent pattern for most teachers? Given these findings, how well does traditional value added compare to our welfare weighted value added? This is more difficult to assess in real world data since we do not know the true impact. However, we can look at how different the two estimates are and use our simulations to get a clearer picture of each measure.
+
+
+
+
+
+\section{Method of data analysis, statistical treatment to be given, decision criteria}
+Our analysis will have two major components: theoretical simulations and empirical estimation. The statistical simulations, many of which we have already begun working on, do not use data from real-world classrooms. These simulations allow us to explore how our estimators perform compared to traditional value added estimates under a variety of conditions. We are focusing on three methods in particular to estimate the heterogeneity in teacher impact along the student achievement distribution: (1) traditional regression analysis including indicator variables for student achievement bins, (2) a non-parametric technique called kernel regression, and (3) quantile regression. We have begun in these simulations to determine the data requirements of each technique, to evaluate under what conditions (e.g. random student assignment, student sorting, peer effects, etc.) each performs well/poorly relative to traditional value added estimates, and to develop an empirical test to quantify the importance of the heterogeneity in teacher match quality along the student achievement distribution in real-world data. We have started by focusing on student achievement, but can extend our framework to other dimensions of student heterogeneity.
+
+These theoretical simulations will then inform our empirical work moving forward. For each teacher, we will pool their students across years and estimate the `value' that each teacher imparts to their students (teachers make many invaluable contributions to their students, both measurable and immeasurable, but in this instance we are only referring to their impact in terms of the few specified student outcomes, such as test scores or future college attendance). We denote this `value' as the function $v_j(x_i, y_i)$. This represents the outcome improvement brought about by teacher $j$ for a student with demographic characteristics $x_i$ and current/prior test scores $y_i$. This object is the crux of our estimation. We will build estimates of this object using the three methods outlined and explored in above with the simulations. We then aggregate this into the total welfare imparted by the teacher to their students using the following equation:
+
+    \begin{gather*}
+        W_j = \sum_{i=1}^{N_j} \omega(x_i, y_i) v_j(x_i, y_i)
+    \end{gather*}
+
+\noindent where $N_j$ is the number of students taught by teacher $j$ and $\omega(x_i, y_i)$ is the weight determined by the policymaker (e.g. if the district had a particular focus on low-achieving students this would be higher for relevant students).
+
+Once we have estimated $W_j$ for each teacher under a given policy environment, this will allow us to explore questions such as `what total welfare gains could be achieved by simply rearranging students within schools and grades' by keeping the estimates of $v_j(x_i, y_i)$ for each teacher and rearranging students to calculate new $W_j$'s.
+
+
+
+
+
+\section{Disposition to be made of research results}
+We will disseminate our research finding in a few stages. Sometime in 2021 we hope to create a brief or set of presentation slides for the district that communicate our first set of preliminary results. Following this we hope to have a draft of an academic paper which we will submit to relevant conferences and journals. As we revise the draft for publication and review processes, we will update the district on relevant changes and advancements.
+
+
+\bibliography{citations}
+ 
+ \end{document}

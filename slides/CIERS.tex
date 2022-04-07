@@ -1,0 +1,973 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Beamer Presentation
+% LaTeX Template
+% Version 1.0 (10/11/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND THEMES
+%----------------------------------------------------------------------------------------
+\documentclass[t,aspectratio=169,11pt]{beamer}
+%\documentclass[t,aspectratio=169,11pt,draft]{beamer}
+
+\mode<presentation> {
+
+\input{LatexColors.incl.tex}
+
+\usetheme{Boadilla}
+
+% Footer and page numbers
+
+% First remove the navigation symbols from the bottom of all slides 
+\setbeamertemplate{navigation symbols}{} 
+
+% Remove the colored line at the bottom
+\setbeamertemplate{footline}{}
+
+
+% Customize items
+\setbeamertemplate{itemize items}{\color{ptlightblue}{\rule[0.05em]{0.6em}{0.6em}}}
+\setbeamertemplate{itemize subitem}{\color{ptlightblue}{\raisebox{0.12em}{$\blacktriangleright$}}}
+\setbeamercolor{enumerate item}{fg=black}
+\setbeamertemplate{enumerate items}[default]
+\setbeamercolor{enumerate subitem}{fg=black}
+\setbeamertemplate{enumerate subitems}[default]
+
+
+% Table of Contents (if we have one)
+\setbeamertemplate{section in toc}{\inserttocsectionnumber.~\inserttocsection}
+\setbeamercolor{section in toc}{bg=white,fg=black}
+\setbeamertemplate{subsection in toc}{%
+  \hspace{1.2em}{{\color{ptlightblue}{\rule[0.05em]{0.6em}{0.6em}}}~\inserttocsubsection\par}
+}
+\setbeamercolor{subsection in toc}{bg=white,fg=black}
+
+
+% Customize beamer colors
+\setbeamercolor{titlelike}{fg=white,bg=ptlightblue}
+\setbeamercolor{button}{bg=ptlightcyan,fg=white}
+}
+
+
+% Import packages
+\usepackage[default]{lato} % More modern looking font than Helvetica
+\usepackage{geometry,ulem,caption,color,setspace,dsfont,physics,commath,amsmath,amssymb}
+\usepackage[comma]{natbib}
+\usepackage[short]{optidef}
+\usepackage{hhline}
+\usepackage{array}
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{adjustbox}
+\usepackage{graphicx,xcolor,bbm,xcomment}
+\usepackage{appendixnumberbeamer}
+\usepackage{textcomp}
+\usepackage{colortbl}
+\usepackage{subcaption} 
+\usepackage{tikz}
+\usetikzlibrary{calc,patterns,positioning}
+\usepackage{pdflscape}
+\usepackage{environ}
+
+\bibliographystyle{ecta}
+
+
+
+% Make Section Header Frames
+\AtBeginSection[]{
+  \setbeamertemplate{navigation symbols}{}
+  \begin{frame}[noframenumbering]
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+
+% Make a new prettier page number
+\addtobeamertemplate{navigation symbols}{}{%
+    \usebeamerfont{footline}%
+    \hspace{5em}%
+    {\color{black!50}{\small\insertframenumber/\inserttotalframenumber}}%
+}
+  
+}
+
+
+\tikzset{
+    invisible/.style={opacity=0},
+    visible on/.style={alt={#1{}{invisible}}},
+    alt/.code args={<#1>#2#3}{%
+      \alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}} % \pgfkeysalso doesn't change the path
+    },
+  }
+
+    
+    %--------------------------------------------------------------
+    % Fix item spacing
+    %----------------------------------------------------------------
+    
+         % redefine itemsep to autofill space on beamer slides
+    % % from https://tex.stackexchange.com/questions/369504#369597
+    \makeatletter
+    \renewcommand{\itemize}[1][]{%
+    	\beamer@ifempty{#1}{}{\def\beamer@defaultospec{#1}}%
+    	\ifnum \@itemdepth >2\relax\@toodeep\else
+    	\advance\@itemdepth\@ne
+    	\beamer@computepref\@itemdepth% sets \beameritemnestingprefix
+    	\usebeamerfont{itemize/enumerate \beameritemnestingprefix body}%
+    	\usebeamercolor[fg]{itemize/enumerate \beameritemnestingprefix body}%
+    	\usebeamertemplate{itemize/enumerate \beameritemnestingprefix body begin}%
+    	\list
+    	{\usebeamertemplate{itemize \beameritemnestingprefix item}}
+    	{\def\makelabel##1{%
+    			{%
+    				\hss\llap{{%
+    						\usebeamerfont*{itemize \beameritemnestingprefix item}%
+    						\usebeamercolor[fg]{itemize \beameritemnestingprefix item}##1}}%
+    			}%
+    		}%
+    	}
+    	\fi%
+    	\setlength\itemsep{\fill}
+    	\ifnum \@itemdepth >1
+    	\vfill
+    	\fi%  
+    	\beamer@cramped%
+    	\raggedright%
+    	\beamer@firstlineitemizeunskip%
+    }
+    \def\enditemize{\ifhmode\unskip\fi\endlist%
+    	\usebeamertemplate{itemize/enumerate \beameritemnestingprefix body end}
+    	\ifnum \@itemdepth >1
+    	\vfil
+    	\fi%  
+    }
+    \makeatother
+    
+    \makeatletter
+    \def\enumerate{%
+    	\ifnum\@enumdepth>2\relax\@toodeep
+    	\else%
+    	\advance\@enumdepth\@ne%
+    	\edef\@enumctr{enum\romannumeral\the\@enumdepth}%
+    	\advance\@itemdepth\@ne%
+    	\fi%
+    	\beamer@computepref\@enumdepth% sets \beameritemnestingprefix
+    	\edef\beamer@enumtempl{enumerate \beameritemnestingprefix item}%
+    	\@ifnextchar[{\beamer@@enum@}{\beamer@enum@}}
+    \def\beamer@@enum@[{\@ifnextchar<{\beamer@enumdefault[}{\beamer@@@enum@[}}
+    \def\beamer@enumdefault[#1]{\def\beamer@defaultospec{#1}%
+    	\@ifnextchar[{\beamer@@@enum@}{\beamer@enum@}}
+    \def\beamer@@@enum@[#1]{% partly copied from enumerate.sty
+    	\@enLab{}\let\@enThe\@enQmark
+    	\@enloop#1\@enum@
+    	\ifx\@enThe\@enQmark\@warning{The counter will not be printed.%
+    		^^J\space\@spaces\@spaces\@spaces The label is: \the\@enLab}\fi
+    	\def\insertenumlabel{\the\@enLab}
+    	\def\beamer@enumtempl{enumerate mini template}%
+    	\expandafter\let\csname the\@enumctr\endcsname\@enThe
+    	\csname c@\@enumctr\endcsname7
+    	\expandafter\settowidth
+    	\csname leftmargin\romannumeral\@enumdepth\endcsname
+    	{\the\@enLab\hspace{\labelsep}}%
+    	\beamer@enum@}
+    \def\beamer@enum@{%
+    	\beamer@computepref\@itemdepth% sets \beameritemnestingprefix
+    	\usebeamerfont{itemize/enumerate \beameritemnestingprefix body}%
+    	\usebeamercolor[fg]{itemize/enumerate \beameritemnestingprefix body}%
+    	\usebeamertemplate{itemize/enumerate \beameritemnestingprefix body begin}%
+    	\expandafter
+    	\list
+    	{\usebeamertemplate{\beamer@enumtempl}}
+    	{\usecounter\@enumctr%
+    		\def\makelabel##1{{\hss\llap{{%
+    						\usebeamerfont*{enumerate \beameritemnestingprefix item}%
+    						\usebeamercolor[fg]{enumerate \beameritemnestingprefix item}##1}}}}}%
+    	\setlength\itemsep{\fill}
+    	\ifnum \@itemdepth >1
+    	\vfill
+    	\fi%  
+    	\beamer@cramped%
+    	\raggedright%
+    	\beamer@firstlineitemizeunskip%
+    }
+    \def\endenumerate{\ifhmode\unskip\fi\endlist%
+    	\usebeamertemplate{itemize/enumerate \beameritemnestingprefix body end}
+    	\ifnum \@itemdepth >1
+    	\vfil
+    	\fi%  
+    }
+    \makeatother
+    
+
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+
+\title{From Value Added to Welfare Added} 
+
+\author{Tanner Eastmond \hfill \and Nathan Mather   \and \hfill Michael D Ricks   \\   \textit{teastmond@ucsd.edu}\hfill \textit{njmather{\fontfamily{qag}\selectfont @}umich.edu} \hfill
+\textit{ricksmi{\fontfamily{qag}\selectfont @}umich.edu} } 
+\institute{}
+\date{\today} 
+
+\begin{document}
+
+\begin{frame}[noframenumbering]
+\titlepage 
+\end{frame}
+
+% Make a new prettier page number
+\addtobeamertemplate{navigation symbols}{}{%
+    \usebeamerfont{footline}%
+    \hspace{5em}%
+    {\color{black!50}{\small\insertframenumber/\inserttotalframenumber}}%
+}
+
+%------------------------------------------------
+% What is Value added 
+%------------------------------------------------
+\begin{frame}{Value Added Measures: Intent and Reality}
+\begin{itemize}
+    \item Goal of Value added measures (VAM) are to rank teachers' ``effectiveness''
+        \begin{itemize}
+            \item Measure post test achievement controlling for a pretest score
+        \end{itemize}
+    \item We know VAM do capture something real
+    \begin{itemize}
+        \item {\color{gray}{\citep{chetty2014measuring2,pope2017multidimensional}}}
+    \end{itemize}
+    \item We know there is heterogeneity in test score effects VAM do not catch
+    \begin{itemize}
+        \item {\color{gray}{\citep{ehrenberg1995teachers,dee2005teacher}}}
+    \end{itemize}
+    % \item We know that if we use VAM for incentives has potential and limitations
+    %\begin{itemize}
+    %    \item {\color{gray}{\citep{jacob2003rotten,neal2010left,pope2019effect}}}
+    %\end{itemize}
+\end{itemize}
+    \vspace{48pt}
+\vfill
+\end{frame}
+
+%------------------------------------------------
+% Why do we care 
+%------------------------------------------------
+\begin{frame}{Value Added Measures: Policy Disconnect }
+\begin{itemize}
+
+
+    \item Theoretical disconnect between education policy goals and use of VAM 
+    \begin{itemize}
+        \item Policies explicitly target gains in some subpopulations
+        \item VAM are mean-oriented statistics: a teachers average impact on students' scores
+        \item Resulting VAM rankings may carry different \textbf{implicit normative} ``welfare weights''
+    \end{itemize}
+    
+    \item  We propose a set of more flexible heterogeneous VAM 
+    \begin{itemize}
+        \item Assess teachers' heterogeneous impacts along the achievement distribution
+        \item  Weight effects according to an \textbf{explicit normative} policy goal or welfare criterion
+    \end{itemize}
+\end{itemize}
+
+
+\end{frame}
+
+%------------------------------------------------
+% How do we answer our question?
+%------------------------------------------------
+
+\begin{frame}{Research Goals}
+
+\begin{enumerate}
+     \item Build a welfare-relevant framework for VAM (and other educational statistics) 
+     %\begin{itemize}
+     %    \item Can we accommodate any policy or normative goal?
+     %\end{itemize}
+    % two to four two is method.
+    \item Propose methods to estimate value added over the achievement distribution
+        %\begin{itemize}
+        %    \item Do certain teachers excel at teaching certain students?
+        %\end{itemize}
+    \item Explore feasibility and accuracy of methods in simulations
+    %\begin{itemize}
+    %    \item Are these methods feasible? Accurate? Informative? 
+    %\end{itemize}
+    \item Estimate VA heterogeneity and welfare implications in real student-teacher data
+    %\begin{itemize}
+    %    \item What implications do rank inversions have for welfare?
+    %    \item What implications are there for possible policies?
+    %\end{itemize}  
+    % Policy relevant tool. When does heterogeneity matter?
+\end{enumerate}
+\end{frame}
+
+%-----------------------------------------------
+% Goal of toady's talk 
+%-----------------------------------------------
+\begin{frame}{Today's Talk}
+
+\begin{enumerate}
+    \item Are these research goals interesting?
+    \item How can we make the methods and metrics most useful? 
+    \item How convincing do the simulations suggest our methods are?
+    \item What are the biggest concerns we should be thinking about?
+\end{enumerate}
+\end{frame}
+
+
+
+
+%------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------------
+% NEW SECTION: Setting up the theory 
+%------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------------
+\section{Measuring Welfare from Value Added}
+
+%------------------------------------------------
+% Estimating STANDARD Value Added 
+%------------------------------------------------
+
+\begin{frame}{Estimating Standard  Value Added}
+
+\begin{itemize}
+    \item In theory test scores are a function of testing ability, value added, and noise
+    \begin{align*}
+    y_{i,t}  &= a_{i,t} + \epsilon_{i,t} \\
+    y_{i,t}  &= a_{i,t-1} + VA_{j(i)}(a_{i,t-1}) + \epsilon_{i,t}
+    \end{align*}
+ 
+    \item We don't observe testing ability. Traditional VAM assumptions:
+    \begin{itemize}
+        \item Predict testing ability with characteristics (including lagged scores): $X_{i,t}$
+        \item Assume homogeneity within and across teachers $VA_{j}(\cdot)=\gamma_{j,t}$ with no $i,j$ error
+    \end{itemize}
+    \begin{align*}
+    y_{i,t}  &= \beta X_{i,t} +\Gamma D_{i,t} + \eta_{i,t}
+    \end{align*}
+    
+    \item Note $\gamma_{j,t}$ variation over time could pick up $i,j$ variation.
+       
+    
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+% Obligatory model going over the logic 
+%------------------------------------------------
+\begin{frame}{Modeling Value Added As Social Welfare}
+
+\begin{itemize}
+    \item We can think of the following social welfare function
+    \begin{itemize}
+        \item $\omega(x_i)$ weights: based on \textit{ex ante} expected performance (pretest)
+        % Talk about the concavity here?
+        \item $v(x_i,y_i)$ value: think achievement, gains, etc.
+    \end{itemize}
+    \[
+    W  = \sum_i \omega(x_i) v(x_i,y_i) 
+    \] 
+    
+    \item Traditional VAM take the average gains for students among each teacher
+    \begin{itemize}
+        \item Expected performance is estimated as $\hat{y}_i$, then $\tilde{v}(\cdot) = y_i - \hat{y}_i$
+    \end{itemize}
+    \[
+    \hat{W}_{j}  = \sum_{i\in\mathcal{C}_j} \frac{(y_i-\hat{y}_i)}{N_{j}} \hspace{3em}
+    \]
+    
+    \item Implies a cardinal ``Value" equal to test score gains
+    
+    \item This implies $\omega(x_i)=\frac{1}{N_j}$, which is (almost) utilitarian
+    % this also implies that the value we care about is growth above/compared to similar students. What I mean is theoretically the same measures could be achieved by changing V or W, but changing W seams easier.  
+    % Not what we hear people talking about 
+    % For reference a VA version of NCLB has a weight  .... 
+    
+    
+    % Note VA scores are mean zero (almost--because you are averaging over classes of differnt sizes) , so total welfare is uninformative but rank is informative.
+\end{itemize}
+
+
+\end{frame}
+
+
+
+\begin{frame}{``Welfare Added''}
+
+\begin{itemize}
+    \item Estimating any other Welfare Added requires an estimate of $\mathbb{E}[v_j(\cdot)|x_i]$
+    \item Let $\hat{v}_j(x_i,y_i)$ estimate a teacher's heterogeneous value added, $\mathbb{E}[v_j(\cdot)|x_i]$
+    
+    \item Then the estimated ``Welfare Added'' by this teacher is  
+    \[
+    \hat{W}_j  = \sum_{i\in \mathcal{C}_j} \omega(x_i) \hat{v}_j(x_i,y_i) 
+    \] 
+    
+    \item Consider the following welfare weight examples:
+    % Should update this with whatever we actually end up using!!!!!!
+    \begin{itemize}
+        \item Utilitarian: All students are weighted equally $\omega(x_i) = 1$
+        \item Rawlsian: We care more about students below some cutoff, $c$, $\omega(x_i) = \mathds{1}(x_i\leq c)$
+        \item Pareto: We care about the lower achieving students more $ \omega(x_i)=  \frac{\alpha x_\mathrm{m}^\alpha}{x_i^{\alpha+1}}$ 
+    \end{itemize}
+    
+\end{itemize}
+
+
+\end{frame}
+
+%-----------------------------------------------
+% Motivation for Weighted VAM 
+%-----------------------------------------------
+
+\begin{frame}{Estimating Effect Heterogeneity}
+
+\begin{itemize}
+    \item A hypothetical ideal would be to estimate every $\hat{v}_j(x_i,y_i)$ separately
+    \item This is impossible, but we propose three alternatives:
+    \begin{enumerate}
+        \item Bin students by pretest scores
+        \item Nonparametrically estimate the impact of teachers over the achievement distribution
+        \item Estimate quantile regressions over relevant percentiles
+    \end{enumerate}
+
+\end{itemize}
+
+\end{frame}
+
+
+
+%------------------------------------------------
+% Method details 
+%-------------------------------------------------
+
+
+\begin{frame}{Using Bin Dummies}
+
+\begin{itemize}
+    \item Bin students into groups based on pretest
+        \begin{itemize}
+        \item Five equal bins across pretest quantiles (i.e. 0-20th, 21-40th, etc.)
+        \item Let $Q_{i,t}$ indicate quantiles by teachers
+        \begin{itemize}
+          \item Note that not all bins necessarily have data 
+        \end{itemize}
+        \end{itemize}
+     \begin{align*}
+    y_{i,t}  &= \beta y_{i,t-1} + \sum_{n=1}^{5} \Gamma_n Q_{i,t} + \eta_{i,t}
+    \end{align*}
+    
+    \item Get estimates for teachers on each bin 
+    
+    \item Weight those impacts according to our weights 
+    
+      \begin{align*}
+    \hat{W}_j = \sum_{i\in \mathcal{C}_j} \sum_n \omega(y_{i,t-1}) \gamma_{j,n} q_{i,t}
+    \end{align*}
+    
+\end{itemize}
+
+  %  \begin{enumerate}
+  %      \item The bins may need to be large to estimate them
+  %      \item We may actually want to group by \textit{ex ante} expected score, which we don't have
+   % \end{enumerate}
+
+
+\end{frame}
+
+
+
+\begin{frame}{Using Kernel Estimation}
+
+\begin{itemize}
+    \item For each teacher: estimate impact of teachers over pretests nonparametrically
+     \begin{align*}
+    y_{it}  &= g(y_{i,t-1}) + u_{i,t}
+    \end{align*}
+\item We then get fitted values for teacher $j$, i.e.  $\hat{g}_j(y_{i,t-1})$
+\item Then for each teacher we sum their weighted impact on students 
+
+      \begin{align*}
+    \hat{W}_j = \sum_{i \in \mathcal{C}_j} \omega(y_{i-1}) \hat{g}_j(y_{i,t-1})
+    \end{align*}
+    
+\end{itemize}
+
+ %       \begin{enumerate}
+ %       \item Flexibly estimate teacher impact on students 
+ %       \item May be very data hungry; hard to include controls
+ %   \end{enumerate}
+ 
+\end{frame}
+
+
+
+%
+%Quantile
+
+
+%We don't do this yet
+%\begin{enumerate}
+%        \item Not sure if the interpretation fits the goals 
+%%        \item Still thinking through estimation 
+%    \end{enumerate}
+
+%------------------------------------------------
+% Testing on Simulated Data 
+%-------------------------------------------------
+\section{Simulation Analysis}
+
+\begin{frame}{Intro to Simulation}
+\begin{itemize}
+    \item Start with an illustrative example 
+    \item Teachers have a region where they are best at teaching 
+    \item Baseline impact is equal for all teachers 
+    \item Students are Normally distributed and randomly assigned
+    \item 100 teachers, 150 students per teacher, 200 Monte Carlo simulations 
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------
+%plot: Example Teacher Impact
+%-----------------------------------------------
+
+\begin{frame}{Expected Teacher Impact is Better for Average Students } 
+
+\begin{figure}
+    \centering
+\includegraphics[width=.85\linewidth]{slides/CIERS_Figures/average_teacher_example_1.png}
+\end{figure}
+\end{frame}
+
+%------------------------------------------------
+%plot: capturing Teacher impact 
+%-----------------------------------------------
+
+\begin{frame}
+
+\frametitle<1>{Each Teacher Has Students They Teach Best}
+\frametitle<2>{Traditional Value Added Captures Some Information}
+\frametitle<3->{We Can Recover Heterogeneous Value Added}
+\vfill
+\begin{figure}
+    \centering
+\includegraphics<1>[width=.85\linewidth]{slides/CIERS_Figures/teacher_example_just_truth_1.png}
+\includegraphics<2>[width=.85\linewidth]{slides/CIERS_Figures/teacher_example_truth_standard_1.png}
+\includegraphics<3>[width=.85\linewidth]{slides/CIERS_Figures/teacher_example_truth_bin_1.png}
+\includegraphics<4>[width=.85\linewidth]{slides/CIERS_Figures/teacher_example_truth_np_1.png}
+\includegraphics<5>[width=.85\linewidth]{slides/CIERS_Figures/teacher_example_1.png}
+\end{figure}
+\end{frame}
+
+
+
+%------------------------------------------------
+%plot: rawlsian weight (base case)
+%-----------------------------------------------
+
+\begin{frame}{From Value Added To Welfare: Rawlsian  Weights}
+\vfill
+\begin{figure}
+    \centering
+\includegraphics[width=.85\linewidth]{slides/CIERS_Figures/weight_example_1.png}
+\end{figure}
+\end{frame}
+
+
+%------------------------------------------------
+%plot: rawlsian caterpillar plots 
+%-----------------------------------------------
+
+\begin{frame}
+\frametitle<1>{Heterogeneous Value Added Implies Welfare Added}
+\frametitle<2>{Standard Value Added Performs Very Poorly}
+\frametitle<3>{Nonparametric Value Added Performs Very Well}
+\vfill
+
+\begin{figure}
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics<1>[width=\linewidth]{slides/CIERS_Figures/truth_cat_run_2.png}
+  \includegraphics<2->[width=\linewidth]{slides/CIERS_Figures/standard_cat_run_2.png}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \uncover<3->{
+  \includegraphics[width=\linewidth]{slides/CIERS_Figures/ww_cat_run_2.png}}
+\end{subfigure}
+\end{figure}
+
+\end{frame}
+
+%------------------------------------------------
+%figures: rawlsian histogram and sum stats 
+%-----------------------------------------------
+
+\begin{frame}{Quantifying the Difference Between Methods} 
+
+\vfill
+\begin{figure}
+    \centering
+    \includegraphics[width=.75\linewidth]{slides/CIERS_Figures/hist_run_2.png}
+\end{figure}
+
+\end{frame}
+
+
+%------------------------------------------------
+%plot: plots over teacher center
+%-----------------------------------------------
+
+\begin{frame}{In This Example Things Break Because of Implicit Weights}
+
+\vfill
+
+\begin{figure}
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{slides/CIERS_Figures/standard_cent_run_2.png}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{slides/CIERS_Figures/welfare_cent_run_2.png}
+\end{subfigure}
+\end{figure}
+
+\end{frame}
+
+
+%-------------------------------------------------
+%plot: histogram for more realistic simulations
+%-------------------------------------------------
+
+\begin{frame}
+\frametitle<1>{Adding Variance in Teacher Ability and Center}
+\frametitle<2>{Adding Peer Effects and Student Sorting}
+\vfill
+\begin{figure}
+    \centering
+ \includegraphics<1>[width=.75\textwidth]{slides/CIERS_Figures/hist_run_4.png}
+
+ 
+ \includegraphics<2>[width=.75\textwidth]{slides/CIERS_Figures/hist_run_6.png}
+\end{figure}
+
+ \only<1>{
+    \hyperlink{bins1}{\beamerbutton{Binned Estimates}}
+    \hyperlink{cat1}{\beamerbutton{Caterpillar Plots}}
+    \hyperlink{hist8}{\beamerbutton{Variance = 0.5}}
+    \hyperlink{hist10}{\beamerbutton{Variance = 1}}
+    \hypertarget{run4}{}
+ }
+ \only<2>{
+    \hyperlink{bins2}{\beamerbutton{Binned Estimates}}
+    \hyperlink{cat2}{\beamerbutton{Caterpillar Plots}}
+    \hypertarget{run6}{}
+ }
+
+\end{frame}
+
+
+%------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------------
+% stress test 
+%------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------------
+\section{Stress Test Weighted VAM}
+
+
+%------------------------------------------------
+%plot 
+%-----------------------------------------------
+
+\begin{frame}{Traditional Methods Perform Well With More Cross-Teacher Variance}
+\vfill
+\begin{figure}
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{slides/CIERS_Figures/stress_bin_ta_sd.png}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{slides/CIERS_Figures/stress_np_ta_sd.png}
+\end{subfigure}
+\end{figure}
+
+\end{frame}
+
+%------------------------------------------------
+%plot 
+%-----------------------------------------------
+
+\begin{frame}{Our Methods Perform Well With More Within-Teacher Variance}
+\vfill
+\begin{figure}
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{slides/CIERS_Figures/stress_bin_max_diff.png}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{slides/CIERS_Figures/stress_np_max_diff.png}
+\end{subfigure}
+\end{figure}
+
+\end{frame}
+
+%-------------------------------------------------------------
+\begin{frame}{Measure Welfare Best When Pooling Across Years}
+\vfill
+\begin{figure}
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{slides/CIERS_Figures/stress_bin_n_stud.png}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{slides/CIERS_Figures/stress_np_n_stud.png}
+\end{subfigure}
+\end{figure}
+    
+\end{frame}
+
+
+%-------------------------------------------------------------
+% Did we want a frame showing that once there are a lot of students var(e_it) doesn't matter? We could just say it.
+
+
+%------------------------------------------------------------------------------------------------------
+% CONCLUDING SECTION 
+%-------------------------------------------------------------------------------------------------------
+\section{Feedback and Next Steps}
+
+%------------------------------------------------
+\begin{frame}[label=next]{Next Steps}
+
+\begin{itemize}
+
+    \item More stress testing and experimenting to understand methods 
+    
+    \item Get data and calibrate simulations
+    
+    \item Extensions like teacher effort, teacher PPF, long term effects, policy counterfactuals
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------
+
+\setbeamertemplate{navigation symbols}{}
+
+\begin{frame}[c,noframenumbering]
+\centering
+\Huge{\centerline{To Be Continued...}}
+\normalsize njmather{\fontfamily{qag}\selectfont @}umich.edu \hspace{2em}
+ricksmi{\fontfamily{qag}\selectfont @}umich.edu \hspace{2em} \normalsize teastmond{\fontfamily{qag}\selectfont @}ucsd.edu
+\end{frame}
+
+%------------------------------------------------
+
+
+\begin{frame}[noframenumbering]
+\frametitle{References}
+\tiny
+\bibliography{citations}
+\end{frame}
+
+
+%----------------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------------
+
+\appendix
+
+
+%----------------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------------
+
+
+
+%----------------------------------
+% Method Three: Kernel Regression
+%------------------------------------
+
+\begin{frame}{Methods: Semiparametric Index Model}
+
+\begin{itemize}
+
+    \item This method flows (most) directly from the SP motivation about weights
+    
+    \item  Nonparametrically identify teacher $j$'s effects over the achievement distribution
+    \begin{itemize}
+        \item Estimate $y_i = \sum _j D_j g_j(\beta X_i) +e_i$  by adapting Ichimura's method \citep{ichimura1993semiparametric}
+        \item Integrate over the effects using desired welfare weights
+    \end{itemize}
+    
+    \item Intuitive analogue: predict $\hat{y_i}$ then estimate $\mathbb{E}[y_i|\hat{y_i},j=j']$ for each teacher $j'$
+
+    \item Questions/Issues:
+    \begin{itemize}
+         \item Are there results to estimating subgroup effects?
+         \item This will probably only be powered if we pool over years
+         \item How do we think about bandwidth selection? 
+    \end{itemize}
+
+    %(Also a place to talk about measuring scores in pctle vs $\sigma$?)
+
+\end{itemize}
+
+\vfill
+\begin{flushleft}
+
+\hyperlink{next}{\beamerbutton{Back}}
+\end{flushleft}
+\end{frame}
+
+\begin{frame}{Methods: Lowbel 2015}
+
+\begin{itemize}
+\item Let $W_i = (X_i,D_i)$, then 
+
+\begin{align*}
+    Y_i &= \sum_k g_k (w_{ki} u_{ki}) +u_{0i} = \sum _j D_{j(i)} g_j(\beta X_i) +u_{0i} \\
+        & \iff g_k = 0 \forall k\leq |X_i| \text{ and } g_k(D_{ki} u_{ki}) = D_{j(i)} g_j(\beta X_i) \forall k>|X_i| 
+\end{align*}
+
+\item This will be true if $g_j(0)=0$, $u_{ki}=\beta X_i$, and $u_{ki}\neq 0$, but even if that is possible, I don't think $\beta X$ will ever be uncorrelated with all $D_j$?
+\end{itemize}
+
+
+\end{frame}
+
+%-----------------------------------------------------------
+%-----------------------------------------------------------
+
+\begin{frame}{Adding Variance in Teacher Ability and Center}
+
+\hypertarget{bins1}{}
+\vfill
+
+\begin{figure}
+    \centering
+ \includegraphics[width=.75\textwidth]{slides/CIERS_Figures/hist_run_3.png}
+\end{figure}
+
+\hyperlink{run4}{\beamerbutton{Back}}
+
+\end{frame}
+
+
+%-----------------------------------------------------------
+%-----------------------------------------------------------
+
+\begin{frame}{Adding Variance in Teacher Ability and Center}
+
+\hypertarget{cat1}{}
+\vfill
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{slides/CIERS_Figures/standard_cat_run_4.png}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{slides/CIERS_Figures/ww_cat_run_4.png}
+\end{subfigure}
+
+\hyperlink{run4}{\beamerbutton{Back}}
+
+\end{frame}
+
+
+%-----------------------------------------------------------
+%-----------------------------------------------------------
+
+\begin{frame}{Adding Variance in Teacher Ability and Center}
+
+\hypertarget{hist8}{}
+\vfill
+
+\begin{figure}
+    \centering
+ \includegraphics[width=.75\textwidth]{slides/CIERS_Figures/hist_run_8.png}
+\end{figure}
+
+\hyperlink{run4}{\beamerbutton{Back}}
+
+\end{frame}
+
+
+%-----------------------------------------------------------
+%-----------------------------------------------------------
+
+\begin{frame}{Adding Variance in Teacher Ability and Center}
+
+\hypertarget{hist10}{}
+\vfill
+
+\begin{figure}
+    \centering
+ \includegraphics[width=.75\textwidth]{slides/CIERS_Figures/hist_run_10.png}
+\end{figure}
+
+\hyperlink{run4}{\beamerbutton{Back}}
+
+\end{frame}
+
+
+%-----------------------------------------------------------
+%-----------------------------------------------------------
+
+\begin{frame}{Adding Peer Effects and Student Sorting}
+
+\hypertarget{bins2}{}
+\vfill
+
+\begin{figure}
+    \centering
+ \includegraphics[width=.75\textwidth]{slides/CIERS_Figures/hist_run_5.png}
+\end{figure}
+
+\hyperlink{run6}{\beamerbutton{Back}}
+
+\end{frame}
+
+
+%-----------------------------------------------------------
+%-----------------------------------------------------------
+
+\begin{frame}{Adding Peer Effects and Student Sorting}
+
+\hypertarget{cat2}{}
+\vfill
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{slides/CIERS_Figures/standard_cat_run_6.png}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{slides/CIERS_Figures/ww_cat_run_6.png}
+\end{subfigure}
+
+\hyperlink{run6}{\beamerbutton{Back}}
+    
+\end{frame}
+
+\end{document}
+

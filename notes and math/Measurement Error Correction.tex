@@ -1,0 +1,94 @@
+\documentclass[letterpaper,12pt]{article}
+
+% Import packages from .sty file.
+%\usepackage{imports}
+
+% Mike's things because he couldn't figure out how to get the preamble working otherwise
+\usepackage[utf8]{inputenc}
+\usepackage{geometry,ulem,graphicx,caption,color,setspace,dsfont,amssymb}
+\usepackage{natbib}
+\usepackage{subcaption} 
+\usepackage[short]{optidef}
+\usepackage{hhline}
+\usepackage[capposition=top]{floatrow}
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{adjustbox}
+\usepackage{tikz}
+\usepackage{pdflscape}
+\usetikzlibrary{calc,patterns,positioning}
+\usepackage{environ}
+
+
+
+
+
+% commands for use to put comments into text 
+
+\newcommand\cmnt[2]{\;
+{\textcolor{red}{[{\em #1 --- #2}] \;}
+}}
+
+\newcommand\Nate[1]{\cmnt{#1}{Nate}}
+\newcommand\Mike[1]{\cmnt{#1}{Mike}}
+\newcommand\Tanner[1]{\cmnt{#1}{Tanner}}
+\newcommand\rmk[1]{\;\textcolor{red}{{\em #1}\;}}
+\newcommand\Natenote[1]{\footnote{\cmnt{#1}{Nate}}}
+\newcommand\Mikenote[1]{\footnote{\cmnt{#1}{Mike}}}
+\newcommand\Tannernote[1]{\footnote{\cmnt{#1}{Tanner}}}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+ 
+\usepackage{natbib}
+\bibliographystyle{apa}
+
+\setcitestyle{round}
+\setcitestyle{semicolon}
+\setcitestyle{yysep={;}}
+
+\usepackage{titlesec}
+\titleformat{\section}
+  {\normalfont\normalsize\bfseries}{\thesection.}{1em}{}
+
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries}{\thesubsection}{1em}{}
+\title{ME Correction notes. }
+  
+  
+\begin{document}
+
+% Set up the title.
+
+\maketitle
+\noindent authors: Julian Betts\footnote{University of California, San Diego}, Tanner Eastmond$^1$, Nathan Mather\footnote{University of Michigan}, and Michael Ricks$^2$
+
+\section{attenuation bias}
+
+Consider a case where we want to estimate 
+
+\begin{equation*}
+    
+\end{equation*}
+
+let $ \sigma^2_T$ be variance of true scores 
+$\sigma^2_x$ be variance of observed scores 
+$r$ is reliability
+one thing I just want to note here is that $SEM = \sigma_x * \sqrt{1-r}$
+note that the first term on the right is not squared and so is the standard deviation rather than the variance. 
+
+and $ r  =  \sigma^2_T/\sigma^2_x $
+
+best source 
+https://sk-sagepub-com.proxy.lib.umich.edu/reference/sage-encyclopedia-of-educational-research-measurement-evaluation/i17618.xml
+
+other sources 
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2893515/
+https://www.statisticshowto.com/standard-error-of-measurement/
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%% References %%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliography{citations}
+    
+\end{document}
