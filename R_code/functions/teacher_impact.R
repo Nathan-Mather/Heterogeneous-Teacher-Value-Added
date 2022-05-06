@@ -190,6 +190,22 @@
         
       }
       
+    }else if(type == "Bin"|type == "bin"){
+      
+      #  teacher center determines comparative advnatage. Max diff is differnce between high and lowe 
+      # centered on their impact. 4 cases H,h, h,l, l,h , l,l
+      t_comp_adv <- as.numeric((teacher_center >= 0))
+      s_type <- as.numeric((studpct >= 0.5))
+      
+      # types matches HH, LL
+      matched <- (t_comp_adv*s_type)+((1-t_comp_adv)*(1-s_type))
+      
+      # types not matched HL, LH
+      not_matched <- (t_comp_adv*(1-s_type))+((1-t_comp_adv)*s_type)
+      
+      return(matched*(teacher_ability + teacher_max/2) + not_matched*(teacher_ability - teacher_max/2))
+      
+      
     } else {
       # MLRN - Monotone, Linear, Rank Similar, No Heterogeneity.
       return(teacher_ability)
