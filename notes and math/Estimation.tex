@@ -1,0 +1,199 @@
+\documentclass[letterpaper,12pt]{article}
+
+% Import packages from .sty file.
+%\usepackage{imports}
+
+% Mike's things because he couldn't figure out how to get the preamble working otherwise
+\usepackage[utf8]{inputenc}
+\usepackage{geometry,ulem,graphicx,caption,color,setspace,dsfont,amssymb}
+\usepackage{natbib}
+\usepackage{subcaption} 
+\usepackage[short]{optidef}
+\usepackage{hhline}
+\usepackage[capposition=top]{floatrow}
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{adjustbox}
+\usepackage{tikz}
+\usepackage{pdflscape}
+\usetikzlibrary{calc,patterns,positioning}
+\usepackage{environ}
+\usepackage{bbm}
+
+
+
+
+
+
+% commands for use to put comments into text 
+
+\newcommand\cmnt[2]{\;
+{\textcolor{red}{[{\em #1 --- #2}] \;}
+}}
+
+\newcommand\Nate[1]{\cmnt{#1}{Nate}}
+\newcommand\Mike[1]{\cmnt{#1}{Mike}}
+\newcommand\Tanner[1]{\cmnt{#1}{Tanner}}
+\newcommand\rmk[1]{\;\textcolor{red}{{\em #1}\;}}
+\newcommand\Natenote[1]{\footnote{\cmnt{#1}{Nate}}}
+\newcommand\Mikenote[1]{\footnote{\cmnt{#1}{Mike}}}
+\newcommand\Tannernote[1]{\footnote{\cmnt{#1}{Tanner}}}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+ 
+\usepackage{natbib}
+\bibliographystyle{apa}
+
+\setcitestyle{round}
+\setcitestyle{semicolon}
+\setcitestyle{yysep={;}}
+
+\usepackage{titlesec}
+\titleformat{\section}
+  {\normalfont\normalsize\bfseries}{\thesection.}{1em}{}
+
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries}{\thesubsection}{1em}{}
+\title{Estimation Notes}
+\date{}
+  
+  
+\begin{document}
+
+\begin{center}
+    \noindent \textbf{\Large Estimation Notes}
+\end{center}
+
+\noindent \textbf{Standard Value Added:}
+
+    \begin{align*}
+        score_{i,t} = \beta_1 score_{i,t-1} + \gamma_{j(i, t)} + \delta_1 X_{i, t} + \delta_2 X_{i, t-1} + \varepsilon_{i, t}
+    \end{align*}
+    
+\noindent where $j(i, t)$ is the index for the teacher who has student $i$ in her class at time $t$, so $\gamma_{j(i, t)}$ are teacher fixed effects. The covariates $X_{i, t}$ include whether the student has ever been designated as an English learner, whether the student has ever been designated as special education, gender, and grade, year, and race fixed effects. We cluster standard errors at the school level. Additionally we control for prior score in the other subject (i.e. math or ELA), and average lagged scores in both subjects in the classroom and school, represented by $X_{i, t-1}$ above.
+
+\vspace{.5cm}
+
+\noindent Stata code:
+
+\begin{verbatim}
+reg zela i.teacher_id zmathlag zelalag zmathlag_class ///
+    zelalag_class zmathlag_school ///
+    zelalag_school everEL everspeced female i.grade i.yearsp i.ethnic ///
+    if misszela==0 & misszelalag==0, nocons vce(cl schl1)
+\end{verbatim}
+
+\noindent The `if' condition simply requires that we have a recorded score for a student this year and last. Julian and I will spend time making sure the sample restrictions make sense, but the most relevant here is that we require that a teacher has 50 such students to remain in the estimation sample. The math equation is the same with one extra if condition (requiring that students didn't take a different math test) and obviously substituting `zela' for `zmath'. Both of these variables are standardized using the overall California test score means and standard deviations.
+
+\vspace{1cm}
+
+
+
+\noindent \textbf{Bin Value Added:}
+
+
+    \begin{align*}
+        score_{i,t} = \beta_1 score_{i,t-1} + highbin_{i,t-1}*\gamma_{j(i, t)} + \delta_1 X_{i, t} + \delta_2 X_{i, t-1} + \varepsilon_{i, t}
+    \end{align*}
+    
+\noindent where $j(i, t)$ is the index for the teacher who has student $i$ in her class at time $t$, so $\gamma_{j(i, t)}$ are teacher fixed effects. $highbin_{i,t-1}$ is an indicator for whether you are above median achievement based on your prior year score in the relevant subject. The covariates $X_{i, t}$ include whether the student has ever been designated as an English learner, whether the student has ever been designated as special education, gender, and grade, year, and race fixed effects. We cluster standard errors at the school level. Additionally we control for prior score in the other subject (i.e. math or ELA), and average lagged scores in both subjects in the classroom and school, represented by $X_{i, t-1}$ above.
+
+\vspace{.5cm}
+
+\noindent Stata code:
+
+\begin{verbatim}
+reg zela i.elabins#i.teacher_id zmathlag zelalag zmathlag_class ///
+    zelalag_class zmathlag_school ///
+    zelalag_school everEL everspeced female i.grade i.yearsp i.ethnic ///
+    if misszela==0 & misszelalag==0, nocons vce(cl schl1)
+\end{verbatim}
+
+\noindent The `if' condition simply requires that we have a recorded score for a student this year and last. Julian and I will spend time making sure the sample restrictions make sense, but the most relevant here is that we require that a teacher has 50 such students to remain in the estimation sample. The math equation is the same with one extra if condition (requiring that students didn't take a different math test) and obviously substituting `zmath' for `zela' and `mathbins' for `elabins'. Both of the former variables are standardized using the overall California test score means and standard deviations.
+
+\vspace{1cm}
+
+
+
+\noindent \textbf{Endogenous Stratification Value Added:}
+
+\noindent First, estimate the following omitting teacher $j$:
+
+    \begin{align*}
+        score_{i,t} = \sum_{k=1}^{10} \theta_k \mathbbm{1}\{scoredec_{i, t-1} = k\} + \delta_1 X_{i, t} + \delta_2 X_{i, t-1} + \varepsilon_{i, t}
+    \end{align*}
+    
+\noindent where $scoredec_{i, t-1}$ is the decile of prior achievement in which the student falls. The covariates $X_{i, t}$ include whether the student has ever been designated as an English learner, whether the student has ever been designated as special education, gender, and grade, year, and race fixed effects. We cluster standard errors at the school level. Additionally we control for prior score in the other subject (i.e. math or ELA), and average lagged scores in both subjects in the classroom and school, represented by $X_{i, t-1}$ above.
+
+\noindent We then run the kernel regression of current year score on the predicted values from the above equation for teacher $j$, and repeat for each teacher, saving the predicted values from the kernel regression over a grid with integer percentile points from 1 to 100.
+
+\vspace{.5cm}
+
+\noindent Stata code:
+
+\begin{verbatim}
+* Predict the ELA score for the given teacher *
+reg zela i.elabins zelalag_class zelalag_school everEL everspeced female ///
+    i.grade i.yearsp i.ethnic if misszela==0 ///
+    & misszelalag==0 & teacher_id != teacher_id[`num']
+	
+predict temp
+replace zelahat = temp if teacher_id == teacher_id[`num']
+drop temp
+
+* Run the regression for ELA *
+npregress kernel zela zelahat if teacher_id == teacher_id[`num'] ///
+    & misszela==0 & misszelalag==0, predict(temp, replace noderivatives)
+\end{verbatim}
+
+\noindent where `num' is the index for teacher $j$. There is more code that follows to properly save the values, but that is more for code review and not as relevant to estimation.
+
+\vspace{1cm}
+
+
+
+\noindent \textbf{Long Term Outcomes:}
+
+\noindent Standard VA (we have gone back and forth about interacting the VA measure with high and low bins):
+
+    \begin{align*}
+        y_{i, t} = \beta_1 VA_{j(i, t)} + \delta_1 X_{i, t} + \delta_2 X_{i, t-1} + \varepsilon_{i, t}
+    \end{align*}
+
+\noindent where $y_{i, t}$ is the outcome (high school graduation, attended college, attended 2 year college, attended 4 year college, earned Bachelor's degree) and $VA_{j(i, t)}$ is the estimated standard value added. The covariates $X_{i, t}$ include whether the student has ever been designated as an English learner, whether the student has ever been designated as special education, gender, and grade, year, and race fixed effects. We cluster standard errors at the school level. Additionally we control for prior score in the same subject (i.e. math or ELA) as the VA with decile fixed effects, and average lagged scores in both subjects in the classroom and school, represented by $X_{i, t-1}$ above.
+
+\vspace{.5cm}
+
+\noindent Stata code:
+
+\begin{verbatim}
+reg `x' ela_va i.elabins zelalag_class ///
+    zelalag_school everEL everspeced female ///
+    i.grade i.yearsp i.ethnic, nocons vce(cl schl1)
+\end{verbatim}
+
+\vspace{.5cm}
+
+\noindent Bin VA:
+
+    \begin{align*}
+        y_{i, t} = \beta_1 LowVA_{j(i, t)}*highbin_{i,t-1} + \beta_2 HighVA_{j(i, t)}*highbin_{i,t-1} + \delta_1 X_{i, t} + \delta_2 X_{i, t-1} + \varepsilon_{i, t}
+    \end{align*}
+
+\noindent where $y_{i, t}$ is the outcome (high school graduation, attended college, attended 2 year college, attended 4 year college, earned Bachelor's degree), $LowVA_{j(i, t)}$ is the estimated low bin value added, and $HighVA_{j(i, t)}$ is the esitmated high bin value added. $highbin_{i,t-1}$ is an indicator for whether you are above median achievement based on your prior year score in the relevant subject. The covariates $X_{i, t}$ include whether the student has ever been designated as an English learner, whether the student has ever been designated as special education, gender, and grade, year, and race fixed effects. We cluster standard errors at the school level. Additionally we control for prior score in the same subject (i.e. math or ELA) as the VA with decile fixed effects, and average lagged scores in both subjects in the classroom and school, represented by $X_{i, t-1}$ above.
+
+\vspace{.5cm}
+
+\noindent Stata code:
+
+\begin{verbatim}
+reg `x' c.ela_low_va#elabinmed c.ela_high_va#elabinmed /// 
+    i.elabins zelalag_class zelalag_school everEL ///
+    everspeced female i.grade i.yearsp i.ethnic, nocons vce(cl schl1)
+\end{verbatim}
+
+
+
+
+\end{document}

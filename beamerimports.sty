@@ -1,0 +1,190 @@
+\ProvidesPackage{beamerimports}
+
+
+% Packages I will use.
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{bbm}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{colortbl}
+\usepackage{enumerate}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{indentfirst}
+\usepackage[utf8]{inputenc}
+\usepackage{mathtools}
+\usepackage[nosectionbib,natbibapa]{apacite}
+\usepackage{tgschola} % Font for beamer
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+\usepackage{verbatim}
+
+
+% Bibliography settings.
+\setcitestyle{round}
+\setcitestyle{semicolon}
+\setcitestyle{yysep={;}}
+\bibliographystyle{apacite}
+\renewcommand\bibliographytypesize{\tiny}
+
+
+% A few custom math commands.
+\newcommand{\e}[2][] {\mathbb{E}_{#1}\left[#2\right]}
+\DeclareMathOperator*{\plim}{p\,lim}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+
+% Nicer looking Itemize and enumerate environments
+\newenvironment{wideitemize}{\itemize\addtolength{\itemsep}{5pt}}{\enditemize}
+\newenvironment{wideenumerate}{\enumerate\addtolength{\itemsep}{5pt}}{\endenumerate}
+
+
+% Define my custom beamer theme.
+\mode<presentation>
+
+    % Required package.
+    \RequirePackage{tikz}
+    
+    
+    % A few custom colors.
+    \definecolor{navy}{HTML}{000328}
+    \definecolor{burntorange}{HTML}{e28743}
+    
+    
+    % Color settings.
+    \setbeamercolor{title page header}{fg=navy}
+    \setbeamercolor{author}{fg=navy}
+    \setbeamercolor{date}{fg=navy}
+    
+    \setbeamercolor{footnote}{fg=navy}
+    \setbeamercolor{footnote mark}{fg=navy}
+    \setbeamercolor{footline}{fg=navy}
+    
+    \setbeamercolor{block title}{fg=navy, bg=gray!40}
+    \setbeamercolor{block body}{fg=navy, bg=gray!20}
+    
+    \setbeamercolor{local structure}{fg=gray}
+    
+    
+    % Font settings.
+    \setbeamerfont{title}{family=\fontfamily{qcs}\selectfont, size=\Large}
+    \setbeamerfont{author}{family=\fontfamily{qcs}\selectfont, size=\normalsize}
+    \setbeamerfont{footnote}{family=\fontfamily{qcs}\selectfont, size=\tiny}
+    
+    \setbeamerfont{frametitle}{family=\fontfamily{qcs}\selectfont, size=\large}
+    
+    \setbeamerfont{block title}{family=\fontfamily{qcs}\selectfont, size=\normalsize}
+    \setbeamerfont{block body}{family=\fontfamily{qcs}\selectfont, size=\normalsize}
+    
+    \setbeamerfont{normal text}{family=\fontfamily{qcs}\selectfont, size=\normalsize}
+    
+    \setbeamercolor{section in toc}{fg=navy}
+    \setbeamercolor{subsection in toc}{fg=navy}
+    
+    \arrayrulecolor{navy}
+    
+    \setbeamercolor{caption}{fg=navy}
+    
+    \AtBeginDocument{\usebeamerfont{normal text}}
+        
+    
+    % Edit footnote settings.
+    \renewcommand\footnoterule{{\color{navy}\hrule width 5cm}}
+
+    
+    % Set background of the slides.
+    \setbeamertemplate{background}{
+        \ifnum\c@framenumber=1%
+          \begin{tikzpicture}
+            \useasboundingbox (0,0) rectangle(\the\paperwidth,\the\paperheight);
+            \draw [line width=0.25mm, burntorange] (\the\paperwidth/30, 13*\the\paperheight/24) -- (29*\the\paperwidth/30, 13*\the\paperheight/24);
+          \end{tikzpicture}
+        \else%
+          \begin{tikzpicture}
+              \useasboundingbox[fill=navy](0,-.1) rectangle(\the\paperwidth,1);
+              \fill[navy] (0,0) rectangle(\the\paperwidth,1);
+          \end{tikzpicture}
+        \fi%
+    }
+    
+    
+    % List settings.
+    \setbeamertemplate{itemize item}{\scriptsize\raise1.25pt\hbox{\donotcoloroutermaths$\bullet$}}
+    \setbeamertemplate{itemize subitem}{\tiny\raise1.5pt\hbox{\donotcoloroutermaths$\boldsymbol{-}$}}
+    \setbeamertemplate{itemize subsubitem}{\tiny\raise1.5pt\hbox{\donotcoloroutermaths$\boldsymbol{-}$}}
+    
+    \setbeamertemplate{enumerate item}{\insertenumlabel.}
+    \setbeamertemplate{enumerate subitem}{\insertenumlabel.\insertsubenumlabel}
+    \setbeamertemplate{enumerate subsubitem}{\insertenumlabel.\insertsubenumlabel.\insertsubsubenumlabel}
+    \setbeamertemplate{enumerate mini template}{\insertenumlabel}
+    
+    
+    % Set up the title slide.
+    \defbeamertemplate*{title page}{tsebeamer}[1][]
+    { 
+       \vskip2cm%
+        \begin{beamercolorbox}[wd=12cm,#1]{title page header}
+          \usebeamerfont{title}\inserttitle\par%
+        \end{beamercolorbox}%
+        \vskip0.75cm%
+        \begin{beamercolorbox}[wd=12cm,leftskip=1cm,#1]{author}
+          \usebeamerfont{author}\insertauthor%
+        \end{beamercolorbox}
+         \vskip0.2cm%
+        \begin{beamercolorbox}[wd=12cm,leftskip=1cm,#1]{date}
+          \usebeamerfont{author}\insertdate%
+        \end{beamercolorbox}
+    }
+    
+    
+    % Set up table of contents slide.
+    \setbeamertemplate{section in toc}[sections numbered]
+    \setbeamertemplate{subsection in toc}[subsections numbered]
+    
+    
+    % Set up body slides.
+    \defbeamertemplate*{frametitle}{tsebeamer}[1][]
+    {
+      \begin{beamercolorbox}[wd=\paperwidth,ht=1cm]{frametitle} 
+          \begin{tikzpicture}
+              \useasboundingbox[fill=navy](0,-.1) rectangle(\the\paperwidth,1);
+              \fill[navy] (0,0) rectangle(\the\paperwidth,1);   
+              \ifx\insertframesubtitle\@empty%
+                  {\node[anchor=west, white,font=\large] at (0.1,0.4){\insertframetitle};}
+                  \else%
+                  {\node[anchor=west, white,font=\large] at (0,0.81){\insertframetitle};%
+                   \node[anchor=west, white,font=\small] at (0,0.41){\insertframesubtitle};}%
+                  \fi
+          \end{tikzpicture}
+      \end{beamercolorbox}
+    }
+    
+
+    % Settings for navigation symbols and numbering.
+    \setbeamertemplate{navigation symbols}{}
+    
+    \addtobeamertemplate{navigation symbols}{}{%
+        \usebeamerfont{footline}%
+        \usebeamercolor[fg]{footline}%
+        \hspace{1em}%
+        \insertframenumber/\inserttotalframenumber
+    }
+    
+    
+    % Block settings.
+    \setbeamertemplate{blocks}[rounded][shadow=false]
+    
+    
+    % Margin settings.
+    \setbeamersize{text margin left=5mm,text margin right=5mm} 
+
+\mode<all>
+
+
+

@@ -177,6 +177,7 @@
 \textit{ricksmi{\fontfamily{qag}\selectfont @}umich.edu} \hfill \textit{jbetts@ucsd.edu}} 
 \institute{}
 \date{\today} 
+% Title paage ________________________________________________________________
 
 \begin{document}
 
@@ -191,18 +192,173 @@
     {\color{black!50}{\small\insertframenumber/\inserttotalframenumber}}%
 }
 
+
+% BEGIN SLIDES ________________________________________________________________
+
 %------------------------------------------------
 % What is Value added 
 %------------------------------------------------
-\begin{frame}{Overview}
+
+% motivation ------------------
+\begin{frame}{Motivation}
 \begin{wideitemize}
+    \item Should we do a policy that raises mean income by \$1000? 
+    \item Ideas in PF around income and redistribution apply to most mean measures
+    
+    \item Core concept is heterogeneity 
+    
+    \item How about training teachers so they raise average scores by 10\%
+
+    \item Value added is a mean based measure 
     
 \end{wideitemize}
 
 \end{frame}
 
+
+% What is the problem -----------------
+\begin{frame}{What is the problem}
+\begin{wideitemize}
+    \item Two teachers with the same VA, but one is "adding" to students at the top, the other to students at the bottom. 
+    \item Say we want to assign an aid, where does it go? 
+    \begin{itemize}
+        \item For this, subsets might make sense 
+    \end{itemize}
+    \item Say we want to asses multiple teacher interventions
+    \begin{itemize}
+        \item For this, something like welfare weights makes more sense 
+    \end{itemize}
+    \item We estimate impact function and apply weights to representative classroom to keep assessment neutral 
+\end{wideitemize}
+\end{frame}
+
+% What have we done?!?!?!?! ------------------
+\begin{frame}{What have we done}
+\begin{wideitemize}
+    \item Bunch of simulations 
+    \item Check out shiny app!
+    \item Basically have reverted to 2 bin estimates 
+\end{wideitemize}
+
+\end{frame}
+
+\begin{frame}{What have we done}
+\begin{figure}[ht]
+    \centering
+    \caption{Histogram of P-Values for T-Test of Math Low Bin = High Bin}
+    \includegraphics[width=.6\textwidth]{figures/Math_T_Test_Hist.png}
+    \label{fig: math ttest}
+\end{figure}
+
+\end{frame}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Teacher scores 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Within Teacher Variation in Value Added}
+
+    \centering
+    \only<1>{
+    \begin{center}
+        ELA VA
+    \end{center}
+        \includegraphics[width=.6\textwidth]{figures/ELA_High_Minus_Low_Hist.png}
+    }
+    
+    \only<2>{
+        \begin{center}
+        MATH VA
+        \end{center}
+        \includegraphics[width=.6\textwidth]{figures/Math_High_Minus_Low_Hist.png}
+    }
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% future outcomes 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Long-Term Outcomes}
+
+    \only<1>{
+       \begin{center}
+        Graduate from High School
+        \end{center}
+        \centering
+        \resizebox{.55\textwidth}{!}{\input{"tables/Highschool Grad"}}
+    }
+    
+    \only<2>{
+    \begin{center}
+        Enroll in a 2 year College
+         \end{center}
+        \centering
+        \resizebox{.55\textwidth}{!}{\input{"tables/Postsecond 2yr"}}
+    }
+    
+    \only<3>{
+     \begin{center}
+        Enroll in a 4 year College
+    \end{center}
+        \centering
+        \resizebox{.55\textwidth}{!}{\input{"tables/Postsecond 4yr"}}
+    }
+    
+    \only<4>{
+    \begin{center}
+        Bachelor's Degree w/in 6 years after High School
+    \end{center}
+        \centering
+        \resizebox{.55\textwidth}{!}{\input{"tables/Bach Degree"}}
+    }
+
+
+\end{frame}
+
+
 %------------------------------------------------
-% Why do we care 
+% teacher reassignment 
+%------------------------------------------------
+
+\begin{frame}{Teacher Reassignment}
+\begin{wideitemize}
+    \item We restrict the class of welfare functions to match our two bin estimates 
+    \item Implies admin only cares about mean low and high bin scores 
+    \item Simulate teacher reassignment within schools leaving classrooms fixed. 
+\end{wideitemize}
+
+\end{frame}
+
+
+%------------------------------------------------
+% teacher reassignment results 
+%------------------------------------------------
+
+\begin{frame}{Within Teacher Variation in Value Added}
+
+    \centering
+    \only<1>{
+    \begin{center}
+        ELA
+    \end{center}
+        \includegraphics[width=.6\textwidth]{figures/ELA_reallocations.png}
+    }
+    
+    \only<2>{
+        \begin{center}
+        MATH
+        \end{center}
+        \includegraphics[width=.6\textwidth]{figures/Math_reallocarions.png}
+    }
+
+\end{frame}
+
+%------------------------------------------------
+% Implied welfare weights issue 
 %------------------------------------------------
 \begin{frame}[c]{Visual Intuition }
 
@@ -247,83 +403,120 @@
 
 
 %------------------------------------------------
-% Model 
+% solutions 
+%------------------------------------------------
+
+\begin{frame}{Why are we on the interior}
+    
+    \begin{wideitemize}
+        \item There is noise/imperfect infromation/mistakes
+        \begin{itemize}
+            \item e.g., they don't have time to estimate value added models and use heuristics
+        \end{itemize}
+        \item There are other objects in the welfare function
+        \begin{itemize}
+            \item e.g., they care about three groups (or 10) with different weights
+            \item e.g., they care about other outcomes 
+        \end{itemize}
+        \item We want to explore some solution concepts for measuring preferences
+        \item How does the reason affect the tools we can use?
+    \end{wideitemize}    
+    \end{frame}
+
+
+%------------------------------------------------
+% noise
 %------------------------------------------------
 
 
-\begin{frame}{Ideas}
+   \begin{frame}{Is this noise? }
+    \begin{wideitemize}
+        \item We have two solution ideas here:
+       \item Keep the ratio of high to low gains the same? 
+       \begin{itemize}
+            \item Think: measure the  distance of the allocation from the origin
+           \item BUT what is origin? (is it from ``0'' gains)
+       \end{itemize}
+       
+       \item Keep ratio of forgone gains the same?
+       \begin{itemize}
+           \item Think: measure the distance to the frontier in each direction. The slope connecting those two points defines the tangent for the point on the frontier. 
+           \item BUT ... ?
+       \end{itemize}
+    \end{wideitemize}    
+    \end{frame}
+    
+    % PLOT
+    \begin{frame}{Plotting more flexible functions}
+    
+        \centering
+    
+        \begin{center}
+            ELA
+        \end{center}
+            \includegraphics[width=.6\textwidth]{figures/ELA_reallocations.png}
+    
+    \end{frame}
+    
+
+
+    %------------------------------------------------
+    % expand welfare function 
+    %------------------------------------------------
+    \begin{frame}{Welfare Function Too Rigid}
+    
     \begin{itemize}
-        \item Paths for solving A on interior 
+        %\item Only two bins is a big restriction 
+        \item Adding more bins/outcomes could get us much closer to actual allocation %(egalitarian and ant-egalitarian) 
         \begin{itemize}
-            \item Welfare function is too rigid (needs more bins or other dimensions) 
-            \item It's just noise, how do we model noise? 
+            \item with enough bins, we are likely on the frontier 
         \end{itemize}
-    \end{itemize}
-\end{frame}
+        
+        \item Plot a bunch and see whats "close" in this 2D space 
+        \begin{itemize}
+            \item Think: If I show nothing is close, concern is not needed
+            \item BUT so many degrees of freedom, something could rationalize allocation
+        \end{itemize}
+        
+        \item Try to estimate a more flexible welfare function
+        \begin{itemize}
+            \item Think: eliminate possible weights using revealed preferences 
+            \item BUT May be contradictions 
+        \end{itemize}
 
-
-
-\begin{frame}{welfare function too rigid}
-
-\begin{itemize}
-    \item How does two bins limit welfare function 
-    \item Explain how adding a bin could get us to point A 
-    \item A could be from favoring very high or very low 
-\end{itemize}    
-\end{frame}
-
-
-\begin{frame}{How do we solve more general functions? }
-\begin{itemize}
-    \item Plot a bunch and see whats "close" 
-    \item try to eliminate possible weights using revealed preferences 
-    \begin{itemize}
-        \item May be contradictions 
-    \end{itemize}
-\end{itemize}    
-\end{frame}
-
-
-\begin{frame}{Is this noise? }
-\begin{itemize}
-   \item Keep the ratio of high to low gains the same? 
-   \begin{itemize}
-       \item what is origin? 
-       \item is it from 0 gains
-   \end{itemize}
-   
-   \item Or, keep ratio of forgone gains the same
-   \begin{itemize}
-       \item Move up and over to the frontier. The slope connecting those two points defines the tangent for the point on the frontier. 
-   \end{itemize}
-\end{itemize}    
-\end{frame}
+    \end{itemize}    
+    \end{frame}
+    
+    \begin{frame}{Flexible Estimation}
+        \begin{wideitemize}
+             \itemize We swap teachers 1 student at 30\% and 1 at 40\% gain 4 points and 2 students at 60\% lose 6 points
+             \item We can eliminate functions where 
+             \begin{equation*}
+                 4*W(30) + 4*W(40) < 12*W(6)
+             \end{equation*}
+        \end{wideitemize}
+    \end{frame}
+    
+    
+    
+    %PLOT 
+    \begin{frame}{Plotting more flexible functions}
+    
+        \centering
+    
+        \begin{center}
+            ELA
+        \end{center}
+            \includegraphics[width=.6\textwidth]{figures/ELA_reallocations.png}
+    
+    \end{frame}
+    
 
 %------------------------------------------------
 % How do we answer our question?
 %------------------------------------------------
 
 
-
-\begin{frame}{Model and settup }
-
-\begin{wideitemize}
-     \item There is a public program with two (types of) participants
-     \item The social planner allocates services subject to technology constraints
-     \begin{itemize}
-         \item In our setting this is allocating teachers given class compositions and teacher-school contracts
-         \item We think this could maybe apply to other settings with public services (e.g., who do you approve for SSI/SSDI, how do you structure Medicaid, etc.)
-         \item Obviously with more flexible technology there will always be more gains
-     \end{itemize}
-     \item If there are multiple individuals of each type the planner is indifferent between them
-     \item For whatever reason (information, communication, free-riding) Coasian solutions fail
-     \begin{itemize}
-         \item 
-     \end{itemize}
-     
-
-\end{wideitemize}
-\end{frame}
 
 
 \begin{frame}[c]{Solution Concept }
@@ -352,24 +545,6 @@
 
 \end{frame}
 
-
-\begin{frame}{Bugs and Questions}
-
-\begin{wideitemize}
-     \item Why isn't the allocation on the frontier?
-     \begin{itemize}
-         \item Optimization is complex or costly given information
-         \item The technology/PPF is measured with error
-         \item There are other dimensions being optimized over  (this one is a problem)
-     \end{itemize}
-   \item How do we deal with changes in technology?
-        \begin{itemize}
-         \item Different tech creates very different total utility for the same indifference ratio...
-     \end{itemize}
-   
-   \item What else?
-\end{wideitemize}
-\end{frame}
 
 
 %------------------------------------------------
@@ -401,6 +576,23 @@ ricksmi{\fontfamily{qag}\selectfont @}umich.edu \hspace{2em} \normalsize teastmo
 
 %----------------------------------------------------------------------------------------
 %----------------------------------------------------------------------------------------
+\begin{frame}{Bugs and Questions}
+
+\begin{wideitemize}
+     \item Why isn't the allocation on the frontier?
+     \begin{itemize}
+         \item Optimization is complex or costly given information
+         \item The technology/PPF is measured with error
+         \item There are other dimensions being optimized over  (this one is a problem)
+     \end{itemize}
+   \item How do we deal with changes in technology?
+        \begin{itemize}
+         \item Different tech creates very different total utility for the same indifference ratio...
+     \end{itemize}
+   
+   \item What else?
+\end{wideitemize}
+\end{frame}
 
 
 \begin{frame}[label=methods]{Methods: Overview}
@@ -500,8 +692,31 @@ ricksmi{\fontfamily{qag}\selectfont @}umich.edu \hspace{2em} \normalsize teastmo
 
 \item This will be true if $g_j(0)=0$, $u_{ki}=\beta X_i$, and $u_{ki}\neq 0$, but even if that is possible, I don't think $\beta X$ will ever be uncorrelated with all $D_j$?
 \end{wideitemize}
-
-
 \end{frame}
+
+
+
+\begin{frame}{Model and settup }
+
+\begin{wideitemize}
+     \item There is a public program with two (types of) participants
+     \item The social planner allocates services subject to technology constraints
+     \begin{itemize}
+         \item In our setting this is allocating teachers given class compositions and teacher-school contracts
+         \item We think this could maybe apply to other settings with public services (e.g., who do you approve for SSI/SSDI, how do you structure Medicaid, etc.)
+         \item Obviously with more flexible technology there will always be more gains
+     \end{itemize}
+     \item If there are multiple individuals of each type the planner is indifferent between them
+     \item For whatever reason (information, communication, free-riding) Coasian solutions fail
+     \begin{itemize}
+         \item 
+     \end{itemize}
+     
+
+\end{wideitemize}
+\end{frame}
+
+
+
 \end{document}
 

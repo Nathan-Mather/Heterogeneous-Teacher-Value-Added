@@ -1,0 +1,59 @@
+\documentclass[letterpaper,12pt]{article}
+
+% Import packages from .sty file.
+\usepackage{imports}
+
+% just doing this to make it easier to read/edit Can change 
+\usepackage{setspace}
+
+\newcommand*\diff{\mathop{}\!\mathrm{d}}
+% \onehalfspacing
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\section{Heterogeneity and Value Added}
+
+In a simple case, let there be student types. Assume value added can be characterized as follows:
+\[
+\gamma_j = \omega_{j,0}\bar{\epsilon}_{j,0}  + \omega_{j,1}\bar{\epsilon}_{j,1} =  \omega_{j,0}(\mu_0 +\gamma_{j,0}) + \omega_{j,1}(\mu_1 +\gamma_{j,1})
+\]
+\noindent where $\omega_{j,k}$ are the shares of student who are of type $k$ who are in teacher $j$'s class, $\gamma_{j,k}$ teacher $j$'s  impact on students of type $k$, and $\mu_k$ are the average residuals of students of type $k$ in the population.
+
+Now let a teacher's absolute advantage (vertical differentiation) $A_j = \omega_{0}\gamma_{j,0} + \omega_{1}\gamma_{j,1}$ with population  weights $\omega_{k}$ that sum up to one. Call a teacher's comparative advantage $C_j = \gamma_{j,1} - \gamma_{j,0}$. With these terms defined we can characterize the value added as
+\begin{align*}
+    \gamma_j  &= \omega_{j,0}(\mu_0 +\gamma_{j,0}) + \omega_{j,1}(\mu_1 +\gamma_{j,1})  \\
+              & =  \omega_{j,0}\gamma_{j,0} + \omega_{j,1}\gamma_{j,1}   +\mu_0 \omega_{j,0} + \mu_1 \omega_{j,1}  \\
+              & =  \omega_{j,0}(A_j -(1-\omega_{0})C_j) + \omega_{j,1}(A_j +\omega_{0}C_j)  +\mu_0 \omega_{j,0} + \mu_1 \omega_{j,1} \\
+              & =  A_j   - \omega_{j,0} (1-\omega_{0})C_j + \omega_{j,1}\omega_{0}C_j +\mu_0 \omega_{j,0} + \mu_1 \omega_{j,1} \\
+              & =  A_j   - \omega_{j,0} (1-\omega_{0})C_j + (1-\omega_{j,0})\omega_{0}C_j +\mu_0 \omega_{j,0} + \mu_1 \omega_{j,1} \\
+              & =  A_j   - \omega_{j,0} C_j +\omega_{j,0}\omega_{0}C_j + \omega_{0}C_j -\omega_{j,0}\omega_{0}C_j +\mu_0 \omega_{j,0} + \mu_1 \omega_{j,1} \\
+              & =  A_j  + C_j  ( \omega_{j,1} - \omega_{1} ) + \sum_k  \omega_{j,k} \mu_k
+\end{align*}
+
+This has three components: the absolute average impact, the allocative efficiency (comparative advantage times the relative matched proportion), and the classroom average of population residuals. Any difference in value added scores could be attributed to any of these three; however, note that if group indicators for the groups are included in the estimation equation, then $\mu_1 = \mu_0 = 0$, and the value added scores (or comparisons) are a function of only the absolute advantage and allocative efficiency.
+
+This two-type example can be generalized as follows:
+\begin{align*}
+    \gamma_j  &= \int_x \omega_j(x)(\gamma_j(x) + \mu(x)) \diff x \\
+              &= \int_x \omega_j(x)(A_j + c_j(x) + \mu(x)) \diff x \\
+              &= A_j \int_x w_j(x) \diff x + \int_x \omega_j(x) c_j(x)\diff x + \int_x \omega_j(x) \mu(x)\diff x \\
+              &= A_j  + \mathbb{E}_j[c_j(x)] + \mathbb{E}_j[\mu(x)]
+\end{align*}
+
+\noindent where $\omega_j(x)$ is the share (mass or probability) of students in teacher $j$'s class who have characteristics $x$. As $x$ becomes higher dimensional, $\mu(x)=0$ is only mechanically guaranteed if the regression is \textbf{fully} saturated; however, one could test whether $\hat{\mu}(x)=0$ for any (or all) values of $x$.
+
+
+\section{Heterogeneity and Shrinkage?}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliography{citations}
+
+
+\end{document}
