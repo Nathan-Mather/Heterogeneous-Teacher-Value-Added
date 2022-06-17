@@ -1,0 +1,267 @@
+
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry,ulem,graphicx,caption,color,setspace,dsfont,physics,commath,amsfonts}
+\usepackage{subcaption} 
+\usepackage[short]{optidef}
+\usepackage{hhline}
+\usepackage[capposition=top]{floatrow}
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{adjustbox}
+\usepackage{tikz}
+\usepackage{pdflscape}
+\usepackage{afterpage}
+\usetikzlibrary{calc,patterns,positioning}
+\usepackage{environ}
+\usepackage{natbib,hyperref}
+
+\usepackage[amsthm]{ntheorem}
+\hypersetup{ hidelinks }
+
+\theoremstyle{definition}
+\newtheorem{innercustomthm}{Assumption}
+\newenvironment{customthm}[1]
+  {\renewcommand\theinnercustomthm{#1}\innercustomthm}
+  {\endinnercustomthm}
+
+\theoremstyle{definition}
+\newtheorem{assumption}{Assumption}
+
+
+\theoremstyle{definition}
+\newtheorem{auxa}{Aux. Assumption v}
+
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+
+\usepackage{titlesec}
+\titleformat{\section}
+  {\normalfont\normalsize\bfseries}{\thesection.}{1em}{}
+
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries}{\thesubsection}{1em}{}
+
+
+
+\makeatletter
+\newsavebox{\measure@tikzpicture}
+\NewEnviron{scaletikzpicturetowidth}[1]{%
+  \def\tikz@width{#1}%
+  \def\tikzscale{1}\begin{lrbox}{\measure@tikzpicture}%
+  \BODY
+  \end{lrbox}%
+  \pgfmathparse{#1/\wd\measure@tikzpicture}%
+  \edef\tikzscale{\pgfmathresult}%
+  \BODY
+}
+\makeatother
+
+\tikzstyle{box}=[rectangle,thick,draw=black,outer sep=0pt,minimum width=5cm,minimum height=5cm,align=center]
+\input{LatexColors.incl.tex}
+\bibliographystyle{ecta}
+
+\DeclareCaptionLabelFormat{AppendixTables}{A.#2}
+
+
+
+\title{From Value Added to Welfare Added: \\ A Social Planner Approach to Education Policy and Statistics}
+
+\author{Tanner S Eastmond\thanks{Department of Economics, University of California, San Diego: \texttt{teastmond@ucsd.edu}, \texttt{jbetts@ucsd.edu}} \and Nathan Mather\thanks{Department of Economics University of Michigan: \texttt{njmather@umich.edu}, \texttt{ricksmi@umich.edu} \hspace{11em} {\color{white}t} This research is the product of feedback and from many people including Ash Craig, Jim Hines, Gordon Dahl, Lars Lefgren, Peter Hull, Jesse Rothstien,  Andrew Simon, and  researchers at the Education Policy Initiative, Youth Policy Lab, and SANDERA as well as with seminar participants at the University of California - San Diego, the University of Michigan, and Brigham Young University. Thanks also to Andy Zau who facilitated the data access and to  Wendy Ranck-Buhr, Ron Rode, and others at the San Diego Unified School District for their interest and feedback.} \and Michael David Ricks$^\dagger$ \and Julian Betts$^*$}
+
+\date{\parbox{\linewidth}{\centering%
+  This Draft Updated: \today\endgraf
+  %\href{https://www.michaeldavidricks.com/research}{For latest draft click here}
+  }}
+
+
+
+
+\geometry{left=1.0in,right=1.0in,top=1.0in,bottom=1.0in}
+
+
+\begin{document}
+
+
+\maketitle
+
+\onehalfspacing
+\begin{abstract}
+{\color{red}Old Abstract:} In a world where policies prioritize low-achieving students, mean-oriented statistics like traditional value-added measures may be at odds with a social planner’s objective. We propose a new method to estimate teacher value added heterogeneity over the achievement distribution based on endogenous stratification by estimating a kernel regression for each teacher of scores over expected scores based on a prediction from all other teachers’ students.  Preliminary results from the San Diego Unified School District suggest that there is a great deal of both within-teacher and across-teacher heterogeneity. Having a teacher that is effective at raising scores near a student’s level is more predictive of future academic success than having a teacher with a high traditional value added score. We also find that existing within-school teacher allocations are more likely to give high-achieving students high-quality matches, which is not efficient if the social planner’s welfare criterion is concave.
+
+
+\end{abstract}
+
+
+\doublespacing
+\vfill
+\pagebreak
+
+\section{Introduction}
+
+Across the world, governments use mean-oriented statistics to evaluate public services like healthcare and education. For example, in the United States over 30 states use value added to evaluate, rank, or compensate teachers.
+Value added scores are regression-adjusted means that target causal teacher effects on test scores. But means may not capture all of the socially relevant information. High value-added teachers do create long-term social gains \citep[e.g.,][]{chetty2014measuring2,pope2017multidimensional}, but there is also heterogeneity across students in both teacher impacts on outcomes \citep[as in][etc.]{Delgado2020,bates2022teacher} and policy-maker preferences for gains \citep[such as No Child Left Behind, see][]{a}. This heterogeneity could be critical for evaluating the efficiency and equity of public service provision since comparative advantage may facilitate both long-term gains and reduced learning gaps. Unfortunately, existing research is silent on the implications of heterogeneity for either efficiency or equity.
+
+This paper explores the implications of heterogeneous value added for the equity and efficiency of allocations and teacher evaluations. We connect the idea of heterogeneous preferences to welfare weights used in public economics and propose two estimators for heterogeneous teacher impacts over student achievement. We estimate the heterogeneous teacher effects using data from all students and teachers in the San Diego Unified School District, focusing on elementary schools in the school years from 2002-03 to 2012-13. Extending the work on heterogeneity beyond test-score effects, we quantify the effects of comparative advantage on long-term outcomes, allocative equity and efficiency, and on teacher rankings by different metrics.
+
+Our first insights come from mapping heterogeneous value added estimates into a welfare-theoretic framework to show when heterogeneity matters and how to aggregate heterogeneous effects up to welfare-relevant statistics. We show that there are three sufficient conditions for heterogeneity to be irrelevant: (1) if there is no heterogeneity by student type, (2) if the heterogeneous impacts are identical for all teachers, or (3) if all classes have equal distributions of student characteristics \textit{and} the social planner weighs gains to all students equally. All three criteria are likely violated with heterogeneity by student achievement, the focus of our paper. The welfare theoretic framework also reveals how to aggregate heterogeneous impacts to welfare-relevant statistics by integrating impacts with respect to welfare weights. Whereas other work has shown that heterogeneity violates ranking assumptions \citep{condie2014teacher} or could drivers of inequity \citep{Delgado2020,bates2022teacher}, our contribution is showing how to aggregate in ways that that allow us to rank teachers, explore equity and efficiency, and even compare (non-Pareto) allocations.
+
+We find three main empirical results. First, after replicating and extending results about the existence of heterogeneity, we show that students who are matched with teachers with a higher relevant value added experience long-term gains larger than standard value added would imply. For example, a low-achieving student assigned to a teacher with 1 standard deviation better value added to below median students experiences a 0.8 percentage point increase in graduation probability---whereas traditional estimates suggest only 0.2 percentage point gains on average \citep[][]{pope2017multidimensional}. Traditional estimates would also suggest that a teacher with 1 standard deviation higher value added reduces two-year college enrollment going by 1.1 percentage points and increases four-year college enrollment by 2.0 percentage points, but we show that the decrease in two-year college enrollment is driven entirely by high achieving students with good teacher match and that good teacher match for low achieving students may increase both two-year and four-year college enrollment. Compared to literature connecting value added to long-term student gains has focused on how value added on different outcomes affect all students on average \citep{chetty2014measuring2,pope2017multidimensional,gilraine2021making}, our contribution is showing that heterogeneity across types of students is equally, if not more, important.
+
+Second, we use our estimates of heterogeneous effects to trace out the district’s production possibilities frontier with a reallocation exercise. Given relative welfare weights on students with above- and below-average scores, we show how to solve for the optimal allocation of teachers to classes as a mixed integer liner programming problem. We find these allocations for each grade and each year, once with only within school switches and then allowing reallocations of teachers across schools. Making allocations based on comparative advantage rather than only absolute advantage (e.g., assigning the teachers with the highest standard value added to the largest classes) can create large gains. For example the district could raise math scores by 0.09 student standard deviations (69\% beyond standard VA) or could shrink racial math gap by 0.12 student standard deviations without reducing the average scores of white students (whereas using standard VA would widen the gap). We find there are even gains to reallocations within schools, albeit smaller ones. Whereas other reallocation exercises with comparative advantage have focused on gains and gaps \citep[e.g.,][]{Delgado2020}, our welfare framework allows us to explore the production possibility frontier, solve for optimal allocations,  consider the tradeoffs between equity and efficiency, and compare the efficacy of different value added measures.
+
+Interestingly, these reallocations also tell us something about the equity and efficiency of current allocation methods. For example, relative to allocations where teachers are randomly assigned to classes, we find that the allocation in our data generates 0.04 standard deviation higher gains for the average high-achieving student and 0.03 standard deviations lower gains for the average low achieving student. This is because of the allocation of teachers to schools: Nearly all of the within school allocations feature lower gains to low achieving students and higher gains to higher achieving students. This pattern suggests that the allocation of teachers to \textit{schools} widens learning gaps in the district each year and is consistent with evidence that better teachers tend to prefer to work in schools with higher income and achievement \citep{bates2022teacher}. This result also applies to a larger literature showing that public services have heterogeneous impacts based on demographics \citep{, , ,} and participation decisions \citep{walters2018demand,finkelstein2019take,ito2021selection,ricks2022strategic} because of the heterogeneous impact of school choice by achievement level.
+
+Finally, our third finding is that, relative to measures that account for heterogeneity, standard value added scores rank minority teachers lower. We find that under standard value added measures, nonwhite teachers score as much as 10\% of a teacher standard deviation lower than under a measure that gives them equal credit for test score gains at every percentile equally. When calibrated to a common performance-pay scheme, these differences would imply an implicit 7\% tax on non-white teachers' wages. Our theoretical results suggest that could either be because minority teachers may be less likely to be allocated to classes by comparative advantage or because they tend to teach students with different expected growth in the district. {\color{red}I think we should examine both}. This finding  speaks to the large literature on racial pay gaps \citep{ a,a,,a,a}and the growing literature in economics on how existing systems can have disparate impacts on different racial groups \citep{ a,a,,a,a}. We find that seemingly innocuous measures of teacher effectiveness can have unintended consequences if teachers experience differential sorting across schools or to classes.
+
+
+The remainder of the paper includes the following sections: (\ref{framework}) Defining the theoretical framework for heterogeneous value added and its implications for welfare and our empirical strategies; (\ref{hetva}) estimating teacher effectiveness on students along the achievement distribution; (\ref{long}) exploring the long-term information content of the estimated heterogeneity; (\ref{swell}) and (\ref{twell}) characterizing the welfare implications of heterogeneity for students and teachers respectively; and (\ref{conc}) containing our conclusion, discussion of policy implications, and avenues for possible future research.
+
+
+
+\section{Framework} \label{framework}
+
+\subsection{Theory}
+
+
+\begin{itemize}
+    \item Value Added and Welfare Added
+    \item Nate's welfare sufficiency stuff
+    \item Mikes' VA = AA + CA*composition + model misspecification?
+\end{itemize}
+
+
+
+\subsection{Estimation}
+\begin{itemize}
+    \item Estimators
+    \item Appendix link for simulations
+    \item Mikes question about shrinkage?
+\end{itemize}
+
+
+\subsection{Data}
+
+\begin{itemize}
+    \item Administrative data on universe students in San Diego Unified School District
+
+    \item Main Sample: 2,165 teachers teaching grades 3-5
+        
+    \begin{itemize}
+        \item Restrict to school years between spring 2003 and 2013 (long term effects)
+        \item Require that students have test scores for consecutive years (to estimate VA)
+        \item Require that a teacher teaches at least 50 such students (to power heterogeneity)
+    \end{itemize}    
+        
+    \item SDUSD has rich data on many variables of interests
+        \begin{itemize}
+        \item Math and ELA scores, standardized to the mean and variance of California
+        \item Long term outcomes: graduation, college enrollment, degree completion
+        \item Controls for student characteristics and lagged student, class, and school achievement
+    \end{itemize}  
+\end{itemize}
+
+
+%\footnote{This is also an essential dimension of heterogeneity since value added can be (loosely) conceptualized as average residuals from expected achievement and is the natural dimension for exploring heterogeneity beyond mean impacts.}
+
+\section{Heterogeneous Value Added} \label{hetva}
+
+
+\begin{figure}
+
+
+\begin{center}
+\resizebox{.3\textwidth}{!}{$y_{i,j} = \gamma_{j,k(i)} \mathds{1}(i\in j) + \beta_1 X_i + \epsilon_{i,j}$}
+\includegraphics[width=.85\textwidth]{slides/slides_pffls/fig1_heterogeneity.pdf}
+\end{center}
+
+    \caption{Teachers are Different}
+    \label{fig:my_label}
+    \floatfoot{Note: 
+    \textcolor{red} It might be worth adding the histogram below as well... }
+\end{figure}
+
+
+\section{Long-Term Impacts} \label{long}
+
+
+\begin{figure}
+\begin{center}
+
+\resizebox{!}{.02\textwidth}{
+$y_{i,j} = \sum_{k_j,k_i} \tau_{k_j,k_i} \hat{\gamma}_{j,k_j}\mathds{1}(k(i) = k_i) + \beta_2 X_i + \nu_{i,j}$}
+
+\includegraphics[width=.95\textwidth]{slides/slides_pffls/fig2b_longterm.pdf}
+\end{center}
+    \caption{Long Term Effects}
+    \label{fig:my_label}
+    \floatfoot{Note: }
+\end{figure}
+
+
+\section{Implications for Students} \label{swell}
+
+\begin{figure}
+    \centering
+    \resizebox{.3\textwidth}{!}{$\max_\mathcal{J} \mathcal{W}(\mathcal{J}) =  \sum_j \sum_{i\in j} \omega_{k(i)} \gamma_{j,{k(i)}}$}
+    \includegraphics[width=.95\textwidth]{slides/slides_pffls/fig3d_reallocation.pdf}
+    \caption{Allocative Efficiency and Regressivity}
+    \label{fig:my_label}
+    \floatfoot{Note: }
+\end{figure}
+
+
+\section{Implications for Teachers} \label{twell}
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=.9\textwidth]{slides/slides_pffls/fig5_racial.pdf}
+    \caption{Standard measures penalize minority teachers}
+    \label{fig:my_label}
+    \floatfoot{Note: }
+    
+\end{figure}
+
+
+
+
+\section{Conclusion} \label{conc} 
+
+
+
+
+
+
+
+
+
+
+
+
+
+\pagebreak
+
+
+
+
+
+
+\bibliography{citations}
+\appendix
+\captionsetup{labelformat=AppendixTables}
+
+
+\setcounter{figure}{0}   
+\setcounter{table}{0}   
+
+\renewcommand{\thetable}{\arabic{table}}
+\renewcommand{\thefigure}{\arabic{figure}}
+
+
+
+\section{Data Appendix} \label{data_app}
+
+
+\end{document}

@@ -1,0 +1,96 @@
+
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry,ulem,graphicx,caption,color,setspace,dsfont,physics,commath,amsfonts}
+\usepackage{subcaption} 
+\usepackage[short]{optidef}
+\usepackage{hhline}
+\usepackage[capposition=top]{floatrow}
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{adjustbox}
+\usepackage{tikz}
+\usepackage{pdflscape}
+\usepackage{afterpage}
+\usetikzlibrary{calc,patterns,positioning}
+\usepackage{environ}
+\usepackage{natbib,hyperref}
+
+\usepackage[amsthm]{ntheorem}
+\hypersetup{ hidelinks }
+
+\theoremstyle{definition}
+\newtheorem{innercustomthm}{Assumption}
+\newenvironment{customthm}[1]
+  {\renewcommand\theinnercustomthm{#1}\innercustomthm}
+  {\endinnercustomthm}
+
+\theoremstyle{definition}
+\newtheorem{assumption}{Assumption}
+
+
+\theoremstyle{definition}
+\newtheorem{auxa}{Aux. Assumption v}
+
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+
+\usepackage{titlesec}
+\titleformat{\section}
+  {\normalfont\normalsize\bfseries}{\thesection.}{1em}{}
+
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries}{\thesubsection}{1em}{}
+
+
+
+\makeatletter
+\newsavebox{\measure@tikzpicture}
+\NewEnviron{scaletikzpicturetowidth}[1]{%
+  \def\tikz@width{#1}%
+  \def\tikzscale{1}\begin{lrbox}{\measure@tikzpicture}%
+  \BODY
+  \end{lrbox}%
+  \pgfmathparse{#1/\wd\measure@tikzpicture}%
+  \edef\tikzscale{\pgfmathresult}%
+  \BODY
+}
+\makeatother
+
+\tikzstyle{box}=[rectangle,thick,draw=black,outer sep=0pt,minimum width=5cm,minimum height=5cm,align=center]
+\input{LatexColors.incl.tex}
+\bibliographystyle{ecta}
+
+\DeclareCaptionLabelFormat{AppendixTables}{A.#2}
+
+
+
+\title{From Value Added to Welfare Added: \\ A Social Planner Approach to Education Policy and Statistics}
+
+\author{Tanner S Eastmond\thanks{Department of Economics, University of California, San Diego: \texttt{teastmond@ucsd.edu}, \texttt{jbetts@ucsd.edu}} \and Nathan Mather\thanks{Department of Economics University of Michigan: \texttt{njmather@umich.edu}, \texttt{ricksmi@umich.edu} \hspace{11em} {\color{white}t} This research is the product of feedback and from many people including Ash Craig, Jim Hines, Gordon Dahl, Lars Lefgren, Peter Hull, Jesse Rothstien,  Andrew Simon, and  researchers at the Education Policy Initiative, Youth Policy Lab, and SANDERA as well as with seminar participants at the University of California - San Diego, the University of Michigan, and Brigham Young University. Thanks also to Andy Zau who facilitated the data access and to  Wendy Ranck-Buhr, Ron Rode, and others at the San Diego Unified School District for their interest and feedback.} \and Michael David Ricks$^\dagger$ \and Julian Betts$^*$}
+
+\date{\parbox{\linewidth}{\centering%
+  This Draft Updated: \today\endgraf
+  %\href{https://www.michaeldavidricks.com/research}{For latest draft click here}
+  }}
+
+
+
+
+\geometry{left=1.0in,right=1.0in,top=1.0in,bottom=1.0in}
+
+
+\begin{document}
+
+Often policymakers in fields like healthcare and education have distributional concerns. Despite these concerns, many administrations use mean-oriented statistics to evaluate the services provided, possibly leading to misaligned policy goals and evaluation targets. One example is the use of value added (VA) measures to evaluate, rank, or compensate teachers in public schools. This is the case is over 30 states in the United States. VA scores are regression-adjusted means that aim to estimate the causal impact of teachers on student test scores, which we term standard VA. In this paper, we first provide a simple framework tying heterogeneous policy preferences and impacts to welfare weights most commonly used in public economics then explore under what conditions heterogeneity is present and when ignoring that heterogeneity matters. We then dive into the educational context and estimate heterogeneity in teacher VA scores using two separate methods.
+
+Using the heterogeneous estimates, we provide three main empirical results. First, building on previous work that shows long-term impacts for students with high standard VA teachers, we show that students who are well matched with teachers with higher relevant VA experience larger long-term gains than the standard VA estimates would imply. Furthermore, we provide important insights to the mechanics of these long-term gains. For example, using only standard VA to explore 2 year versus 4 year college attendance suggests that students with high standard VA teachers are pushed from 2 year to 4 year colleges. However, exploring this deeper with our heterogeneous estimates suggests that this effect is concentrated among high achieving students with well matched teachers. Low achieving students with well matched teachers are more likely to attend both 2 year and 4 year colleges.
+
+Our second empirical result uses our estimates of heterogeneous effects to trace out the district's production possibilities frontier (PPF) with a set of reallocation exercises. Keeping classes constant, we find the optimal allocation of teachers for a simple linear welfare weighting scheme (i.e. a weight of $\alpha$ on students below median prior achievement and $1-\alpha$ on above median achievement). We do this by solving the assignment as a mixed-integer linear programming problem for each set of weights $\alpha = .01, .02, \dots, .99$ in two different exercises where we move teachers across classes within school, grade, and year or across classes within district, grade, and year. This set of PPFs show large gains for moving teachers across existing classrooms and illuminates how policymakers could leverage this knowledge to reduce achievement gaps and improve equity and efficiency in school districts.
+
+The last empirical result shows that using standard VA measures under-ranks minority teachers relative to using our heterogeneous measures. In particular, we find that nonwhite teachers score as much as 10$\%$ of a teacher standard deviation lower than when using a measure that gives equal credit to gains at every point in the prior achievement distribution. When calibrated to a common performance-pay scheme, these differences would imply an implicit 7$\%$ tax on non-white teachers' wages.
+
+Overall we show that ignoring heterogeneity in the context of elementary education has implications for (1) understanding the magnitude of long-term impacts of teachers on students, (2) pushing forward policy with distributional goals and helping at risk students, and (3) correctly identifying and rewarding quality teachers, and specifically avoiding penalties on non-white teachers.
+
+\end{document}

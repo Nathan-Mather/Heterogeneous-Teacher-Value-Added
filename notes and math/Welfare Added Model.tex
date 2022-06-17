@@ -1,0 +1,121 @@
+\documentclass[letterpaper,12pt]{article}
+
+% Import packages from .sty file.
+%\usepackage{imports}
+
+% Mike's things because he couldn't figure out how to get the preamble working otherwise
+\usepackage[utf8]{inputenc}
+\usepackage{geometry,ulem,graphicx,caption,color,setspace,dsfont,amssymb}
+\usepackage[comma]{natbib}
+\usepackage{subcaption} 
+\usepackage[short]{optidef}
+\usepackage{hhline}
+\usepackage[capposition=top]{floatrow}
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{adjustbox}
+\usepackage{tikz}
+\usepackage{pdflscape}
+\usetikzlibrary{calc,patterns,positioning}
+\usepackage{environ}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+ 
+\usepackage{natbib}
+\bibliographystyle{unsrtnat}
+
+\usepackage{titlesec}
+\titleformat{\section}
+  {\normalfont\normalsize\bfseries}{\thesection.}{1em}{}
+
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries}{\thesubsection}{1em}{}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% welfare addded model 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+A quick sketch of a model to describe when we would care about heterogeneity 
+
+\section{social planner}
+The social planner doesn't value test scores directly, but cares about the welfare weighted present value of utility of students lifetime utility. 
+\begin{equation}
+ \sum_i \psi_i U_{i}
+\end{equation}
+
+While there are many things that can impact the utility of these students through the course of their life, what is relevant for value added is test score gains. So, the utility function is a function of scores and the objective is
+
+\begin{equation}
+ \sum_i \psi_i U_{i}(S_{it}) = \sum_i \psi_i \bar{U}'_{i}(S_{it}) * S_{it}
+\end{equation}
+
+Where $\bar{U}'_{i}(S_{it}) $ is the average marginal utility of test score gains between $0$ and $S_{it}$. Now if we let $\psi_i \bar{U}'_{i}(S_{it}) = \gamma_i$ denote the product of the welfare weight and the average marginal utility of a test score up to the score for person i, we get that the social planner cares about a weighted sum of scores. 
+
+\begin{equation}
+    \sum_i \gamma_i S_{it}
+\end{equation}
+Where i is the student type, t is time, $\gamma$ is the welfare weights and $S$ is the score gains. 
+
+The main point I am trying to get across with this is that even if the social planner doesn't value test scores directly, they can value them indirectly with a set of welfare weights that are a combination of your actual welfare weight for that student's total utility and the marginal change that the increase in test scores has on their future utility. If the welfare weights are individual specific, there is no restriction on the welfare function of the policymaker (beyond the general restrictions of welfare functions).
+
+However, if the welfare weights on test scores can only be a function of test scores, $\gamma(s_i)$, this does restrict $\psi$ weights. $\gamma(s_i)$ can differentiate between the average marginal utility of test scores along the test score distribution, but cannot account for either differences in the marginal utility of test score functions between students or different weights on different students regarding the same utility gain. For example, suppose very wealth kids will do well in the future regardless of their test scores. The utilitarian policy maker in equation (1) may want to give their test score gains a low weight, but this cannot be accomplished with $\gamma(s_i)$. 
+
+There are multiple reasons or interpretations of this relationship that make this not a big concern to me. One answer is a sort of non-utilitarian answer. Maybe it doesn't seem just to be valuing their academic progress differently for non-educational reasons. Would it seem right to give a student less attention because they are so poor that the marginal utility gain of a test score increase is low? In some sense, I think many policy makers have moral stance that students deserve some amount of equal treatment regardless of things that are out of their control. It's okay to condition on their academic progress, but not their parents income or race, for example.  This may even have a utilitarian justification beyond the scope of the paper or a single model, or could probably be justified with a veil of ignorance type argument. 
+
+A utilitarian answer would be to say that beyond test scores, there is no actionable or legal information which we can use to estimate their future outcomes. I could maybe wright this out more formally with assumptions about expected utility gains conditional on test scores. 
+
+Another justification is just as a practical limitation for this paper. There is nothing in our framework that would prevent you from weighting based on parent's income if you had the info and wanted to do that. 
+
+\subsection{Value Added }
+
+
+Teacher j impacts students linearly depending on their type 
+
+\begin{equation}
+    S_{it} = \alpha_{ji}S_{i,t-1} + \epsilon
+\end{equation}
+
+Suppose there are just two student types L, and H (high and low performing students). 
+
+First lets consider a policy maker deciding between two teachers for a class of equal L and H students. Suppose $\alpha_{jH} = \alpha_{jL}$ for all teachers j In this case the policymaker trivially cares only about the average of the to alphas since they are equal. Heterogeneity doesn't matter because there is none! We can estimate  $\alpha$ with any class composition since any combination of the two types gives the same average impact (again, they are equal). 
+
+Now suppose that $\alpha_{jH} \neq \alpha_{jL}$ for all teachers j, but lets assume their welfare weights for the two types are equal $\gamma_L = \gamma_H$. 
+
+Now the policymaker just wants to maximize scores so they just care about the weighted sum of the alphas (weighted by class composition). Since the class in question is equal parts L and H the social planner will just choose the teacher with the highest average alpha. This could be measured by value added, but only if that teacher has a value added score in a class with the same composition since value added will measure the average impact on the observed class. Alternatively, if they had estimates for the alphas for each teacher and each type, even from a class with a different composition, the policymaker can infer the welfare impact on this type of class. Measuring heterogeneity might be useful even in this narrow case! 
+
+We can see similar forces at play if we consider a policymaker who has two different classes to fill. One that is 1/4 L, 3/4 H and another that is reversed. Even though their welfare weights are the same, the policymaker will benefit from estimating each Alpha individually because they will want to match the teacher's with a comparative advantage to the classes with more of those students. Alternatively, if they had standard value added scores for all teachers in classrooms of both types (an unlikely scenario), you could also back out the optimal allocation. 
+
+The intuition here is that having heterogeneity means a teachers total impact is dependent on class composition. Standard value added will tell you how they did with the class they got, but not how they will do in a different class. Estimating each alpha for each type allows you to estimate the teacher impact in any class with heterogeneity. 
+
+Now suppose $\gamma_H \neq \gamma_l $. For the equal sized classes, we will want to choose the teacher that maxes 
+
+\begin{equation}
+    \frac{1}{2}(\gamma_l \alpha_{jl}) +    \frac{1}{2}(\gamma_H \alpha_{jH})
+\end{equation}
+
+Here each individual alpha clearly matters since estimating value added even on this same class composition will not return the welfare relevant metric. 
+
+\subsection{Ordinal Transformations}
+
+Some of the value of welfare weighting is that, with the proper welfare weights, we have transformed ordinal test scores to have actual cardinal meaning. Equal welfare weighted gains are meant to be equally valuable to the policymaker, so the welfare, sum of the weight and scores, have cardinal meaning that cannot be transformed even with an order preserving transformation. 
+
+Similar to welfare weights on utility, we are not requiring test scores (utility) to have ordinal meaning. We can transform test scores (utility), but will need a corresponding transformation of welfare weights to preserve the sum of the two (wich is cardinal welfare). We can see this in the following numerical example. 
+
+Suppose you have a function of welfare weights for a set of linear scores $\gamma(S_i) = \frac{1}{s_i}$. So, a given change in scores from s1 to s2 gives a welfare change of $\int_{s_1}^{s_2} \frac{1}{s_i} = \ln(s_2)-\ln(s_1)$. This welfare has cardinal meaning, but test scores do not. So, we can transform the test scores with an order preserving transformation. For example let $t(s) = s^2$. to preserve our welfare measure, We just need a corresponding transformation of the welfare weights that gives a new function $\gamma_0(s)$ such that 
+$$\int_{t(s_1)}^{t(s_2)}\gamma_0(s)  = \ln(s_2)-\ln(s_1)$$
+
+$\gamma_0(s) = \frac{1}{2s}$ is such a transformation in this example. 
+
+In general if we let $\Gamma(s) = \int \gamma(s)$, then 
+
+$$ \frac{d \Gamma(t(s)) }{ ds} = \gamma_0(s) $$
+
+
+\end{document}
