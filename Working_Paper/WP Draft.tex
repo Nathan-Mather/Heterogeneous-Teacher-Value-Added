@@ -150,42 +150,37 @@ In addition to the welfare issues outlined above, teacher heterogeneity makes in
      \max \sum_i \psi_i U_{i}
     \end{equation}
     
-    While there are many things that can impact the utility of these students through the course of their life, what is relevant for value added is test scores. So, let's model utility as a function of scores $U_{i}(S_{it})$. We can think of all other things that impact student i's utility as fixed, and $U_{i}(S_{it})$ describes student i's lifetime utility if they score S at time t.  $U_{i}(S_{it})$ is not observable, but we can rewrite it as a combination of a student specific average, and the observable test score using the following definition. 
+  Now policy makers don't see lifetime utility of children or really know what their welfare weight should be. They do, however, see traits like test scores, which we will focus on. They also can change test scores through policy intervention. So, suppose the policymaker is considering a policy that will impact scores $S$ at time $t$. Their goal then, is to maximize 
+ 
+     \begin{equation}
+     \max \sum_i \E[ \psi_i U_{i} |S_{it}]
+    \end{equation}
+    
+    We can rewrite each students expectation in the following way to get a clearer connection to test score measures. 
+    
+    \begin{equation}
+         \E[ \psi_i U_{i} |S_{it}] = \frac{\E[ \psi_i U_{i} |S_{it}]}{S_{it}} S_{it} = \gamma_i(S_{it}) S_{it}
+    \end{equation}
+
+    
+    In words, $\gamma_i(S_{it})$  is the average expected welfare per test score point for student i over the range of scores from 0 to the students actual score $S_{it}$. It is the weight that transforms an ordinal test score $S_{it}$ into a cardinal measure of welfare that incorporates both the expected utility given $S_{it}$, and the expected welfare weight. This is an average over test score points for a given student, not an average accross students. To understand this term, it is helpful to think through a simple example. Suppose  $ \E[ \psi_i U_{i} |S_{it}]= S_{it}$ for all students. That is, expected welfare is linear in test scores. In this case,  $\gamma_i(S_{it}) = 1$ because all students gain 1 util per score over the entire range of scores. In this case, test scores are welfare. 
   
-    \begin{definition}
-    
-    Let $\bar{U}_{i}(S_{it})$ be the value such that 
-    \begin{equation}
-         \bar{U}_{i}(S_{it}) = \frac{U_{i}(S_{it})}{S_{it}}
-    \end{equation}
-    
-    In words, this is the average utility per test score point that the student gained over the range from 0 to the students actual score $S_{it}$  
-    
-    This implies
-    \begin{equation}
-        \bar{U}_{i}(S_{it}) * S_{it} = U_{i}(S_{it})
-    \end{equation}
-    \end{definition}
-    
-    And so we can rewrite the policymakers objective function as 
+    While it is helpful to think about the policymakers overall goal, actual policy proposals consider changes in test scores and changes in welfare. The policymaker will then want to maximize the change in welfare given their budget. We can characterize a change in the same way. Suppose we are considering a policy $J$ that will change scores from $S_{i,t-1}$ to $S_{it}$ and let $S_{it} - _{i,t-1} = \Delta^jS_i$
     
     \begin{equation}
-       \max_S  \sum_i \psi_i \bar{U}_{i}(S_{it}) * S_{it}
+        \E[\psi_i U_i|S_{it}] - \E[\psi_i U_i |S_{i,t-1}] =  \frac{\E[\psi_i U_i|S_{it}] - \E[\psi_i U_i |S_{i,t-1}] }{\Delta^jS_i} \Delta^jS_i = \gamma_i(S_{it}, S_{i,t-1}) \Delta^jS_i
     \end{equation}
+ 
+    In this case, $\gamma_i(S_{it}, S_{i,t-1})$ is the average expected welfare gain for a change from $S_{i,t-1}$ to $S_{it}$ for student i. This turns our ordinal measure of test score gains intro a cardinal measure of welfare gains. 
+ 
+
+    While our specific context is test scores, the same logic applies to any policy outcome that impacts welfare. The proper weights can recover the expected welfare change from an observable outcome. In the math above, the proper weights  $\gamma_i$ were still individual specific. That is, we allowed for different conditional expected utility and welfare weights for each person. For example one student may be destined to be a famous musician, and their expected lifetime utility change from a higher test score in math might actually be pretty relative to other students. 
     
+    While This is helpful as a theoretical starting point, using individual welfare weights  $\gamma_i$ to asses policy intervention would not only require knowing those weights for every student, it would also require knowing the expected test score change from a proposed policy for each individual student. In practice, we will need to make a simplification.
     
-    $\bar{U}_{i}(S_{it}) $ is the student specific average utility of test score gains between $0$ and $S_{it}$. To understand this term, it is helpful to think through a simple example. Suppose $U_{i}(S_{it}) =S_{it}$. That is, utility is linear in test scores. In this case, $ \bar{U}_{i}(S_{it}) = 1$ because all students gain 1 util per score over the entire range of scores. 
+    In this paper, we make the assumption that $\gamma_i(S_{it}, S_{i,t-1}) = \gamma(S_{it}, S_{i,t-1}))$. This means that the expected social benefit of any two students getting the same change in scores is the same, regardless of the other characteristics of those students. However, the approach we use could be broadened to consider weights along various dimensions s.t. $\gamma_i(S_{it}, S_{i,t-1}) = \gamma(S_{it}, S_{i,t-1}, X_{it})$ Where $X_{it}$ could include things like parental income or race. This would allow the policymaker to place more weight on the scores of disadvantaged groups, for example. The next section considers when this would be important and the implications for doing so. It also clarifies when considering even test scores is needed relative to standard value added. 
     
-    Now let $\psi_i \bar{U}_{i}(S_{it}) = \gamma_i(S_{it})$ denote the product of the welfare weight and the average utility of a test score. $\gamma_i(S_{it})$ is the weight a given policymaker places on a students score. Applying these weights converts an ordinal test score measure into a cardinal measure of student welfare. The social planner then has the following goal
-    
-    \begin{equation}
-       \max_S \sum_i \gamma_i(S_{it}) S_{it}
-    \end{equation}
-    
-    While our specific context is test scores, the same logic applies to any welfare relevant measure of policy outcomes. Proper individual weights will completely recover social welfare. While This is helpful as a theoretical starting point, using individual welfare weights to asses  policy intervention would require knowing how that policy impacts every individual. Moreover, we are unlikely to know $\gamma_i(S_{it})$ at the individual level.
-    
-    In this paper, we make the assumption that $\gamma_i(S_{it}) = \gamma(S_{it})$. In words, this means that the welfare weight, or implied social benefit, of any two students achieving test scores of $S$ is the same, regardless of the other characteristics of those students. However, the approach we use could be broadened to consider weights along various dimensions s.t. $\gamma_i(S_{it}) = \gamma(S_{it}, X_{it})$ Where $X_{it}$ could include things like parental income or race. This would allow the policymaker to place more weight on the scores of disadvantaged groups, for example. The next sections considers when our approach is needed relative to standard value added and clarifies when more dimensions of heterogeneity may need to be considered. 
-    
+
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % parameterize across pretest scores 
@@ -195,85 +190,102 @@ In addition to the welfare issues outlined above, teacher heterogeneity makes in
     
     As we alluded to above, considering heterogeneity is a bit of a balancing act. Measuring individual impact would be perfect but empirically impossible, and averages may miss important equity and efficiency information. With this in mind, why is considering test score heterogeneity specifically important for value added and when are average scores not enough? 
     
-    The simplest answer is that $\gamma_i(S_{it}) = \gamma(S_{it})$ is actually a correct assumption. If policymakers really do want to treat students equally, then weighting based solely on test scores makes sense. The average welfare benefit of an additional point changes along the test score distribution, but perhaps any student getting a given score is equally valuable regardless of who that student is. This is not a ridiculous assertion and we expect it has some proximity to many policymaker's beliefs. However, it does ignore equity considerations and legitimate concerns over racial and economic disparities in outcomes. While the idea of treating students equally makes sense, weighting disadvantaged students more when it comes to a particular policy may lead to more equitable policies given a broader context. We expect doing this explicitly would in fact be illegal in the context of teacher reassignment, the intervention we consider most explicitly, and so do not include it in that context. In the appendix we show that our approach maximizes welfare for a policymaker with a legal restriction to treat students equally based on their outcomes. 
+    The simplest answer for why yo consider test scores and test scores only is that $\gamma_i(S_{it}, S_{i,t-1}) = \gamma(S_{it}, S_{i,t-1}))$ is actually a correct assumption. If policymakers really do want to treat students equally, then weighting based solely on test scores makes sense. The average welfare benefit of an additional point almost certainly changes along the test score distribution, since test scores are ordinal, but perhaps any student getting a given score is equally valuable regardless of who that student is. This is not a ridiculous assertion and we expect it has some proximity to many policymaker's beliefs. However, it does ignore equity considerations and concerns over racial and economic disparities in outcomes. While the idea of treating students equally has some appeal, weighting disadvantaged students more when it comes to a particular policy may lead to more equitable policies given a broader context. We expect doing this explicitly would in fact be illegal in the context of teacher reassignment, the intervention we consider most explicitly. In the appendix we show that our approach maximizes welfare for a policymaker with a legal restriction to treat students equally based on their outcomes. As we discuss more below, concerns over disparities may also be better modeled as an explicit consideration of group differences rather than through individual weights. 
     
-    Even though policymakers interests may extend beyond averages or even test score heterogeneity, there are cases where either approach may provide the correct answer regardless. Lets consider a policy $j$ that will shift test scores by $S_{it} - S_{i,t-1} = \Delta S_i^j$ for student i.  The policy maker will want to maximize the following.
-   
-    \large
-      \begin{equation}
-      \label{policy_obj}
-        \sum_{i=1}^n \gamma_i(S_{it})\Delta S_i^j
-      \end{equation}
-    
-    \normalsize
-    In general, the welfare impact in equation \ref{policy_obj} can be related to the average change in test scores in the following way\footnote{This approach and notation is similar to that use in \cite{Keyser_2020}. }
-    
+    Even though policymakers interests may extend beyond averages or even test score heterogeneity, there are cases where either approach may, in expectation, provide the correct answer regardless. In general, with completely unrestricted test score weights $\gamma_i(S_{it}, S_{i,t-1})$ the total welfare impact of a policy change can be related to the average change in test scores across students in the following way \footnote{This approach and notation is similar to that use in \cite{Keyser_2020}. }
     \large
     \begin{align*}
-       \\ \sum_i \gamma_i(S_{it})\Delta S_i^j =&
-       \\ \sum_i \frac{\gamma_i(S_{it})\Delta S_i^j}{\sum_i \Delta S_i^j} \sum_i \Delta S_i^j =&
-       \\ \sum_i \frac{\gamma_i(S_{it})\Delta S_i^j}{\sum_i \Delta S_i^j}  n \E[\Delta S_i^j] 
+       \\ \sum_i \gamma_i(S_{it}, S_{i,t-1})) \Delta S_i^j =&
+       \\ \sum_i \frac{\gamma_i(S_{it}, S_{i,t-1}))\Delta S_i^j}{\sum_i \Delta S_i^j} \sum_i \Delta S_i^j =&
+       \\ \sum_i \frac{\gamma_i(S_{it}, S_{i,t-1}))\Delta S_i^j}{\sum_i \Delta S_i^j} \quad n \E[\Delta S_i^j] 
     \end{align*}
       \normalsize 
     
-    If we know the first term of the last line, than we can recover the welfare impact of a policy from the average impact on test scores. The trouble is, that is a very complicated object that depends, not just on the test score welfare weights $\gamma$, but also on the joint distribution of those weights with the changes in test scores for policy j. If a policymaker has this much knowledge about the impact of a policy, they likely do not need an economists help. In practice, certain policies allow for a simpler connection to the average test score gains. Consider the following observation 
+    If we know the first term of the last line, than we can recover the welfare impact of a policy from the average impact on test scores. The trouble is, that is a very complicated object that depends, not just on the test score welfare weights $\gamma_i$, but also on the joint distribution of those weights with the changes in test scores for policy j. If a policymaker does not already have a wealth of knowledge about the policy's impact, it is not clear how much giving them the average gain helps them make a decision in general. In practice, certain policies allow for a simpler connection to the average test score gains. Consider the following observation 
     
     \large
     \begin{definition}
-    if $\gamma(m_i) \indep \Delta S_i^j$ then 
+    \label{pol_indep}
+    if $\gamma_i(S_{it}, S_{i,t-1})) \indep \Delta S_i^j$ then 
     \begin{equation}
-        \E[\sum_i \gamma_i(S_{it})U(m_i)]= n\E[\gamma_i(S_{it})]\E[\Delta S_i^j]
+        \E[\sum_i \gamma_i(S_{it}, S_{i,t-1})) \Delta S_i^j]= n\E[\gamma_i(S_{it}, S_{i,t-1})]\E[\Delta S_i^j]
     \end{equation}
     \end{definition}
     
     \normalsize
-    In this case, knowing just the average of $\gamma_i(S_{it})$ is enough to make the change in scores a relevant statistic. However, the assumption that the test score weights and change in scores are independent is unlikely to be satisfied for many education policies. 
+    In this case, the policy maker knowing just the average of $\gamma_i(S_{it}, S_{i,t-1})$ for the affected population is enough for them to turn the average change in scores into the expected welfare change. This is still, perhaps, a lot to know since it requires some understanding of where the growth is happening. Additionally, the assumption that the test score weights and change in scores are independent is unlikely to be satisfied for many education policies. If, for example, a policy disproportionately helps high performing students and weights are not linear, it is violated.
     
-    We can relax this assumption by conditioning our expectations on relevant variables. In this paper, we focus on test scores. This gives us the following 
+    We can relax this assumption, and lessen the knowledge required of policymakers, by conditioning our expectations on relevant variables. Conditioning on pre test scores gives us the following 
     
     \large
-    \begin{align*}
-    
-       \\ \text{If  }   \gamma_i(S_{it}) \indep \Delta S_i^j | S_{i,t} &
-        \\ \text{then} &
-       \\ \E[\sum_i \gamma_i(S_{it})U(m_i)| S_{i,t}]= n\E[\gamma_i(S_{it})|S_{i,t}]\E[\Delta S_i^j|S_{i,t}] &
-    \end{align*}
+    \begin{definition}
+    \label{cond_exp_1}
+        If $ \gamma_i(S_{it}, S_{i,t-1})) \indep \Delta S_i^j | S_{i,t-1}$ then
+        \begin{equation*}
+           \E[\sum_i \gamma_i(S_{it}, S_{i,t-1})) \Delta S_i^j| S_{i,t-1}]= \sum_i \: \E[\gamma_i(S_{it}, S_{i,t-1}))|S_{i,t-1}] \:\E[\Delta S_i^j|S_{i,t-1}] 
+        \end{equation*}
+    \end{definition}
     \normalsize
     
     This assumption is more believable. In order to be violated it would need to be the case that test score weights vary even among students with the same scores and that the policy in question deferentially impacts those students. An example where this does not hold is a policy that especially helps kids with very rich parents, and a policymaker who wants to place less weight on rich students because they expect test scores to have a lower benefit for those students. In this case, ignoring parental wealth would rank polices with the average gains at each test score level equally even if one of those policies had gains concentrated among very rich students. A simpler way to put this is that conditioning on test scores gives an unbiased welfare estimate for policies that do not change disparities among groups of interest. 
     
-    This prompts us to separately consider how given policies impact disparities, and, if present, weigh those impacts separately against the welfare based measure. This especially makes sense since disliking disparities can exist without a desire to weight particular disadvantaged students more in general. Horizontal equity does not fit simply into a welfare framework. 
+    This suggests an alternative approach to considering aspects like racial, economic, or gender inequality. Rather than weight certain students more than others, we can separately consider how given policies impact disparities, and, if present, weigh those impacts separately against the test score based welfare measure. This may actually be a better match to policymaker preferences since disliking disparities can exist without a desire to weight particular disadvantaged students more in general. Concern for does not fit cleanly into a welfare framework. 
+    
+    The approach we take in this paper requires one more step. Recall that we restrict $\gamma_i(S_{it}, S_{i,t-1})) = \gamma(S_{it}, S_{i,t-1}))$. That is, test score weights are only determined by the scores themselves. Next, we estimate post-test scores not only with pretests, but with other demographics, $X_i$ as well. This gives 
+    
+    \begin{definition}
+    \label{indep_def_used}
+        If $ \gamma(S_{it}, S_{i,t-1})) \indep \Delta S_i^j |S_{i,t-1}, X_i $ then
+        \begin{equation*}
+           \E[\sum_i \gamma(S_{it}, S_{i,t-1})) \Delta S_i^j| S_{i,t-1}, X_i]= \sum_i \: \E[\gamma(S_{it}, S_{i,t-1}))|S_{i,t-1}, X_i] \:\E[\Delta S_i^j|S_{i,t-1}, X_i] 
+        \end{equation*}
+    \end{definition}
+    
+    While we are conditioning on characteristics like race or parental income in the $X_i$, it is not as general as if we had done that in definition \ref{cond_exp_1}. This is because the weights are restricted to test scores. The only role $X_i$ is playing is to better estimate the test score after the policy, $S_{it}$. Implicit in this equation is the idea that we either do not care about, or do not expect there to be disparities in other important variables. This again shows the importance of measuring the increase or decrease of disparities for a given policy. 
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Motivations specific to VAM 
    \subsection{Test Score Heterogeneity and Value Added Inference}
-   
+   \label{va_hetero}
    % This section is about how heterogeneity is specifically important for VAM because it impacts out ability to make inferences.  
    
    The above framework applies generally to education policy. However, there are additional motivations to considering heterogeneity in test scores for Value Added analysis specifically. To see this we first need to understand the components of heterogeneous value added. 
    
     In a simple case, let there be student types. Assume value added can be characterized as follows:
     \[
-    \gamma_j = \omega_{j,0}\bar{\epsilon}_{j,0}  + \omega_{j,1}\bar{\epsilon}_{j,1} =  \omega_{j,0}(\mu_0 +\gamma_{j,0}) + \omega_{j,1}(\mu_1 +\gamma_{j,1})
+    \alpha_j = \omega_{j,0}\bar{\epsilon}_{j,0}  + \omega_{j,1}\bar{\epsilon}_{j,1} =  \omega_{j,0}(\mu_0 +\alpha_{j,0}) + \omega_{j,1}(\mu_1 +\alpha_{j,1})
     \]
-    \noindent where $\omega_{j,k}$ are the shares of student who are of type $k$ who are in teacher $j$'s class, $\gamma_{j,k}$ teacher $j$'s  impact on students of type $k$, and $\mu_k$ are the average residuals of students of type $k$ in the population.
+    \noindent where $\omega_{j,k}$ are the shares of student who are of type $k$ who are in teacher $j$'s class, $\alpha_{j,k}$ teacher $j$'s  impact on students of type $k$, and $\mu_k$ are the average residuals of students of type $k$ in the population.
     
-    Now let a teacher's absolute advantage (vertical differentiation) $A_j = \omega_{0}\gamma_{j,0} + \omega_{1}\gamma{j,1}$ with population  weights $\omega_{k}$ that sum up to one. Call a teacher's comparative advantage $C_j = \gamma_{j,1} - \gamma_{j,0}$. With these terms defined we can characterize the value added as
+    Now let a teacher's absolute advantage (vertical differentiation) $A_j = \omega_{0}\alpha_{j,0} + \omega_{1}\alpha_{j,1}$ with population  weights $\omega_{k}$ that sum up to one. Call a teacher's comparative advantage $C_j = \alpha_{j,1} - \alpha_{j,0}$. With these terms defined we can characterize the standard value added as
     \begin{align*}
-        \gamma_j  &= \omega_{j,0}(\mu_0 +\gamma_{j,0}) + \omega_{j,1}(\mu_1 +\gamma_{j,1})  \\
-                  & =  \omega_{j,0}\gamma_{j,0} + \omega_{j,1}\gamma_{j,1}   +\mu_0 \omega_{j,0} + \mu_1 \omega_{j,1}  \\
+        \alpha_j  &= \omega_{j,0}(\mu_0 +\alpha_{j,0}) + \omega_{j,1}(\mu_1 +\alpha_{j,1})  \\
+                  & =  \omega_{j,0}\alpha_{j,0} + \omega_{j,1}\alpha_{j,1}   +\mu_0 \omega_{j,0} + \mu_1 \omega_{j,1}  \\
                   & =  \omega_{j,0}(A_j -(1-\omega_{0})C_j) + \omega_{j,1}(A_j +\omega_{0}C_j)  +\mu_0 \omega_{j,0} + \mu_1 \omega_{j,1} \\
                   & =  A_j   - \omega_{j,0} (1-\omega_{0})C_j + \omega_{j,1}\omega_{0}C_j +\mu_0 \omega_{j,0} + \mu_1 \omega_{j,1} \\
                   & =  A_j   - \omega_{j,0} (1-\omega_{0})C_j + (1-\omega_{j,0})\omega_{0}C_j +\mu_0 \omega_{j,0} + \mu_1 \omega_{j,1} \\
                   & =  A_j   - \omega_{j,0} C_j +\omega_{j,0}\omega_{0}C_j + \omega_{0}C_j -\omega_{j,0}\omega_{0}C_j +\mu_0 \omega_{j,0} + \mu_1 \omega_{j,1} \\
-                  & =  A_j  + C_j  ( \omega_{j,1} - \omega_{1} ) + \sum_k  \omega_{j,k} \mu_k
+                  & =  A_j  + C_j  ( \omega_{j,1} - \omega_{j,0} ) + \sum_k  \omega_{j,k} \mu_k
     \end{align*}
     
     This has three components: the absolute average impact, the allocative efficiency (comparative advantage times the relative matched proportion), and the classroom average of population residuals. Any difference in value added scores could be attributed to any of these three; however, note that if group indicators for the groups are included in the estimation equation, then $\mu_1 = \mu_0 = 0$, and the value added scores (or comparisons) are a function of only the absolute advantage and allocative efficiency.
     
-    This two-type example can be generalized as follows:
+     Suppose $\alpha_{j,0} = \alpha_{j,1}$ for all teachers j. That is teachers impact both student groups equally. In this case the policymaker trivially cares only about the average of the to alphas since they are equal. The teacher's true affect is estimating with an average value added regardless of the class composition. Measuring the heterogeneity of the impact of a given policy may still matter, however, if $\gamma_0 \neq \gamma_1$. For example, if higher value added teachers are sorted into advanced classes and students of different test scores have different welfare weights, definition \ref{pol_indep} won't hold and we will still want to consider the heterogeneous impact of the policy. However, the heterogeneity of that policy can be estimating with standard value added since teachers impact is homogeneous. 
+     
+    Now suppose that $\alpha_{j,0} \neq \alpha_{j,1}$ for all teachers j, but lets assume the welfare weights for the two types are equal and $\gamma_0 = \gamma_1$. Now, the welfare weights $\gamma$ can be normalized to a constant and equation \ref{pol_indep} holds. So, we need only estimate the average impact of the policy. However, estimating the average impact can no longer be done with standard value added in general. The composition of a given teacher's class, $\omega_{j,i}$, will impact their standard value added score. If the policy involves changing the class composition, the standard value added estimate for the teacher's impact after the change will be biased. If instead we estimate $\alpha_{j,0}$ and $\alpha_{j,1}$, we can infer the teacher's impact on a class of any composition. In particular, we can estimate their impact on the class they will have after a policy change. 
+    
+    Finally, suppose $\alpha_{j,0} \neq \alpha_{j,1}$ and $\gamma_L \neq \gamma_H$. In this case, the unconditional expectation in definition \ref{pol_indep} is unlikely to hold \footnote{a case where it might would be something like a teacher training that happens to increase test scores equally for both types of students.Then $\Delta S_i^j$ is actually a constant so the terms are independent.}. Turning to the assumptions in definition \ref{indep_def_used}, we need to estimate the expected test score change for each student conditional on their observable characteristics $S_{i,t-1}, X_i$. if, as is the case in this paper, the groups 0 and 1 are based on previous year test scores, than the expected change in test scores conditional on $S_{i,t-1}, X_i$ will depend on the teachers heterogeneous impact on the corresponding group. We can see this at work in our simulation of teacher reassignment in section \hl{SECTION}. For a given class reassignment, ignoring student characteristics outside test scores for simplicity, we estimate the welfare impact in a classroom as 
+    
+    \begin{align}
+      \\ \sum_i \: \E[\gamma(S_{it}, S_{i,t-1}))|S_{i,t-1}] \:\E[\Delta S_i^j|S_{i,t-1}]  = &
+      \\ \sum_i \: \E[\gamma(S_{i,t-1} + alpha_{j,i}, S_{i,t-1})] \alpha_{j,i}
+    \end{align}
+
+    where $\alpha_{j,i}$ is the expected impact the teacher has on a student's test scores based on their type. $\E[\gamma(S_{i,t-1} + alpha_{j,i}, S_{i,t-1})]$ is the welfare weight corresponding to the students pretest score and expected post-test score. For most students, this is either $\gamma_0$ or $\gamma_1$ corresponding to their type. The exception is students near the cutoff who change types as a result of the policy change. 
+    
+    One caveat of the above discussion is that, of course, measuring heterogeneity increases the variance of estimates. The above scenarios outline when heterogeneity is theoretically important. Weather or not it can be effectively measured to improve policy analysis is a practical empirical question we hope to address in this paper. For simplicity, the above discussion also revolved around an example with only two types of students. This can, however, be generalized as follows: 
     \begin{align*}
-        \gamma_j  &= \int_x \omega_j(x)(\gamma_j(x) + \mu(x)) \diff x \\
+        \alpha_j  &= \int_x \omega_j(x)(\alpha_j(x) + \mu(x)) \diff x \\
                   &= \int_x \omega_j(x)(A_j + c_j(x) + \mu(x)) \diff x \\
                   &= A_j \int_x w_j(x) \diff x + \int_x \omega_j(x) c_j(x)\diff x + \int_x \omega_j(x) \mu(x)\diff x \\
                   &= A_j  + \mathbb{E}_j[c_j(x)] + \mathbb{E}_j[\mu_(x)]
@@ -281,17 +293,14 @@ In addition to the welfare issues outlined above, teacher heterogeneity makes in
     
     \noindent where $\omega_j(x)$ is the share (mass or probability) of students in teacher $j$'s class who have characteristics $x$. As $x$ becomes higher dimensional, $\mu(x)=0$ is only mechanically guaranteed if the regression is \textbf{fully} saturated; however, one could test whether $\hat{\mu}(x)=0$ for any (or all) values of $x$.
     
-    \subsubsection{GO through example in notes and math/welfare added notes. }
-        Go through example but update it to use the better/more formal notation from mikes stuff above
-   
-     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Ordinal Test scores, Cardinal Welfare
    \subsection{Ordinal Test scores, Cardinal Welfare}
-   % don't know if this should go here but worth noting that we are solving this problem as well 
+   \hl{don't know if this should go here or be so long, but worth noting that we are solving this problem as well }
         
     Some of the value of welfare weighting is that, with the proper welfare weights, we have transformed ordinal test scores to have actual cardinal meaning. The atonality of test scores has been shown to cause problems for Value Added inference \hl{(CITATION)}. Equal welfare weighted gains are meant to be equally valuable to the policymaker, so the welfare, sum of the weight and scores, have cardinal meaning that cannot be transformed even with an order preserving transformation. 
     
-    Similar to welfare weights on utility, we are not requiring test scores (utility) to have ordinal meaning. We can transform test scores (utility), but will need a corresponding transformation of welfare weights to preserve the sum of the two (wich is cardinal welfare). We can see this in the following numerical example. 
+    Similar to welfare weights on utility, we are not requiring test scores (utility) to have ordinal meaning. We can transform test scores (utility), but will need a corresponding transformation of welfare weights to preserve the sum of the two (which is cardinal welfare). We can see this in the following numerical example. 
     
     Suppose you have a function of welfare weights for a set of linear scores $\gamma(S_i) = \frac{1}{s_i}$. So, a given change in scores from s1 to s2 gives a welfare change of $\int_{s_1}^{s_2} \frac{1}{s_i} = \ln(s_2)-\ln(s_1)$. This welfare has cardinal meaning, but test scores do not. So, we can transform the test scores with an order preserving transformation. For example let $t(s) = s^2$. to preserve our welfare measure, We just need a corresponding transformation of the welfare weights that gives a new function $\gamma_0(s)$ such that 
     $$\int_{t(s_1)}^{t(s_2)}\gamma_0(s)  = \ln(s_2)-\ln(s_1)$$
@@ -348,7 +357,17 @@ In addition to the welfare issues outlined above, teacher heterogeneity makes in
             % be done in previous section 
         
         \subsubsection{Weighting Estimates}
-            % go over how we weight estimates.
+        For policy specific questions, it may be best to provide dis-aggregated estimates of teacher's impacts on the various types of students. This enables the estimation of the welfare impact of a particular policy, for example teacher reassignment, by summing up the conditional expected welfare weight and policy impact for each student like int definition \ref{indep_def_used} and as discussed above in section \ref{va_hetero}. However, value added is also used for general teacher ranking and assessment. If teacher heterogeneity is significant, is there still a way to objectively rank teachers according to a particular set of heterogeneous welfare weights? 
+        
+        Rather than ranking teachers based on their average impact on test scores for the class they have, which may depend on class composition which is outside of the teacher's control and does not reflect their welfare impact, we can instead rank teachers based on the expected welfare impact they would have on a representative class that is consistent across teachers. In the discrete setting, let $\bar{\omega_k}$ and $\gamma_k$be the average proportion of students in group k and welfare weight for group k respectively. Let $\alpha_{j,k}$ be teacher j's group specific value added for group k. Than we can aggregate their group specific test scores as 
+        \begin{equation}
+        \label{agg_equation}
+            VA_j = \sum_k \gamma_k \bar{\omega_k} \alpha_{j,k}
+        \end{equation}
+        
+        This gives the welfare benefit a teacher would have on an average class. Now, choosing the average class composition for every teacher may or may not be the right normative choice. If a teacher has a big comparative advantage with high scoring students in a district with, on average, very high scoring students, but their class is primarily low scoring. What is the right way to assess their performance? They may not be bad relative to their well matched peers, which the above metric could tease out, but they may still in fact be doing a poor job helping the students they have, which the above metric ignores. This emphasizes that in a world of heterogeneity, no metric will be perfect. However, equation \ref{agg_equation} does help to rank teachers based on what is under their control. 
+        
+        \hl{Should maybe put something here discussing practical issues like cases with extremely sorted classes not having support to properly estimate some subgroups. Shrinkage helps us avoid punishing or praising those teachers though by putting the groups without support close to the mean.}
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %Appendix link for simulations
@@ -374,7 +393,7 @@ In addition to the welfare issues outlined above, teacher heterogeneity makes in
 
 %%%%%%%%%%%%%
 % Estimation
-%%%%%%%%%%%%
+%%%%%%%%%%%%%
 \section{Data}
 
 \begin{itemize}
@@ -436,13 +455,13 @@ One concern with our two-bin estimates is whether we are picking up real within 
 
 The outcomes we use are the following: `High School Grad' is an indicator for whether the student graduated from high school, `Two Year College' is an indicator for whether the student enrolled in a 2 year college within a year following high school graduation, `Four-Year College' is an indicator for whether the student enrolled in a 4 year college within a year following high school graduation, and `Any College' is an indicator for either `Two Year College' or `Four-Year College'. 
 
-Sumamry statistics for these outcomes are shown in figure #### 
+Summary statistics for these outcomes are shown in figure #### 
 \begin{itemize}
     \item I would like to see a table or chart with the percent of students in each category or something like that. 
     \item One possibility for the lack of an effect on HS gradation in math is high overall graduation rates. 
 \end{itemize}
 
-To test the predictive power of standard value added we run a regression of each of the outcomes described above on student demographics and the average teacher value added for the student in grades 3-5. For the binned estimates, rather than the average value added, we include terms for the average high bin value added of a student's teachers in grades 3-5 times an indicator for if that student is a high achieving student and a comparable term if they are a low bin student. The terms then indicate the predictive power of high bin value added on high scoring student's outcomes and low bin value added on low scoring student's outcomes. Figure \ref{ong_term_ceofs} shows these coefficients for each of the outcome variables. 
+To test the predictive power of standard value added we run a regression of each of the outcomes described above on student demographics and the average teacher value added for the student in grades 3-5. For the binned estimates, rather than the average value added, we include terms for the average high bin value added of a student's teachers in grades 3-5 times an indicator for if that student is a high achieving student and a comparable term if they are a low bin student. The terms then indicate the predictive power of high bin value added on high scoring student's outcomes and low bin value added on low scoring student's outcomes. Figure \ref{long_term_coefs} shows these coefficients for each of the outcome variables. 
 
 
 Our results for standard value added are generally similar to what the authors found in \cite{chetty2014measuring2}. Our standard value added estimates in ELA are predictive of graduating from high school, enrolling in any college within a year of high school, and  enrolling in a Four-Year College. \hl(graduating with a Bachelor's degree within 6 years of high school). Surprisingly, Standard Math Value added is not predictive of high school graduation but the remaining results match. We also show that value added decreases enrollment in a two year college. Presumably because of substitution into four year degresss. 
@@ -465,19 +484,22 @@ Overall these results are strong evidence of match effects between teachers and 
 
 
 \begin{figure}
-\label{ong_term_ceofs}
+\label{long_term_coefs}
 \begin{center}
 
 \resizebox{!}{.02\textwidth}{
 $y_{i,j} = \sum_{k_j,k_i} \tau_{k_j,k_i} \hat{\gamma}_{j,k_j}\mathds{1}(k(i) = k_i) + \beta_2 X_i + \nu_{i,j}$}
 
-\includegraphics[width=.95\textwidth]{slides/slides_pffls/fig2b_longterm.pdf}
+\includegraphics[width=.95\textwidth]{Working_Paper/WP_Figures/fig2b_longterm.pdf}
 \end{center}
     \caption{Long Term Effects}
     \label{fig:my_label}
     \floatfoot{Note: }
 \end{figure}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Implications for Students
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Implications for Students} \label{swell}
 
@@ -490,7 +512,9 @@ $y_{i,j} = \sum_{k_j,k_i} \tau_{k_j,k_i} \hat{\gamma}_{j,k_j}\mathds{1}(k(i) = k
     \floatfoot{Note: }
 \end{figure}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Implications for Teachers
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implications for Teachers} \label{twell}
 
 
