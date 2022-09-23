@@ -1,0 +1,853 @@
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+% Import packages and establish settings %
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+\documentclass[t,aspectratio=169,11pt]{beamer}
+
+\usepackage{beamerimports}
+
+\definecolor{ptb5}{RGB}{54,75,154}	 % NT                   
+\definecolor{ptb4}{RGB}{74,123,183} % RC + NT	                    
+\definecolor{ptb3}{RGB}{110,166,205}                     
+\definecolor{ptb2}{RGB}{152,202,225}% EC + RC + NT                  
+\definecolor{ptb1}{RGB}{194,228,239}
+\definecolor{ptg0}{RGB}{234,236,204}
+\definecolor{ptr1}{RGB}{254,218,139} %EC only
+\definecolor{ptr2}{RGB}{253,179,102}	                    
+\definecolor{ptr3}{RGB}{246,126,75} % AT +	EC + RC                    
+\definecolor{ptr4}{RGB}{221,61,45}	 % AT + EC                   
+\definecolor{ptr5}{RGB}{165,0,38}	 % AT	   
+
+
+
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+% Define the Title Page %
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+\title{From Value Added to Welfare Added: \\ A Social Planner Approach to Education Policy and Statistics\vskip.3cm}
+
+\author{Tanner S Eastmond\footnote{Department of Economics, University of California San Diego} \vskip.2cm Nathan Mather$^2$ \vskip.2cm Michael Ricks\footnote{Department of Economics, University of Michigan} \vskip.2cm Julian Betts\footnote{Department of Economics, University of California San Diego and NBER} }
+
+\date{}
+
+
+\begin{document}
+
+
+
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+% Title Page %
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\setcounter{footnote}{0}
+
+
+
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+% Introduction, motivation, and contribution %
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+
+%-------------------------------------------------------------------------------------%
+% NEED TO FIX TITLE
+ % why we care about heterogeneity
+\begin{frame}{Heterogeneity can matter in evaluation of policies}
+
+    \vfill
+    \begin{wideitemize}
+        \item Consider the large class of treatment-effect-like estimators based on fixed effects
+        \vspace{-12pt}
+        \begin{itemize}
+            \item Teacher/school value added
+            \item Hospital/insurance/provider report cards
+            \item Firm and worker productivity
+        \end{itemize}
+        
+        \item But hospitals, firms, and teachers may have comparative advantages
+        \begin{itemize}
+            \item \textbf{Efficiency:} allocating resources well could make society better off on average
+            \item \textbf{Equity:} if social planner also cares about gaps, there may be even more gains
+        \end{itemize}
+    \end{wideitemize}
+    \vfill
+    
+\end{frame}
+
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+\begin{frame}{Teacher value added measures ``mean'' well}
+
+    \vfill
+    \begin{wideitemize}
+        \item 30+ states use value added measures to rank, evaluate, or compensate teachers
+        
+        \item<2-> Traditional value added measures focus on mean student gains 
+        
+        \item <3->{\color<2-4>{ptr3}\textbf{Means}} may not capture all of the socially relevant information
+            %  spend \$50B on 4M kindergarteners each year
+            % In most cases this is a question of when not a question of whether
+            \begin{itemize}
+                \item<4->  Consider two teacher support programs:  Policy A increases achievement for all students. Policy B increases test scores for the top half of students but lowers test scores for the bottom half of students. {\color<4>{ptr5}\textbf{Both policies increase average test scores by 1 percent.}} Which policy would education policymakers prefer?! \vskip.2cm
+                \item<5-> Traditional value added modeling could conclude the two programs were identical in impact
+                
+            \end{itemize}
+        
+        \item<6-> {\color<6>{ptr5}\textbf{Positive: Does value added vary meaningfully over student achievement?}} 
+      
+        \item<7> {\color<7>{ptr5}\textbf{Normative: How does ignoring heterogeneity affect equity and efficiency?}}
+    \end{wideitemize}
+    \vfill
+    
+\end{frame}
+
+
+
+
+%-------------------------------------------------------------------------------------%
+
+\begin{frame}{If there is heterogeneity, how much does it matter?}
+
+    \vfill
+    \begin{wideitemize}
+        \item \textbf{Standard VA:} Do traditional measures of value added capture real effects?
+            \begin{itemize}
+                \item<2-> Yes! Teacher effects on student achievement seem to be unbiased
+                
+                {\tiny \color{gray}\citep[e.g.,][etc.]{chetty2014measuring1,Koedel2015}}
+                
+                \item<3-> High value-added teachers cause improvements in long-term student outcomes
+                
+                {\tiny \color{gray}\citep[e.g.,][]{chetty2014measuring2,pope2017multidimensional}}
+            \end{itemize}
+        
+        \item<4-> \textbf{Heterogeneity:} Is there heterogeneity in each teacher's value added?
+            \begin{itemize}
+                \item<5-> Emerging evidence suggests differences across student types
+            
+                {\tiny \color{gray} \citep[e.g.,][]{lockwood2009,condie2014teacher,pope2017multidimensional,Delgado2020,bates2022teacher}}
+            \end{itemize}
+            
+        \item<6-> Heterogeneous estimates can't automatically rank teachers or compare (non-Pareto) allocations... 
+        %cannot inform counterfactual policy discussions about reducing noncompliance or economic questions about efficiency and equity. This is because these questions hinge on the sorting of and effects on noncompliant children---patterns the complier-based LATE cannot inform.
+    \end{wideitemize}
+    \vfill
+    
+\end{frame}
+
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+\begin{frame}{Our Contribution: \textbf{Simultaneously} Allow for Two Types of Heterogeneity}
+    \begin{wideitemize}
+         \vfill
+                
+             
+            
+                \item<1-> \textbf{Heterogeneous Impacts:} Comparative advantage shapes overall \textbf{gains}
+                \item<2-> \textbf{Heterogeneous Preferences:} Heterogeneity in valuation across students, such as egalitarian goals, means policymakers care about \textbf{gaps}
+                \vspace{+12pt}
+                \item <3->Together, heterogeneity in both impacts \textit{and} preferences lead to materially different optimal allocations of teachers and student outcomes
+                
+             
+
+        
+       
+    \end{wideitemize}
+    \vfill
+    
+\end{frame}
+
+
+%-------------------------------------------------------------------------------------%
+
+\begin{frame}{This paper evaluates heterogeneous value added}
+
+    \vfill
+    \begin{wideitemize}
+        \item Combine models of heterogeneous value added with welfare theory
+            \begin{itemize}
+                \item Explore theoretical justification and practical implications of heterogeneity
+                
+                \item Use simple two group estimator
+                
+                \item Aggregate to welfare using {\color<1>{ptr5}\textbf{explicit}} welfare weights
+            \end{itemize}
+            
+      
+        
+        \item<2-> Characterize implications for welfare and policy
+            \begin{itemize}
+                \item Use welfare weights to solve reallocation as  mixed-integer linear programming problem
+                
+                \item Compare implications of different measures for students and teachers
+            \end{itemize}
+    \end{wideitemize}
+    \vfill
+
+\end{frame}
+
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+\begin{frame}{Major Findings: Ignoring heterogeneity curtails scores and fosters inequity}
+
+    \vfill        
+    \begin{wideitemize}
+    %\item There is significant selection:
+        % Recall I am thinking about selection in terms of potential untreated outcomes
+        \item {\color<1>{ptr5}\textbf{Heterogeneity:}} Replicate and extend results that teachers have different effects
+        {\tiny \color{gray}\citep{lockwood2009,condie2014teacher,bates2022teacher}}
+            \begin{itemize}
+                \item<2-> {\color<2>{ptr5}\textbf{Long Term:}} Value Added ``Match'' raises graduation and college enrollment beyond VA
+            \end{itemize}
+        
+        \item<3-> {\color<3>{ptr5}\textbf{Student Welfare:}} Reallocations can raise scores and shrink gaps 
+        %{\tiny \color{gray} \citep{bedard2006persistence,black2011too,mccrary2011effect,cook2016birthdays,molnar2018redshirting,fortner2019forced}}
+            \begin{itemize}
+                \item<4-> \textbf{Utilitarian planner}:
+                \begin{itemize}
+                    \item<5-> Use of heterogeneous VA raises math scores annually by 0.015 student standard deviations (about 50\% beyond standard VA) 
+                     \item<6-> For ELA annual gains are 0.0125 standard deviations (about 125\% beyond standard VA)
+                \item<7-> Inequality in test scores falls slightly.
+                \end{itemize}
+               
+                \item<8->\textbf{Egalitarian planner}:
+                \begin{itemize}
+                    \item<9-> Gaps in achievement can fall much more
+                    \item<10-> Use of heterogeneous VA leads to even greater welfare gains relative to traditional VA 
+                
+                \end{itemize}
+                %\item  Shrink racial math gap by 0.12 student standard deviations (standard VA widens gap)
+                
+                %{\tiny \color{gray} \citep[]{lalonde1986evaluating,brand2010benefits,einav2010optimal,walters2018demand,finkelstein2019take,ito2021selection}}
+            
+                %{\tiny \color{gray} \citep[]{lalonde1986evaluating,brand2010benefits,einav2010optimal,walters2018demand,finkelstein2019take,ito2021selection}}
+            \end{itemize}
+        %brinch2017beyond,mogstad2018using,kline2019heckits,walters2018demand,ito2021selection
+        
+        %\item<4-> {\color<4>{ptr5}\textbf{Teacher Welfare:}} Standard VA methods penalize minority teachers
+            %\begin{itemize}
+             %   \item Ignoring heterogeneity would be a 7\% performance pay tax on minorities
+                %{\tiny \color{gray} \citep[]{graue2000redshirting,deming2008lengthening,illinois2019anact}}
+            
+%\end{itemize}
+    \end{wideitemize}
+    \vfill
+
+\end{frame}
+
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+\begin{frame}[c,noframenumbering]{Today's Talk}
+\begin{columns}
+\begin{column}{0.575\textwidth}
+\begin{wideenumerate}
+    \item How Do We Model and Measure Value Added?
+    \begin{itemize}
+        \item Conceptual model
+        \item Empirical methods
+    \end{itemize}
+   
+    \item How Do Teachers Affect Different Students?
+    \vspace{-12pt}
+    \begin{itemize}
+        \item Test-score impacts
+        \item Long-term impacts
+    \end{itemize}
+
+    \item What About Welfare and Policy?
+    \begin{itemize}
+        \item Comparing reallocations
+        \item Recovering implicit weights
+        \item Reranking teachers
+    \end{itemize}
+\end{wideenumerate}
+\end{column}
+\begin{column}{0.40\textwidth}
+\vspace{-1.5em}
+\begin{tikzpicture}
+%\draw[line width=.5cm] (0,0)  -- (3.2,1.8) -- (0,3.5) -- (3,4.2);
+\usetikzlibrary{arrows}
+\usetikzlibrary{shapes}
+\tikzstyle{every node}=[draw=black,fill=black, ellipse]
+\node[minimum width=2.6cm, minimum height = 1cm] (a) at (0,0) {};
+\node[minimum width=2cm, minimum height = .8cm] (b) at (4,1.6) {};
+\node[minimum width=1.6cm, minimum height = .6cm] (c) at (0,3.2) {};
+\node[minimum width=1.2cm, minimum height = .4cm] (d) at (3.2,3.9) {};
+\draw[fill = black] (a.75) -- (b.188) -- (b.235) -- (a.06);
+\draw[fill = black] (b.170) -- (c.318) -- (c.348) -- (b.140);
+\draw[fill = black] (c.5) -- (d.205) -- (d.182) -- (c.28);
+\draw[fill = black]  (2.8,5.5) to  [bend right=14] (3.2,4.6) to [bend right =14] (3.6,5.5) -- cycle;
+\draw[fill = black] (3.6,5.5) arc (0:180:.4cm);
+\draw[fill = white] (3.2,5.5) circle (.22cm);
+
+\end{tikzpicture}
+
+
+
+\end{column}
+\end{columns}
+\end{frame}
+
+
+
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+%  %
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+\section{How Should We Think About Heterogeneous Value Added?}
+
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+
+%-------------------------------------------------------------------------------------%
+
+\begin{frame}{Review: standard VA}
+
+    \vfill
+    \begin{wideitemize}
+    \item Assume student test scores, $y_{it}$, are estimable with
+    \begin{align*}
+        y_{it} &= \gamma_{j(i)} + \beta X{it} +  \varepsilon_{it}
+    \end{align*}
+    \item $\gamma_{j(i)}$ are fixed-effects estimates for teacher $j$'s VA 
+    \begin{itemize}
+        \item Typically assume an autocorrelation structure over time
+        \item Then regression adjust for shrinkage $\to$ $\tilde{\gamma}_{jt}$
+    \end{itemize}
+    \item $X_{it}'$ is a vector of controls (conditional independence)
+        %lagged score in other subject, lagged average class and school test scores, gender, race, grade, year, English language status, and special education status.
+    \item $\varepsilon_{it}$ mechanically combines class and student components
+    \end{wideitemize}
+    \vfill
+    
+\end{frame}
+
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+ % how we think about heterogeneity
+\begin{frame}{Overview: Assumptions and insights of conceptual framework}
+
+\vfill
+\begin{wideitemize}
+    \item Heterogeneity in value added by {\color<1>{ptb4}\textbf{expected achievement}} is a natural extension
+        
+    {\tiny \color{gray} \citep{lockwood2009,condie2014teacher,Delgado2020,bates2022teacher}}
+
+    \item<2-> {\color<2>{ptr5}\textbf{We care:}} Two scenarios sufficient to not care about estimating heterogeneity
+      \begin{itemize}
+        \item If teachers are homogeneous (no surprise)
+        \item If classes are homogeneous \textit{and} social preferences utilitarian
+        \item Both scenarios seem farfetched
+
+        
+    \end{itemize}
+    \item<3-> {\color<3>{ptr5}\textbf{Class composition:}} Heterogeneity $\implies$ standard VA not composition neutral
+      \begin{itemize}
+        \item Optimally re-allocated teachers' students will score higher 
+        % \item Teachers with certain students may be penalized (akin to model misspecification)
+                
+    \end{itemize}
+    
+    \item<4-> {\color<4>{ptr5}\textbf{How to aggregate:}} Heterogeneous effects aggregated with \textbf{explicit} welfare weights
+      \begin{itemize}
+        \item  Welfare theory allows us to compare reallocations
+        
+    \end{itemize} 
+\end{wideitemize}
+\vfill
+
+
+        %\hyperlink{ex1}{\beamerbutton{Example One}}
+        %\hyperlink{ex2}{\beamerbutton{Example Two}}   
+\end{frame}
+
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+% \begin{frame}{Measurement if we care about more than the mean}
+
+% \begin{wideitemize}
+%     \item Two approaches for estimating heterogeneity along the achievement distribution
+    
+%     \item<2-> Option 1: Split students into $k$ bins and estimate $\gamma_{j,k}$ 
+%     \begin{itemize}
+%         \item Works great for small number of bins....
+%         \item But we don't have infinite data, or actually know the \textit{ex ante} expected score
+%     \end{itemize}
+
+%     \item<3-> Option 2: Predict $\hat{y}$ and use kernel estimator:  $y_{i,t}=g_j(\hat{y}_{i,t})$
+%     \begin{itemize}
+%         \item Since $\hat{y}_{it} = \hat{\beta} X_{it}$  predicts expected score consistently but with error
+%         \item Jacknifed following the endogenous stratification literature \citep{abadie2018endogenous}
+%         \item Much more information, but less precise
+%     \end{itemize}
+
+% \end{wideitemize}
+
+% \end{frame}
+
+
+
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+%  %
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+\section{Is there Meaningful Heterogeneity in Teacher Effects?}
+
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+\begin{frame}{We use data from teachers in San Diego, California}
+
+\vfill
+\begin{wideitemize}
+    \item  Estimate value added using data from the San Diego Unified School District
+            \begin{itemize}
+                \item Test score effects of elementary school teachers
+                
+                \item Long-term effects of value added vs heterogeneous value added
+            \end{itemize}
+
+    \item<2-> Main Sample: 2,165 teachers teaching grades 3-5
+        
+    \begin{itemize}
+        \item Restrict to school years between spring 2003 and 2013 (long term effects)
+        \item Require that students have test scores for consecutive years (to estimate VA)
+    \end{itemize}    
+        \beamerbutton{Summary Statistics}
+        
+        %\hyperlink{data}{\beamerbutton{Data Cleaning}}
+
+    \item<3-> SDUSD has rich data on many variables of interests
+        \begin{itemize}
+        \item Math and ELA scores, standardized to the mean and variance of California
+        \item Long term outcomes: graduation, college enrollment, degree completion
+        \item Controls for student characteristics and lagged student, class, and school achievement
+    \end{itemize}  
+\end{wideitemize}
+\vfill
+
+\end{frame}
+
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+% \begin{frame}[label=het1,c]{Teachers create very heterogeneous value added}
+
+
+
+% \begin{center}
+% \resizebox{.3\textwidth}{!}{$y_{i,j} = \gamma_{j,k(i)} \mathds{1}(i\in j) + \beta_1 X_i + \epsilon_{i,j}$}
+% \includegraphics[width=.85\textwidth]{slides/slides_pffls/fig1_heterogeneity.pdf}
+% \end{center}
+
+% \hyperlink{example}{\beamerbutton{Hypothesis Tests}}
+% \end{frame}
+%-------------------------------------------------------------------------------------%
+
+\begin{frame}[c]{Teacher value-added highly heterogeneous, especially for math}
+
+    \vfill
+    \begin{figure}[H]
+        \centering
+         \includegraphics[width=.45\textwidth]{Working_Paper/WP_Figures/Math_High_Bin_Versus_Low_Bin.png}
+          \includegraphics[width=.45\textwidth]{Working_Paper/WP_Figures/ELA_High_Bin_Versus_Low_Bin.png}
+       
+            \caption*{Teacher VAM is correlated, but not identical, between student types}
+            \label{fig:t_tests}
+    \end{figure}
+    \vfill
+
+\end{frame}
+
+
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+\begin{frame}{How persistent is teacher \textbf{relative} value added?}
+
+\vfill
+\begin{wideitemize}
+    \item As in Chetty et al., we estimate each teacher's value added separately for each school year, but with separate estimates for below-median and above-median students.
+
+    \item<2-> Estimates or relative productivity could be useful for administrators to assign to classes, but less so if these estimates change radically for a teacher from year to year.
+
+    \item<3-> Next slides look at teachers with five or more annual VA estimates, showing the fraction of estimates where low VA > high VA
+    \item<4-> About 35-40 percent of teachers are ALWAYS better at teaching one type of student than the other
+        
+\end{wideitemize}
+\vfill
+
+\end{frame}
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+\begin{frame}[c, label=math_bin_diff]{Many teachers are consistently better at teaching one type of student}
+\begin{center}
+
+
+\includegraphics[width=.65\textwidth]{Working_Paper/WP_Figures/Math_Bin_Diff.png}
+% OLD JULY DRAFT \includegraphics[width=.85\textwidth]{slides/Figures/fig2b_longterm.pdf}
+\begin{itemize}
+    \item Teachers by share of years their \textbf{Math} VA is higher for "Low" students \hyperlink{ela_bin_diff}{\beamerbutton{ELA}}
+\end{itemize}
+\end{center}
+
+\end{frame}
+
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+\begin{frame}[c]{Long Term Effects}
+\begin{center}
+
+\resizebox{!}{.02\textwidth}{$y_{i,j} = \sum_{k_j,k_i} \tau_{k_j,k_i} \hat{\gamma}_{j,k_j}\mathds{1}(k(i) = k_i) + \beta_2 X_i + \nu_{i,j}$}
+
+
+\includegraphics[width=.85\textwidth]{Working_Paper/WP_Figures/fig2b_longterm.pdf}
+% OLD JULY DRAFT \includegraphics[width=.85\textwidth]{slides/Figures/fig2b_longterm.pdf}
+\end{center}
+
+\end{frame}
+
+
+
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+%  %
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+\section{What are the Implications for Welfare?}
+
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+\begin{frame}{Connecting value added to social welfare}
+
+\begin{itemize}
+    \item We can think of the following social welfare function
+    \begin{itemize}
+        \item $\omega(x_i,y_i)$ weights: likely based on \textit{ex ante} expected performance
+        % Talk about the concavity here?
+        \item $v(x_i,y_i)$ value: think achievement, gains, etc.
+    \end{itemize}
+    \[
+    W  = \sum_i \omega(x_i,y_i) v(x_i,y_i) 
+    \] 
+    
+    \item Traditional VAM take the average gains for students among each teacher, e.g.
+    \[
+    \hat{W}_{VA}  = \sum_i \frac{(y_i-\hat{y}_i)}{N_{j(i)}} \hspace{3em}
+    \]
+    
+    \item This implies $\omega(x_i,y_i)=\frac{1}{N_j}$, which (almost) gives equal weight to all students
+
+\end{itemize}
+
+
+\end{frame}
+
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+\begin{frame}{``Welfare added''}
+
+\begin{wideitemize}
+
+    \item Let $\hat{v}_j(x_i,y_i)$ estimate a teacher's heterogeneous value added, $\mathbb{E}[v(\cdot)|x_i,j]$
+    
+    \item Then the estimated ``Welfare Added'' by this teacher is  
+    \[
+    \hat{W}_j  = \sum_{i\in j} \omega(x_i,y_i) \hat{v}_j(x_i,y_i) 
+    \] 
+    
+    \item Consider the following examples:
+    \begin{itemize}
+        \item Utilitarian: All students are weighted equally $\omega(x_i,y_i) = 1$
+        
+        \item Egalitarian: We weight students with lower expected achievement more highly than students with higher expected achievement.  
+        \begin{itemize}
+        \item Example with two groups, Low and High: $\omega_{low} > 1 > \omega_{high}$
+        \end{itemize}
+        \item Rawlsian: We care only about students below some cutoff, $c$, $\omega(x_i,y_i) = \mathds{1}(x_i\leq c)$
+%\item Beta: Flexible with monotone derivative $ \omega(x_i,y_i)=  \mathcal{B}(x_i;\alpha,\beta)$ 
+        
+\beamerbutton{Beta Distribution}
+    \end{itemize}
+    
+    %\item But estimating Welfare Added requires an estimate of $\mathbb{E}[v(\cdot)|x_i,j]$
+
+\end{wideitemize}
+
+
+\end{frame}
+
+
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+
+\begin{frame}{Reallocation exercises}
+
+    \vfill
+    \begin{itemize}
+        \item Linear welfare function, $\alpha$ weight on below median students and $1 - \alpha$ weight on above median:
+    \end{itemize}
+    
+    \[
+    \hat{W}_j  = \sum_{i\in j} \mathbbm{1}\{i \in lowbin\}\alpha \widehat{VA}_{lowbin} + \mathbbm{1}\{i \in highbin\}(1-\alpha) \widehat{VA}_{highbin}
+    \] 
+    
+    \begin{itemize}
+        \item Keep classes fixed, shuffled teachers across classes
+        \item Two simulations:
+        \begin{itemize}
+            \item Move teachers within school/grade/year
+            \item Move teachers across schools within grade/year
+        \end{itemize}
+        \item Calculate for $\alpha \in (0, 0.01, 0.02, ..., 0.99, 1)$, plot PPF
+    \end{itemize}
+    \vfill
+    
+\end{frame}
+
+
+\begin{frame}[c, label=math_school]{Efficiency and equity gains in \textbf{math} from within school reallocations}
+\centering
+\resizebox{.3\textwidth}{!}{$\max_\mathcal{J} \mathcal{W}(\mathcal{J}) =  \sum_j \sum_{i\in j} \omega_{k(i)} \gamma_{j,{k(i)}}$}
+
+\includegraphics<1>[width=.6\textwidth]{Working_Paper/WP_Figures/WithinSchoolReallocationMath.pdf}
+% Below: this was the graph showing PPF and the Evil Me minimums
+%\includegraphics<2>[width=.85\textwidth]{slides/Figures/ela_reallocation_both.png}
+
+\hyperlink{ela_school}{\beamerbutton{ELA}}
+
+\end{frame}
+
+
+\begin{frame}[c, label=indiff]{Gains in ELA relative to Standard VA differ based on planner preference}
+\centering
+
+\includegraphics<1>[width=.6\textwidth]{Working_Paper/WP_Figures/PPF_Indifference_Curve_for_ELA_with_Weight_75.pdf}
+\includegraphics<2>[width=.6\textwidth]{Working_Paper/WP_Figures/ELA_het_vs_standard_gains_in_welfare.pdf}
+\includegraphics<3>[width=.6\textwidth]{Working_Paper/WP_Figures/Percent_Advant_het_vs_standard_gains_in_welfare.pdf}
+
+\end{frame}
+
+
+
+\begin{frame}[c, label=math_district]{\textbf{Math} across school reallocations}
+\centering
+\resizebox{.3\textwidth}{!}{$\max_\mathcal{J} \mathcal{W}(\mathcal{J}) =  \sum_j \sum_{i\in j} \omega_{k(i)} \gamma_{j,{k(i)}}$}
+
+\includegraphics<1>[width=.6\textwidth]{Working_Paper/WP_Figures/BothReallocationsMath.pdf}
+% Below: this was the graph showing PPF and the Evil Me minimums
+%\includegraphics<2>[width=.85\textwidth]{slides/Figures/ela_reallocation_both.png}
+
+\hyperlink{ela_district}{\beamerbutton{ELA}}
+
+\end{frame}
+
+
+
+\begin{frame}[c, label=math_winners]{There are winners and losers, but most kids can be made better off}
+\centering
+
+\includegraphics<1>[width=.6\textwidth]{Working_Paper/WP_Figures/Who_is_Hurt_Math.png}
+
+\hyperlink{ela_winners}{\beamerbutton{ELA}}
+
+\end{frame}
+
+
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+%  %
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+\section{Policy Implications and Conclusion}
+
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+\begin{frame}{So what did we learn?}
+
+\begin{wideitemize}
+\item Good reason to believe heterogeneity (and estimating heterogeneity) matters
+\item<2-> Given heterogeneity, standard VA may not be ``utilitarian'' for students or teachers
+\begin{itemize}
+    \item Econometrically very close to utilitarian for students
+    % \item<3-> But penalizes black teachers (because class composition)
+\end{itemize}
+\item<3-> Teacher effectiveness varies with student achievement---and has long-term implications
+\item<4-> Lots of room for gains through reallocations---far beyond standard VA
+\item<5-> These gains become much bigger, overall and relative to standard VA, when we allow for an egalitarian social welfare function
+\end{wideitemize}
+
+\end{frame}
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+\begin{frame}[c,noframenumbering]
+\centering
+\Huge{\centerline{Thank You!}}
+
+\normalsize  teastmond@ucsd.edu \hspace{1em} njmather@umich.edu \hspace{1em} ricksmi@umich.edu \hspace{1em} jbetts@ucsd.edu
+
+\end{frame}
+
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+\begin{frame}
+\frametitle{References}
+\tiny
+\bibliography{citations}
+\end{frame}
+
+
+
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+%  %
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+\appendix
+\setbeamertemplate{navigation symbols}{}
+
+
+
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+%  %
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+\section{Bonus Slides}
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+\begin{frame}[label=example]{Within Teacher Variation in Value Added}
+
+    \centering
+    $H_0: \text{Low Bin VA} = \text{High Bin VA}$
+    \resizebox{.8\textwidth}{!}{\input{slides/Tables/withinttest}}
+
+\hyperlink{het1}{\beamerbutton{Back}}
+\end{frame}
+
+
+
+\begin{frame}[c, label=ela_bin_diff]{Many teachers are consistently better at teaching one type of student}
+\begin{center}
+
+
+\includegraphics[width=.65\textwidth]{Working_Paper/WP_Figures/ELA_Bin_Diff.png}
+% OLD JULY DRAFT \includegraphics[width=.85\textwidth]{slides/Figures/fig2b_longterm.pdf}
+\begin{itemize}
+    \item Teachers by share of years their \textbf{ELA} VA is higher for "Low" students \hyperlink{math_bin_diff}{\beamerbutton{Back}}
+\end{itemize}
+\end{center}
+
+\end{frame}
+
+
+
+\begin{frame}[c, label=ela_school]{\textbf{English Language Arts (ELA)} within school reallocations}
+\centering
+\resizebox{.3\textwidth}{!}{$\max_\mathcal{J} \mathcal{W}(\mathcal{J}) =  \sum_j \sum_{i\in j} \omega_{k(i)} \gamma_{j,{k(i)}}$}
+
+\includegraphics<1>[width=.6\textwidth]{Working_Paper/WP_Figures/WithinSchoolReallocationELA.pdf}
+% Below: this was the graph showing PPF and the Evil Me minimums
+%\includegraphics<2>[width=.85\textwidth]{slides/Figures/ela_reallocation_both.png}
+
+\hyperlink{math_school}{\beamerbutton{Back}}
+
+\end{frame}
+
+
+
+\begin{frame}[c, label=ela_district]{\textbf{English Language Arts (ELA)} across school reallocations}
+\centering
+\resizebox{.3\textwidth}{!}{$\max_\mathcal{J} \mathcal{W}(\mathcal{J}) =  \sum_j \sum_{i\in j} \omega_{k(i)} \gamma_{j,{k(i)}}$}
+
+\includegraphics<1>[width=.6\textwidth]{Working_Paper/WP_Figures/BothReallocationsELA.pdf}
+% Below: this was the graph showing PPF and the Evil Me minimums
+%\includegraphics<2>[width=.85\textwidth]{slides/Figures/ela_reallocation_both.png}
+
+\hyperlink{math_district}{\beamerbutton{Back}}
+
+\end{frame}
+
+
+
+\begin{frame}[c, label=ela_winners]{There are winners and losers, but most kids can be made better off}
+\centering
+
+\includegraphics<1>[width=.6\textwidth]{Working_Paper/WP_Figures/Who_is_Hurt_ELA.png}
+
+\hyperlink{math_winners}{\beamerbutton{Back}}
+
+\end{frame}
+
+
+
+\end{document}
+
+
+
+
+
+
+
