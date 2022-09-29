@@ -46,6 +46,7 @@
 \newtheorem{definition}{Definition}
 
 
+\newcommand*\diff{\mathop{}\!\mathrm{d}}
 %\DeclareMathOperator*{\argmax}{arg\,max}
 %\DeclareMathOperator*{\argmin}{arg\,min}
 
@@ -79,9 +80,6 @@
 }
 \makeatother
 
-\tikzstyle{box}=[rectangle,thick,draw=black,outer sep=0pt,minimum width=5cm,minimum height=5cm,align=center]
-\input{LatexColors.incl.tex}
-\bibliographystyle{ecta}
 
 \DeclareCaptionLabelFormat{AppendixTables}{A.#2}
 
@@ -107,9 +105,12 @@
 
 \maketitle
 
-\onehalfspacing
 \begin{abstract}
-Mean oriented statistics are ubiquitous in policy analysis.  In a world where policies are meant to prioritize low-achieving students, mean-oriented statistics like traditional value-added measures may be at odds with the policy objective. We propose a new method to estimate teacher value added heterogeneity over the achievement distribution. We lay out theory to show when considering heterogeneity is important for recovering welfare estimates and when it is important for accurate estimates of teacher impacts. We use data from the San Diego Unified School District to show there is measurable heterogeneity in the impact teachers have on students with high and low test scores. We show that this heterogeneity is measurable without sacrificing the established predictive power of value added. We show how using heterogeneous value-added measures can lead to better policy analysis using teacher assignment to class rooms as an example. Gains up to .1 standard deviation in test scores are achievable by reassigning teachers using heterogeneous value added. We also use these estimates to plot the policy possibility frontier of teacher reassignment allowing policymakers to better choose the policy that fits their normative preferences. Finally, we show that ignoring heterogeneity may be leading to systematic undervaluation of black teachers. 
+Mean-oriented statistics---although ubiquitous in empirical welfare analysis---are less informative when policies have heterogeneous effects or when policy makers have distributionally-based objectives. This paper formally articulates when it is necessary to estimate heterogeneity in a policy's effects to assess its effect on welfare and quantifies the importance of heterogeneity in an enormous public service provision problem: the allocation of teachers to elementary school classes. %Because traditional value-added measures only measure means they may be at odds with policy objectives that often prioritize lower-achieving students. To address this
+To this end, we estimate heterogeneity in teacher value added over the achievement distribution using data from the San Diego Unified School District, finding that over \textcolor{red}{68\%} of teachers have a significant comparative advantage. \textcolor{red}{and long term effects of being assigned a well-matched teacher:( } Reallocating teachers to classes within school (district) would raise average achievement by 0.015 (0.045) standard deviations per student per year. These gains are \textcolor{red}{70-120\%} larger than those from a reallocation using mean value added. Welfare gains from incorporating information about heterogeneity are even larger when the policy makers preferences are convex (or concave). These results point to the importance of optimizing other public programs by using information about effect heterogeneity (comparative advantage) and social preferences to make welfare maximizing allocations.
+
+
+%to show there is measurable heterogeneity in the impact teachers have on students with high and low test scores. We show that this heterogeneity is measurable without sacrificing the established predictive power of value added. We show how using heterogeneous value-added measures can lead to better policy analysis using teacher assignment to class rooms as an example. Gains up to .1 standard deviation in test scores are achievable by reassigning teachers using heterogeneous value added. We also use these estimates to plot the policy possibility frontier of teacher reassignment allowing policymakers to better choose the policy that fits their normative preferences. Finally, we show that ignoring heterogeneity may be leading to systematic undervaluation of black teachers. 
 \end{abstract}
 
 
@@ -117,6 +118,7 @@ Mean oriented statistics are ubiquitous in policy analysis.  In a world where po
 \vfill
 \pagebreak
 
+\onehalfspacing
 %%%%%%%%%%%%%%%%%%%
 % Introduction 
 \section{Introduction}
