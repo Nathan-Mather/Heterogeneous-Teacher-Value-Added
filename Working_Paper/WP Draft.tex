@@ -10,7 +10,6 @@
 \usepackage[utf8]{inputenc}
 \usepackage{geometry,ulem,graphicx,caption,color,setspace,dsfont,physics,commath,amsfonts}
 
-
 \usepackage{caption}
 \usepackage{subcaption} 
 \usepackage[short]{optidef}
@@ -106,8 +105,15 @@
 \maketitle
 
 \begin{abstract}
-Mean-oriented statistics---although ubiquitous in empirical welfare analysis---are less informative when policies have heterogeneous effects or when policy makers have distributionally-based objectives. This paper formally articulates when it is necessary to estimate heterogeneity in a policy's effects to assess its effect on welfare and quantifies the importance of heterogeneity in an enormous public service provision problem: the allocation of teachers to elementary school classes. %Because traditional value-added measures only measure means they may be at odds with policy objectives that often prioritize lower-achieving students. To address this
-To this end, we estimate heterogeneity in teacher value added over the achievement distribution using data from the San Diego Unified School District, finding that over \textcolor{red}{68\%} of teachers have a significant comparative advantage. \textcolor{red}{and long term effects of being assigned a well-matched teacher:( } Reallocating teachers to classes within school (district) would raise average achievement by 0.015 (0.045) standard deviations per student per year. These gains are \textcolor{red}{70-120\%} larger than those from a reallocation using mean value added. Welfare gains from incorporating information about heterogeneity are even larger when the policy makers preferences are convex (or concave). These results point to the importance of optimizing other public programs by using information about effect heterogeneity (comparative advantage) and social preferences to make welfare maximizing allocations.
+
+% Nate: Tried to make it less technical, ended up making it longer. Not sure what to think! 
+Mean-oriented statistics---although ubiquitous in empirical welfare analysis---are less informative when policies have heterogeneous effects or when policy makers have distributionally-based objectives. In this paper we formally articulate when estimating heterogeneity in a policy's effect is necessary to determine welfare impacts. To test this theory, we estimate the heterogeneity in teacher value added over the achievement distribution using data from the San Diego Unified School District. These estimates are used to quantify the importance of heterogeneity in an enormous public service provision problem: the allocation of teachers to elementary school classes. We find over \textcolor{red}{68\%} of teachers do have a significant comparative advantage across student types, and assigning teachers based on that comparative advantage to existing classrooms within (across) schools improves outcomes by 0.015 (0.045) standard deviations per student per year. This is \textcolor{red}{70-120\%} larger than what is achievable with standard value added. We also find welfare gains from considering heterogeneity are even larger when policymakers prefer to prioritize lower (or higher) achieving students. These results point to the importance of optimizing other public programs by using information about effect heterogeneity to both increase average outcomes via comparative advantage and better match distributional impacts from policy recommendations to the social preferences of decision makers. 
+
+
+
+
+%Mean-oriented statistics---although ubiquitous in empirical welfare analysis---are less informative when policies have heterogeneous effects or when policy makers have distributionally-based objectives. This paper formally articulates when it is necessary to estimate heterogeneity in a policy's effects to assess its effect on welfare and quantifies the importance of heterogeneity in an enormous public service provision problem: the allocation of teachers to elementary school classes. %Because traditional value-added measures only measure means they may be at odds with policy objectives that often prioritize lower-achieving students. To address this
+%To this end, we estimate heterogeneity in teacher value added over the achievement distribution using data from the San Diego Unified School District, finding that over \textcolor{red}{68\%} of teachers have a significant comparative advantage. \textcolor{red}{and long term effects of being assigned a well-matched teacher:( } Reallocating teachers to classes within school (district) would raise average achievement by 0.015 (0.045) standard deviations per student per year. These gains are \textcolor{red}{70-120\%} larger than those from a reallocation using mean value added. Welfare gains from incorporating information about heterogeneity are even larger when the policy makers preferences are convex (or concave). These results point to the importance of optimizing other public programs by using information about effect heterogeneity (comparative advantage) and social preferences to make welfare maximizing allocations.
 
 
 %to show there is measurable heterogeneity in the impact teachers have on students with high and low test scores. We show that this heterogeneity is measurable without sacrificing the established predictive power of value added. We show how using heterogeneous value-added measures can lead to better policy analysis using teacher assignment to class rooms as an example. Gains up to .1 standard deviation in test scores are achievable by reassigning teachers using heterogeneous value added. We also use these estimates to plot the policy possibility frontier of teacher reassignment allowing policymakers to better choose the policy that fits their normative preferences. Finally, we show that ignoring heterogeneity may be leading to systematic undervaluation of black teachers. 
@@ -122,6 +128,17 @@ To this end, we estimate heterogeneity in teacher value added over the achieveme
 %%%%%%%%%%%%%%%%%%%
 % Introduction 
 \section{Introduction}
+
+    % going back to a very general introduction that transitions into education
+    % General idea to get across: Measuring heterogeneity is often requires if we want policymaker's to be able to infer welfare affects 
+    Does a policy that could raise the mean real income in the United States by \$1000 seem like a good idea? At first glance, we may certainly think so, but suppose we then learn that to implement this policy we would need to take \$1000 from the poorest half of the country in order to give \$3000 to the richer half. Does this still seem like a good policy? Many people may have concerns after this additional information, and with good reason. Public policy often impacts different types of people, and the same measurable impact on different types of people will not always be valued equally by policymakers. How to make interpersonal comparisons is ultimately a normative question, but making that comparison is difficult if not impossible without the correct positive analysis. In the above example, knowing the mean impact was not enough, but meauring a particular type of heterogeneous impact, the impact on above and below median income people, makes the problem approachable for a policymaker. 
+
+    % This isn't just important for redistribution of dollars. It matters in, for example, education
+    Economic literature often considers this in the context of redistributing dollars (the optimal tax literature for example). However, the same dynamics can be at play when any mean outcome measure is used on a heterogeneous population.
+
+    
+    
+    For example, giving a dollar to the richest and poorest Americans will not have an equal impact on their lives. Considering policy impacts in dollars and heterogeneity along income has precedence in economics in the optimal tax literature using welfare weights. While welfare weights and income may be the most familiar setting for an economist, the same phenomena can be at play in any mean outcome measure.
 
     Is a policy that raises the average real income in the united states a success? What if, despite the average gain, the poorest Americans become poorer under this policy? Does this matter? Economic literature utilizing welfare weights is frequently used to address equity concerns about inequality across income levels such as this\footnote{The optimal tax literature is a great example}. However, the same dynamics can be at play when any mean outcome measure is used on a heterogeneous population.  
     Across the world, governments use mean-oriented statistics to evaluate public services like healthcare and education. In the United States over 30 states use value added to evaluate, rank, or compensate teachers. 
@@ -535,9 +552,9 @@ In addition to the welfare issues outlined above, teacher heterogeneity makes in
 % Implications for Students
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Implications for Students} \label{swell}
+\section{Implications for Students and Optimal Allocation of Teachers} \label{swell}
 
-By estimating teacher value added flexibly along the student achievement distribution, policymakers can think about and even target gains in particular student sub-populations. To this end, we performed a set of teacher reallocation simulations using the estimated high and low bin value added for each teacher. In each simulation, we set a ‘weight’ $\alpha$ (between 0 and 1) on low bin students and $1 - \alpha$ on high bin students. In economic terms we are positing very simple linear indifference curves that trade off performance for below-median students with that of above-median students. A policymaker with these preferences may value gains to low score or high scoring students more, but does is not concerned with the distribution within each bin beyond the sum. The ‘weight’ on each group represents the degree to which policymakers wish to target gains between the two groups of students. We then rearranged teachers within school, grade, and year, keeping class composition fixed. We leave class composition fixed so that within-classroom peer effects are unchanged, and to avoid confounding changes in peer effects with changes in the teacher in each classroom. In particular, we found the welfare maximizing allocation based on each specified $\alpha$. We also include the average choices made by schools to compare against the welfare-maximizing outcomes. The results are shown in figure \ref{fig:aloc_eff}
+By estimating teacher value added flexibly along the student achievement distribution, policymakers can target gains in particular student sub-populations. To this end, we performed a set of teacher reallocation simulations using the estimated high and low bin value added for each teacher. In each simulation, we set a ‘weight’ $\alpha$ (between 0 and 1) on low bin students and $1 - \alpha$ on high bin students. In economic terms we are positing very simple linear indifference curves that trade off performance for below-median students with that of above-median students. A policymaker with these preferences may value gains to low score or high scoring students more, but does is not concerned with the distribution within each bin beyond the sum. The ‘weight’ on each group represents the degree to which policymakers wish to target gains between the two groups of students. We then rearranged teachers within school, grade, and year, keeping class composition fixed. We leave class composition fixed so that within-classroom peer effects are unchanged, and to avoid confounding changes in peer effects with changes in the teacher in each classroom. In particular, we found the welfare maximizing allocation based on each specified $\alpha$. We also include the average choices made by schools to compare against the welfare-maximizing outcomes. The results are shown in figure \ref{fig:aloc_eff}
 
 % updated 8/9/22
 \begin{figure}[H]
@@ -663,6 +680,9 @@ We plan to plug these differences into a real payment scheme to see what the pay
     \centering
     \input{"tables/Teacher Characteristics.tex"}
     \label{tab:teacher_char}
+    \bigskip
+    
+    \footnotesize{1 - Coefficients and standard errors in this row are multiplied by 100}
 \end{table}
 
 
