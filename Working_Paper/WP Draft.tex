@@ -42,6 +42,7 @@
 
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}
+\newtheorem{thm}{Theorem}
 
 
 \newcommand*\diff{\mathop{}\!\mathrm{d}}
@@ -131,21 +132,25 @@ Though ubiquitous in empirical analyses, mean-oriented statistics may not fully 
 
     % going back to a very general introduction that transitions into education
     % General idea to get across: Measuring heterogeneity is often requires if we want policymaker's to be able to infer welfare affects 
-    Does a policy that could raise the mean real income in the United States by \$1000 seem like a good idea? At first glance, we may certainly think so, but suppose we then learn that to implement this policy we would need to take \$1000 from the poorest half of the country in order to give \$3000 to the richer half. Does this still seem like a good policy? Many people may have concerns after this additional information, and with good reason. Public policy often impacts different types of people, and the same measurable impact on different types of people will not always be valued equally by policymakers. How to make interpersonal comparisons is ultimately a normative question, but making that comparison can be difficult if not impossible without positive analysis that considers relevant heterogeneous impacts. We show how and when measuring heterogeneity is essential for policymakers to assess the  welfare impact of a policy. First, Measuring heterogeneity can be vital for accurate estimates of mean policy impacts or for optimizing policy based on comparative advantage. Beyond this, we show that measuring heterogeneity is especially important when the impact of a policy is correlated with the welfare weights policymakers' place on different individuals. In the above example, knowing the mean impact was not enough because the policy impacted low income folks differently than high income folks and policymakers care about distributional effects across income. 
+    Does a policy that could raise the mean real income in the United States by \$1000 seem like a good idea? At first glance, we may certainly think so, but suppose we then learn that to implement this policy we would need to take \$1000 from the poorest half of the country in order to give \$3000 to the richer half. Does this still seem like a good policy? Many people may have concerns after this additional information, and with good reason. Public policy often impacts different types of people, and the same measurable impact on different types of people will not always be valued equally by policymakers. How to make interpersonal comparisons is ultimately a normative question, but making that comparison can be difficult if not impossible without positive analysis that considers relevant heterogeneous impacts. We show how and when measuring heterogeneity is essential for policymakers to assess the  welfare impact of a policy. In particular, when the treatment affects are correlated with the welfare weights policymakers' place on different individuals, using the average effect will lead to biased welfare assessments. The size of this bias is determined by the covariance of the treatment affect and welfare weights. We can see this in the simple example above. Knowing the mean impact of \$1000 was not enough because the policy impacted low income folks differently than high income folks and policymakers care about distributional effects across income. 
+
+    % here I am adding the paragraph two to set up how heterogeneity matters for mean outcomes 
+    In addition to distributional concerns, measuring heterogeneous treatment effects is often an essential component of accurate estimates of mean outcomes for policy counterfactuals. Consider the example of assigning a teacher to a classroom. Suppose we know over the past few years the teacher has, on average, increased students scores by 10 points a year. However, we are considering a policy that would move this teacher to a new school where their classroom would consist of many more students who are behind on the curriculum. It is not necessarily the case that this teachers average impact will still be 10 points in this new classroom. If we can instead estimate their impact in the previous years differentially along the achievement distribution, we can see their performance for high and low achieving students respectively and better infer their average impact in this new classroom. Here heterogeneity not only improves our estimates of average affects, it allows policymakers to leverage comparative advantage to better match teachers to students. We not only measure both of these ideas empirically, we show how they interact. When policy makers care about redistribution, accurate inferences about these types of counterfactuals are especially important for policy optimization.  
 
     % This isn't just important for redistribution of dollars. It matters in, for example, education
-    Economic literature often considers heterogeneity and welfare weights in the context of redistributing dollars (the optimal tax literature for example). However, the same dynamics can be at play for any mean outcome of interest. Policymakers care about things like like test scores, life expectancy, fitness, nutrition, or employment, in addition to income; moreover, they often care about \emph{who} receives the gains in those outcomes. Despite this, governments use mean-oriented statistics to evaluate public services like healthcare and education. In the United States over 30 states use value added to evaluate, rank, or compensate teachers. 
-
-    % value added is good. But measuring heterogeneity could make it better 
-    % Measuring heterogeneity allows for greater mean outcomes via comparative advantage
-    % it is also essential for unbiased estimates of welfare 
-    Value added scores are regression-adjusted means that target causal teacher effects on test scores. Value-added metrics have been adapted for good reason. High value-added teachers, who improve test scores on average, do create long-term average social gains \citep[e.g.,][]{chetty2014measuring2,pope2017multidimensional}. However, research has already shown there is variation in how high value-added teachers increase scores for different types of students\citep[as in][etc.]{Delgado2020,bates2022teacher}. This paper, as well as other work, shows how measuring this heterogeneity enables policies like teacher assignment to achieve even higher average scores via comparative advantage \hl{citations of other two papers}. As the example above showed, however, the importance of heterogeneity does not stop there. Policymakers likely have heterogeneous preferences about where test-score gains are most valuable. For some students, improving test scores by 10\% might be the difference between having a high school diploma or dropping out while other students will be well on their way to college with or without a 10\% gain. It is reasonable for policymakers to want to treat these outcomes differently. Just like in the income example above, measuring the heterogeneity of the test score gains from a policy like teacher reassignment is an essential part of providing policymakers with welfare relevant statistics. 
+    Both of the above motivations for measuring heterogeneity have broad applications beyond these specific examples. Economic literature often considers heterogeneity and welfare weights in the context of redistributing dollars (the optimal tax literature for example). However, the same dynamics can be at play for any mean outcome of interest. Policymakers care about things like like test scores, life expectancy, fitness, nutrition, or employment, in addition to income; moreover, they often care about \emph{who} receives the gains in those outcomes. Additionally assigning teachers to new classrooms is not the only case where measuring heterogeneity will improve counterfactual estimates. Other policies assigning practitioners like doctors, judges, police, or even firms to different heterogeneous populations will have the same dynamics.
+    
+    
+    
+    Despite the above considerations, governments use mean-oriented statistics to evaluate public services like healthcare and education. For example, in the United States over 30 states use value added to evaluate, rank, or compensate teachers. Value added scores are regression-adjusted means that target causal teacher effects on test scores. Value-added metrics have been adapted for good reason. High value-added teachers, who improve test scores on average, do create long-term average social gains \citep[e.g.,][]{chetty2014measuring2,pope2017multidimensional}. However, research has already shown there is variation in how high value-added teachers increase scores for different types of students\citep[as in][etc.]{Delgado2020,bates2022teacher}. This paper, as well as other work, shows how measuring this heterogeneity enables policies like teacher assignment to achieve even higher average scores via comparative advantage \citep{bates2022teacher, ahn2021importance}. Policymakers likely have heterogeneous preferences about where test-score gains are most valuable. For some students, improving test scores by 10\% might be the difference between having a high school diploma or dropping out while other students will be well on their way to college with or without a 10\% gain. It is reasonable for policymakers to want to treat these outcomes differently. Just like in the income example above, measuring the heterogeneity of the test score gains from a policy like teacher reassignment is an essential part of providing policymakers with welfare relevant statistics. 
 
     % this still needs some work! Will have take another crack after re-writing the theory section. 
     % two goals for thise paragraphs:
     %  1) setting up the theoretical work 
     % 2) explaining how our empirical context fits into that framework 
-    This paper starts by showing how to connect any outcome of interest, be it test scores, income, or nutrition, to a model of social welfare. Next, we show how inferring welfare impacts from average outcomes is difficult when a policymaker's welfare weights correlate with the magnitude of a policy's impact. We then show how this issue is alleviated by measuring heterogeneity along the factors that both influence the policy and policymaker's welfare weights. The size of the bias in welfare estimates when using mean outcomes is shown to be a function of the covariance between policy outcomes and welfare weights, but after incorporating heterogeneity, the bias is the conditional covariance (which is likely less if not zero). 
+    This paper starts by showing how to connect any outcome of interest, be it test scores, income, or nutrition, to a model of social welfare. Next, we show how inferring welfare impacts from average outcomes is difficult when a policymaker's welfare weights correlate with the magnitude of a policy's impact. We then show how this issue is alleviated by measuring heterogeneity along the factors that both influence the policy and policymaker's welfare weights. The size of the bias in welfare estimates when using mean outcomes is shown to be a function of the covariance between policy outcomes and welfare weights, but after incorporating heterogeneity, the bias is the conditional covariance (which is likely smaller, if not zero). 
+
+    % need to add something about measuring the counterfactuals here 
     
     While this theory is generally applicable, we show how it fits in to the specific context of policy assessment using test-scores and value-added measures. We estimate heterogeneous teacher value-added  using data from all students and teachers in the San Diego Unified School District, focusing on elementary schools in the school years from 2002-03 to 2012-13. The dimension of heterogeneity we focus on is differing levels of pre-intervention test score achievement. The motivation for this is that some teachers may be better at teaching students that are more prepared while other teachers may be better at teaching students who are less prepared. So, a policy intervention like reassigning a teacher to a new classroom, is likely to have different impacts on low and high scoring students. Additionally, policymakers conceivably value gains to students who are struggling or excelling differently. These two facts together make a correlation between policy outcomes and welfare weights plausible, which, as we lay out in our theory, makes recovering welfare from average impacts difficult. This motivates our focus on test score heterogeneity, but our approach can be applied along any relevant dimension. 
     
@@ -173,7 +178,7 @@ Though ubiquitous in empirical analyses, mean-oriented statistics may not fully 
     %This is because of the allocation of teachers to schools: Nearly all of the within school allocations feature lower gains to low achieving students and higher gains to higher achieving students. This pattern suggests that the allocation of teachers to \textit{schools} widens learning gaps in the district each year and is consistent with evidence that better teachers tend to prefer to work in schools with higher income and achievement \citep{bates2022teacher}. This result also applies to a larger literature showing that public services have heterogeneous impacts based on demographics \citep{, , ,} and participation decisions \citep{walters2018demand,finkelstein2019take,ito2021selection,ricks2022strategic} because of the heterogeneous impact of school choice by achievement level.
 
     % teacher allocation is not the only place this matters 
-    As stated above, the important of our welfare framework and measuring heterogeneity stretches far beyond the single example of teacher reallocation. We also show how ranking and incentivizing teachers based on standard value added differs from a ranking based on our measure that that accounts for heterogeneity along the test score achievement distribution. Heterogeneous value-added gives each teacher multiple estimates, one for each student type. Other work has shown that heterogeneity violates ranking assumptions \citep{condie2014teacher} or could contribute to inequity \citep{Delgado2020,bates2022teacher}. Using the welfare framework, we show how to aggregate heterogeneous value added into a welfare-relevant statistic by integrating over the welfare weights. This strategy is capable of ranking teachers in accordance with the goals of specific policymakers. This aggregate ranking also solves the known issue of using ordinal test scores for value added measures \hl{(NEED TO FIND SOURCE)}. 
+    As stated above, the importance of our welfare framework and measuring heterogeneity stretches far beyond the single example of teacher reallocation. We also show how ranking and incentivizing teachers based on standard value added differs from a ranking based on our measure that that accounts for heterogeneity along the test score achievement distribution. Heterogeneous value-added gives each teacher multiple estimates, one for each student type. Other work has shown that heterogeneity violates ranking assumptions \citep{condie2014teacher} or could contribute to inequity \citep{Delgado2020,bates2022teacher}. Using the welfare framework, we show how to aggregate heterogeneous value added into a welfare-relevant statistic by integrating over the welfare weights. This strategy is capable of ranking teachers in accordance with the goals of specific policymakers. This aggregate ranking also solves the known issue of using ordinal test scores for value added measures \hl{(NEED TO FIND SOURCE)}. 
     
     Using this method, we find that standard value added scores rank minority teachers lower. Under standard value added measures, nonwhite teachers score as much as 10\% of a teacher standard deviation lower than under a measure that gives them equal credit for test score gains at every percentile equally\footnote{\hl{this also needs to be updated}}. When calibrated to a common performance-pay scheme, these differences would imply an implicit 7\% tax on non-white teachers' wages. Our theoretical results suggest that could either be because minority teachers may be less likely to be allocated to classes by comparative advantage or because they tend to teach students with different expected growth in the district. This finding  speaks to the large literature on racial pay gaps \hl{Needs cite} and the growing literature in economics on how existing systems can have disparate impacts on different racial groups \hl{needs cite}. We find that seemingly innocuous measures of teacher effectiveness can have unintended consequences if teachers experience differential sorting across schools or classes.
     
@@ -188,15 +193,19 @@ Though ubiquitous in empirical analyses, mean-oriented statistics may not fully 
 %%%%%%%%%%%%%
 % Theory
 %%%%%%%%%%%%
-\section{From Mean Outcomes to Welfare}
+\section{Mean Outcomes, Heterogeneity, and Welfare}
 \label{theory_setion}
 
-    % Quick set up  
+    % Quick set up
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    % a bit of repetition here from the intro. Might be good repetition, might be making this boring 
+    This section formalizes the implications of estimating mean-oriented statistics for use in welfare analyses. Considering a social planner or policymaker who wants to estimate the welfare resulting from a given policy, we highlight two considerations that motivate thinking about heterogeneity. First, how are average test scores connected to welfare? We formally present the social planner's problem and then demonstrate why the average affect, even if it is known, is a biased estimate of welfare because it ignores of distributional considerations. In particular, the bias is theoretically measurable as the covariance between welfare weights and heterogeneous outcomes. Second, it is often empirically difficult to estimate even average effects of policies without measuring heterogeneous treatment effects. Not only does measuring heterogeneous treatment lead to more accurate counterfactual inference, it allows policymakers to consider comparative advantage and better optimize policy decisions. 
     
-    % This isn't good as is but I need to come back to it 
-    When a mean statistic is used for policy decisions, like when value-added is used to to reward or punish teachers, it is implicitly assumed that the unit for the outcome, like test scores, is a cardinal, policy relevant measure of welfare. One point of student growth attributed to a teacher increases that teacher's value added equally regardless of where that student started or their other characteristics. As the discussion above demonstrates, this is unlikely to match policymakers' normative preferences, but outcomes like test scores do seem to matter for students. 
-    
+%%%%%%%%%%%%%
+% The Social Planner Problem
+%%%%%%%%%%%%
+\subsection{The Social Planner Problem}
 
     
     % Welfare Added 
@@ -204,13 +213,19 @@ Though ubiquitous in empirical analyses, mean-oriented statistics may not fully 
     
     % outline: first, we show how measuring mean outcomes has an implicit connection to welfare. We measure outcomes we think are either good or bad in order to increase or decrease them. The first thing we do is show how any policy outcome can be incorporated into a welfare framework. In general, a policymaker that has a set of welfare weights and outcomes for each individual could back out welfare. 
     
-    In order to connect value added to an explicit theory of social welfare, consider a generic social planner. The social planner doesn't value test scores directly, but cares about the welfare weighted present value of students' lifetime utility. Let $U_i$ be a students lifetime utility and let $\psi_i$ be the social welfare weight on that student. The policy maker's objective is then to maximize
+    In order to connect value added to an explicit theory of social welfare, consider a generic social planner deciding on a policy $j$. This could be any policy from assigning teachers to classrooms (our application);  defining an eligibility threshold for a public program like health insurance; or deciding between various public works projects. Let $N$ be the size of the population impacted by a policy. Let $U^j_i$ be lifetime utility and $\psi^j_i$ be the social welfare weight for person $i$ under policy $j$. Welfare under policy $j$ is then
+        
+        \begin{equation}
+        \mathcal{W}^j = N \int_0^1 \psi^j_i U^d_i \text{d}i
+        \end{equation}
     
-    \begin{equation}
-     \max \sum_i \psi_i U_{i}
-    \end{equation}
-    
-  Policy makers don't see lifetime utility of children. They do, however, see traits like test scores, which impact lifetime utility, and test scores is an outcome that can be influenced by policy interventions. So, suppose the policymaker is considering a policy that will impact scores $S$ at time $t$. Their goal then, is to maximize 
+    The right hand side is the size of the population impacted by the policy times the average welfare impact within the population. For comparing policies on the same population, like different allocations of teachers within a district, this N can be ignored, and we can think of the average impact only. when the population changes, for example comparing a school policy to a district wide policy, the relative size of the populations will matter for the total welfare generated. 
+
+    % need to summarize what happens in the appendix and fix up the end bit 
+
+
+
+  Policymakers and economists cannot measure lifetime utility directly. They can, however, measure policy impacts for traits like test scores, which impact lifetime utility. So, suppose the policymaker is considering a policy that will impact scores $S$ at time $t$. Their goal then, is to maximize 
  
      \begin{equation}
      \max \sum_i \E[ \psi_i U_{i} |S_{it}]
@@ -226,65 +241,79 @@ Though ubiquitous in empirical analyses, mean-oriented statistics may not fully 
     In words, $\gamma_i(S_{it})$  is the average expected welfare per test score point for student i over the range of scores from 0 to the students actual score $S_{it}$. It is the weight that transforms an ordinal test score $S_{it}$ into a cardinal measure of welfare that incorporates both the expected utility given $S_{it}$, and the expected welfare weight $\psi_i$. This is an average over test score points for a given student, not an average accross students. To understand this term, it is helpful to think through a simple example. Suppose  $ \E[ \psi_i U_{i} |S_{it}]= S_{it}$ for all students. That is, expected welfare is linear in test scores. In this case,  $\gamma_i(S_{it}) = 1$ because all students gain 1 util per score over the entire range of scores. In this case, test scores are welfare. 
 
    While it is helpful to think about the policymakers overall goal, actual policy proposals typically consider changes in outcomes like test scores and changes in welfare. The policymaker will then want to maximize the change in welfare given their budget. We can characterize a change in the same way. Suppose we are considering a policy $J$ that will change scores from $S_{i,t-1}$ to $S_{it}$ and let $S_{it} - S_{i,t-1} = \Delta^jS_i$
-    
-    \begin{equation}
+
+    \begin{thm}
+    \label{def_welfare_change}
+         \begin{equation}
         \E[\psi_i U_i|S_{it}] - \E[\psi_i U_i |S_{i,t-1}] =  \frac{\E[\psi_i U_i|S_{it}] - \E[\psi_i U_i |S_{i,t-1}] }{\Delta^jS_i} \Delta^jS_i = \gamma_i(S_{it}, S_{i,t-1}) \Delta^jS_i
-    \end{equation}
+         \end{equation}
+    \end{thm}
+   
  
-    In this case, $\gamma_i(S_{it}, S_{i,t-1})$ is the average expected welfare weight for a change from $S_{i,t-1}$ to $S_{it}$ for student i. This turns our ordinal measure of test score gains intro a cardinal measure of welfare gains. 
+    In this case, $\gamma_i(S_{it}, S_{i,t-1})$ is the average expected welfare weight for a change from $S_{i,t-1}$ to $S_{it}$ for student i. This turns our ordinal measure of test score gains intro a cardinal measure of welfare gains. Theorem \ref{def_welfare_change}, then, gives us a welfare relevant statistic for assessing and optimizing policy.
  
-  The example used here matches our empirical exercise by using test scores, but the same logic applies for any meaningful outcome. The proper weights can recover the expected welfare change from an observable outcome. In the math above, the proper weights  $\gamma_i$ are still individual specific. That is, we allowed for different conditional expected utility and welfare weights for each person. For example one student may be destined to be a famous musician, and their expected lifetime utility change from a higher test score in math might actually be pretty low relative to other students. 
+  The example used here matches our empirical exercise by using test scores, but the same logic applies for any meaningful outcome (simply relabel S as another outcome). The proper weights can recover the expected welfare change from any  observable outcome. In the math above, the proper weights  $\gamma_i$ are still individual specific. That is, we allowed for different conditional expected utility and welfare weights for each person. For example one student may be destined to be a famous musician, and their expected lifetime utility change from a higher test score in math might actually be pretty low relative to other students. 
     
-    While this is helpful as a theoretical starting point, using individual welfare weights  $\gamma_i$ to asses policy intervention would not only require knowing those weights for every student, it would also require knowing the expected test score change from a proposed policy for each individual student. In practice, we will need to make a simplification that is empirically estimable. This practical need is likely what motivates most work assessing mean outcomes, but what is the cost of this simplification? How biased will our intuition about welfare impacts from mean outcomes be?  
+    While this is helpful as a theoretical starting point, using individual welfare weights  $\gamma_i$ to asses policy intervention would not only require knowing those weights for every student, it would also require knowing the expected test score change from a proposed policy for each individual student. In practice, we will need to make a simplification that is empirically estimable. This practical need is likely what motivates most work assessing mean outcomes, but what is the cost of this simplification? How biased will our intuition about welfare impacts from mean outcomes be? The next section considers this in detail. 
+    
     
     % mean outcomes 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-    Even though policymakers interests may extend beyond averages, there are cases where mean outcomes may, in expectation, provide the correct answer regardless. In general, it is possible to represent the welfare impact of a policy as the product of some number and the average change in our outcome of interest. We do this using a similar approach and notation to \cite{Keyser_2020} where they are thinking about willingness to pay as a specific outcome.
-    \begin{align*}
-       \\ \sum_i \gamma_i(S_{it}, S_{i,t-1})) \Delta S_i^j =&
-       \\ \sum_i \frac{\gamma_i(S_{it}, S_{i,t-1}))\Delta S_i^j}{\sum_i \Delta S_i^j} \sum_i \Delta S_i^j =&
-       \\ \sum_i \frac{\gamma_i(S_{it}, S_{i,t-1}))\Delta S_i^j}{\sum_i \Delta S_i^j} \quad n \E[\Delta S_i^j] 
-    \end{align*}
-
-    % need to get rid of self citation and explain this here 
-    If we know the first term of the last line, than we can recover the welfare impact of a policy from the average impact on test scores. The trouble is that the first term is a very complicated object that depends, not just on the test score welfare weights $\gamma_i$, but also on the joint distribution of those weights with the changes in test scores for policy j. If a policymaker does not already have a wealth of knowledge about the policy's impact, it is not clear how much giving them the average gain helps them make a decision in general. The complexity of that first term, however, disappears if a policy has no disparate impacts within the affected population. If there is not relationship between the outcome, $ S_i^j$ in this case, and the welfare weights, we get the following. 
+    \subsection{Mean Outcomes and Welfare}
     
-    \begin{definition}
-    \label{pol_indep}
-    if $\gamma_i(S_{it}, S_{i,t-1})) \indep \Delta S_i^j$ then 
-    \begin{equation}
-        \E[\sum_i \gamma_i(S_{it}, S_{i,t-1})) \Delta S_i^j]= n\E[\gamma_i(S_{it}, S_{i,t-1})]\E[\Delta S_i^j]
-    \end{equation}
-    \end{definition}
-    
-
-    $E[\gamma_i(S_{it}, S_{i,t-1})]$ is a more straightforward object. It is the average welfare weight for the impacted population. In practice, this means average outcomes will work very well for cases when the benefits of a policy are uniform or random, or when there is not variation in welfare weights among the impacted population. This may approximately hold, for example, for targeted programs like SNAP benefits. What about for something like test scores and teacher reassignment? If the reassignment disproportionately helps high or low performing students and weights on test scores are not linear, it will be violated. What does it look like if we apply the above method when the independence assumption does not hold? In general:
-
-
+    Even though policymakers interests may extend beyond average outcomes, there are cases where mean outcomes may, in expectation, provide the correct answer regardless. In general, it is possible to represent the welfare impact of a policy as the product of some number and the average change in our outcome of interest. We can do this using a similar approach and notation to \cite{Keyser_2020} where they are thinking about willingness to pay as a specific outcome.
     \begin{align}
-        & \E[\sum_i \gamma_i(S_{it}, S_{i,t-1})) \Delta S_i^j] = \\
-        & n \Big( \E[\gamma_i(S_{it}, S_{i,t-1})]\E[\Delta S_i^j] + \Cov(\gamma_i(S_{it}, S_{i,t-1}), \Delta S_i^j) \Big)
+       \sum_i \gamma_i(S_{it}, S_{i,t-1})) \Delta S_i^j =&
+       \\ \sum_i \frac{\gamma_i(S_{it}, S_{i,t-1}))\Delta S_i^j}{\sum_i \Delta S_i^j} \sum_i \Delta S_i^j =&
+       \\ \sum_i \frac{\gamma_i(S_{it}, S_{i,t-1}))\Delta S_i^j}{\sum_i \Delta S_i^j} \quad n \E[\Delta S_i^j]   \label{eq_hendren}
     \end{align}
 
 
-    So, if we ignore the correlation between a policies outcomes and the welfare weight of those impacted and use average outcomes and the average welfare weight for a population, our estimate will be biased by the covariance term. What can be done about this? Measuring heterogeneous impacts along key dimensions can lower the bias. Of course, considering heterogeneity is a bit of a balancing act. Measuring individual impact would be perfect but empirically impossible, but by choosing dimensions that are both policy relevant and ethically relevant, we may be able to lower the bias significantly. With this in mind, suppose we condition our estimates and welfare weights on prior year test scores to get:
 
-    \begin{definition}
+    % need to get rid of self citation and explain this here 
+    If policymakers know the first term of line \ref{eq_hendren}, than they can recover the welfare impact of a policy from economists estimates of the average impact on test scores (the second term). The trouble is that the first term is a very complicated object that depends, not just on the test score welfare weights $\gamma_i$, but also on the joint distribution of those weights with the changes in test scores for policy j. If a policymaker does not already have a wealth of knowledge about the policy's impact, it is not clear how much giving them the average gain helps them make a decision in general. The complexity of that first term, however, disappears if a policy has no disparate impacts within the affected population. If there is not relationship between the outcome, $ S_i^j$ in this case, and the welfare weights, we get the following. 
+    
+    \begin{thm}
+    \label{pol_indep}
+    if $\gamma_i(S_{it}, S_{i,t-1})) \indep \Delta S_i^j$ then 
+    \begin{equation}
+        \sum_{i=1}^n \E[\gamma_i(S_{it}, S_{i,t-1})) \Delta S_i^j]= n\E[\gamma_i(S_{it}, S_{i,t-1})]\E[\Delta S_i^j]
+    \end{equation}
+    \end{thm}
+    
+
+    $E[\gamma_i(S_{it}, S_{i,t-1})]$ is a more straightforward object. It is the average welfare weight for the impacted population. In practice, this means policymakers can recover welfare from average outcomes without knowing the joint distribution of welfare weights and policy impacts for cases when the benefits of a policy are uniform or random, or when there is not variation in welfare weights among the impacted population. This may approximately hold, for example, for targeted programs like SNAP, Medicade, and TANF. Economists can estimate an average treatment effect like the average willingness to pay for SNAP benefits, and policymakers can apply welfare weights to this estimate that reflect how much they value dollars to SNAP recipients relative to the general population \citep{Keyser_2020}. 
+
+    How would this work for a policy where the population and the treatment affect are not homogeneous?  For example, test scores and teacher reassignment. If the reassignment disproportionately helps high or low performing students and weights on test scores are not linear, the independence assumption will be violated. Suppose we try to use the above strategy anyway. That is, we estimate the average test score gains (the average treatment effect) and policymakers weight these gains according to their average welfare weight for the entire student population. The estimates will be biased according to the following theorem. 
+
+    \begin{thm}
+    If welfare is estimated using the product of an average outcome $E[\Delta S_i^j]$ and an average welfare weight $\E[\gamma_i(S_{it}, S_{i,t-1})]$ the estimate will be biased by: 
+    
+    \begin{align}
+       \sum_{i=1}^n \E[\gamma_i(S_{it}, S_{i,t-1})) \Delta S_i^j] -n * \E[\gamma_i(S_{it}, S_{i,t-1})]\E[\Delta S_i^j]  = & 
+       \\ n * \Cov(\gamma_i(S_{it}, S_{i,t-1}), \Delta S_i^j) & 
+    \end{align}
+    \end{thm}
+
+
+
+    So, if we ignore the correlation between a policies outcomes and the welfare weight of those impacted our estimate will be biased by the covariance term. What can be done about this? Measuring heterogeneous impacts along key dimensions can lower the bias. Of course, considering heterogeneity is a bit of a balancing act. Measuring individual impact would be perfect but empirically impossible, but by choosing dimensions that are both policy relevant and ethically relevant, we may be able to lower the bias significantly. With this in mind, suppose we condition our estimates and welfare weights on prior year test scores. Now the bias is equal to:
+
+    \begin{thm}
     \label{cond_exp_1}
         \begin{align*}
-           & \E[\sum_i \gamma_i(S_{it}, S_{i,t-1})) \Delta S_i^j| S_{i,t-1}]= \\
-           & \sum_i \: \E[\gamma_i(S_{it}, S_{i,t-1}))|S_{i,t-1}] \: \E[\Delta S_i^j|S_{i,t-1}] + \Cov(\gamma_i(S_{it}, S_{i,t-1}), \Delta S_i^j|S_{i,t-1})
+           & \sum_{i=1}^n \E[\gamma_i(S_{it}, S_{i,t-1})) \Delta S_i^j| S_{i,t-1}] - \sum_{i=1}^n \: \E[\gamma_i(S_{it}, S_{i,t-1}))|S_{i,t-1}] \: \E[\Delta S_i^j|S_{i,t-1}] = \\
+           &  n*\Cov(\gamma_i(S_{it}, S_{i,t-1}), \Delta S_i^j|S_{i,t-1})
         \end{align*}
-    \end{definition}
+    \end{thm}
 
 
     % Why this is obviously better
-    Practically, this means economists estimate $E[\Delta S_i^j|S_{i,t-1}]$ rather than a simple mean and the policymakers can incorporate their welfare weight functions, the conditional expectation, along the prior year test score dimension for the impacted population $\E[\gamma_i(S_{it}, S_{i,t-1}))|S_{i,t-1}]$.  How is this conditional estimate better than an average? The conditional covariance is likely lower than the unconditional covariance. In certain cases, it may even go to zero. 
-    % need an eplination for why conditional covariance is lower 
+    Practically, this means economists estimate $E[\Delta S_i^j|S_{i,t-1}]$ rather than a simple mean and the policymakers can incorporate their welfare weight functions, the conditional expectation $\E[\gamma_i(S_{it}, S_{i,t-1}))|S_{i,t-1}]$, along the prior year test score dimension for the impacted population $\E[\gamma_i(S_{it}, S_{i,t-1}))|S_{i,t-1}]$.  How is this conditional estimate better than an average? The conditional covariance is likely lower than the unconditional covariance. In certain cases, it may even go to zero. 
+    % need an explanation for why conditional covariance is lower 
     
     Consider the case where policymakers actually do want to treat students with equal prior test scores equally. That is, for two students who scored the same on their tests last year, a test score gain is the same. Or, mathematically, $\gamma_i(S_{it}, S_{i,t-1}) = \gamma(S_{it})$. This might be a reasonable approximation for some policymakers who favor more equitable levels of test-score achievement. In this case, conditioning on prior test scores makes the welfare weights a constant and so they are uncorrelated with the policy outcome. This is one simple case, but there are others that could lead to a zero covariance as well\footnote{For example we could have welfare weights of $\gamma(S_{it}, S_{i,t-1})$, where policymakers care about both the pre and post test scores for creating their weights. If the error from estimating post }.  
-    % check in on how to make that footnote work or jsut dorp it 
+    % check in on how to make that footnote work or just drop it 
     
     While this is likely to improve the welfare inference, what are we still missing? Why might the conditional covariance still be positive? One example is equity considerations and concerns over racial and economic disparities in outcomes. While the idea of treating students with equal scores equally has some appeal, it ignores other concerns policymakers may have such as lowering racial and economic inequality in educational outcomes. If a policy disproportionately helps White or rich students, for example, the true welfare weights and test score gains will be correlated since Black students, who would have larger welfare weights in this case, are seeing lower gains on average. In this case, ignoring race would rank polices with the same average gains at each test score level equally even if one of those policies had gains concentrated among White students, which our hypothetical policy maker does not like.
 
@@ -292,21 +321,23 @@ Though ubiquitous in empirical analyses, mean-oriented statistics may not fully 
     
     How exactly to do this brings up an important consideration for the welfare weighting framework. Often concerns about racially inequity are framed around disparities, with larger racial disparities being undesirable. This is a preference about an aggregate measure rather than an argument about individual welfare. We could approximate that concern by giving higher welfare weights to students in racial groups with lower mean outcomes, but this is a sort of ad hoc solution. Why? Because the ethical position we are modeling is a policymaker who cares about disparities. They do not want to weight Black students more indefinitely, only until the collective outcomes have been equalized. In this case, the welfare weights would need to dynamically adjust as disparities grew or shrank. For this reason, we find it conceptually clearer to measure the aggregate impact on racial disparities directly and to consider this impact in addition to the welfare impact when considering policy changes. Among policies that impact disparities equally, the welfare estimates allow policymakers to decide between the options. If the impact on disparities differ, policymakers will have to consider how much they are willing to trade off one for the other.      
 
-    % What are some of the more specific assumptions we make in this paper? Getting rid of i for example (although the framing for this might need to change) 
-    The equation in definition \ref{cond_exp_1} describes the welfare consideration as generally in order to conceptualize the bias from making particular assumptions about welfare weight and policy impacts. Practically, however, what do the assumptions we use in our estimation look like within this framework? Ee restrict $\gamma_i(S_{it}, S_{i,t-1})) = \gamma(S_{it})$. That is, test score weights are only determined by pretest scores. We also estimate post-test scores not only with pretests, but with other demographics and test interactions $X_i$ as well. This gives 
     
-    \begin{definition}
-    \label{indep_def_used}
-       Given the assumption that  $\gamma_i(S_{it}, S_{i,t-1})) = \gamma(S_{it})$
-        \begin{align*}
-           & \E[\sum_i \gamma(S_{it}) \Delta S_i^j| S_{i,t-1}, X_i] = \\ 
-           & \sum_i \: \E[\gamma(S_{it})|S_{i,t-1}, X_i] \:\E[\Delta S_i^j|S_{i,t-1}, X_i] \\
-           & \sum_i \: \gamma(S_{it}) \:\E[\Delta S_i^j|S_{i,t-1}, X_i]
-        \end{align*}
-    \end{definition}
+    % I think the rest of this section can all be cut! I am pretty sure it is just flat out wrong due to me being confused about how the X_i vector gets used in practice. Commenting out untill I talk to mike and am more confident. 
+    %-------------------------------------------------
+    %The equation in definition \ref{cond_exp_1} describes the welfare consideration as generally in order to conceptualize the bias from making particular assumptions about welfare weight and policy impacts. Practically, however, what do the assumptions we use in our estimation look like within this framework? Ee restrict $\gamma_i(S_{it}, S_{i,t-1})) = \gamma(S_{it})$. That is, test score weights are only determined by pretest scores. We also estimate post-test scores not only with pretests, but with other demographics and test interactions $X_i$ as well. This gives 
+    
+   % \begin{thm}
+    %\label{indep_def_used}
+      % Given the assumption that  $\gamma_i(S_{it}, S_{i,t-1})) %= \gamma(S_{it})$
+      %  \begin{align*}
+           %& \E[\sum_i \gamma(S_{it}) \Delta S_i^j| S_{i,t-1}, %X_i] = \\ 
+         %  & \sum_i \: \E[\gamma(S_{it})|S_{i,t-1}, X_i] \:\E[\Delta S_i^j|S_{i,t-1}, X_i] \\
+          % & \sum_i \: \gamma(S_{it}) \:\E[\Delta S_i^j|S_{i,t-1}, X_i]
+       % \end{align*}
+   % \end{thm}
 
     % Tansition to value added spcific outcomes and the next section 
-    While we are conditioning on characteristics like race or parental income in the $X_i$, it is not as general as if we had done that in definition \ref{cond_exp_1}. This is because the weights are restricted to test scores. The only role $X_i$ is playing is to better estimate the test score after the policy, $S_{it}$ (and so by definition estimating $\Delta S_i^j$) . Implicit in this equation is the idea that the policymaker does not wish to differentiate between test score gains for different students with the same pretest score. As mentioned above, however, we can and do separately consider the increase or decrease of racial disparities for a given policy. 
+  %  While we are conditioning on characteristics like race or parental income in the $X_i$, it is not as general as if we had done that in definition \ref{cond_exp_1}. This is because the weights are restricted to test scores. The only role $X_i$ is playing is to better estimate the test score after the policy, $S_{it}$ (and so by definition estimating $\Delta S_i^j$) . Implicit in this equation is the idea that the policymaker does not wish to differentiate between test score gains for different students with the same pretest score. As mentioned above, however, we can and do separately consider the increase or decrease of racial disparities for a given policy. 
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Motivations specific to VAM 
@@ -314,7 +345,7 @@ Though ubiquitous in empirical analyses, mean-oriented statistics may not fully 
    \label{va_hetero}
    % This section is about how heterogeneity is specifically important for VAM because it impacts out ability to make inferences.  
    
-   The above framework applies generally to any policy, and illustrates the benefit measuring heterogeneity has for optimizing policy to specific goals. In many policy settings, measuring heterogeneity is also necessary to assess even the average impact of a policy. Generally speaking, this is true when estimates of a policy's impact using a particular population, with a certain mix of characteristics and treatment affects, are applied to a different population with a different mix of characteristics. In the general case, this is a basic element of policy assessment and causal research. Treatment affects from one country, for example, do not necessarily translate to other countries if there are fundamental differences in the populations. A less obvious case is when a policy matches service providers, like teachers, doctors, or contractors, to consumers like students or patients. Using average assessments of past performance to estimate outcomes from policy interventions that alter the match between providers and consumers will lead to inaccurate estimates. By estimating key elements of affect heterogeneity, however, we can adjust our counterfactual estimates to account for the differing populations. To see how this works with value added and test scores specifically consider the following heterogeneous value added estimator. 
+   The above framework applies generally to any policy, and illustrates the benefit that measuring heterogeneity has for accurate welfare estimates. In many policy settings, measuring heterogeneity is also necessary to assess even the average impact of a policy. Generally speaking, this is true when estimates of a policy's average treatment are applied to a new setting with a different population and a different mix of characteristics. In the general case, this is a basic element of policy assessment and causal research. Average treatment affects from one country, for example, do not necessarily translate to other countries if there are fundamental differences in the populations. A less obvious case is when a policy matches service providers, like teachers, doctors, or contractors, to consumers like students or patients. Using average assessments of past performance to estimate outcomes from policy interventions that alter the match between providers and consumers will lead to inaccurate estimates of the provider's impact. By estimating key elements of affect heterogeneity, however, we can adjust our counterfactual estimates to account for the differing populations. To see how this works with value added and test scores specifically consider the following heterogeneous value added estimator. 
    
     In a simple case, let there be two student types 0 and 1. For example above and below median scoring students. Assume value added can be characterized as follows:
     \[
@@ -345,13 +376,13 @@ Though ubiquitous in empirical analyses, mean-oriented statistics may not fully 
     Finally, suppose $\alpha_{j,0} \neq \alpha_{j,1}$ and $\gamma_L \neq \gamma_H$. In this case, the unconditional expectation in definition \ref{pol_indep} is unlikely to hold \footnote{a case where it might would be something like a teacher training that happens to increase test scores equally for both types of students.Then $\Delta S_i^j$ is actually a constant so the terms are independent. This seems like an unlikely scenario, but it is mathematically possible}. Turning to the assumptions in definition \ref{indep_def_used}, we need to estimate the expected test score change for each student conditional on their observable characteristics $S_{i,t-1}, X_i$. If, as is the case in this paper, the groups 0 and 1 are based on previous year test scores, than the expected change in test scores conditional on $S_{i,t-1}, X_i$ will depend on the teachers heterogeneous impact on the corresponding group. We can see this at work in our simulation of teacher reassignment in section \ref{swell}. For a given class reassignment we estimate the welfare impact in a classroom as 
 
         \begin{align}
-           & \E[\sum_i \gamma(S_{it}) \Delta S_i^j| S_{i,t-1}, X_i] = \\ 
-           & \sum_i \: \E[\gamma(S_{it})|S_{i,t-1}, X_i] \:\E[\Delta S_i^j|S_{i,t-1}, X_i] \\
-           & \sum_i \: \gamma(S_{it}) \hat{\alpha}_{j,i}
+           & \E[\sum_i \gamma_i(S_{it}, S_{i,t-1})) \Delta S_i^j| S_{i,t-1}] = \\ 
+           & \sum_i \: \E[\gamma_i(S_{it}, S_{i,t-1}))|S_{i,t-1}, X_i] \:\E[\Delta S_i^j|S_{i,t-1}] \\
+           & \sum_i \: \hat{\gamma}(S_{i,t-1}) \hat{\alpha}_{j,i}(S_{i,t-1})
         \end{align}
 
 
-    where $\hat{\alpha}_{j,i}$ is the predicted impact teacher j has on a student i's test scores based on the students observable characteristics $S_{i,t-1}$ and  $ X_i$. $\gamma(S_{it})$ is the welfare weight corresponding to the students pretest score. 
+    where $\hat{\alpha}_{j,i}$ is the predicted impact teacher j has on a student i's test scores conditional on the students observable characteristics $S_{i,t-1}$. $hat{\gamma}(S_{i,t-1})$ is the expected welfare weight corresponding to the students pretest score. 
 
     % this poitn is no longer relevent because we are only weighting based on pretest scores, Maybe worth mentioning, but prbably it is just confusing. 
     %In the two type case this is usually either $\gamma_0$ or $\gamma_1$, corresponding to the student's type. The exception is for students near the cutoff who change types as a result of the policy change. In this case they get a weighted average of the two. 
@@ -537,8 +568,9 @@ Though ubiquitous in empirical analyses, mean-oriented statistics may not fully 
     % Needs to be updated (although it's just an example so not super important 
     \begin{figure}[H]
         \begin{center}
-        \resizebox{.3\textwidth}{!}{$y_{i,j} = \gamma_{j,k(i)} \mathds{1}(i\in j) + \beta_1 X_i + \epsilon_{i,j}$}
-        \includegraphics[width=.85\textwidth]{Working_Paper/WP_Figures/fig1_heterogeneity.pdf}
+        %\resizebox{.55\textwidth}{!}{$y_{i,j} = \gamma_{j,k(i)} \mathds{1}(i\in j) + \beta_1 X_i + \epsilon_{i,j}$}
+        \includegraphics[width=.45\textwidth]{Working_Paper/WP_Figures/Example_1201.png}
+        \includegraphics[width=.45\textwidth]{Working_Paper/WP_Figures/Example_1246.png}
         \end{center}
             \caption{Teachers are Different}
                \label{fig_teacher_examples}
@@ -576,7 +608,7 @@ Though ubiquitous in empirical analyses, mean-oriented statistics may not fully 
 
     What does it look like for our heterogeneous measure to perform well? If our binned estimate corresponds to future outcomes in a similar way to standard value added, then the predictive power has not been diminished. Additionally, we might expect to see some additional information via idiosyncratic affects on particular outcomes. For example, we might expect the low bin value added to have a large affect on high-school graduation or two year-college while high bin has a larger impact on four year. 
 
-    Our results for standard value added are somewhat consistent with what was found in \cite{chetty2014measuring2}. Surprisingly, none of the measures are predictive of high school graduation. One explanation for this might be that SDUSD has an unusually high graduate rate, creating ceiling effects, While the standard errors keep most affects from being statically significant, standard value added and both of our binned estimates track closely with an increase in any college, primarily from four year college with potentially a drop in two year college, and an increase in a bachelor's degree within 6 years. While the standard errors are too large to say anything too confidently, the point estimates for two year college are higher for below-median students, which makes sense if those students are closer to the margin of not going to any college. For above-median students, high teacher value-added suggests a drop in the probability of two-year college enrollment, and an increase in the probability of four-year college enrollment. We can also see that the standard errors for each student group are not actually much bigger than for the mean as a whole. While a stronger difference in which outcomes are associated with which bins would give us an extra reason to focus on test score heterogeneity, the fact that they are closely matching the predicted outcomes of standard value added suggest we are not just picking up noise with the binned estimates. 
+    Our results for standard value added are somewhat consistent with what was found in \cite{chetty2014measuring2}. Surprisingly, none of the measures are predictive of high school graduation. One explanation for this might be that SDUSD has an unusually high graduation rate, creating ceiling effects. While not statically significant, standard value added and both of our binned estimates track closely with an increase in any college, primarily from four year college with potentially a drop in two year college, and an increase in a bachelor's degree within 6 years. While the standard errors are too large to say anything too confidently, the point estimates for two year college are higher for below-median students, which makes sense if those students are closer to the margin of not going to any college. For above-median students, high teacher value-added suggests a drop in the probability of two-year college enrollment, and an increase in the probability of four-year college enrollment. We can also see that the standard errors for each student group are not actually much bigger than for the mean as a whole. While a stronger difference in which outcomes are associated with which bins would give us an extra reason to focus on test score heterogeneity, the fact that they are closely matching the predicted outcomes of standard value added suggest we are not just picking up noise with the binned estimates. 
 
     % updated 8/9/22
     \begin{figure}[H]
@@ -622,7 +654,7 @@ By estimating teacher value added flexibly along the student achievement distrib
     \label{fig:aloc_eff}
 \end{figure}
 
-The graphs on the top row show possibilities for within-school teacher re-assignments for ELA and math (left and right respectively), while the bottom row shows the possibilities when teachers can be re-assigned across schools. 
+The graphs on the top row show possibilities for within-school teacher re-assignments for ELA and math (left and right respectively), while the bottom row shows the corresponding possibilities when teachers can be re-assigned across schools. 
 
 	Each point in the figures represents the average gains to below median students (on the y-axis) and the average gains to above median students (on the x-axis) under the given reallocation. All gains have been re-centered on the actual allocation of teachers (the red diamond). This means, for example, if a point is at (-0.02, 0.04) that the simulation produced an average loss to above median students of 0.02 standard deviations and an average gain to below median students of 0.04 students, both relative to the actual allocation of teachers. The means a negative number indicates a ``loss" only relative to the future predicted by status quo policy and not that students are actually losing knowledge or getting lower test scores. 
 
@@ -630,13 +662,13 @@ The graphs on the top row show possibilities for within-school teacher re-assign
 
 	For reference, we marked the utilitarian planner's solution, which we define as the best reallocation with equal weight on all students $(\alpha=0.5)$, with an orange diamond. Additionally, we run a simulation where we order classes by size and teachers by standard value added within each school-grade-year cell, assigning the teacher with the highest standard value added to the biggest class, the next to the second biggest class, and so on until the teacher with the lowest standard value added gets the smallest class. This is represented on the figure by a green diamond.
 
-	The first observation from these figures is that using the information gained with the two-bin estimates of value added allows for meaningful possible gains on average for both above and below median students. Moving from the actual allocation to the utilitarian maximum within schools, shown by the yellow dot, gives a rough average gain of 0.013 standard deviations for below-median and 0.009 for above-median students in ELA.  In math, the potential gains are larger, roughly 0.015 standard deviation for both types of students on average. These gains represent estimates for a single year, so over time could compound for students who experienced these gains year on year. 
+	The first observation from these figures is that using the information gained with the two-bin estimates of value added allows for meaningful possible gains on average for both above and below median students. Moving from the actual allocation to the utilitarian maximum within schools, shown by the yellow dot, gives an average gain of about 0.013 standard deviations for below-median and 0.009 for above-median students in ELA.  In math, the potential gains are larger, roughly 0.015 standard deviation for both types of students on average. These gains represent estimates for a single year, so over time could compound for students who experienced these gains year on year. 
 
- The second observation is that moving from a standard value-added approach to the heterogeneous approach can lead to larger gains in mean achievement. By comparing the utilitarian solutions with the optimal allocations from the standard value-added model, shown by the yellow and green dots respectively, one can see that using the two-bin value added model materially increases the potential gains from re-assigning teachers within a given school and grade. 
+ The second observation is that moving from a standard value-added approach to the heterogeneous approach can lead to larger gains in mean achievement. By comparing the utilitarian solutions with the optimal allocations from the standard value-added model, shown by the yellow and green dots respectively, one can see that using the heterogeneous value added model materially increases the potential gains from re-assigning teachers within a given school and grade. 
  
  The third observation is that policymakers could boost achievement more effectively if they had the ability to re-assign teachers in a given grade across schools. The predicted gains in achievement if teachers are allocated across schools are .04 and .05 for below-median and above-median students in ELA, and .05 and .08 in math. Comparing to the gains with within-school reallocation shown in the top row, in ELA the gains are roughly four times higher, and the gains in math are roughly three times higher, if teaches are reallocated across schools. 
 
- Of course, reallocating teachers across schools may be sharply constrained, for instance by collective bargaining agreements. Indeed, in the district we study the union contract gives teachers with higher seniority priority when slots open up. Teacher preferences over location of their workplace could also constrain re-assignments across schools. For example, \citep{boyd2005a,boyd2005b} demonstrate that in New York most teachers prefer to work near where they live.
+ Of course, reallocating teachers across schools may be sharply constrained, for instance by collective bargaining agreements. Indeed, in the district we study the union contract gives teachers with higher seniority priority when slots open up. Teacher preferences over location of their workplace could also constrain re-assignments across schools. For example, \citep{boyd2005a} demonstrate that in New York most teachers prefer to work near where they live.
 
 	% I STILL CANNOT UNDERSTAND WHAT POINT IS BEING MADE HERE. I HAVE NOTES FROM OUR MEETING THAT THIS IS ABOUT THE GREEN TO ORANGE COMPARISON, BUT I HAVE COVERED THAT IN TEH ABOVE PARAGRAPH. CAN WE DELETE THIS? The second main takeaway from these figures is that there is a wide range of options for policymakers in deciding which students to target by deliberately assigning teachers to certain classes. Looking at the across school math allocations, for example, there is a .1 point swing in below median gains and a .15 swing in above median gains depending on the allocation chosen. This emphasizes the importance of thinking explicitly about welfare and the normative preferences of policymakers when making decisions like this. While standard value added may seam neutral, there is an implicit weight being used. 
  
@@ -659,7 +691,7 @@ The graphs on the top row show possibilities for within-school teacher re-assign
     \end{subfigure}
     
     \label{fig:win_lose}
-    \caption{Distribution of gains or losses for each bin across weighting schemes. \hl{Note these figure are not updated with newest chetty style estimation strategy}}
+    \caption{Distribution of gains or losses for each bin across weighting schemes.}
 \end{figure}
 
 As expected, as the policymaker increases the weight on below-median students, the predicted test scores for below-median students are higher relative to above-median students. Examining the predicted mean effects, shown by the X marks in each box, it is roughly true that the average achievement of neither group falls as long as the weight stays in the middle, between about 20 and 80. Nonetheless, students at the 10th percentile of predicted impacts shown by the bottom "whisker", almost always are predicted to lose 0.1 or more of a standard deviation in achievement due to the within-school teacher re-assignments. Logically, teacher re-assignments will not typically be a Pareto improvement for students, and these numbers illustrate that logic.
@@ -708,9 +740,15 @@ We plan to plug these differences into a real payment scheme to see what the pay
 
 \section{Appendix}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Going from utility to test scores 
+\subsection{From welfare to Weighted Test Scores}
+
+
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Ordinal Test scores, Cardinal Welfare
-   \subsection{Ordinal Test scores, Cardinal Welfare}
+   \subsection{Ordinal Test scores, Cardinal Welfare (probably cut this)}
    \label{Cardinal_note}
     Some of the value of welfare weighting is that, with the proper welfare weights, we have transformed ordinal test scores to have actual cardinal meaning. The atonality of test scores has been shown to cause problems for Value Added inference \hl{(CITATION)}. Equal welfare weighted gains are meant to be equally valuable to the policymaker, so the welfare, sum of the weight and scores, have cardinal meaning that cannot be transformed even with an order preserving transformation. 
     
