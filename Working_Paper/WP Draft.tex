@@ -216,7 +216,7 @@ Though ubiquitous in empirical analyses, mean-oriented statistics may not fully 
     In order to connect value added to an explicit theory of social welfare, consider a generic social planner deciding on a policy $j$. This could be any policy from assigning teachers to classrooms (our application);  defining an eligibility threshold for a public program like health insurance; or deciding between various public works projects. Let $N$ be the size of the population impacted by a policy. Let $U^j_i$ be lifetime utility and $\psi^j_i$ be the social welfare weight for person $i$ under policy $j$. Welfare under policy $j$ is then
         
         \begin{equation}
-        \mathcal{W}^j = N \int_0^1 \psi^j_i U^d_i \text{d}i
+        \mathcal{W}^j = N \int_0^1 \psi^j_i U^j_i \text{d}i
         \end{equation}
     
     The right hand side is the size of the population impacted by the policy times the average welfare impact within the population. For comparing policies on the same population, like different allocations of teachers within a district, this N can be ignored, and we can think of the average impact only. when the population changes, for example comparing a school policy to a district wide policy, the relative size of the populations will matter for the total welfare generated. 
@@ -225,94 +225,92 @@ Though ubiquitous in empirical analyses, mean-oriented statistics may not fully 
 
 
 
-  Policymakers and economists cannot measure lifetime utility directly. They can, however, measure policy impacts for traits like test scores, which impact lifetime utility. So, suppose the policymaker is considering a policy that will impact scores $S$ at time $t$. Their goal then, is to maximize 
- 
-     \begin{equation}
-     \max \sum_i \E[ \psi_i U_{i} |S_{it}]
-    \end{equation}
-    
-    We can rewrite each students expectation in the following way to get a clearer connection to test score measures. 
-    
-    \begin{equation}
-         \E[ \psi_i U_{i} |S_{it}] = \frac{\E[ \psi_i U_{i} |S_{it}]}{S_{it}} S_{it} = \gamma_i(S_{it}) S_{it}
-    \end{equation}
+  Policymakers and economists cannot measure lifetime utility directly. They can, however, measure policy impacts for traits like test scores, which impact lifetime utility. So, suppose the policymaker is considering a policy that will impact scores $S$ at time $t$. Their goal then, is to maximize the expected lifetime utility given the observed outcome of like test scores $S_i^j$
+  
+    \begin{align}
+           & \E[\mathcal{W}^j|S_i^j] = N E[\int_0^1 \psi^j_i U^j_i \text{d}i|S_i^j] \\
+           & = N \int_0^1 E[\psi^j_i U^j_i |S_i^j] \text{d}i \\ 
+           &  = N \int_0^1 \frac{E[\psi^j_i U^j_i |S_i^j]}{S_i^j} S_i^j\text{d}i \\ 
+          &   = N \int_0^1 \gamma_i(S_{it}) S_{it} \text{d}i
+    \end{align}
 
-    
-    In words, $\gamma_i(S_{it})$  is the average expected welfare per test score point for student i over the range of scores from 0 to the students actual score $S_{it}$. It is the weight that transforms an ordinal test score $S_{it}$ into a cardinal measure of welfare that incorporates both the expected utility given $S_{it}$, and the expected welfare weight $\psi_i$. This is an average over test score points for a given student, not an average accross students. To understand this term, it is helpful to think through a simple example. Suppose  $ \E[ \psi_i U_{i} |S_{it}]= S_{it}$ for all students. That is, expected welfare is linear in test scores. In this case,  $\gamma_i(S_{it}) = 1$ because all students gain 1 util per score over the entire range of scores. In this case, test scores are welfare. 
+   Were the second line follows by Fubini's theorem (welfare is positive and finite), and the last line is simply redefining the first term as a test score welfare weight $\gamma_i(S_{it})$. In words, $\gamma_i(S_{it})$  is the average expected welfare per test score point for student i over the range of scores from 0 to the students actual score $S_{it}$. It is the weight that transforms an ordinal test score $S_{it}$ into a cardinal measure of welfare that incorporates both the expected utility given $S_{it}$, and the expected welfare weight $\psi_i$. This is an average over test score points for a given student, not an average across students. To understand this term, it is helpful to think through a simple example. Suppose  $ \E[ \psi_i U_{i} |S_{it}]= S_{it}$ for all students. That is, expected welfare is linear in test scores. In this case,  $\gamma_i(S_{it}) = 1$ because all students gain 1 util per score over the entire range of scores. In this case, test scores are welfare. While it may seem unusual to apply welfare weights to a short term outcome like test scores, previous work on surrogates \hl{RAJ CHETTY PAPER} shows a connection between short term outcomes like test scores and long term outcomes like earnings. If short term outcomes can reasonably predict long term outcomes more clearly connected to lifetime utility, it is reasonable that policymakers can develop welfare weights for short term outcomes. 
 
-   While it is helpful to think about the policymakers overall goal, actual policy proposals typically consider changes in outcomes like test scores and changes in welfare. The policymaker will then want to maximize the change in welfare given their budget. We can characterize a change in the same way. Suppose we are considering a policy $J$ that will change scores from $S_{i,t-1}$ to $S_{it}$ and let $S_{it} - S_{i,t-1} = \Delta^jS_i$
+   While it is helpful to think about the policymakers overall goal, actual policy proposals typically consider changes in outcomes like test scores and changes in welfare. The policymaker will then want to maximize the change in welfare given their budget. We can characterize a change in the same way. Suppose we are considering a policy $J$ that will change some outcome, say test scores, from $S_i^0$ to $S_i^j$ and let $S_i^j- S_i^0 = \Delta S^j_i$
 
     \begin{thm}
     \label{def_welfare_change}
-         \begin{equation}
-        \E[\psi_i U_i|S_{it}] - \E[\psi_i U_i |S_{i,t-1}] =  \frac{\E[\psi_i U_i|S_{it}] - \E[\psi_i U_i |S_{i,t-1}] }{\Delta^jS_i} \Delta^jS_i = \gamma_i(S_{it}, S_{i,t-1}) \Delta^jS_i
-         \end{equation}
+    \begin{align}
+           &  \Delta \mathcal{W}^j \\
+           & = \E[\mathcal{W}^j|S_i^j] - E[\mathcal{W}|S_i^0]  \\
+           &  = N \int_0^1 \frac{E[\psi^j_i U^j_i |S_i^j] - E[\psi_i U_i |S_i^0]}{\Delta S^j_i} \Delta S^j_i\text{d}i \\ 
+          &   = N \int_0^1 \gamma_i(S_i^j, S_i^0) \Delta S^j_i \text{d}i
+    \end{align}
     \end{thm}
+
    
  
-    In this case, $\gamma_i(S_{it}, S_{i,t-1})$ is the average expected welfare weight for a change from $S_{i,t-1}$ to $S_{it}$ for student i. This turns our ordinal measure of test score gains intro a cardinal measure of welfare gains. Theorem \ref{def_welfare_change}, then, gives us a welfare relevant statistic for assessing and optimizing policy.
- 
-  The example used here matches our empirical exercise by using test scores, but the same logic applies for any meaningful outcome (simply relabel S as another outcome). The proper weights can recover the expected welfare change from any  observable outcome. In the math above, the proper weights  $\gamma_i$ are still individual specific. That is, we allowed for different conditional expected utility and welfare weights for each person. For example one student may be destined to be a famous musician, and their expected lifetime utility change from a higher test score in math might actually be pretty low relative to other students. 
-    
-    While this is helpful as a theoretical starting point, using individual welfare weights  $\gamma_i$ to asses policy intervention would not only require knowing those weights for every student, it would also require knowing the expected test score change from a proposed policy for each individual student. In practice, we will need to make a simplification that is empirically estimable. This practical need is likely what motivates most work assessing mean outcomes, but what is the cost of this simplification? How biased will our intuition about welfare impacts from mean outcomes be? The next section considers this in detail. 
+    In this case, $\gamma_i(S_i^j, S_i^0) $ is the average expected welfare weight for a change from $S_i^0$ to $S_i^j$ for student i. This turns our ordinal measure of test score gains intro a cardinal measure of welfare gains. Theorem \ref{def_welfare_change}, then, gives us a welfare relevant statistic for assessing and optimizing policy.
+
+ Despite being an unbiased metric for changes in welfare, implementing this optimization rule still has a major complication. In the math above, the proper weights  $\gamma_i$ are still individual specific. That is, we allowed for different conditional expected utility and welfare weights for each person. For example one student may be destined to be a famous musician, and their expected lifetime utility change from a higher test score in math might actually be pretty low relative to other students. While this is helpful as a theoretical starting point, using individual welfare weights  $\gamma_i$ to asses policy intervention would not only require knowing those weights for every student, it would also require estimating all of the unit-specific treatment effects of the policy. Unfortunately, it is unlikely that the policy maker knows these effects before hand---especially if numerous potential policies are being considered. As such we now turn to considering effect estimation and how estimation decisions affect the welfare estimates.
     
     
     % mean outcomes 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \subsection{Mean Outcomes and Welfare}
-    
-    Even though policymakers interests may extend beyond average outcomes, there are cases where mean outcomes may, in expectation, provide the correct answer regardless. In general, it is possible to represent the welfare impact of a policy as the product of some number and the average change in our outcome of interest. We can do this using a similar approach and notation to \cite{Keyser_2020} where they are thinking about willingness to pay as a specific outcome.
+
+    Practitioners often attempt to infer welfare from only the average treatment effects for a policy, $ATE^j$. Using a similar approach to  \cite{Keyser_2020}, the following equation shows how this is possible if the correct welfare weights are applied
+
+
     \begin{align}
-       \sum_i \gamma_i(S_{it}, S_{i,t-1})) \Delta S_i^j =&
-       \\ \sum_i \frac{\gamma_i(S_{it}, S_{i,t-1}))\Delta S_i^j}{\sum_i \Delta S_i^j} \sum_i \Delta S_i^j =&
-       \\ \sum_i \frac{\gamma_i(S_{it}, S_{i,t-1}))\Delta S_i^j}{\sum_i \Delta S_i^j} \quad n \E[\Delta S_i^j]   \label{eq_hendren}
+           & \Delta \mathcal{W}^j \\
+           &  = N \int_0^1 \gamma_i(S_i^j, S_i^0) \Delta S^j_i \text{d}i\\
+           & = N \frac{\int_0^1 \gamma_i(S_i^j, S_i^0) \Delta S^j_i \text{d}i}{\int_0^1 \Delta S^j_i \text{d}i} \int_0^1 \Delta S^j_i \text{d}i \\
+           & =  N \Tilde{\gamma}^j ATE^j 
     \end{align}
-
-
 
     % need to get rid of self citation and explain this here 
-    If policymakers know the first term of line \ref{eq_hendren}, than they can recover the welfare impact of a policy from economists estimates of the average impact on test scores (the second term). The trouble is that the first term is a very complicated object that depends, not just on the test score welfare weights $\gamma_i$, but also on the joint distribution of those weights with the changes in test scores for policy j. If a policymaker does not already have a wealth of knowledge about the policy's impact, it is not clear how much giving them the average gain helps them make a decision in general. The complexity of that first term, however, disappears if a policy has no disparate impacts within the affected population. If there is not relationship between the outcome, $ S_i^j$ in this case, and the welfare weights, we get the following. 
+    The trouble is that the first term, $\Tilde{\gamma}^j$ depends depends, not just on the test score welfare weights $\gamma_i$, but also on the joint distribution of those weights with the changes in test scores for policy j. It is a complex object that involves a deep understanding of the distribution of heterogeneous impacts. If a policymaker already has this deep knowledge, it is not clear how much giving them the average treatment effect will help. 
+
+    Rather than consider the complicated object $\Tilde{\gamma}^j$, it is often simpler to consider the simple mean welfare weight for the entire population impacted by a given policy, $\bar{\gamma}^j = \int_0^1 \gamma_i(S_i^j, S_i^0)$. This follows the intuition supplied in \cite{Keyser_2020} and in other economic analysis. In general, using this simpler average weight with the average treatment effect is a biased measure of welfare:
     
-    \begin{thm}
-    \label{pol_indep}
-    if $\gamma_i(S_{it}, S_{i,t-1})) \indep \Delta S_i^j$ then 
-    \begin{equation}
-        \sum_{i=1}^n \E[\gamma_i(S_{it}, S_{i,t-1})) \Delta S_i^j]= n\E[\gamma_i(S_{it}, S_{i,t-1})]\E[\Delta S_i^j]
-    \end{equation}
-    \end{thm}
-    
-
-    $E[\gamma_i(S_{it}, S_{i,t-1})]$ is a more straightforward object. It is the average welfare weight for the impacted population. In practice, this means policymakers can recover welfare from average outcomes without knowing the joint distribution of welfare weights and policy impacts for cases when the benefits of a policy are uniform or random, or when there is not variation in welfare weights among the impacted population. This may approximately hold, for example, for targeted programs like SNAP, Medicade, and TANF. Economists can estimate an average treatment effect like the average willingness to pay for SNAP benefits, and policymakers can apply welfare weights to this estimate that reflect how much they value dollars to SNAP recipients relative to the general population \citep{Keyser_2020}. 
-
-    How would this work for a policy where the population and the treatment affect are not homogeneous?  For example, test scores and teacher reassignment. If the reassignment disproportionately helps high or low performing students and weights on test scores are not linear, the independence assumption will be violated. Suppose we try to use the above strategy anyway. That is, we estimate the average test score gains (the average treatment effect) and policymakers weight these gains according to their average welfare weight for the entire student population. The estimates will be biased according to the following theorem. 
-
-    \begin{thm}
-    If welfare is estimated using the product of an average outcome $E[\Delta S_i^j]$ and an average welfare weight $\E[\gamma_i(S_{it}, S_{i,t-1})]$ the estimate will be biased by: 
+  \begin{thm}
+    If welfare is estimated using the product of an average outcome $ATE^j$ and an average welfare weight $\bar{\gamma}^j$ the estimate will be biased by: 
     
     \begin{align}
-       \sum_{i=1}^n \E[\gamma_i(S_{it}, S_{i,t-1})) \Delta S_i^j] -n * \E[\gamma_i(S_{it}, S_{i,t-1})]\E[\Delta S_i^j]  = & 
-       \\ n * \Cov(\gamma_i(S_{it}, S_{i,t-1}), \Delta S_i^j) & 
+       & \textbf{Bias} = \Delta \mathcal{W}^j - N\bar{\gamma}^j ATE^j \\
+       & =  N \left( \int_0^1 \gamma_i(S_i^j, S_i^0) \Delta S^j_i \text{d}i - \bar{\gamma}^j ATE^j \right) \\
+       & = N \left( \E[\gamma_i] \E[\Delta S^j_i] + \Cov(\gamma_i, \Delta S^j_i) - \bar{\gamma}^j ATE^j \right) \\
+       & = N \Cov(\gamma_i, \Delta S^j_i)
     \end{align}
     \end{thm}
 
+    With the exact equation for the bias in hand, we can see that this simpler approach will produce unbiased results when welfare weights are orthogonal to policy outcomes.   In practice, this means policymakers can recover welfare from average outcomes without knowing the joint distribution of welfare weights and policy impacts in a few special cases.  For example when the benefits of a policy are uniform or random, or when there is not variation in welfare weights among the impacted population. This may approximately hold, for example, for targeted programs like SNAP, Medicade, and TANF. Economists can estimate an average treatment effect like the average willingness to pay for SNAP benefits, and policymakers can apply welfare weights to this estimate that reflect how much they value dollars to SNAP recipients relative to the general population \citep{Keyser_2020}. 
+    
+    How would this work for a policy where the population and the treatment affect are not homogeneous?  For example, test scores and teacher reassignment. If the reassignment disproportionately helps high or low performing students and weights on test scores are not linear, then the covariance term, the bias, is non-zero
+
+ Measuring heterogeneous impacts along key dimensions can lower the bias. Of course, considering heterogeneity is a bit of a balancing act. Measuring individual impact would be perfect but empirically impossible, but by choosing dimensions that are both policy relevant and ethically relevant (i.e. they vary by both test scores and welfare weights), we may be able to lower the bias significantly. With this in mind, suppose we condition our estimates and welfare weights on some variable $X_i$ (with state space X), for example prior year test scores. Now the bias is equal to:
 
 
-    So, if we ignore the correlation between a policies outcomes and the welfare weight of those impacted our estimate will be biased by the covariance term. What can be done about this? Measuring heterogeneous impacts along key dimensions can lower the bias. Of course, considering heterogeneity is a bit of a balancing act. Measuring individual impact would be perfect but empirically impossible, but by choosing dimensions that are both policy relevant and ethically relevant, we may be able to lower the bias significantly. With this in mind, suppose we condition our estimates and welfare weights on prior year test scores. Now the bias is equal to:
 
     \begin{thm}
     \label{cond_exp_1}
         \begin{align*}
-           & \sum_{i=1}^n \E[\gamma_i(S_{it}, S_{i,t-1})) \Delta S_i^j| S_{i,t-1}] - \sum_{i=1}^n \: \E[\gamma_i(S_{it}, S_{i,t-1}))|S_{i,t-1}] \: \E[\Delta S_i^j|S_{i,t-1}] = \\
-           &  n*\Cov(\gamma_i(S_{it}, S_{i,t-1}), \Delta S_i^j|S_{i,t-1})
-        \end{align*}
+       & \textbf{Bias} = \Delta \mathcal{W}^j - N \int_X \bar{\gamma}^j(X_i) CATE^j(X_i) \\
+       & =  N \left( \int_0^1 \gamma_i(S_i^j, S_i^0) \Delta S^j_i \text{d}i - \int_X \bar{\gamma}^j(X_i) CATE^j(X_i) \right)  \\
+      & =  N \left( \E[\gamma_i \Delta S^j_i] - \int_X \bar{\gamma}^j(X_i) CATE^j(X_i) \right) \\
+        & = N \left( \int_X \E[\gamma_i \Delta S^j_i| X_i] - \int_X \bar{\gamma}^j(X_i) CATE^j(X_i) \right)  \\
+       & = N \int_X \left(  \E[\gamma_i| X_i] \E[\Delta S^j_i| X_i] + \Cov(\gamma_i, \Delta S^j_i| X_i) - \bar{\gamma}^j(X_i) CATE^j(X_i) \right) \\
+       & = N \int_X \Cov(\gamma_i, \Delta S^j_i| X_i)
+    \end{align*}
     \end{thm}
-
-
+    
+%%%%%%%%%%%%%%%%%%% STOPPED THE REDRAFT HERE %%%%%%%%%%%%%%%%%%%%%
     % Why this is obviously better
-    Practically, this means economists estimate $E[\Delta S_i^j|S_{i,t-1}]$ rather than a simple mean and the policymakers can incorporate their welfare weight functions, the conditional expectation $\E[\gamma_i(S_{it}, S_{i,t-1}))|S_{i,t-1}]$, along the prior year test score dimension for the impacted population $\E[\gamma_i(S_{it}, S_{i,t-1}))|S_{i,t-1}]$.  How is this conditional estimate better than an average? The conditional covariance is likely lower than the unconditional covariance. In certain cases, it may even go to zero. 
+    Practically, this means economists estimate the conditional average treatment effect $ CATE^j(X_i)$ rather than an average treatment effect and the policymakers can incorporate their average welfare weight as a function of $X$,  $\bar{\gamma}^j(X_i)$.  How is this conditional estimate better than an average? The conditional covariance is likely lower than the unconditional covariance. In certain cases, it may even go to zero. 
     % need an explanation for why conditional covariance is lower 
     
-    Consider the case where policymakers actually do want to treat students with equal prior test scores equally. That is, for two students who scored the same on their tests last year, a test score gain is the same. Or, mathematically, $\gamma_i(S_{it}, S_{i,t-1}) = \gamma(S_{it})$. This might be a reasonable approximation for some policymakers who favor more equitable levels of test-score achievement. In this case, conditioning on prior test scores makes the welfare weights a constant and so they are uncorrelated with the policy outcome. This is one simple case, but there are others that could lead to a zero covariance as well\footnote{For example we could have welfare weights of $\gamma(S_{it}, S_{i,t-1})$, where policymakers care about both the pre and post test scores for creating their weights. If the error from estimating post }.  
+    Consider the case where policymakers actually do want to treat students with equal prior test scores equally. That is, for two students who scored the same on their tests last year, a test score gain is the same. Or, mathematically, $\gamma_i(S_{it}, S_{i,t-1}) = \gamma(S_{i,t-1})$. This might be a reasonable approximation for some policymakers who favor more equitable levels of test-score achievement. In this case, conditioning on prior test scores makes the welfare weights a constant and so they are uncorrelated with the policy outcome. This is one simple case, but there are others that could lead to a zero covariance as well\footnote{For example we could have welfare weights of $\gamma(S_{it}, S_{i,t-1})$, where policymakers care about both the pre and post test scores for creating their weights. If the error from estimating post }.  
     % check in on how to make that footnote work or just drop it 
     
     While this is likely to improve the welfare inference, what are we still missing? Why might the conditional covariance still be positive? One example is equity considerations and concerns over racial and economic disparities in outcomes. While the idea of treating students with equal scores equally has some appeal, it ignores other concerns policymakers may have such as lowering racial and economic inequality in educational outcomes. If a policy disproportionately helps White or rich students, for example, the true welfare weights and test score gains will be correlated since Black students, who would have larger welfare weights in this case, are seeing lower gains on average. In this case, ignoring race would rank polices with the same average gains at each test score level equally even if one of those policies had gains concentrated among White students, which our hypothetical policy maker does not like.
@@ -345,7 +343,7 @@ Though ubiquitous in empirical analyses, mean-oriented statistics may not fully 
    \label{va_hetero}
    % This section is about how heterogeneity is specifically important for VAM because it impacts out ability to make inferences.  
    
-   The above framework applies generally to any policy, and illustrates the benefit that measuring heterogeneity has for accurate welfare estimates. In many policy settings, measuring heterogeneity is also necessary to assess even the average impact of a policy. Generally speaking, this is true when estimates of a policy's average treatment are applied to a new setting with a different population and a different mix of characteristics. In the general case, this is a basic element of policy assessment and causal research. Average treatment affects from one country, for example, do not necessarily translate to other countries if there are fundamental differences in the populations. A less obvious case is when a policy matches service providers, like teachers, doctors, or contractors, to consumers like students or patients. Using average assessments of past performance to estimate outcomes from policy interventions that alter the match between providers and consumers will lead to inaccurate estimates of the provider's impact. By estimating key elements of affect heterogeneity, however, we can adjust our counterfactual estimates to account for the differing populations. To see how this works with value added and test scores specifically consider the following heterogeneous value added estimator. 
+   The above framework applies generally to any policy, and illustrates the benefit that measuring heterogeneity has for accurate welfare estimates. In many policy settings, measuring heterogeneity is also necessary to assess even the average impact of a policy. Generally speaking, this is true when estimates of a policy's average treatment are applied to a new setting with a different population and a different mix of characteristics. In the general case, this is a basic element of policy assessment and causal research. Average treatment affects from one country, for example, do not necessarily translate to other countries if there are fundamental differences in the populations. A less obvious case is when a policy matches service providers, like teachers, doctors, or contractors, to consumers like students or patients. Using average assessments of past performance to estimate outcomes from policy interventions that alter the match between providers and consumers will lead to inaccurate estimates of the provider's impact. By estimating key elements of effect heterogeneity, however, we can adjust our counterfactual estimates to account for the differing populations. To see how this works with value added and test scores specifically consider the following heterogeneous value added estimator. 
    
     In a simple case, let there be two student types 0 and 1. For example above and below median scoring students. Assume value added can be characterized as follows:
     \[
