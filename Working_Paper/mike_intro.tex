@@ -1,0 +1,178 @@
+\documentclass[12pt]{article}
+
+% import packages for general latex 
+\usepackage{imports}
+
+
+% mike packages 
+
+\usepackage[utf8]{inputenc}
+\usepackage{geometry,ulem,graphicx,caption,color,setspace,dsfont,physics,commath,amsfonts,bm}
+
+\usepackage{caption}
+\usepackage{subcaption} 
+\usepackage[short]{optidef}
+\usepackage{hhline}
+\usepackage[capposition=top]{floatrow}
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{adjustbox}
+\usepackage{tikz}
+\usepackage{pdflscape}
+\usepackage{afterpage}
+\usetikzlibrary{calc,patterns,positioning}
+\usepackage{environ}
+\usepackage{natbib,hyperref}
+\usepackage{soul}
+
+\usepackage[amsthm]{ntheorem}
+\hypersetup{ hidelinks }
+
+\theoremstyle{definition}
+\newtheorem{innercustomthm}{Assumption}
+\newenvironment{customthm}[1]
+  {\renewcommand\theinnercustomthm{#1}\innercustomthm}
+  {\endinnercustomthm}
+
+\theoremstyle{definition}
+\newtheorem{assumption}{Assumption}
+
+
+\theoremstyle{definition}
+\newtheorem{auxa}{Aux. Assumption v}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{thm}{Theorem}
+
+
+\newcommand*\diff{\mathop{}\!\mathrm{d}}
+%\DeclareMathOperator*{\argmax}{arg\,max}
+%\DeclareMathOperator*{\argmin}{arg\,min}
+
+
+\usepackage{titlesec}
+\titleformat{\section}
+  {\normalfont\normalsize\bfseries}{\thesection.}{1em}{}
+
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries}{\thesubsection}{1em}{}
+
+%% For editing
+\newcommand\cmnt[2]{\;
+{\textcolor{red}{[{\em #1 --- #2}] \;}
+}}
+\newcommand\nate[1]{\cmnt{#1}{Nate}}
+\newcommand\rmk[1]{\;\textcolor{red}{{\em #1}\;}}
+\newcommand\natenote[1]{\footnote{\cmnt{#1}{Nate}}}
+
+
+\makeatletter
+\newsavebox{\measure@tikzpicture}
+\NewEnviron{scaletikzpicturetowidth}[1]{%
+  \def\tikz@width{#1}%
+  \def\tikzscale{1}\begin{lrbox}{\measure@tikzpicture}%
+  \BODY
+  \end{lrbox}%
+  \pgfmathparse{#1/\wd\measure@tikzpicture}%
+  \edef\tikzscale{\pgfmathresult}%
+  \BODY
+}
+\makeatother
+
+
+\DeclareCaptionLabelFormat{AppendixTables}{A.#2}
+
+
+
+\title{From Value Added to Welfare Added: \\ A Social-Planner Approach Applied to Education Policy}
+
+\author{Tanner S. Eastmond\thanks{Department of Economics, University of California, San Diego: \texttt{teastmond@ucsd.edu}, \texttt{jbetts@ucsd.edu}} \and Nathan J Mather\thanks{Department of Economics University of Michigan: \texttt{njmather@umich.edu}} \and Michael David Ricks\thanks{National Bureau of Economic Research: \texttt{ricksmi@umich.edu} \hspace{17em} {\color{white}t} This research is the product of feedback and from many people including Ash Craig, Jim Hines, Gordon Dahl, Lars Lefgren, Peter Hull, Nathan Hendren, Andrew Bacher-Hicks, William-Delgado, Amy Finklestein, %Jesse Rothstein,
+Andrew Simon, and  researchers at the Education Policy Initiative, Youth Policy Lab, and SANDERA as well as with seminar participants at the University of California - San Diego, the University of Michigan, Brigham Young University, CAL Labor Summit, and Boston University. Thanks also to Andy Zau who facilitated the data access and to  Wendy Ranck-Buhr, Ron Rode, and others at the San Diego Unified School District for their interest and feedback.} \and Julian Betts$^{*\ddagger}$}
+
+
+\geometry{left=1.0in,right=1.0in,top=1.0in,bottom=1.0in}
+
+% Start of the document 
+\begin{document}
+\maketitle
+
+
+%We use welfare theory to recover normatively relevant information from heterogeneous and multidimensional estimates of value added and consider optimal policy of allocating teachers to classes.
+
+\begin{abstract}
+
+Though ubiquitous in research and practice, mean-based “value-added” measures may not fully inform policy or welfare considerations when policies have heterogeneous effects, impact multiple outcomes, or seek to advance distributional objectives. In this paper we formalize the importance of heterogeneity for calculating social welfare and quantify the importance of heterogeneity in an enormous public service provision problem: the allocation of teachers to elementary school classes. Using data from the San Diego Unified School District we estimate heterogeneity in teacher value added over the student achievement distribution. Because a majority of teachers have significant comparative advantage across student types, allocations that use a heterogeneous estimate of value added can raise scores by 34-97\% relative to those using standard value added estimates. These gains are even larger if the social planner has heterogeneous preferences over groups. Because reallocations benefit students on average at the expense of teachers' revealed preferences, we also consider a simple teacher compensation policy, finding that the marginal value of public funds would be infinite for bonuses of up to 16\% of baseline pay. These results, while specific to the teacher assignment problem, suggest more broadly that using information about effect heterogeneity might improve a broad range of public programs—both on grounds of average impacts and distributional goals.
+
+\end{abstract}
+
+\onehalfspacing
+
+\pagebreak 
+
+\section{Introduction}
+
+% Paragraph(s) about why we care: 
+%    -Value added is common, 
+%    -heterogeneity won't be captured in these means
+%    -Research questions: when does het matter? How bad is ignoring it in assigning teachers to classrooms?
+
+% set up and what we do in this paper 
+When evaluating policies, programs, and institutions researchers often rely on mean impacts. While means are powerful summary measures, they can also mask economically important information. This paper seeks to understand how measuring heterogeneity can more fully inform welfare measures and better optimize policy choices. We ask two main questions. (1) Theoretically, when does heterogeneity (in effects, outcomes, and social preferences) matter for maximizing a social objective? (2) Empirically, how large are the welfare gains from using heterogeneous rather than average estimates of impacts to evaluate and refine public policy?
+
+
+% Wondering if this should be one or two paragraphs?
+Although these questions have many applications, we explore them in the context of value added scores for elementary school teachers. Many have used value added scores (regression adjusted means) to measure the effects of teachers and schools \citep[see reviews in][]{angrist2022methods,bacher2022estimation}; doctors, hospitals, and nursing homes \citep{chandra2016health,doyle2019evaluating,hull2020hosptial,einav2022producing,chan2022selection}; and even judges, prosecutors and defense attorneys \citep{abrams2007luck,norris2019examiner,harrington2023prosecutor}. We choose this setting because of mounting empirical evidence that value added scores are both \textit{multidimensional} and \textit{heterogeneous} in the education context. For example, teachers affect student outcomes in multiple dimensions such as math and reading scores \citep{condie2014teacher}, attendance and suspensions \citep{jackson2018test}, and worth ethic and learning skills \citep{pope2017multidimensional}. Furthermore, teachers also have heterogeneous effects on different types of students defined by factors such as race and gender \citep[e.g.,][]{dee2005teacher,delhommer2019highschool,Delgado2020} and socioeconomic status \citep{bates2022teacher}. Similar patterns have been found in health-related value added \citep[e.g.,][]{hull2020hosptial,amyspaperwhenitcomesout}. 
+
+This paper applies and extends such insights from theoretical welfare economics to overcome the limitations that arise from multidimensional and heterogeneity, allowing us to empirically evaluate the optimal allocation teachers to classes based on this information.  The critical issue from a social welfare perspective is that in the presence of multidimensionality and heterogeneity value-added measures only partially order the welfare of an allocation of teachers to students.  Intuitively, this is because of ambiguity about whether a ``better'' teacher  produces gains in math or reading scores or for advanced or remediated students  \citep[see impossibility-like results in][]{condie2014teacher}. Fortunately, whereas research in value added has identified these problems, research in public finance has a long history of using using welfare functions to aggregate over the heterogeneous effects of policies. We apply and extend such insights from welfare economics for two purposes. First, we  characterize the shortcomings of relying on mean-oriented measures of policy effects such as standard value added to make welfare considerations in general. Then the bulk of the paper evaluates the optimal allocation of teachers to classes in particular using measures of heterogeneous value added that produce scalar, welfare-relevant statistics.
+
+Our theoretical results show two ways that ignoring effect heterogeneity can lead to inaccurate inference about policy counterfactuals and how policy can be improved by measuring heterogeneity. First, bias arises when means effects are not externally valid to match effects from the policy. For example, imagine a medical treatment that did not have serious side effect in the population in general. If we are considering a policy that would target this treatment to new high-risk patients, it is not clear whether the impact will be the same. Second, bias also arises from the covariance of the effects of a policy and and welfare weights. For example, consider a tax reform that raises post-tax incomes by \$3000 to the richest 50\% of households but reduces incomes by \$1000 for the poorest 50\% of households. Policymakers may consider this reform undesirable for equity reasons even though it increases average incomes. These biases can both be reduced or eliminated by estimating conditional average treatment effect along appropriate observable dimensions and allowing for heterogeneous welfare weights.
+ 
+
+% These examples are general 
+%Both of the above motivations for measuring heterogeneity have broad applications beyond these specific examples. The economic literature most often considers heterogeneity and welfare weights in the context of redistributing dollars (the optimal tax literature for example). However, the same dynamics can be at play for any mean outcome of interest. In addition to income, policymakers care about things like test scores, life expectancy, fitness, nutrition, or employment; moreover, they often care about \textit{who} receives the gains in those outcomes and who, if anyone, loses. Additionally, assigning teachers to new classrooms is not the only case where measuring heterogeneity will improve counterfactual estimates. Other policies assigning practitioners like doctors, judges, police, or even firms to different heterogeneous populations have the same dynamics.
+
+These theoretical results highlight an interesting contribution of our paper. As empirical policy evaluations become increasingly common, our theoretical results characterize the trade-offs implicit in relying on mean impacts. For example, using mean effects to predict the welfare of an allocation is biased in general because welfare depends not just on program impacts and welfare weights but the covariance of the two. Interestingly, this insight is reminiscent of similar results in optimal corrective taxation of heterogeneous consumption externalities (like alcohol). \citet{griffith2019tax} show that the optimal corrective tax is average consumption externality \textit{plus} the covariance between individual contributions to the externality (the effect) and demand elasticities (the weight). Furthermore, in the externality context, conditioning (in this case tax differentiation by product) also reduces the bias, as it does in our setting.\footnote{The second insight is technically a generalization of the first, which was originally suggested in \citet{diamond1973consumption}.} The importance of heterogeneity and conditioning in these theoretical settings raises questions about whether using average ``sufficient statistics'' is appropriate when heterogeneous estimates could inform differentiated policies like corrective taxation of heterogeneous \textit{production} externalities \citep[][]{hollingsworth2019external,fell2021emissions,sexton2021heterogeneous}, [2], [3]. Additionally, we speak to these trade-offs by showing how both biases can be reduced by estimating conditional average treatment effect along observable dimensions to allow for heterogeneity in impacts.
+
+
+With these theoretical results in hand, this paper's second and main contribution is in highlighting the first-order importance of considering heterogeneity in welfare analysis. We do this by exploring the importance of our theoretical results empirically in the context of one of the largest public service allocation problems in the US: the assignment of elementary school teachers to classes. We cast this allocation problem into our welfare-theoretic framework and show how it can be solved as a mixed-integer linear programming problem if a social planner has estimates of teacher impacts, for example standard or heterogeneous value-added measures.
+
+We use the methods pioneered by \citet{Delgado2020} to estimate the value added of all third- through fifth-grade teachers on student math and English language arts (ELA) scores separately for students had above- and below-median scores the previous year. We also estimate the standard constant-effects value added for a comparison \citep{chetty2014measuring1}. Although both measures of value added are correlated, we find substantial heterogeneity. For example, the average within-teacher difference in value added (i.e., comparative advantage) across groups is 53\% the size of the standard deviation in standard teacher value added for ELA and 48\% for math. This suggests enormous gains from reallocating teachers to classes with more students they have a comparative advantage in teaching. We also thoroughly document the reliability of these estimates by demonstrating that they are forecast unbiased (up to NNN\%), persistent over time (with year-to-year correlations between 0.78-0.90), and equally predictive of later-life outcomes as standard value added (despite being estimated on half the sample).
+
+With estimates of heterogeneous teacher effects in hand, we simulate two counterfactual reallocations of teachers (one within schools and one across schools within the district) to measure the welfare gains in absolute terms and relative to standard value added. In these exercises the gains from considering just one dimension of heterogeneity increase test score gains by 34-97\% relative to only using the standard value added measure, depending on the subject and constraints. Although the critical role of comparative advantage has literally been acknowledged for centuries, our contribution to welfare theory is connecting treatment effect heterogeneity, comparative advantage, and social preferences. This insight captures the intuition that heterogeneity is a key consideration for allocating scarce resources according to a social objectives---as has been explored theoretically \citep{kitagawa2018should,athey2021policy} and as is reflected in a recent explosion of empirical inquiry about targeting treatments as varied as social safety programs \citep{alatas2016self,finkelstein2019take}, costly energy efficiency interventions \citep{ito2021selection,ida2022choosing} and even resources to reduce gun violence \citep{bhatt2023predicting} or promote entrepreneurship in developing countries \citep{hussam2022targeting}.
+
+
+Finally, our paper makes several innovative contributions to the literatures on value added and teacher value added. First our theoretical insights allow us to leverage welfare theory to aggregate over multidimensional and heterogeneous value added. This is critical for evaluating teacher impacts and the welfare of allocations. In particular, we find that combining information from multiple outcomes substantially improves the welfare gains from reallocations. Although it is not obvious \textit{ex ante} how to optimally aggregate multiple dimensions of gains from teacher impacts, our theory suggests combining outcomes based on how they affect long-term outcomes of interest. We make this combination using estimates of the differential impact of elementary school gains in math and ELA on lifetime earnings from \citet{chetty2014measuring2}. In practice, we find that the allocation of teachers that maximizes present-valued lifetime earnings would generate over \$1350 in present valued earnings per student or over \$27.9 million in total.\footnote{Here present valuation is discounted at 3\% following back to age 10 following \citet{krueger1999experimental} and \citet{chetty2014measuring2}.} These impacts are not small; they represent 34\% larger wage impacts relative to focusing simulations only on math \citep[as in][]{chetty2014measuring1,Delgado2020,bates2022teacher}. 
+
+Second, we also demonstrate that achievement is the most meaningful dimension of heterogeneity in our education context, which is important because rich administrative data have thousands of ways to specify match effects. Finally, extend our understanding of the welfare implications of teacher compensation policies that have often focused only on incentive compatibility rather than optimality \citep[e.g.,][]{rothstein2015teacher,bates2022teacher} by exploring the welfare implications of using lump-sum transfers to compensate teachers for the possibility of reallocation. By calculating the marginal value of public funds \citep[MVPF][]{Keyser_2020} for varying sizes of bonus payments to all teachers. We find enormous gains from the bonus program. The MVPF of transfers for up to \$8300 per teacher is infinite given present-value the income gains from the reallocation and the marginal tax revenue recouped thereof. This is an enormous transfer, representing 16\% of the median income in the district. For within-school-grade reallocations---which have smaller gains but which should be all but costless to teachers---we find that the MVPF is infinite for bonuses of up to \$2200. 
+
+
+% Not sure how to build in the explicit results rather than just the relative gains, worth trying though.
+
+% First, our results show enormous gains from making allocations based off of heterogeneous estimates of value added. We find that a social planner seeking to maximize average scores could increase both lower- and higher-scoring students' ELA scores by 0.04 student standard deviations. Gains from math are even larger: 0.04 for lower-scoring students and 0.07 for higher. Compared to an allocation that used standard value added measures to allocate the best teachers to the largest classes, our reallocation generates 34-97\% higher gains in test scores. An interesting implication of our results is that by reallocating the traditional assumptions of constant effects and equal class size we can reallocate rather than release teachers. ``Deselecting'' low-performing teachers has been the traditional policy counterfactual in value added papers for a quarter of a century. However in our setting deselection would only raise average math scores by 0.021 $\sigma$---a smaller figure than  simply putting better teachers in larger classes would create, and one that is dwarfed by reallocations using comparative advantage 0.070. This highlights the critical role of comparative advantage in welfare considerations. 
+
+%Furthermore, deselection using standard value added penalizes teachers who happen to be allocated to worse-matched classes generating a 16-19\% discrepancy between rankings in the lowest five percent.
+
+
+
+% Paragraph(s) about what we do - Welfare Students (het/multidimensionality)
+%    - 
+%    - 
+%    - 
+
+% Paragraph(s) about what we do - Welfare Teachers
+
+
+
+
+
+
+%Dalhstrom ppaper on match effects of lag outocmes.
+
+
+This paper is organized into 6 sections. Section 2 introduces our framework for welfare and value added with the implications of heterogeneity. Section 3 contains our estimation procedure and a description of value added in the San Diego Unified School District. Section 4 leverages our welfare theory to explore the reallocation of teachers to classes and measures the welfare gains from using information about heterogeneity. Finally, Section 5 draws the pieces together to explore the implications for welfare and Section 6 concludes.
+
+
+
+\bibliography{citations}
+
+\end{document}

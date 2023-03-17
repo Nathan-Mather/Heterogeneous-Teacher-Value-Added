@@ -93,6 +93,7 @@
 \usepackage{pdflscape}
 \usepackage{environ}
 \usepackage{array}
+\usepackage{accents}
 \usepackage{etoolbox}
 \usepackage[normalem]{ulem}
 \BeforeBeginEnvironment{itemize}{\par}
@@ -170,8 +171,8 @@
 \tikzset{
   pics/student/.style args={#1,#2}{
      code={
-       \filldraw [fill=#1,draw=black,visible on=#2] (.05,.15) .. controls (.05,.7) and (.65,.8) .. (.75,.2) .. controls (.55,.05) and (.05,0) .. (.05,.15) ;
-       \filldraw [fill=#1,draw=black,visible on=#2] (.35,.75) circle [radius=.22];
+       \filldraw [fill=#1,draw=black,visible on=#2,line width=1pt] (.1,.3) .. controls (.1,1.4) and (1.4,1.6) .. (1.5,.4) .. controls (1.1,.1) and (.1,0) .. (.1,.3) ;
+       \filldraw [fill=#1,draw=black,visible on=#2,line width=1pt] (.7,1.5) circle [radius=.44];
      }
   }
 }
@@ -183,7 +184,7 @@
 
 \title{From Value Added to Welfare Added: \\ A Social Planner Approach to Education Policy and Statistics\vskip.3cm}
 
-\author{Tanner S Eastmond\footnote{Department of Economics, University of California San Diego} \vskip.2cm Nathan Mather$^2$ \vskip.2cm Michael Ricks\footnote{Department of Economics, University of Michigan} \vskip.2cm Julian Betts\footnote{Department of Economics, University of California San Diego and NBER} }
+\author{Tanner S Eastmond$^1$ \vskip.2cm Nathan Mather$^2$ \vskip.2cm Michael Ricks$^3$ \vskip.2cm Julian Betts$^{1,3}$ }
 
 \begin{document}
 
@@ -203,212 +204,193 @@
 
 
 %------------------------------------------------
-
-% Why do we care about late entry
+% Why do we care 
 %------------------------------------------------
-\begin{frame}{\textbf{ } }
+\begin{frame}[c]{\textbf{What is the effect of a teacher, school, hospital, or policy?} }
 
-\begin{wideitemize}
-    \item 
-    
-    \item <2->
-    \begin{itemize}
-        \item<3-> 
-        \item<4-> 
-    \end{itemize}
-    
-    \item<5-> {\color<5>{ptr5}\textbf{Question1}} 
-  
-    \item<6> {\color<6>{ptr5}\textbf{Question2}}
-  
-\end{wideitemize}
+\centering
+\begin{tikzpicture}[scale=1]
+  \draw (-2.5,1.5) pic{student={white,<2->}};
+  \node[anchor= east,visible on=<7-10>,font=\large,ptb4] at (-2.5,2.6){Effect = 7 };
+  \node[anchor= east,visible on=<12->,font=\large,ptb4] at (-2.5,2.6){Effect = 7?};
+  \draw (-2.5,-1.5) pic{student={white,<8->}};
+  \node[anchor= south east,visible on=<11->,font=\large,ptr5] at (-2.5,-.5){Effect = 4?};
+  \draw (2.5,-1.5) pic{student={white,<2->}};
+  \draw (2.5,1.5) pic{student={white,<2->}};
+  \draw[-latex,ptb4,ultra thick,visible on=<3->] (-1,2.6) -- (2.5,2.6) node[font=\large,anchor=west,outer sep=2 cm,visible on=<3->]{6}; 
+  \draw[-latex,ptb4,ultra thick,visible on=<4->] (-1,2.6) -- (2.5,-.4) node[font=\large,anchor=west,outer sep=2 cm]{8};
+  \draw[-latex,ptr5,ultra thick,visible on=<9->] (-1,-.5) -- (2.5,-.5) node[font=\large,anchor=west,outer sep=2.35 cm]{/ 6} ;
+  \draw[-latex,ptr5,ultra thick,visible on=<10->] (-1,-.5) -- (2.5,2.5) node[font=\large,anchor=west,outer sep=2.35 cm]{/ 2};
+\end{tikzpicture}
+
 
 \end{frame}
 
 %------------------------------------------------
-\begin{frame}{\textbf{ } }
+\begin{frame}{\textbf{Averages ``mean'' well, but don't capture everything} }
 
 \begin{wideitemize}
-    \item 
+    \item Whether in teacher value added, school and hospital report cards, or policy evaluations researchers use mean-oriented statistics
+
+
     
-    \item <2->
+    \item <2-> But mean masks important heterogeneity of multiple types
     \begin{itemize}
-        \item<3->{\color<3>{ptr5}\textbf{Impacts}}: If policies have distinct affects on different groups  
-        \item<4->{\color<4>{ptr5}\textbf{Outcomes}}: If policies affect multiple outcomes in different ways
-        \item<5->{\color<5>{ptr5}\textbf{Preferences}}: If policymakers assign varried value to different groups (e.g., care about levels \textbf{and} gaps)
+        \item<3->\textbf{Impacts}: If policies have \textbf{\color<3>{ptr3}heterogeneous effects} on different groups 
+        % Edu example
+        \item<4->\textbf{Outcomes}: If policies affect \textbf{\color<4>{ptr1}multiple outcomes} in different ways
+        % Health
+        \item<5->\textbf{Preferences}: If policymakers have \textbf{\color<5>{ptr5}heterogeneous value} over groups (e.g., levels and gaps)
+        % Public program 
     \end{itemize}
+
+    % The mean statistics do not capture any of these dimensions of heterogeneity
     
-    \item<5-> (NCLB)
+    \item<6-> \textbf{\color{ptr5}Theoretically, when does heterogeneity matter for maximizing a social objective?}
   
-    \item<6> 
+    \item<7>  \textbf{\color{ptr5}In education policy, how misleading are traditional teacher value added estimates?}
   
 \end{wideitemize}
 
 \end{frame}
 %------------------------------------------------
 
-
-
 %------------------------------------------------
-% What do we know about late entry effects
-\begin{frame}{\textbf{}}
+\begin{frame}{\textbf{Emerging evidence suggests heterogeneity matters} }
 
 \begin{wideitemize}
-    \item We need to know how waiting affects children who {\color{ptb4}\textbf{reluctantly}} and {\color{ptr5}\textbf{always}} wait
+    \item Researchers promote ``value added''-like estimates for policy in many contexts
+    %in research and policy with teachers, schools, hospitals, residential care facilities, etc.
+        \begin{itemize}
+        \item <2-> Heterogeneous and multidimensional value added are the emerging frontier
+
+       {\tiny \color{gray} \citep[]{jackson2018test,pope2017multidimensional,Delgado2020,ahn2021importance,bates2022teacher,Dahlstrand2022defying}}
+
+       \item<3->But both heterogeneity and multidimensionality undermine ranking units and allocations
     
-    \item<2-> \textbf{Causal research}: Compare children around birthday cutoffs to measure gains
+        {\tiny \color{gray} \citep[]{condie2014teacher}}
+        \end{itemize}
     
-    \begin{itemize}
-        %\item Compare children with birthdays just before and after state cutoffs
-        \item Older ``entry age'' increases achievement, advanced course taking, and college persistence
+    
+    \item<4-> In the real world, numerous policies have distributional objectives 
+        \begin{itemize}
+        % No Child Left Behind, means-tested public programs, progressive taxation, etc.
+        \item<5-> Heterogeneous weights from public finance can extend to cost-benefit analysis
         
-         {\tiny \color{gray}\citep[e.g.,][etc.]{datar2006does,deming2008lengthening,elder2009kindergarten,dhuey2019school,routon2020older}}
-        
-        \item<3-> IVs identify Local Average Treatment Effects (LATE) of {\color{ptr2}\textbf{eager}} recommendation following
-        % The compliers are...
-        
-        % They are different observably
-        % They are making different decisions
+        {\tiny \color{gray} \citep[]{adler2016benefit,fleurbaey2016use}}
+        \item<6-> Can welfare theory also make value added useful despite heterogeneity?
     \end{itemize}
-    
-    \item<4-> \textbf{Descriptive research}: Compare children whose parents made different decisions
-    
-
-    \begin{itemize}
-        \item Families who don't follow recommendations are systematically different
-        % This could mean that there is efficient sorting, but it might not. two narratives about equity suggest that
-        
-        {\tiny \color{gray} \citep[e.g.,][]{cameron1990effects,graue2000redshirting,march2005academic,schanzenbach2017your,fortner2017kindergarten}}
-    
-        \item<5-> There is no reason that the LATE would be externally valid
-    \end{itemize}
-    
-    \item<6-> \textbf{This paper}: Estimate effects on {\color{ptb4}\textbf{reluctant}}, {\color{ptr2}\textbf{eager}}, and  {\color{ptr5}\textbf{always}} waiting children
-    
-    %cannot inform counterfactual policy discussions about reducing noncompliance or economic questions about efficiency and equity. This is because these questions hinge on the sorting of and effects on noncompliant children---patterns the complier-based LATE cannot inform.
-    
-
-\end{wideitemize}
-\end{frame}
-
-% Maybe show a figure of the RD in my data?
-
-%------------------------------------------------
-% What is my question and how will I answer it?
-\begin{frame}{\textbf{This paper will estimate effects of waiting on each group}}
-
-\begin{wideitemize}
-    \item I answer these questions using data on the universe of kindergarteners in Michigan
-    \begin{itemize}
-        \item Focus on one cohort of children facing a cutoff in 2013 
-        \item Measure academic outcomes at third grade
-    \end{itemize}
-    
-    
-    \item<2-> Two birthday cutoffs $\to$ effects on children who {\color{ptr2}\textbf{eagerly}} and {\color{ptb4}\textbf{reluctantly}} wait
-    
-    \begin{itemize}
-        \item {\color<3-4>{ptr2}\textbf{First cutoff}}: recommends waiting
-        \item {\color<5-6>{ptb4}\textbf{Second cutoff}}: requires waiting
-        
-        
-        {\tiny \color{gray} \citep{cattaneo2016interpreting,cattaneo2020extrapolating}}
-    
-    \end{itemize}    
-    \end{wideitemize}
-\only<2-6>{
-    \vspace{1em}
-    \begin{tikzpicture}
-    \draw [font=\fontsize{10pt}{10pt}\selectfont,outer sep = 4pt,line width=.025cm,visible on=<2->] (-6.6,-1.2)  -- node [anchor=south,align=center,minimum height = 1cm,visible on=<3->] {Policy Recommends \\ {\color{ptb3}\textbf{Starting}}} (-2.6,-1.2);
-    \draw [font=\fontsize{10pt}{10pt}\selectfont,outer sep = 4pt,line width=.025cm,visible on=<2->] (-2.6,-1.2) -- node [anchor=south,align=center,minimum height = 1cm,visible on=<4->] {Policy Recommends \\ {\color{ptr2}\textbf{Waiting}}} (2.6,-1.2);
-    \draw [font=\fontsize{10pt}{10pt}\selectfont,outer sep = 4pt,line width=.025cm,,visible on=<2->] (2.6,-1.2) -- node [anchor=south,align=center,minimum height = 1cm,visible on=<6->] {Policy Requires \\ {\color{ptr3}\textbf{Waiting}}} (6.6,-1.2);
-    
-    \draw [font=\fontsize{10pt}{10pt}\selectfont,line width=.025cm,color=white,visible on=<2->] (-7.6,-1.2) -- (-6.6,-1.2) ;
-    \draw [font=\fontsize{10pt}{10pt}\selectfont,line width=.025cm,stealth-stealth,visible on=<2->] (-6.6,-1.2) -- (6.6,-1.2) ;
-    \draw [font=\fontsize{10pt}{10pt}\selectfont,line width=.025cm,visible on=<2->] (-2.6,-1.4) node [anchor=north,align=center] {Recommendation \\ Cutoff} -- (-2.6,-1.) ;
-    \draw [font=\fontsize{10pt}{10pt}\selectfont,line width=.025cm,visible on=<2->] (2.6,-1.4) node [anchor=north,align=center] {Requirement \\ Cutoff}-- (2.6,-1.) ;
-    \end{tikzpicture}
-        \vspace{-30em}}
-    
-\begin{wideitemize}
-    
-    \item<8-> No discontinuity affects children who {\color{ptr5}\textbf{always}} wait
-    
-    
-     \begin{itemize}
-         \item<9-> \textbf{New test}: Changes in test scores over birthdays identify selection
-         \item<9-> Extrapolation using either regression discontinuity or marginal treatment effects tools
-         
-        {\tiny \color{gray} \citep{heckman2005structural,brinch2017beyond,mogstad2018using,cattaneo2020extrapolating}}
-     
-     \end{itemize}
-
-\end{wideitemize}
-\end{frame}
-
-%------------------------------------------------
-% What is the answer
-\begin{frame}{\textbf{Parental selection increases achievement but reduces equity}}
-
-            
-\begin{wideitemize}
-%\item There is significant selection:
-% Recall I am thinking about selection in terms of potential untreated outcomes
-\item {\color<1>{ptr5}\textbf{Negative selection in levels:}} Parents make lower achieving children wait 
-
-{\tiny \color{gray}\citep{cameron1990effects,march2005academic,schanzenbach2017your,fortner2017kindergarten}}
-
-
-\item<2-> {\color<2>{ptr5}\textbf{Positive selection on gains:}} Strategic entry raises average achievement
-
-{\tiny \color{gray} \citep{bedard2006persistence,black2011too,mccrary2011effect,cook2016birthdays,molnar2018redshirting,fortner2019forced}}
-
-\begin{itemize}
-    \item<3-> {\color<3>{ptr5}\textbf{Differential Sorting:}} Response to gains is driven by higher-income families 
- 
-    {\tiny \color{gray} \citep[]{lalonde1986evaluating,brand2010benefits,einav2010optimal,walters2018demand,finkelstein2019take,ito2021selection}}
-\end{itemize}
-
-%brinch2017beyond,mogstad2018using,kline2019heckits,walters2018demand,ito2021selection
-
-
-\item<4-> {\color<4>{ptr5}\textbf{Unequal Impacts:}} Strategic entry expands achievement gaps
-
-{\tiny \color{gray} \citep[]{graue2000redshirting,deming2008lengthening,illinois2019anact}}
-
-
-\begin{itemize}
-    \item<5-> {\color<5>{ptr5}\textbf{Early Investments:}} Public investment could shrink gaps and raise scores
-
-    {\tiny \color{gray} \citep{elder2009kindergarten,kline2016evaluating,felfe2018does,cornelissen2018benefits,shapiro2019if}}
-    
-\end{itemize}
 
     
    
-
-% This is for two reasons...
-
-
-%\begin{itemize}
-%    \item<11-> Average gains are $0.48$ for high SES but only $0.16$ for low SES
-%    \item<12-> Only high-income families sort children on gains
-%\end{itemize}
 \end{wideitemize}
 
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}{\textbf{The key is moving from value added to ``welfare-added''} }
+
+\begin{wideitemize}
+    \item We use a welfare-theoretic framework to approach a policymaker's objective
+    %in research and policy with teachers, schools, hospitals, residential care facilities, etc.
+        \begin{itemize}
+            \item<2-> Framework fully ranks allocations, given weights on outcomes and groups 
+            \item<3-> We characterize three gains from including heterogeneity in estimation
+    \end{itemize}
+    \vspace{12pt}
+\end{wideitemize} 
+    
+    \begin{wideenumerate}
+    \item<4-> Using \textbf{\color<4-5>{ptr3}comparative advantage} makes better allocations than only absolute
+    \begin{itemize}
+        \item<5-> Related to literatures on targeting for health and public programs
+    \end{itemize}
+    \item<6-> Directly addressing distributional or \textbf{\color<6-7>{ptr5}equity concerns} controls relevant gaps
+    \begin{itemize}
+        \item<7-> As in research in optimal tax, discrimination, and environmental justice 
+    \end{itemize}
+    \item<8-> Heterogeneous estimators may be more \textbf{\color<8-9>{ptb3}externally valid}
+    \begin{itemize}
+        \item<9-> Like papers on drug trials and selection on unobservables
+    \end{itemize}
+    \end{wideenumerate}
+
+\end{frame}
 
 
-%main implications for what we don't know:
-%\begin{itemize}    
-%    \item Parents redshirt child if (1) they can AND (2) they think their child needs it
-%    \item Parents are making (short term) optimal decisions for their children
-%    \item Parents' decisions have (short term) positive externalities for other children
-  
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}{\textbf{We apply this theory of heterogeneity to teacher value added} }
+
+\begin{wideitemize}
+    \item We estimate \textbf{\color<2-3>{ptr3}heterogeneous}, \textbf{\color<4-5>{ptr1}multidimensional} value added in San Diego Unified
+    \begin{itemize}
+        \item Over 1,700 teachers in 3-5th grade classrooms between 2002-2013
+    \end{itemize}
+    \item<7-> We focus on \textbf{\color<7-11>{ptr3}achievement} impacts on \textbf{\color<7-11>{ptr1}multiple subjects}
+
+    \item<12-> We find substantial, persistent heterogeneity (with some correlation within teachers)
+    %in research and policy with teachers, schools, hospitals, residential care facilities, etc.
+\end{wideitemize} 
+
+\centering
+\vspace{12pt}
+\begin{tikzpicture}
+   
+\tikzstyle{box}=[rectangle,thick,draw=black,outer sep=0pt,minimum width=3.7cm,minimum height=1.cm,align=center,font=\fontsize{10pt}{10pt}\selectfont]
+
+\node (B1) at (0,0) [box,label={[align=center,anchor=south,visible on=<5>,ptr1]\textbf{Outcome 1}},label={[align=center,anchor=south,visible on=<6->,]\textbf{Outcome 1}},anchor=south east,visible on=<3->] {};
+\node (B2) at (B1.east) [box,label={[align=center,anchor=south,visible on=<5>,ptr1]\textbf{Outcome 2}},label={[align=center,anchor=south,visible on=<6->]\textbf{Outcome 2}},anchor=west,visible on=<3->] {};
+\node (B3) at (B1.south)  [box,anchor=north,visible on=<3->] {};
+\node (B4) at (B1.south east) [box,anchor=north west,visible on=<3->] {};
+\node (O1) at (B4.east) [box,draw=none,anchor= west,minimum width=2.5cm] {};
+
+
+\node (C1) at (0,0) [box,anchor=south east,visible on=<8->] {\textbf<8>{High Achieving Math}} ;
+\node (C2) at (C1.east) [box,anchor= west,visible on=<9->] {\textbf<9>{High Achieving ELA}} ;
+\node (C3) at (C1.south)  [box,anchor=north,visible on=<10->] {\textbf<10>{Low Achieving Math}};
+\node (C4) at (C1.south east) [box,anchor=north west,visible on=<11->] {\textbf<11>{Low Achieving ELA}};
+
+
+\node (T1) at (B1.west) [rectangle,draw=none,visible on=<3->,outer sep=1pt,align=right,anchor=east,minimum width=2.3cm] {\color<3>{ptr3}\textbf{Group A}};
+\node (T2) at (B3.west) [rectangle,draw=none,visible on=<3->,outer sep=1pt,align=right,anchor=east,minimum width=2.3cm] {\color<3>{ptr3}\textbf{Group B}};
+\end{tikzpicture}
+
+
 \end{frame}
 
 
 
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}{\textbf{Heterogeneity is key for using teachers' skills effectively}}
 
+    \begin{wideitemize}
+    \item We reallocate teachers within (across) schools based on our estimates of value added
+    \begin{itemize}
+        \item<2-> How do allocations compare to the results to using traditional estimates 
+    \end{itemize}
+    \end{wideitemize}
+    \vspace{12pt}
+    \begin{wideenumerate}
+    \item<3-> Heterogeneous VA raises average scores 34-50\% (66-97\%) more than traditional VA
+    \begin{itemize}
+        \item<4-> The across-school gains are 0.04$\sigma$ in ELA and 0.06$\sigma$ in Math
+
+         {\tiny \color{gray} \citep[]{bates2022teacher}}
+    \end{itemize}
+    \item<5-> With distributional concerns, heterogeneous VA boosts average scores by 16-50\% 
+    %(similar welfare)
+    \begin{itemize}
+        \item<6-> Reallocations close gaps, but only moving teachers across discticts shrink racial gaps
+    \end{itemize}    
+    \item<7-> Combined optimization could increase present valued earnings by \$8.6 M (\$32.5 M) 
+    \begin{itemize}
+        \item<9-> Only enormous costs to teachers/parents/admins/union rationalize status quo
+    \end{itemize}
+    \end{wideenumerate}
+
+\end{frame}
 
 \setbeamertemplate{navigation symbols}{} 
   
@@ -419,17 +401,16 @@
 \begin{column}{0.575\textwidth}
 \vspace{-1.5em}
 \begin{wideenumerate}
-    \item How Should We Model Decision-making?
+    \item When Will Heterogeneity Matter for Welfare?
     \begin{itemize}
-        \item Kindergarten Entry
-        \item Waiting and Achievement
-        \item Equity and Efficiency
+        \item Absolute and Comparative Advantage
+        \item Distributional Concerns
+        \item A Note on Estimation
     \end{itemize}
-    \item How Do Entry Decisions Affect Children?
+    \item What Are the Implications for Value Added?
     \begin{itemize}
-        \item Michigan Policy and Data
-        \item RD Estimates
-        \item MTE Estimates
+        \item Heterogeneous Impacts
+        \item Reallocations and Decompositions
     \end{itemize}
     \item What About Welfare and Policy?
 \end{wideenumerate}
@@ -468,477 +449,434 @@
 }
 
 %------------------------------------------------
-\section{How Should We Think About Kindergarten Entry Decisions?}
+\section{When Will Heterogeneity Matter for Welfare?}
 
-
-	\begin{frame}[label=wait1]{\textbf{First stage: To wait or to start kindergarten } }
-		
-    
-    \begin{figure}
-        \centering
-        \begin{scaletikzpicturetowidth}{\textwidth}
-        \input{Slides/tables_figures/practice_talk/UD_unspool2}
-        \end{scaletikzpicturetowidth}
-    \end{figure}
-		
-		
-	\vfill
-	\hyperlink{model1}{\beamerbutton{Formal Model 1}}  
-	\hyperlink{whywaiting}{\beamerbutton{Why ``Waiting''?}}  
-	\hyperlink{treatments}{\beamerbutton{Definitions of Treatment}}  
-
-		
-		
-	\end{frame}
-	
-
-	\begin{frame}{\textbf{Second stage: Waiting decisions and test scores}}
-		\begin{wideitemize}
-			
-			\item Define potential third grade achievement if start/wait: $Y(w)=Y_w(X,r,U,\gamma_w)$
-			
-			\item<2-> Average potential outcomes by group$: g\in\{at, ec, rc\}$
-
-			\[  \mu_{w,g}(r,x) = \mathbb{E}[Y_i(w)|R_i=r,G_i=g,X=x] \]
-				
-		\begin{center}
-			\input{Slides/tables_figures/practice_talk/intro_framework2}
-		\end{center}	
-				
-				
-			\item<7-> {\color{ptr5}\textbf{Positive Question: How do families select into waiting? 	}}
-				
-			\hypertarget<7>{wait2}{}
-				
-
-		\end{wideitemize}
-		
-
-		
-		
-		\hyperlink{model2}{\beamerbutton{Formal Model 2}}
-	\end{frame}
-	
-	
-	
-	
-	\begin{frame}[label=wait3]{\textbf{Welfare: Selection, efficiency, and equity}}
-		\begin{wideitemize}
-			\item<2-> {\color<2-4>{ptr5}\textbf{Normative Question: Does allowing choice make families better off on average?}}
-			\begin{itemize}
-				% Efficient if not
-				\item Efficiency $=$ choices are revealed preferred and result in higher average scores
-				
-				%{\tiny \color{gray} \citep[e.g.,]{carneiro2011estimating,kaufmann2014understanding,nybom2017distribution}}
-				
-				\item<3->This assumes \textbf{no spillovers in utility} among families
-				%Noncompliance could reduce efficiency because the children who benefit the most are often least likely to participate.
-				% This may be the rationale behind rules banning early entry in 15 states
-				%\item<4-> Noncompliance might also be inefficient if positive selection drives achievement
-				
-				%{\tiny \color{gray} \citep[][]{schanzenbach2017your,fortner2017kindergarten}}
-				
-				% In any of these cases there is a social cost of having kids who benefit less wait to enter
-				\item<4-> Certain spillovers in scores among families could also be an issue
-				
-				{\tiny \color{gray} \citep{bedard2012school,cascio2016first,pena2017creating}}
-				
-			\end{itemize}
-			
-			\item<5-> {\color<5>{ptr5}\textbf{Normative Question: Does strategic entry widen or shrink social disparities?}}
-			\begin{itemize}
-				\item Equitable $=$ choice does not widen differences across groups
-				
-				%\item<6>  White and higher-income families are more likely to exercise choice
-				
-				%{\tiny \color{gray} \citep[][]{schanzenbach2017your,fortner2017kindergarten}}
-				
-				
-				%\item<6-> privileged families can sort more efficiently on gains
-				%\item<7-> their children benefit more from waiting on average
-			\end{itemize}
-				
-			\item<6> I can assess both sets implications of choice if I know $\mu$ by $x$
-			
-			
-			% Concern about this inequity is strong enough that noncompliance is banned in many states and school districts.
-			% Note the tension between equity and efficiency questions
-		\end{wideitemize}
-		\vspace{4em}
-		%\hyperlink{equity}{\beamerbutton{Equity Algebra}}    
-		\hyperlink{narratives}{\beamerbutton{Common Assumptions About Selection}}    
-	\end{frame}
-
-
-
-
-%------------------------------------------------
-\section{How Does Waiting to Enter Kindergarten Affect Children?}
-\subsection{Michigan Context: Policy and Data}
-
-%------------------------------------------------
-\begin{frame}{\textbf{Michigan policy context has extra identifying variation}}
-
-
+\begin{frame}{\textbf{A welfare framework for using value added}}
 \begin{wideitemize}
-    \item Most states have birthday cutoffs that {\color<1>{ptb3}\textbf{recommend}} entry decisions %($z\in{0,1}$)
-    %\begin{itemize}
-    %    \item Nationwide we see 6-7\% always takers and at least 2-3\% reluctant compliers 
-    %\end{itemize}
-    %Redshirting has always been allowed, but some early entry has been essentially prohibited since 2010 (districts receive no state funding for enrolled children who have not turned five by December 1). 
-    \item<2-> 15 states and many districts {\color<2>{ptr3}\textbf{require}} waiting after the cutoff  %($z\in{0,2}$)
-      \begin{itemize}
-        \item And many are considering requiring starting before the cutoff (as in many other countries)
-        
-        {\tiny \color{gray}\citep[e.g.][]{illinois2019anact}}
-    \end{itemize}  
-    \item<3-> Michigan has had both policies at {\color<3->{ptr5}\textbf{two}} sequential cutoffs \only<8-9>{(I focus on one cohort)} \hypertarget<9>{policy1}{}
-
-
-\end{wideitemize}
-  
-    \vspace{2em}
-    \begin{tikzpicture}
-    \draw [font=\fontsize{10pt}{10pt}\selectfont,outer sep = 4pt,line width=.025cm,visible on=<4-8>] (-6.6,-1.2)  -- node [anchor=south,align=center,minimum height = 1cm,visible on=<5-8>] {Policy Recommends \\ {\color{ptb3}\textbf{Starting}}} (-1.6,-1.2);
-    \draw [font=\fontsize{10pt}{10pt}\selectfont,outer sep = 4pt,line width=.025cm,visible on=<9->] (-6.6,-1.2)  -- node [anchor=south,align=center,minimum height = 1cm,visible on=<9->] {Policy Recommends \\ {\color{ptb3}\textbf{Starting}}} (0.6,-1.2);
-    
-    \draw [font=\fontsize{10pt}{10pt}\selectfont,outer sep = 4pt,line width=.025cm,visible on=<4-8>] (-1.6,-1.2) -- node [anchor=south,align=center,minimum height = 1cm,visible on=<6-8>] {Policy Recommends \\ {\color{ptr1}\textbf{Waiting}}} (3.6,-1.2);
-    \draw [font=\fontsize{10pt}{10pt}\selectfont,outer sep = 4pt,line width=.025cm,visible on=<9->] (0.6,-1.2) -- node [anchor=south,align=center,minimum height = 1cm,visible on=<9->] {Policy Recommends \\ {\color{ptr1}\textbf{Waiting}}} (3.6,-1.2);
-    \draw [font=\fontsize{10pt}{10pt}\selectfont,outer sep = 4pt,line width=.025cm,,visible on=<4->] (3.6,-1.2) -- node [anchor=south,align=center,minimum height = 1cm,visible on=<7->] {Policy Requires \\ {\color{ptr3}\textbf{Waiting}}} (6.6,-1.2);
-    
-    \draw [font=\fontsize{10pt}{10pt}\selectfont,line width=.025cm,color=white,visible on=<4->] (-7.6,-1.2) -- (-6.6,-1.2) ;
-    \draw [font=\fontsize{10pt}{10pt}\selectfont,line width=.025cm,stealth-stealth,visible on=<4->] (-6.6,-1.2) -- (6.6,-1.2) ;
-    \draw [font=\fontsize{10pt}{10pt}\selectfont,line width=.025cm,visible on=<4-8>] (-1.6,-1.4) node [anchor=north,align=center] {Sep 1 \\ Cutoff} -- (-1.6,-1.) ;
-    \draw [font=\fontsize{10pt}{10pt}\selectfont,line width=.025cm,visible on=<9->] (0.6,-1.4) node [anchor=north,align=center] {Nov 1 \\ Cutoff} -- (0.6,-1.) ;
-    
-    \draw [font=\fontsize{10pt}{10pt}\selectfont,line width=.025cm,visible on=<4->] (3.6,-1.4) node [anchor=north,align=center] {Dec 1 \\ Cutoff}-- (3.6,-1.) ;
-    \end{tikzpicture}
-
-  
-\hyperlink{change}{\beamerbutton{Policy Changes}}  %\hyperlink{requirement}{\beamerbutton{Functional Requirements}}  
-  
-\end{frame}
-
-
-
-
-
-%If ... you wish to enroll him or her in kindergarten ... you must notify the school district of your plan. Once a school district receives notice ... They may talk with you about your child’s readiness for school... Regardless of what they recommend, you make the final decision about whether or not to enroll your child in kindergarten.
-
-%------------------------------------------------
-\begin{frame}{\textbf{I use data from Michigan and a national survey}}
-
-
+    \item Assume a social planner has some objective $\mathcal{W}^j$ that depends on policy $j$
+\end{wideitemize}\vspace{-6pt}
+\begin{align*}  
+      \only<1-2>{\mathcal{W}^j &=  \int_0^1 \psi^j_i U^j_i \text{d}i \\}%
+      \only<3-6>{\accentset{\sim}{\mathcal{W}}^j &=  \int_0^1 \psi^j_i S(Y^j_i,X^j_i) \text{d}i \\}%
+      \only<7->{\Delta \accentset{\sim}{\mathcal{W}}^j  &=  \int_0^1 \omega_i(S^j_i,S^0_i) \Delta S^j_i \text{d}i \\}%
+      \color{white} \sum  & \color{white}\sum \sum \sum  \sum \sum \sum \sum 
+\end{align*}\vspace{-24pt}
 \begin{wideitemize}
-    \item Administrative data on universe of kindergarteners in Michigan Public Schools
+    \item<2-> With unobserved utility, policymakers ``score'' allocations based on observed outcomes
     \begin{itemize}
-        \item Main Sample: 96,000 kindergartners turning 5 between Mar 2013-Feb 2014
-        \item Supporting Sample: about 1,000,000 kindergarteners turning five between 2003-2013
-        
-        %\hyperlink{data}{\beamerbutton{Data Cleaning}}
-    \end{itemize}
-    \item<2-> Three key data elements
-    \begin{itemize}
-        \item Efficiency: Third grade math scores 
-        % Psychometrically calibrated to compare across years
-        % Close to kindergarten entry
-        % Yes within grade vs within age
-        \item Equity: Rich demographic, neighborhood, and school data
-        \item Estimation: Exact date of birth 
-        % This is why  I  need to do the RD
-        
-        
-        %\hyperlink{grade}{\beamerbutton{Within Grade vs Within Age}} 
-        %\hyperlink{sumstat}{\beamerbutton{Variables and Summary Statistics}}
-        %\hyperlink{month}{\beamerbutton{Importance of DoB}}
-    
-    \end{itemize}
-    \item<3-> Early Childhood Longitudinal Study, Birth Cohort (ELCS-B)
-    \begin{itemize}
-        \item National study of children 0-K (low power, but has baseline data)
-    \end{itemize}
-\end{wideitemize}
-\end{frame}
+        \item<4-> Using the score will be the key insight for overcoming \textbf{\color<4>{ptr1}multidimensionality}
+        \item<5-> We're agnostic about the score, but includes nice options like ``surrogate indices''
 
-
-\begin{frame}[c]{\textbf{Recall the groups and group shares?}}
-\begin{figure}
-    \centering
-    \begin{scaletikzpicturetowidth}{\textwidth}
-    \input{Slides/tables_figures/practice_talk/UD_color}
-    \end{scaletikzpicturetowidth}
-\end{figure}
-\end{frame}
-
-
-\begin{frame}[c]{\textbf{The RD first stage identifies groups shares}}
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{Slides/tables_figures/practice_talk/rd/rdud2.pdf}
-\end{figure}
-\end{frame}
-
-%\subsection{Descriptive Evidence of Sorting and Efficiency}
-\begin{frame}[c]{\textbf{The reduced form shows nontrivial effects of waiting}}
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{Slides/tables_figures/practice_talk/rd/rd3.pdf}
-\end{figure}
-
-\end{frame}
-
-
-
-\subsection{Combining Insights from RD and MTE Frameworks}
-
-% ZDU
-\begin{frame}{\textbf{Consider Mapping the RD by $W$ Into Reluctance to Wait, $U_W$}}
-
-
-
-% Acknowlege Bertana and Imbens and Amanda
-
-\begin{figure}
-    \begin{centering}
-    
-    \includegraphics<1>[width=\textwidth]{Slides/tables_figures/practice_talk/side/fig6_ss1.pdf}    
-    \includegraphics<2>[width=\textwidth]{Slides/tables_figures/practice_talk/side/fig6_ss2.pdf}        
-    \includegraphics<3>[width=\textwidth]{Slides/tables_figures/practice_talk/side/fig6_ss3.pdf}
-    \includegraphics<4>[width=\textwidth]{Slides/tables_figures/practice_talk/side/fig6_ss4.pdf}
-    \includegraphics<5>[width=\textwidth]{Slides/tables_figures/practice_talk/side/fig6_ss5.pdf}
-    \includegraphics<6>[width=\textwidth]{Slides/tables_figures/practice_talk/side/fig6_ss6.pdf}
-    \includegraphics<7>[width=\textwidth]{Slides/tables_figures/practice_talk/side/fig6_ss7.pdf}
-    \includegraphics<8>[width=\textwidth]{Slides/tables_figures/practice_talk/side/fig6_ss8.pdf}
-    \includegraphics<9>[width=\textwidth]{Slides/tables_figures/practice_talk/side/fig6_ss9.pdf}
-    \includegraphics<10>[width=\textwidth]{Slides/tables_figures/practice_talk/side/fig6_ss10.pdf}
-% Point that this is the whole support of unobservables.
-\end{centering}
-\end{figure}
-
-
-
-\end{frame}
-
-
-
-% Four takeaways
-\begin{frame}
-
-\frametitle<1>{\textbf{Four main takeaways from this figure}}
-\frametitle<2-6>{\textbf{1. These relationships identify $\bm{\tau_{ec}}$}}
-\frametitle<7-8>{\textbf{2. These relationships identify the selection between compliers}}
-\frametitle<9>{\textbf{With one cutoff this is all we could say}}
-\frametitle<10-11>{\textbf{3. Extrapolating from Dec 1 suggests heterogeneity in gains}}
-\frametitle<12>{\textbf{4. To estimate $\bm{\tau_{at}}$ we need to know how always takers are selected}}
-
-\begin{figure}
-    \begin{centering}
-
-\includegraphics<1-2>[width=.9\linewidth]{Slides/tables_figures/practice_talk/effects/fig7_late1.pdf}
-\includegraphics<3>[width=.9\linewidth]{Slides/tables_figures/practice_talk/effects/fig7_late2.pdf}
-\includegraphics<4>[width=.9\linewidth]{Slides/tables_figures/practice_talk/effects/fig7_late3.pdf}
-\includegraphics<5>[width=.9\linewidth]{Slides/tables_figures/practice_talk/effects/fig7_late4.pdf}
-\includegraphics<6-7>[width=.9\linewidth]{Slides/tables_figures/practice_talk/effects/fig7_late5.pdf}
-\includegraphics<8-10>[width=.9\linewidth]{Slides/tables_figures/practice_talk/effects/fig7_late6.pdf}
-\includegraphics<11-12>[width=.9\linewidth]{Slides/tables_figures/practice_talk/effects/fig7_late7.pdf}
-%\includegraphics<1-2>[width=.9\textwidth]{old/Paper_Figs/mte/f11appendix_to_late.pdf}
-%\includegraphics<3->[width=.9\textwidth]{old/Paper_Figs/mte/f5lates.pdf}
-\end{centering}
-\end{figure}
-
-
-%\hyperlink{rdtable}{\beamerbutton{RD Results (Table)}}
-%\hyperlink{extrap}{\beamerbutton{Extrapolation Details}}
-\end{frame}
-
-% Negative Selection
-\begin{frame}{\textbf{So how are always takers selected?}}
-
-\begin{wideitemize}
-    \item Recall: selection is about test scores for students had they started at five ($\mu_{0,g}$)
-    \item<2-> Prevailing wisdom: they are positively selected since they have ``good'' covariates
-    \item<3-> But this is contrary to anecdotes about readiness 
-    \item<4-> I show across three tests that {\color{ptr5}\textbf{always takers}} are negatively selected
-    \begin{itemize}
-    
-    
-    \item<5-> \textbf{New Test}: As always taker share increases, average scores fall less, not more
-    \item<6-> Always takers have worse elementary school outcomes than eager compliers
-    \item<7-> Future always takers had lower birthweight and know fewer letters and numbers at four
-    
-
-    
-    \end{itemize}
-    \item<8> Suggests  $\mu_{0,at}<\mu_{0,ec}<\mu_{0,rc}$ and that the relationship is likely very close to linear
-    
-    \hypertarget<7>{redselection}{}
-    
-    \vfill
-
-\end{wideitemize}
-
-    \hyperlink{rdseltest}{\beamerbutton{Running Variable Test}}
-    \hyperlink{eclsb}{\beamerbutton{ECLS-B Figure}} 
-    \hyperlink{out}{\beamerbutton{Elementary School Outcomes}} 
-\end{frame}
-
-
-\begin{frame}[c]
-
-\frametitle<1>{\textbf{What does negative selection look like?}}
-\frametitle<2-3>{\textbf{We know selection is monotonic in reluctance to wait $U_W$}}
-\frametitle<4>{\textbf{Always takers gain enormously from family investments in waiting}}
-\frametitle<5>{\textbf{Effects identify differences that increase average achievement}}
-\centering
-
-\includegraphics<1-2>[width=.9\textwidth]{Slides/tables_figures/practice_talk/effects/fig10_atate0.pdf}
-\includegraphics<3>[width=.9\textwidth]{Slides/tables_figures/practice_talk/effects/fig10_atate1.pdf}
-\includegraphics<4-5>[width=.9\textwidth]{Slides/tables_figures/practice_talk/effects/fig10_atate2.pdf}
-
-\end{frame}
-
-
-
-\begin{frame}[c]{\textbf{Heterogeneity identifies differences that that drive inequities}}
-\centering
-
-\input{Slides/tables_figures/practice_talk/table/effects}
-
-\end{frame}
-
-
-
-\section{Mechanisms, Policy Implications, and Conclusion}
-
-
-\begin{frame}{\textbf{What drives enormous differences in effects?}}
-\begin{wideitemize}
-    \item Higher-income families gain 0.48 SD relative to 0.16 for lower-income families
-    
-    \item<2-> One important difference between families is differential investments
-    \begin{itemize}
-        \item Literature shows low-SES kids get lower quality child care before beginning school
-        
-        {\tiny \color{gray} \citep{shapiro2019if,flood2021inequality}}
-        
-        \item I find this is true in the year that children wait to enter kindergarten
-        % I replicate similar patterns in ELCS-B data (to be disclosed)
-        
-        %Interestingly there is suggestive evidence that within SES redshirters are getting better investments in both groups
+    {\tiny \color{gray} \citep[]{finkelstein2019take}}
     \end{itemize}
     
-    \item<3-> Interestingly, these investments seem to mediate the effects of waiting
+        \item<6-> Without spillovers, the score will explain the welfare effects of any policy
+        
+    \hyperlink{proof1}{\beamerbutton{Proof}}
         \begin{itemize}
-        \item No SES-difference in effects for children in the same prekindergarten programs
-            
-        
-        \hyperlink{ates}{\beamerbutton{Effects by GSRP}}
-    
-            
-        \item Consistent public programs pulling children from different counterfactual care
-        
-        {\tiny \color{gray} \citep{kline2016evaluating}}
-        
-        
+        \item<8-> Welfare weights $\omega_i$ capture the social value of $i$'s score increase 
+        \item<9-> Using these weights will be the key insight for overcoming \textbf{\color<9>{ptr3}heterogeneity}
     \end{itemize}
     
 \end{wideitemize}
-
-
+    
 \end{frame}
 
 
-
-\begin{frame}{\textbf{Counterfactuals show requirements reduce scores but shrink gaps}}
+\begin{frame}{\textbf{Value added, welfare, and comparative advantage}}
 \begin{wideitemize}
-    \item We know always takers benefit the most---but this is driven by high income families
+    \item Consider policies that involve assigning different units to different ``treatments'' $d$
+ 
+    \item<2-> Imagine using the population average treatment effect $\tau^d_{ATE}=\mathbb{E}[S^d-S^0]$ to forecast the welfare of a given allocation: $\tilde{\tau}^j \equiv \int_i \sum_d \omega_i  p^j(d,i) \tau^d_{ATE} \text{d}i$
+\begin{itemize}
+    \item<3-> Under the same assumptions, the projected welfare is biased
     
-    \item<2-> What implications for efficiency and equity? (Assuming effects at cutoff extrapolate) 
-    \begin{itemize}
-        \item Counterfactual 1a: Make cutoff a requirements (use only eager complier LATE)
-        \item Counterfactual 1b: Make cutoff a requirements (allow for selection on gains)
-        \item Counterfactual 2: Allow noncompliance but expand enrollment in prekindergarten
-        
-    \end{itemize}
-
-
-%\item<5-> Improving sorting could also shrink inequitable impact of current policy 
-\end{wideitemize}
-    
-\alt<3->{\begin{table}[hbt]
-	\centering
-	\resizebox*{.8\textwidth}{!}{
-	\input{Slides/tables_figures/practice_talk/simulation}}
-\end{table}}{}
-\end{frame}
-
-
-
-\begin{frame}{\textbf{What do we learn about economic decision-making?}}
-\begin{wideenumerate}
-    \item Children negatively sort into waiting to enter kindergarten
-    \item<2-> High-SES parents are responsive to gains from additional investments
-    \alt<3->{}{\begin{itemize}
-        \item Parents choose to start children who would gain the least
-        \item Parents wait and invest in those who gain the most
-    \end{itemize}}
-    \item<3-> There are large differences in the effects of waiting by SES
-    \alt<4->{}{
-    \begin{itemize}
-        \item This is not because low-SES parents sort inefficiently
-        \item It seems to be because there are barriers to investments 
-    \end{itemize}}
-    \item<4-> Banning noncompliance would reduce gaps but at the cost of overall achievement
-    \begin{itemize}
-        \item Prefer increasing low-SES participation in early childhood programs 
-    \end{itemize}
-        
-\end{wideenumerate}
-    
-    
-    
-\end{frame}
-
-
-\begin{frame}{\textbf{What does this all mean for parents and policy makers?}}
-\begin{wideitemize}
-    \item The large gains to always takers do not mean that everyone should redshirt
-    \begin{itemize}
-        \item Rather, if you are considering redshriting, it is likely with good cause
-        \item<2-> Prioritize high-quality investments in the year before kindergarten
-        
-        {\tiny \color{gray} \citep{noel2003delay,noel2008mothers,elder2009kindergarten}}
-        % It is not about maturation nearly as much as preparation
-        
-        \item<3-> Caveat: don't wait if there might be actual learning disabilities 
-        
-        {\tiny \color{gray} \citep{fortner2018delayed}}
-    \end{itemize}
-    
-    \item<4-> Increasing participation in high-quality care prekindergarten would boost efficiency and equity
-    \begin{itemize}
-        \item Simulations suggest this is preferable to banning noncompliance (but more expensive)
-        
-        \item<5-> But expanding access is not enough---need outreach and investments for take-up
-        
-        {\tiny \color{gray} \citep{kline2016evaluating,cornelissen2018benefits,shapiro2019if}}
-        
-    \end{itemize}
-\end{wideitemize}
+    \hyperlink{proof2}{\beamerbutton{Proof}}
    
+ \end{itemize}   \vspace{-12pt}
+    \begin{align*}
+     \only<3->{    \text{\textbf{Bias}}^j_1 &= \Delta \accentset{\sim}{\mathcal{W}}^j - \tilde{\tau}^j \\
+                        &= \int_i \sum_d \omega_i p^j(d,i) (\Delta S^j_i-\tau^d_{ATE})\text{d}i \color{white} \sum \sum \sum}
+    \end{align*}
 
+
+
+%\item<3-> Assuming heterogeneity on observables, $\mathcal{X}$, the projected welfare is biased:
+% \end{itemize}   
+%    \begin{align*}
+%         \text{\textbf{Bias}}^j &= \Delta \accentset{\sim}{\mathcal{W}}^j - \tau^j_{ATE} \\
+%                        &= \int_\mathcal{X} \sum_d \omega(x) p^j(d,x) (\tau^d_{CATE}(x)-\tau^d_{ATE})\text{d}x
+%    \end{align*}
+    % Note int_x ( t(x) f(x|d) p^d -t p^d + ... for all d) dx 
+  
+
+     \item<5-> \textbf{\color<5>{ptr3}Comparative advantage} means $\tau^d_{ATE}$ is not \textbf{\color<5>{ptb3}externally valid} everywhere
+       \begin{itemize}
+  \item<6-> Bias is zero only when not assigned by \textbf{\color<6>{ptr3}comparative advantage} on average
+  
+  \item<7-> \textbf{\color{ptb3}External validity} concerns are exacerbated when you have to estimate $\tau^d$
+  
+            \hyperlink{proof2}{\beamerbutton{Details}}
+       \end{itemize} 
+
+    
+        
+    
+\end{wideitemize}
+    
 \end{frame}
 
 
 
-\begin{frame}[c]
+\begin{frame}{\textbf{Value added, welfare, and distributional concerns}}
+\begin{wideitemize}
+    \item Complications arise from not knowing $\tau^j_{ATE} = \mathbb[S^j-S^0]$, but what if we did?
+     \begin{itemize}
+        \item<2-> For example, consider the estimate $\bar{\omega} \tau^j_{ATE}$ from \citet{Keyser_2020}
+     \end{itemize}
+
+    \item<3-> Under the same assumptions, the projected welfare is still biased
+    
+    \hyperlink{proof3}{\beamerbutton{Proof}}
+    \vspace{-12pt}
+    \begin{align*}
+     \only<3->{    \text{\textbf{Bias}}^j_2 &= \Delta \accentset{\sim}{\mathcal{W}}^j - \bar{\omega} \tau^j_{ATE} \color{white} \sum \sum \sum\\
+                        &= \text{Cov}(\omega_i,\Delta S^j_i) }
+    \end{align*}    
+        
+    \item<4-> Means aren't enough if \textbf{\color<4>{ptr5}distributional concerns} interact with heterogeneity 
+    \begin{itemize}
+        \item Some conditions can only guarantee zero bias, e.g., if there is no heterogeneity or if the objective is to raise average scores 
+    \end{itemize}
+    
+\end{wideitemize}
+    
+\end{frame}
+
+
+
+\begin{frame}{\textbf{How close can you get with heterogeneity?}}
+\begin{wideitemize}
+    \item Knowing the full joint distribution of individual-level effects and weights is unlikely
+ \begin{itemize}
+     \item In welfare theory and empirical research, the solution is to use characteristics $\mathcal{X}$
+ \end{itemize}
+
+\item<2-> Assuming all heterogeneity is on observables, the projected welfare is unbiased:
+\begin{itemize}
+    \item Where the conditional average effect of $d$ is $\tau^d_{CATE}(x)=\mathbb{E}[S^d-S^0|X]$
+\end{itemize}
+    \begin{align*}
+         \Delta \accentset{\sim}{\mathcal{W}}^j &= \int_\mathcal{X} \sum_d \omega(x) p^j(d,x) \tau^d_{CATE}(x)\text{d}x
+    \end{align*}
+     \item<3-> Even if missing a relevant $x$, conditioning will shrink the bias under certain conditions
+     \begin{itemize}
+         \item Similar to intuition for how regression controls affect omitted variable bias
+     \end{itemize}
+    \begin{align*}
+     \text{\textbf{Bias}}^j_1 &= \int_i \omega_i p^j(d,i) (\Delta S^j_i-\tau^d_{CATE}(x_i))\text{d}i  \\
+     \text{\textbf{Bias}}^j_2 &= \int_\mathcal{X} \text{Cov}(\omega_i,\Delta S^j_i|x) \text{d}x 
+    \end{align*}  
+
+       
+
+\end{wideitemize}
+    
+\end{frame}
+
+
+
+
+\begin{frame}[c]{\textbf{Each component could matter substantially for welfare}}
+\centering
+\resizebox{!}{.46\textwidth}{
+\begin{tikzpicture}[scale=1]
+	\draw[thick,<->] (0,10) node[left]{$S_1$} --(0,0)--(24,0) node[below]{$S_2$};
+	\draw[dashed,color=black!40,visible on=<13-20>] (0,8.42)--(22,4.42) node[anchor=north west,fill=white,text=black,outer sep=1pt]{$\accentset{\sim}{\mathcal{W}}_3$};
+	\draw[dashed,color=black!40,visible on=<11->] (0,7)--(22,3) node[anchor=north west,fill=white,text=black,outer sep=1pt]{$\accentset{\sim}{\mathcal{W}}_2$};
+	\draw[dashed,color=black!40,visible on=<10->] (0,4.4)--(22,.4) node[anchor=north west,fill=white,text=black,outer sep=1pt]{$\accentset{\sim}{\mathcal{W}}_1$};
+	\draw[dashed,color=black!40,visible on=<9->] (0,2)--(8.9,.2) node[anchor=west,fill=white,text=black,outer sep=1pt]{$\accentset{\sim}{\mathcal{W}}_0$};
+	\draw[thick,color=black!40,visible on=<14-15>] (0,2)--(8.9,.2);
+    \draw[thick,color=black!40,visible on=<14-17>] (0,4.4)--(22,.4);
+    \draw[thick,color=black!40,visible on=<16-19>] (0,7)--(22,3);
+    \draw[thick,color=black!40,visible on=<18-19>] (0,8.42)--(22,4.42);
+	\draw[visible on=<5->] (21,0) arc(0:90:21cm and 7.5cm);
+	\draw[visible on=<3->] (13,0) arc(0:90:13cm and 4.4cm);
+	\node[fill=white, draw=black,thick,minimum width=.4cm,minimum height=.4cm,visible on=<2->] at (5.,1) {};
+	\node[fill=ptr1, circle, draw=black,visible on=<4->] at (10.8,2.45) {};
+	\node[fill=ptr3, circle, draw=black,visible on=<6->] at (18.2,3.7) {};
+	\node[fill=ptr5, circle, draw=black,visible on=<13->] at (9.7,6.65) {};
+	\draw[thick,<-,color=black!60,visible on=<3->] (13,.6)--(14,.6) node[anchor= west,fill=white,text=black,outer sep=1pt]{PPF $\hat{\tau}^d_{ATE}$};
+	\draw[thick,<-,color=black!60,visible on=<5->] (20.6,1.7)--(21.6,1.7) node[anchor= west,fill=white,text=black,outer sep=1pt]{PPF $\hat{\tau}^d_{CATE}(\tilde{s})$};
+	\draw[ultra thick, ->,color=black!40,visible on=<15->](-.4,2.1)-- node [midway, left,rotate=90,color=black,anchor=north,outer sep=-35pt,align=center] {Absolute \\ Advantage}(-.4,4.2) ;
+	\draw[ultra thick, ->,color=black!40,visible on=<17->](-.4,4.5)-- node [midway, left,rotate=90,color=black,anchor=north,outer sep=-35pt,align=center] {Comparative \\ Advantage}(-.4,6.8) ;
+	\draw[ultra thick, ->,color=black!40,visible on=<19->](-.4,7.1)-- node [ left,rotate=90,color=black,anchor=north,outer sep=-35pt,align=center] {Using \\ Wieghts}(-.4,8.4) ;
+    \draw[color=black] (1.5,-.8) --(21.7,-.8) --(21.7,-1.8) --(1.5,-1.8) --  (1.5,-.8);
+	\node[fill=white, draw=black,thick,label=0:Status Quo Policy,minimum width=.4cm,minimum height=.4cm,visible on=<2->] at (2.3,-1.3) {};
+	\node[fill=ptr1, circle, draw=black,label=0:Mean Effects,visible on=<4->] at (6.5,-1.3) {};
+	\node[fill=ptr3, circle, draw=black,label=0:Heterogeneous Effects,visible on=<6->] at (10,-1.3){};
+	\node[fill=ptr5, circle, draw=black,label=0:Heterogeneous Effects + Weights,visible on=<13->] at (14.9,-1.3)  {};
+	%\draw[color=black] (7.5,-.8) --(18,-.8) --(18,-2.6) --(7.5,-2.6) --  (7.5,-.8);
+	%\node[fill=white, draw=black,thick,label=0:Status Quo Policy,minimum width=.4cm,minimum height=.4cm,visible on=<2->] at (8.5,-1.3) {};
+	%\node[fill=ptr1, circle, draw=black,label=0:Mean Effects,visible on=<4->] at (13.7,-1.3) {};
+	%\node[fill=ptr3, circle, draw=black,label=0:Het Effects,visible on=<6->] at (8.5,-2.05){};
+	%\node[fill=ptr5, circle, draw=black,label=0:Het + Weights,visible on=<13->] at (13.7,-2.05)  {};
+\end{tikzpicture}}
+\end{frame}
+
+
+\section{Application: Welfare and Heterogeneous Value Added}
+
+\subsection{Estimating Heterogeneous Teacher Value Added}
+
+
+
+\begin{frame}[label=va]{\textbf{Estimating value added in San Deigo Unified}}
+\begin{wideitemize}
+    \item Empirical setting is the San Diego Unified School District
+    \begin{itemize}
+        \item Second largest district in CA, broadly representative of the state
+        \item 1,791 teachers in grades 3-5 classrooms from 2002-2013
+    \end{itemize}
+
+    \item<2-> We explore \textbf{\color<2>{ptr3}heterogeneity in value added} along the achievement distribution
+    \begin{itemize}
+        \item<3-> Achievement seems like the most natural dimension of \textbf{\color<3>{ptr3}heterogeneity in teacher effects} (think: teaching differentiation) and \textbf{\color<3>{ptr5}social preferences} (think: policy examples)
+        \item<4-> Split estimates by median score in the district separately for \textbf{\color<4>{ptr1}math and ELA}
+    \end{itemize}
+    
+
+    \item<3-> Very standard VA estimation adapted for heterogeneity following \citet{chetty2014measuring1}, \citet{Delgado2020}, and \citet{bates2022teacher}
+    
+    \hyperlink{details}{\beamerbutton{VA Estimation Details}}      
+ \begin{itemize}
+        \item<5-> \textbf{Key Assumption:} classroom-by-achievement-type shocks and idiosyncratic shocks are conditionally independent (with restrictions about stationarity)
+    \end{itemize}
+
+
+\end{wideitemize}
+\end{frame}
+
+
+
+\begin{frame}[c]{\textbf{Teacher effects are correlated but dispersed}}
+\centering
+ \includegraphics[width=.95\textwidth]{Working_Slides/WS_Figures/02a_VA.pdf}%
+\end{frame}
+
+
+\begin{frame}[label=effects]{\textbf{Estimation extensions and robustness checks}}
+\begin{wideitemize}
+    \item Heterogeneous effects leave lots of room for \textbf{\color<1>{ptr3}comparative advantage}
+    \begin{itemize}
+        \item Cross subject correlations are weaker than within-subject correlations
+
+        \hyperlink{cross}{\beamerbutton{Cross-Subject Scatter}}
+        \item Similar to cross-race correlation and less correlated than cross-SES
+        
+         {\tiny \color{gray} \citep[]{Delgado2020,bates2022teacher}}
+    \end{itemize}
+
+    \item<2->\textbf{\color<2>{ptr5}Key Concern}: Are the differences noise or actual comparative advantage?
+
+    \item<3-> Heterogeneity seems to reliably estimate economically meaningful differences
+    
+        \hyperlink{persistence}{\beamerbutton{Persistence}}            \hyperlink{longrun}{\beamerbutton{Long-Run Effects}}
+        
+    \begin{itemize}
+        \item<4-> Heterogeneous effects tend to be just as \textbf{\color<4>{ptb3}forecast unbiased}
+        \item<5-> We find that \textbf{\color<5>{ptr3}comparative advantage} is extremely persistent over time\hypertarget<5>{effects1}{ }         
+        \item<6-> Heterogeneous value added captures all the information from \textbf{\color<6>{ptr1}long-run outcomes}\hypertarget<6>{effects2}{ } 
+
+    \end{itemize}
+
+
+\end{wideitemize}
+\end{frame}
+
+
+
+
+
+\subsection{Reallocating Teachers to Classrooms}
+\begin{frame}{\textbf{What allocations maximize student achievement?}}
+\begin{wideitemize}
+    \item Combining theory and estimates, we can see how much heterogeneity matters 
+
+    \item<2-> We consider allocating teachers to classes (within or across schools) $\mathcal{J}:C\to J$
+\only<3->{
+\[
+    \max_\mathcal{J} \accentset{\sim}{\mathcal{W}}(\mathcal{J}) = \max_\mathcal{J} \sum_c \sum_{i\in c} \omega_{H} \,H_i \,\hat{\tau}^{j(c)}_{H}  +(1-\omega_{H}) \, (1-H_i) \, \hat{\tau}^{j(c)}_{L}
+\]}
+\begin{itemize}
+    \item<4-> Because teachers differ you cannot just assign by \textbf{\color<4>{ptb4}absolute advantage}
+    \item<5-> Because class sizes differ you cannot just assign by \textbf{\color<5>{ptr3}comparative advantage}
+    \item<6-> The result is an optimization problem with over $2.5 \cdot 10^{1846}$ permutations
+\end{itemize}
+\item<7-> So we recharacterize the problem as a mixed integer linear programming problem 
+
+\hyperlink{milp}{\beamerbutton{Proof}}
+
+\end{wideitemize}
+\end{frame}
+
+
+\begin{frame}[c]{\textbf{Reallocating teachers to classes creates large gains}}
+
+\centering
+ \includegraphics<2>[width=.95\textwidth]{Working_Slides/WS_Figures/03a_reallocation.pdf}%
+ \includegraphics<3>[width=.95\textwidth]{Working_Slides/WS_Figures/03b_reallocation.pdf}%
+\end{frame}
+
+
+\begin{frame}{\textbf{Quantifying the gains from comparative advantage and equity}}
+\begin{wideitemize}
+    % These are big gains, given the correlation, can't you just get most of it from standard VA?
+    \item We compare the gains of the optimal allocation with the gains from using standard VA
+
+    \hyperlink{versus}{\beamerbutton{VA versus Heterogeneity}} \hyperlink{dist_gains}{\beamerbutton{Distributional Gains}} \hyperlink{scores}{\beamerbutton{Egalitarian Socres}}
+\only<3->{
+\[
+    \max_\mathcal{J} \accentset{\sim}{\mathcal{W}}(\mathcal{J}) = \max_\mathcal{J} \sum_c \sum_{i\in c} \omega_{H} \, H_i\, \alt<1-3>{\hat{\tau}^{j(c)}_{H}}{{\color{ptr5}\hat{\tau}_{VA}^{j(c)}}}  +(1-\omega_{H})\,  (1-H_i)\, \alt<1-3>{\hat{\tau}^{j(c)}_{L}}{{\color{ptr5}\hat{\tau}_{VA}^{j(c)}}}
+\]}
+    \begin{itemize}
+        \item<3-> Heterogeneous VA raises average scores by 66-97\% more than standard VA \hypertarget<5>{equity1}{} 
+        % (34-50\% w/i)
+        \item<3-> While always valuable, heterogeneity is particularly useful when both groups matter
+        \item<4-> With egalitarian social objectives, heterogeneity is key to maintaining average scores  \hypertarget<5>{equity2}{}
+    \end{itemize}
+    
+    \item<5-> Our teacher reallocations can shrink achievement and racial gaps 
+
+    \hyperlink{achgap}{\beamerbutton{Achievement Gaps}} 
+    \hyperlink{urmgap}{\beamerbutton{Racial Gaps}}
+    \hyperlink{loser}{\beamerbutton{Winners \& Losers}}
+    
+    \begin{itemize}
+        \item<6-> Requires egalitarian weights (54-72\%) on low achievers in district reallocations
+        \item<7-> Within-school reallocations don't meaningfully change racial gaps \hypertarget<7>{equity3}{}
+        \item<8-> Note these are average not ``Pareto'' gains: there are winners and losers\hypertarget<8>{equity4}{}
+    % This motivates the idea of compensation and $ values
+    \end{itemize}
+
+\end{wideitemize}
+\end{frame}
+
+
+\section{Welfare Analyses and Conclusion}
+
+
+\begin{frame}{\textbf{What does it take to get to ``welfare added''?}}
+\begin{wideitemize}
+    % These are big gains, given the correlation, can't you just get most of it from standard VA?
+    \item Can we move from evaluating the ``social objective'' to true ``welfare''?
+
+
+
+    \item \textbf{\color<2>{ptr5}Families:} Assume families only value long-run labor-market effects from teachers
+    \begin{itemize}
+        \item<3-> Obvious oversimplification, but approach extends to any number of valued dimensions
+        \item<4-> Plausible for the within-school reallocations (not much sorting)
+        \item<5-> Implies ``partial equilibrium'' interpretation for district-wide reallocations (i.e, no resorting) \alt<1-5>{}{... although there is no evidence that families value value added...
+        
+        {\tiny \color{gray} \citep[]{imberman2016does,abdulkadirouglu2020parents}}
+        }
+
+        
+        \item<7-> Use estimates of the \textbf{\color<7>{ptr1}subject-specific} effects of higher value-added teachers on earnings 
+
+        {\tiny \color{gray} \citep[]{chetty2014measuring2}}
+    \end{itemize}
+
+    \item<8-> \textbf{\color<8>{ptr5}Teachers:} We calculate the MVPF for dollars spent on added compensation
+    \begin{itemize}
+        \item<9-> Compare to existing calibrations/estimates of compensating variation
+        
+        {\tiny \color{gray} \citep[]{rothstein2015teacher,bates2022teacher}}
+        \item<10-> Requires assumptions about transfers of tax dollars back to district
+    \end{itemize}
+
+
+\end{wideitemize}
+\end{frame}
+
+
+
+
+
+\begin{frame}[c]{\textbf{Calculating optimal earnings gains from reallocations}}
+\centering
+ \includegraphics<1>[width=.95\textwidth]{Working_Slides/WS_Figures/05a_dollars.pdf}%
+ \includegraphics<2>[width=.95\textwidth]{Working_Slides/WS_Figures/05b_dollars.pdf}%
+ \includegraphics<3>[width=.95\textwidth]{Working_Slides/WS_Figures/05c_dollars.pdf}%
+ \includegraphics<4>[width=.95\textwidth]{Working_Slides/WS_Figures/05d_dollars.pdf}%
+\end{frame}
+
+
+\begin{frame}[label=conc]{\textbf{Are gains like this really feasible?}}
+\begin{wideitemize}
+    % These are big gains, given the correlation, can't you just get most of it from standard VA?
+    \item At a district level this would create \$7.4-27.9M dollars of earnings \textbf{every year}
+    \begin{itemize}
+        \item<2-> Because ELA matters gains are larger (\$1.5-7M) than only allocating by math 
+        
+        {\tiny \color{gray} \citep[]{bates2022teacher}}
+       
+    \end{itemize}
+
+    \item<3-> But this policy isn't costless (teachers might hate it), so is it really feasible?
+    \begin{itemize}
+        \item<4-> \textbf{Thought experiment:} Give teachers a bonus for the possibility of reallocation
+        \item<5-> How much would it be worth paying them?
+    \end{itemize}   
+   \end{wideitemize}   
+   \vspace{12pt}
+   \only<6->{
+\[
+MVPF = \frac{\text{Benefits\_to\_Students}}{\text{Net\_cost\_to\_budget}} = \frac{\sum \Delta S^j_i \cdot (1- t)}{J\cdot \text{Bonus}-\sum \Delta S^j_i \cdot t)}
+\]}
+
+\begin{wideitemize}
+\item<7> It looks like there are enormous potential for long-term gains \hypertarget<7>{conc2}{}
+
+\hyperlink{mvpf}{\beamerbutton{MVPF Results}}
+\end{wideitemize}    
+
+\end{frame}
+
+
+\begin{frame}{\textbf{So what did we learn?}}
+
+\begin{wideitemize}
+\item Good reason to believe heterogeneity (and estimating heterogeneity) matters
+\item<2-> \textbf{\color<2>{ptr3}Teacher effectiveness varies} with student achievement with long-term implications
+\item<3-> Lots of room for \textbf{\color<3-4>{ptr5}gains through reallocations}---far beyond standard VA
+\begin{itemize}
+    \item<4-> Bigger gains (overall and relative to standard VA), with egalitarian social weights
+\end{itemize}
+\item<5-> Many teacher reallocation programs pay for themselves in the long run
+\end{wideitemize}
+
+\end{frame}
+
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
+\begin{frame}[c,noframenumbering]
 \centering
 \Huge{\centerline{Thank You!}}
-\normalsize ricksmi{\fontfamily{qag}\selectfont @}umich.edu
+
+\normalsize  teastmond@ucsd.edu \hspace{1em} njmather@umich.edu \hspace{1em} ricksmi@umich.edu \hspace{1em} jbetts@ucsd.edu
+
 \end{frame}
 
-%------------------------------------------------
 
+
+
+
+\appendix
+\section{Appendix}
+\setbeamertemplate{navigation symbols}{}
 
 \begin{frame}
 \frametitle{References}
@@ -947,564 +885,109 @@
 \end{frame}
 
 
-%----------------------------------------------------------------------------------------
-%----------------------------------------------------------------------------------------
-
-\appendix
-\setbeamertemplate{navigation symbols}{}
 
 
-%----------------------------------------------------------------------------------------
-%----------------------------------------------------------------------------------------
+\begin{frame}[c,label=cross]{\textbf{Cross subject correlations are much weaker}}
+\centering
+ \includegraphics[width=.95\textwidth]{Working_Slides/WS_Figures/A2_crossVA.pdf}
+ \raggedright
+ \vfill
+ \hyperlink{effects}{\beamerbutton{Back}}
+\end{frame}
 
-\begin{frame}[label=whywaiting]{\textbf{What decision are talking about?}}
+\begin{frame}[c,label=persistence]{\textbf{Comparative Advantage is persistent over time}}
+\centering
+ \includegraphics[width=.95\textwidth]{Working_Slides/WS_Figures/02b_VA.pdf}
+ \raggedright
+ \vfill
+ \hyperlink{effects1}{\beamerbutton{Back}}
+\end{frame}
 
-\begin{wideitemize}
-    \item Economic and education research have proposed many potential ``treatments''
-    \begin{itemize}
-        \item<2-> \textbf{\color<2>{ptr5}{Age Based}}: Entry age, relative age, age at assessment, etc.
-        \item<3-> \textbf{\color<3>{ptr5}{Recommendation Based}}: Early vs On-Time vs Redshirted
-        \item<4-> \textbf{\color<4>{ptr5}{Binary}}: Start at five(ish) vs at six(ish)
-        
-    \end{itemize}
-    
-    
-    \item<5-> The first two conceptualizations have limited interpretability and identifiability
-        
-        {\tiny \color{gray}\citep[see for example][]{angrist2008mostly,barua2016school}}
-        
-    
-    \item<6-> Treatment: \textbf{\color{ptr3}{waiting}} and investing in child another year before kindergarten
-    
-     {\tiny \color{gray}\citep[following binary definition in][]{black2011too,dhuey2019school}}
-    
-    \begin{itemize}
-        \item Focuses on behaviorally relevant choice for parents and policy makers 
-        %Once a child is born, entry age is not separably manipulable with existing technology
-        \item Trades off separation of relevant mechanisms for identifiability and interpretability
-        \item Clarifies relation between early, on-time, and redshirting 
-    \end{itemize}
-        
-
-   
-    
-    
-\end{wideitemize}
-
-
-\hyperlink{wait1}{\beamerbutton{Back}}
+\begin{frame}[c,label=longrun]{\textbf{Heterogeneous value added predicts long-term outcomes}}
+\centering
+ \includegraphics[width=.95\textwidth]{slides/Figures/fig2b_longterm.pdf}
+ \raggedright
+ \vfill
+ \hyperlink{effects2}{\beamerbutton{Back}}
 \end{frame}
 
 
 
 
-\begin{frame}[label=treatments]{\textbf{Comparing definitions of treatment} }
-
-\begin{wideitemize}
-    \item Economics usually model ``treatment'' is (continuous) school starting age
-    \begin{itemize}
-        \item But this treatment is not separately identified from age at assessment
-        
-        \item It also has monotonicity problems in IV settings
-        
-        {\tiny \color{gray}\citep[see discussion in][]{angrist2008mostly,barua2016school}}
-        
-    \end{itemize}
-    
-    \item<2-> Education research compares (unordered) early, on-time, and redshirted entrants
-    \begin{itemize}
-        \item But these terms cannot generate potential outcomes
-        \item It also implies non-excludability in IV settings
-       
-    \end{itemize}
-    
-
-    
-\end{wideitemize}
-\vspace{8em}
-\hyperlink{wait1}{\beamerbutton{Back}}
+\begin{frame}[c,label=versus]{\textbf{Reallocation exercises}}
+\centering
+ \includegraphics<1>[width=.95\textwidth]{Working_Slides/WS_Figures/03a_reallocation.pdf}%
+ \includegraphics<2>[width=.95\textwidth]{Working_Slides/WS_Figures/03e_reallocation.pdf}%
+ \includegraphics<3>[width=.95\textwidth]{Working_Slides/WS_Figures/03d_reallocation.pdf}%
+ \raggedright
+ \vfill
+ \hyperlink{equity1}{\beamerbutton{Back}}
 \end{frame}
 
 
-
-\begin{frame}[label=treatments2]{\textbf{A treatment with potential outcomes} }
-
-\begin{wideitemize}
-    \item  Education research compares (unordered) early, on-time, and redshirted entrants
-    \begin{itemize}
-        \item<6-> Redshirting is not a different ``treatment'' from  on-time waiting
-        \item<7-> Early entry is not a treatment, but selection out of treatment    
-        \item<10-> A given child can't even have $Y_i(\text{early})$, $Y_i(\text{on-time})$, \textbf{and} $Y_i(\text{late})$
-    \end{itemize}
-
-   
-    
-\end{wideitemize}
-
-    \begin{tikzpicture}
-
-    \draw (-3,-2.25) pic{student={white,<2->}};
-    \node (X1) at (-3,-2.25)  [font=\fontsize{8pt}{8pt}\selectfont,anchor=south east,visible on=<2->,align=right] {Age =  5.000 \\ On-Time};
-    
-    \draw (-3,-1) pic{student={white,<3->}};
-    \node (X1) at (-3,-1)  [font=\fontsize{8pt}{8pt}\selectfont,anchor=south east,visible on=<3->,align=right] {Age = 6.000 \\ Redshirt};
-    
-    \draw (-3,-3.5) pic{student={black!10,<8->}};
-    \node (X1) at (-3,-3.5)  [font=\fontsize{8pt}{8pt}\selectfont,anchor=south east,visible on=<8->,align=right] {Age = 4.000 \\ Early};
-    
-    
-    \draw (3,-1) pic{student={white,<5->}};
-    \node (X1) at (3,-1)  [font=\fontsize{8pt}{8pt}\selectfont,anchor=south east,visible on=<5->,align=right] {Age = 5.997 \\ On-Time};
-    
-    \draw (3,-2.25) pic{student={white,<4->}};
-    \node (X1) at (3,-2.25)  [font=\fontsize{8pt}{8pt}\selectfont,anchor=south east,visible on=<4->,align=right] {Age = 4.997 \\ Early};
-    
-    \draw (3,.25) pic{student={black!10,<9->}};
-    \node (X1) at (3,.25)  [font=\fontsize{8pt}{8pt}\selectfont,anchor=south east,visible on=<9->,align=right] {Age = 6.997 \\ Redshirt};
-    
-    
-    \draw [font=\fontsize{10pt}{10pt}\selectfont,line width=.1cm,color=white] (-7.5,-1.2) -- (-6.5,-1.2) ;
-    \draw [font=\fontsize{10pt}{10pt}\selectfont,line width=.025cm,stealth-stealth,visible on=<3->,] (-6.5,-1.2) -- (6.5,-1.2);
-    \draw [font=\fontsize{10pt}{10pt}\selectfont,line width=.025cm,visible on=<3->] (0,-1.4) node [anchor=north] {Cutoff}-- (0,-1.) ;
-    \end{tikzpicture}
-    
-    
-    \hyperlink{wait1}{\beamerbutton{Back}}   
-
+\begin{frame}[c,label=dist_gains]{\textbf{Gains are the largest when the social objective is egalitarian}}
+\centering
+ \includegraphics[width=.95\textwidth]{Working_Slides/WS_Figures/03f_reallocation.pdf}
+\raggedright
+ \vfill
+ \hyperlink{equity2}{\beamerbutton{Back}}
 \end{frame}
 
 
-
-\begin{frame}[label=model1]{\textbf{Modeling kindergarten decisions: first stage}}
-
-\begin{wideitemize}
-  \item Given $Z\in \{0,1,2\}$, let the net benefit of treatment be
-\begin{align*}
-    V_1-V_0 &= \mu_W(Z,X,r) - \nu_W
-\end{align*}
-
-\item<2-> If we assume 
-\begin{itemize}
-    \item Continuity: $F_{\nu}(\cdot|X,r)$, is absolutely continuous
-    \item Independence:  $U_W \perp Z|X,r $
-    \item Relevance: $\mu_W(Z,X,r)$ is nondegenerate
-\end{itemize}
-
-\item<2-> Then $F_{\nu}(\nu_W|X,r):=U_W \sim U[0,1]$ characterizes the first stage:
-\begin{align*}
-    W &= \mathds{1}(U_W \leq p_z(X,r)) \\
-\visible<3>{    p_0 = P(W=1|Z=0,X,r) \hspace{2em} p_1 &= P(W=1|Z=1,X,r) \hspace{4em} p_2 = 1 }
-\end{align*}
-
-
-\end{wideitemize}
-
-\vfill 
-
-\hyperlink{wait1}{\beamerbutton{Back}}   
+\begin{frame}[c,label=scores]{\textbf{With distributional preferences, heterogeneity raises scores}}
+\centering
+ \includegraphics[width=.95\textwidth]{Working_Slides/WS_Figures/03g_reallocation.pdf}%
+\raggedright
+ \vfill
+ \hyperlink{equity2}{\beamerbutton{Back}}
 \end{frame}
 
 
 
 
+\begin{frame}[c,label=achgap]{\textbf{Reallocations can strongly shape achievement gaps}}
+\centering
+ \includegraphics[width=.95\textwidth]{Working_Slides/WS_Figures/04a_gaps.pdf}
+ \raggedright
+ \vfill
+ \hyperlink{equity3}{\beamerbutton{Back}}
+\end{frame}
 
+\begin{frame}[c,label=urmgap]{\textbf{Only moving teachers across schools can change racial gaps}}
+\centering
+ \includegraphics[width=.95\textwidth]{Working_Slides/WS_Figures/04b_gaps.pdf}
 
-
-\begin{frame}[c,label=educ]{\textbf{These groups are connected to education literature}}
-
-\begin{wideitemize}
-\item Wherever $Z$ is as-good-as-random the following hold:
-\begin{itemize}
-    \item Always takers include redshirters and would-be redshirters with lucky birthdays
-    \item Reluctant compliers include early entrants and lucky  would-be early entrants 
-    \item Redshirters and early entrants are random samples of always takers and reluctant compliers (respectively)
-\end{itemize}
-
-\item My results will estimate effects of waiting on redshirters and early entrants
-
-\item On-Time entrants conflate all groups. The following count as ``on-time entrants'':
-\begin{itemize}
-    \item Always takers who are assigned to wait (would be redshirters) 
-    \item Reluctant compliers who are assigned to start (would be early entrants who start)
-    \item Reluctant compliers who are required to wait (would be early entrants who wait)
-    \item Eager compliers who are recommended to start
-    \item Eager compliers who are recommended or required to wait 
-\end{itemize}
-
-\end{wideitemize}
-
-\vfill
-
-\hyperlink{wait1}{\beamerbutton{Back}}   
+ \raggedright
+ \vfill
+ \hyperlink{equity3}{\beamerbutton{Back}}
 \end{frame}
 
 
+\begin{frame}[c,label=loser]{\textbf{The share of each group harmed depends on the welfare weight}}
+\centering
+ \includegraphics[width=.95\textwidth]{Working_Slides/WS_Figures/04c_winlose.pdf}
 
+ \raggedright
+ \vfill
+ \hyperlink{equity3}{\beamerbutton{Back}}
+\end{frame}
 
+\begin{frame}[c,label=loser]{\textbf{While shares change the size of losses is fairly constant}}
+\centering
+ \includegraphics[width=.95\textwidth]{Working_Slides/WS_Figures/A4_losssize.pdf}
 
-
-\begin{frame}[label=model2]{\textbf{Modeling kindergarten decisions: second stage}}
-
-\begin{wideitemize}
-  \item Given unobserved determinants of scores $\gamma_0,\gamma_1$ let potential math scores be
-\begin{align*}
-    Y(1)=Y_1(X,r,U,\gamma_1) \hspace{3em}&\hspace{3em}    Y(0)=Y_0(X,r,U,\gamma_0)
-\end{align*}
-
-\item<2-> If we assume 
-\begin{itemize}
-    \item Independence:  $(\mu_W,\gamma_0) \perp Z|X,r $ and $(\mu_W,\gamma_1) \perp Z|X,r $
-    \item Support: $0<P(W=1|X,r)<1$ % I assume that there are places with P=1...?
-    \item Finite Scores: $\mathbb{E}[Y(1)]<\infty$ and $\mathbb{E}[Y(0)]<\infty$
-\end{itemize}
-
-\item<2-> Together these imply the LATE monotonicity assumption:
-\begin{itemize}
-    \item no children would wait if and only if they are recommended to start
-    \item no children would start if and only if they are recommended or required to wait
-\end{itemize}that
-
-
-\end{wideitemize}
-
-\vfill 
-
-\hyperlink{wait2}{\beamerbutton{Back}}   
+ \raggedright
+ \vfill
+ \hyperlink{equity3}{\beamerbutton{Back}}
 \end{frame}
 
 
-%------------------------------------------------
-
-\begin{frame}[label=narratives]{\textbf{Common narratives about strategic entry carry implicit assumptions  }}
-\begin{wideitemize}
-
-\item Example 1: ``Kindergarten timing is just about readiness''
-\begin{itemize}
-    \item<2-> Negative selection in levels: $\mu_{0,at}<\mu_{0,ec}<\mu_{0,rc}$ 
-    \item<3-> No selection on gains: $\tau_{at}\approx \tau_{ec} \approx \tau_{rc}$ 
-\end{itemize}
-    
-\item<4-> Example 2: ``Surely the privileged kids don't actually gain much''
-\begin{itemize}
-    \item<5-> Positive selection in levels: $\mu_{0,at}>\mu_{0,ec}>\mu_{0,rc}$ 
-    \item<6-> Negative selection on gains: $\tau_{at}<\tau_{ec} < \tau_{rc}$ 
-\end{itemize}
-% You'll notice this argument is at odds with the equity argument, which requires that AT have a meaningful effect.
-    
-\item<7-> Example 3: ``Requirements are necessary to ensure readiness''
-\begin{itemize}
-    \item<8-> No (or positive) selection in levels: $\mu_{0,at}\approx\mu_{0,ec}\approx \mu_{0,rc}$ 
-    \item<9-> No stance on selection on gains: $\tau_{at}\lessgtr \tau_{ec} \lessgtr \tau_{rc}$ 
-\end{itemize}
-      
-\item<10-> Estimating these parameters will distinguish between proposed explanations 
-% on average
-    
-
-\end{wideitemize}
-
-\hyperlink{wait3}{\beamerbutton{Back}}  
-
-\end{frame}
-
-
-
-
-\begin{frame}[label=change]{\textbf{Birthday cutoff policy changes 2002-2022}}
-\begin{scaletikzpicturetowidth}{.8\textwidth}
-\input{Slides/tables_figures/practice_talk/changes}
-        \end{scaletikzpicturetowidth}
-\vfill 
-
-\hyperlink{policy1}{\beamerbutton{Back}}   
-\end{frame}
-
-
-
-%\begin{frame}[label=requirements]{\textbf{Policy details}}
-
-%\begin{wideitemize}
-% \item Waiver
- 
-
-%\end{wideitemize}
-
-%\vfill 
-
-%\hyperlink{policy1}{\beamerbutton{Back}}   
-%\end{frame}
-
-
-
-
-\begin{frame}[label=eclsb,c]{\textbf{Many baseline outcomes are linear in $U_W$}}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=.8\textwidth]{Draft8/all.pdf}
-    
-    \footnotesize SOURCE: U.S. Department of Education, National Center for Education Statistics, Early Childhood Longitudinal Survey-Birth Cohort (ECLS-B).
-\end{figure}
-
-\hyperlink{redselection}{\beamerbutton{Back}}
-
-\end{frame}
-
-
-
-\begin{frame}[label=out,c]{\textbf{Always takers have worse elementary school outcomes}}
-\begin{center}
-    \resizebox{\textwidth}{!}{
-\input{Slides/tables_figures/practice_talk/elementary}}
-
-\end{center}
-\hyperlink{redselection}{\beamerbutton{Back}}
-
-\end{frame}
-
-
-
-
-\begin{frame}[label=rdseltest,c]
-
-\frametitle<1-6>{\textbf{Intuition for test of selection}}
-\frametitle<7>{\textbf{Intuition: Positive selection}}
-\frametitle<8>{\textbf{Intuition: Negative selection}}
-\frametitle<9>{\textbf{Data suggest negative selection}}
-
-
-
-\begin{center}
-\input{Slides/tables_figures/practice_talk/rd_selection}
-\end{center}
-
-\hyperlink{redselection}{\beamerbutton{Back}}
-
-\end{frame}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%------------------------------------------------
-% Is having AT peers worse than having TC peers
-\begin{frame}<0>[label=extensions]{Peer Effects}
-
-Peer effects questions:
-    \begin{itemize}
-        \item Having older peers improves students' absolute performance \citep{pena2017creating}
-        \item Because late entrants are negatively selected and positively affected, this effect might not be the same if a student's older peer is a complier vs always taker...
-        \item I've replicated similar results to \citep{pena2017creating}, and preliminary results suggest it is better to have an AT peer than a old complier peer... but I'm not sure I've done it right...
-        \item Parental decisions may be socially optimal
-    \end{itemize}
-
-\end{frame}
-
-
-
-%------------------------------------------------
-
-% LATE sum balance table
-\begin{frame}<0>[noframenumbering]{Monotonicity \& Effects Would Resolve Selection Puzzle}
-
-\begin{itemize}
-    \item \citet{fortner2017kindergarten} introduce a puzzle of ``negative and postive selection''
-    \begin{itemize}
-        \item Redshirted students are more likely to have disability diagnosis %lower bound on disability selection
-        \item Redshirted students without disabilities perform better on third grade assessments
-        \item Redshirted students with disabilities perform worse than peers with disabilities
-    \end{itemize}
-    \vspace{12pt}
-    \item  This characterizes selection in multiple dimensions of covariates
-    \vspace{12pt}
-    \item Negative selection (i.e., low untreated outcomes) and a large treatment effect could explain both selections but on only one dimension: propensity to be treated
-    %\item `Selection on gains' idea: redshirt when it will really help 
-    \vspace{12pt}
-    \footnotesize
-    % Note: this is for students closest to cutoff (63\% of redshirters). Redshirters far from cutoff look to be very negatively selected and I don't estimate the treatment effect for them.
-\end{itemize}
-
-\end{frame}
-
-% Parental Preferences 
-\begin{frame}<0>{5. Other Ideas}
-
-\citet{cook2018school} show evidence that parents care about relative age less than absolute age. Can I see if they care about relative or absolute performance?
-    \begin{itemize}
-        \item We could somehow use the changing cutoff date
-    \end{itemize}
-
-\vspace{12pt}    
-    
-Does the difference between AT and TC have something to add about what happens during that year ?
-    \begin{itemize}
-        \item Both are the same relative and absolute ages
-        \item Could the difference say something about what makes up the ``black box'' treatment effect?
-    \end{itemize}
-
-\vspace{12pt}
-The compulsory schooling laws changed in Michigan near the start of my sample, and while they thought about the cut off, they didn't think as carefully about all four groups
-\begin{itemize}
-    \item It seems like there is something interesting there beyond the simple policy evaluation
-\end{itemize}
-
-\vspace{12pt}
-
-\hyperlink{nextsteps}{\beamerbutton{Back}}
-
-\end{frame}
-%------------------------------------------------
-
-%------------------------------------------------
-% What is the answer
-\begin{frame}<0>{\textbf{Long contributions}}
-
-\only<1>{\vspace{.33em}}
-\begin{wideenumerate}
-    \item Describe the economics of kindergarten entry using unobserved heterogeneity
-    
-    \only<1-4>{
-    \begin{itemize}
-        \item Characterize sorting around recommendations as \textbf<2>{partial compliance}
-        % Rather than distinct treatments
-        
-        {\tiny \color{gray}\citep{black2011too,dhuey2019school,imbens1994identification,angrist1996identification,mogstad2020causal}}
-        
-        \item Measure selection \textbf<3>{in potential outcomes} between  groups
-        % Rather than in covariates
-        
-        {\tiny \color{gray}\citep{cameron1990effects,graue2000redshirting,march2005academic,schanzenbach2017your,fortner2017kindergarten,cook2018school,fortner2019forced,molnar2018redshirting}}
-        
-        \item Measure effects \textbf<4>{beyond compliers} from RD-based ``entry age'' analyses
-        % Rather than just eager compliers
-        
-        {\tiny \color{gray}\citep{bedard2006persistence,elder2009kindergarten,elder2010importance,evans2010measuring,black2011too,mccrary2011effect,bedard2012school,cook2016birthdays,kim2017public,black2017simple,bertanha2019external,kowalski2018behavior}}
-        
-    \end{itemize}}
-
-% Talk about selection and readiness
-
-    
-    \item<5-> Quantify the policy tradeoff between recommending vs requiring starting and waiting
-    
-    \only<5-6>{
-    \begin{itemize}
-        \item If allowed selection around recommendations  \textbf<6>{increases} achievement but reduce equity
-        % Getting the right answer \textbf{depends} on allowing for selection on gains
-        
-        {\tiny \color{gray}\citep{illinois2019anact}}
-        \end{itemize}}
-        
-    \item<7-> Explore how agents make intergenerational investments under constraints
-    \only<7>{
-    \begin{itemize}
-        
-        \item Higher-income families are more responsive to children's gains from waiting, and \hspace{4em} lower-income families are more responsive to the costs of waiting
-        
-        {\tiny \color{gray}\citep{kline2016evaluating,felfe2018does,cornelissen2018benefits,walters2018demand}}
-        % Allowing for het nonparametrically is important
-    \end{itemize}}
-    
-    
-    \item<8-> Highlight inequities in how much children benefit from the ``gift of time''
-    \only<8>{
-    \begin{itemize}
-        \item Mechanisms emphasize the role of investments in the year children wait
-        
-        {\tiny \color{gray}\citep{elder2009kindergarten,shapiro2019if,kline2016evaluating,felfe2018does,cornelissen2018benefits}}
-        
-        \item Simulations with more prekindergarten for low-SES children raise scores and shrink gaps
-        
-        %
-        
-        %If barriers prevent agents from making important investments in their children, it may affect other decisions like school choice, college support, fertility, nutrition, preventative care, and the development of social capital.
-        
-    \end{itemize}}
-\end{wideenumerate}
-\end{frame}
-
-\begin{frame}<0>{\textbf{Parental selection increases achievement but reduces equity}}
-
-%\begin{center}
-%\input{Slides/tables_figures/practice_talk/intro_results}
-%\end{center}
-            
-\begin{wideitemize}
-%\item There is significant selection:
-% Recall I am thinking about selection in terms of potential untreated outcomes
-\item {\color<1-2>{ptr5}\textbf{Negative selection in levels:}} Parents make lower achieving children wait 
-\only<1-2>{
-\begin{itemize}
-    \item {\color<1-2>{ptb4}\textbf<1-2>{Reluctant waiters}} outperform both other groups when no one waits
-    %by more than $0.40\sigma$
-    % Talk about readiness
-    \item<2-> Selection with {\color<2>{ptr5}\textbf<2>{outcomes}} not characteristics flips common narratives
-    
-    {\tiny \color{gray}\citep{cameron1990effects,graue2000redshirting,march2005academic,schanzenbach2017your,fortner2017kindergarten}}
-    
-\end{itemize}}
-
-\item<3-> {\color<3-4>{ptr5}\textbf{Positive selection on gains:}} Strategic entry raises average achievement
-\only<3-4>{
-\begin{itemize}
-    \item {\color<3-4>{ptr5}\textbf{Always waiters'}} gains ($0.60-0.80\sigma$) from waiting are at least double other groups'
-    %
-    \item<4-> {\color<4>{ptr5}\textbf<4>{Heterogeneity}} beyond the recommendation-LATE matters for policy
-    
-    {\tiny \color{gray} \citep{bedard2006persistence,elder2009kindergarten,black2011too,mccrary2011effect,bedard2012school,cook2016birthdays}}
-\end{itemize}}
-
-\item<5-> {\color<5-6>{ptr5}\textbf{Unequal Impacts:}} Strategic entry expands achievement gaps
-\only<5-6>{
-\begin{itemize}
-    \item Higher-income families benefit 3x more and drive \textit{all} selection on gains
-    % to vary by income clarifies that whereas higher-income families select in response to the gains to their children, lower-income families select in response to the costs of waiting.
-    \item<6-> Allowing flexible selection may affect other public programs and investments
-    
-    {\tiny \color{gray} \citep[]{mogstad2018using,kline2019heckits,walters2018demand,sdfas,ito2021selection}}
-\end{itemize}}
-
-\item<7-> {\color{ptr5}\textbf<7-9>{Early Investments:}} Public investment could shrink gaps and raise scores
-
-\only<7-9>{
-\begin{itemize}
-    \item Higher-income families invest more, but similar investments have similar gains
-    % to vary by income clarifies that whereas higher-income families select in response to the gains to their children, lower-income families select in response to the costs of waiting.
-    \item<8-> Consistent with heterogeneity in take-up and effects of early childhood programs
-
-    {\tiny \color{gray} \citep{kline2016evaluating,felfe2018does,cornelissen2018benefits}}
-    
-    \item<9-> I compare recommendations, requirements, and expanded public prekindergarten
-    
-\end{itemize}}
-
-% This is for two reasons...
-
-
-%\begin{itemize}
-%    \item<11-> Average gains are $0.48$ for high SES but only $0.16$ for low SES
-%    \item<12-> Only high-income families sort children on gains
-%\end{itemize}
-\end{wideitemize}
-
-
-
-%main implications for what we don't know:
-%\begin{itemize}    
-%    \item Parents redshirt child if (1) they can AND (2) they think their child needs it
-%    \item Parents are making (short term) optimal decisions for their children
-%    \item Parents' decisions have (short term) positive externalities for other children
-  
+\begin{frame}[c,label=mvpf]{\textbf{Reallocations have high MVPF even for large bonus programs}}
+\centering
+ \includegraphics[width=.95\textwidth]{Working_Slides/WS_Figures/05_MVPF.pdf}
+ \raggedright
+ \vfill
+ \hyperlink{conc2}{\beamerbutton{Back}}
 \end{frame}
 
 
